@@ -3,6 +3,7 @@ _add_unit_tests(
         testBroker
         testBrokerBatching
         testBrokerBlocking
+        testCache
         testTransaction
 
     INCLUDE_DIRS

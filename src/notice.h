@@ -17,6 +17,9 @@ class StageNotice;
 using StageNoticePtr = std::shared_ptr<StageNotice>;
 using StageNoticePtrList = std::vector<StageNoticePtr>;
 
+using StageNoticeConstPtr = std::shared_ptr<const StageNotice>;
+using StageNoticeConstPtrList = std::vector<StageNoticeConstPtr>;
+
 class StageNotice 
 : public TfNotice
 , public std::enable_shared_from_this<StageNotice> {
