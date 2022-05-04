@@ -3,6 +3,7 @@ _add_unit_tests(
         testBroker
         testBrokerBatching
         testBrokerBlocking
+        testTransaction
 
     INCLUDE_DIRS
         ${USD_INCLUDE_DIR} 
