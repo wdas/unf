@@ -5,10 +5,12 @@ _add_library(
     SOURCES
         broker.cpp
         notice.cpp
+        transaction.cpp
 
     PUBLIC_HEADERS
         broker.h
         notice.h
+        transaction.h
 
     INCLUDE_DIRS
         ${USD_INCLUDE_DIR} 
