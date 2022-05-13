@@ -4,11 +4,13 @@ _add_library(
 
     SOURCES
         broker.cpp
+        dispatcher.cpp
         notice.cpp
         transaction.cpp
 
     PUBLIC_HEADERS
         broker.h
+        dispatcher.h
         notice.h
         transaction.h
 

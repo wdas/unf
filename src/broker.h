@@ -10,7 +10,6 @@
 #include "pxr/base/tf/weakPtr.h"
 #include "pxr/usd/usd/stage.h"
 #include "pxr/usd/usd/common.h"
-#include "pxr/usd/usd/notice.h"
 
 #include <functional>
 #include <memory>
@@ -21,12 +20,15 @@
 PXR_NAMESPACE_OPEN_SCOPE
 
 class NoticeBroker;
+class Dispatcher;
 
 using NoticeBrokerPtr = TfRefPtr<NoticeBroker>;
 using NoticeBrokerWeakPtr = TfWeakPtr<NoticeBroker>;
 
 using NoticeCaturePredicateFunc = 
     std::function<bool (const UsdBrokerNotice::StageNotice &)>;
+
+using DispatcherPtr = TfRefPtr<Dispatcher>;
 
 class NoticeBroker : public TfRefBase, public TfWeakBase {
 public:
@@ -53,6 +55,13 @@ public:
     NoticeBroker(const NoticeBroker &) = delete;
     NoticeBroker &operator=(const NoticeBroker &) = delete;
 
+    template<class T>
+    void AddDispatcher() {
+        static_assert(std::is_base_of<Dispatcher, T>::value);
+        auto self = TfCreateWeakPtr(this);
+        _dispatchers.push_back(TfCreateRefPtr(new T(self)));
+    }
+
 private:
     NoticeBroker(const UsdStageWeakPtr&);
 
@@ -68,34 +77,13 @@ private:
         void Join(_TransactionHandler&);
     };
 
-    template<class BrokerNotice, class UsdNotice>
-    void _Register(const NoticeBrokerWeakPtr& self);
-
-    template<class BrokerNotice, class UsdNotice>
-    void _Notify(const UsdNotice&, const UsdStageWeakPtr&);
-
     void _SendNotices(_TransactionHandler&);
 
 private:
     UsdStageWeakPtr _stage;
     std::vector<_TransactionHandler> _transactions;
-    std::vector<TfNotice::Key> _keys;
+    std::vector<DispatcherPtr> _dispatchers;
 };
-
-template<class BrokerNotice, class UsdNotice>
-void NoticeBroker::_Register(const NoticeBrokerWeakPtr& self)
-{
-    auto cb = &NoticeBroker::_Notify<BrokerNotice, UsdNotice>;
-    _keys.push_back(TfNotice::Register(self, cb, _stage));
-}
-
-template<class BrokerNotice, class UsdNotice>
-void NoticeBroker::_Notify(
-    const UsdNotice& notice, const UsdStageWeakPtr& stage)
-{
-    auto _notice = std::shared_ptr<BrokerNotice>(new BrokerNotice(notice));
-    Send(_notice);
-}
 
 template<class BrokerNotice>
 void NoticeBroker::Send()

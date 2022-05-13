@@ -1,5 +1,6 @@
 #include "broker.h"
 #include "notice.h"
+#include "dispatcher.h"
 
 #include "pxr/pxr.h"
 #include "pxr/base/tf/weakPtr.h"
@@ -11,21 +12,7 @@ PXR_NAMESPACE_OPEN_SCOPE
 NoticeBroker::NoticeBroker(const UsdStageWeakPtr& stage)
     : _stage(stage)
 {
-    auto self = TfCreateWeakPtr(this);
-    _keys.reserve(4);
-
-    _Register<
-        UsdBrokerNotice::StageContentsChanged, 
-        UsdNotice::StageContentsChanged> (self);
-    _Register<
-        UsdBrokerNotice::ObjectsChanged, 
-        UsdNotice::ObjectsChanged> (self);
-    _Register<
-        UsdBrokerNotice::StageEditTargetChanged, 
-        UsdNotice::StageEditTargetChanged> (self);
-    _Register<
-        UsdBrokerNotice::LayerMutingChanged, 
-        UsdNotice::LayerMutingChanged> (self);
+    AddDispatcher<StageDispatcher>();
 }
 
 bool NoticeBroker::IsInTransaction()
