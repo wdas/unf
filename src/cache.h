@@ -8,8 +8,8 @@
 #include "pxr/base/tf/weakBase.h"
 #include "pxr/base/tf/weakPtr.h"
 #include "pxr/base/tf/anyWeakPtr.h"
+#include "pxr/base/tf/refPtr.h"
 
-#include <memory>
 #include <vector>
 #include <type_traits>
 
@@ -64,7 +64,7 @@ public:
         }
 
         // Copy and merge all notices.
-        UsdBrokerNotice::StageNotice notice = *_notices.at(0).get();
+        UsdBrokerNotice::StageNotice notice = *_notices.at(0);
         auto it = std::next(_notices.begin());
 
         while(it != _notices.end()) {
@@ -74,7 +74,7 @@ public:
 
         // Replace list of notices with merged notice.
         _notices = UsdBrokerNotice::StageNoticeConstPtrList {
-            std::shared_ptr<UsdBrokerNotice::StageNotice>(&notice)
+            UsdBrokerNotice::StageNoticePtr(&notice)
         };
     }
 
@@ -83,7 +83,7 @@ public:
 private:
     void _OnReceiving(const T& notice)
     {
-        _notices.push_back(notice.GetReference());
+        _notices.push_back(UsdBrokerNotice::StageNoticeConstPtr(&notice));
     }
 
     UsdBrokerNotice::StageNoticeConstPtrList _notices;

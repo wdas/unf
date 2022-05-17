@@ -49,7 +49,7 @@ public:
     void Send();
 
     template<class BrokerNotice>
-    void Send(const std::shared_ptr<BrokerNotice>&);
+    void Send(TfRefPtr<BrokerNotice>&);
 
     // Don't allow copies
     NoticeBroker(const NoticeBroker &) = delete;
@@ -88,19 +88,19 @@ private:
 template<class BrokerNotice>
 void NoticeBroker::Send()
 {
-    auto _notice = std::make_shared<BrokerNotice>();
+    TfRefPtr<BrokerNotice> _notice = BrokerNotice::Create();
     Send(_notice);
 }
 
 template<class BrokerNotice>
-void NoticeBroker::Send(const std::shared_ptr<BrokerNotice>& notice)
+void NoticeBroker::Send(TfRefPtr<BrokerNotice>& notice)
 {
     // Capture the notice to be processed later if a transaction is pending.
     if (_transactions.size() > 0) {
         _TransactionHandler& transaction = _transactions.back();
 
         // Indicate whether the notice needs to be captured.
-        if (transaction.predicate && !transaction.predicate(*notice.get()))
+        if (transaction.predicate && !transaction.predicate(*notice))
             return;
 
         // Store notices per type name, so that each type can be merged if 

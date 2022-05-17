@@ -18,27 +18,24 @@ TF_REGISTRY_FUNCTION(TfType)
     TfType::Define<LayerMutingChanged, TfType::Bases<StageNotice> >();
 }
 
-ObjectsChanged::ObjectsChanged(
-    const UsdNotice::ObjectsChanged& notice)
+ObjectsChanged::ObjectsChanged(const UsdNotice::ObjectsChanged& notice)
 {
     // TODO: Extract logic from Stage notice
 }
 
-void ObjectsChanged::Merge(StageNotice&& notice)
+void ObjectsChanged::Merge(ObjectsChanged&& notice)
 {
-    ObjectsChanged&& _notice = dynamic_cast<ObjectsChanged&&>(notice);
     // TODO: Write merge logic
 }
 
 LayerMutingChanged::LayerMutingChanged(
-    const PXR_NS::UsdNotice::LayerMutingChanged& notice)
+    const UsdNotice::LayerMutingChanged& notice)
 {
     // TODO: Extract logic from Stage notice
 }
 
-void LayerMutingChanged::Merge(StageNotice&& notice)
+void LayerMutingChanged::Merge(LayerMutingChanged&& notice)
 {
-    LayerMutingChanged&& _notice = dynamic_cast<LayerMutingChanged&&>(notice);
     // TODO: Write merge logic
 }
 

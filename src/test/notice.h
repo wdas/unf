@@ -7,14 +7,16 @@
 #include "pxr/base/tf/notice.h"
 #include "pxr/usd/usd/notice.h"
 
-class MergeableNotice : public PXR_NS::UsdBrokerNotice::StageNotice
+class MergeableNotice 
+: public PXR_NS::UsdBrokerNotice::StageNoticeImpl<MergeableNotice>
 {
 public:
     MergeableNotice() {}
     virtual ~MergeableNotice() {}
 };
 
-class UnMergeableNotice : public PXR_NS::UsdBrokerNotice::StageNotice
+class UnMergeableNotice 
+: public PXR_NS::UsdBrokerNotice::StageNoticeImpl<UnMergeableNotice>
 {
 public:
     UnMergeableNotice() {}

@@ -5,6 +5,8 @@
 #include "broker.h"
 
 #include "pxr/pxr.h"
+#include "pxr/base/tf/refBase.h"
+#include "pxr/base/tf/refPtr.h"
 #include "pxr/base/tf/weakBase.h"
 #include "pxr/usd/usd/common.h"
 
@@ -43,7 +45,7 @@ private:
     void _OnReceiving(
         const UsdNotice& notice, const UsdStageWeakPtr& stage)
     {
-        auto _notice = std::shared_ptr<BrokerNotice>(new BrokerNotice(notice));
+         TfRefPtr<BrokerNotice> _notice = BrokerNotice::Create(notice);
         _broker->Send(_notice);
     }
 

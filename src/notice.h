@@ -2,10 +2,11 @@
 #define NOTICE_BROKER_NOTICE_H
 
 #include "pxr/pxr.h"
+#include "pxr/base/tf/refPtr.h"
+#include "pxr/base/tf/refBase.h"
 #include "pxr/base/tf/notice.h"
 #include "pxr/usd/usd/notice.h"
 
-#include <memory>
 #include <vector>
 
 PXR_NAMESPACE_OPEN_SCOPE
@@ -14,58 +15,72 @@ namespace UsdBrokerNotice {
 
 class StageNotice;
 
-using StageNoticePtr = std::shared_ptr<StageNotice>;
+using StageNoticePtr = TfRefPtr<StageNotice>;
 using StageNoticePtrList = std::vector<StageNoticePtr>;
 
-using StageNoticeConstPtr = std::shared_ptr<const StageNotice>;
+using StageNoticeConstPtr = TfRefPtr<const StageNotice>;
 using StageNoticeConstPtrList = std::vector<StageNoticeConstPtr>;
 
-class StageNotice 
-: public TfNotice
-, public std::enable_shared_from_this<StageNotice> {
+class StageNotice : public TfNotice, public TfRefBase {
 public:
-    virtual ~StageNotice() {}
+    virtual ~StageNotice() = default;
 
     virtual bool IsMergeable() const { return true; }
-    virtual void Merge(StageNotice&&) {}
-
-    std::shared_ptr<const StageNotice> GetReference() const
-    {
-        return shared_from_this();
-    }
+    virtual void Merge(StageNotice&&) {};
 
 protected:
     StageNotice() {}
 };
 
-class StageContentsChanged : public StageNotice {
+template<class Self>
+class StageNoticeImpl : public StageNotice {
 public:
+    template <class... Args>
+    static TfRefPtr<Self> Create(Args&&... args) { 
+        return TfCreateRefPtr(new Self(std::forward<Args>(args)...)); 
+    }
+
+    virtual void Merge(StageNotice&& notice) override {
+        Merge(static_cast<Self&&>(notice));
+    }
+
+protected:
+    virtual void Merge(Self&&) {}
+};
+
+class StageContentsChanged : public StageNoticeImpl<StageContentsChanged> {
+protected:
     explicit StageContentsChanged(
         const UsdNotice::StageContentsChanged&) {}
-    virtual ~StageContentsChanged() {}
+
+    friend StageNoticeImpl<StageContentsChanged>;
 };
 
-class ObjectsChanged : public StageNotice {
-public:
+class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
+protected:
     explicit ObjectsChanged(const UsdNotice::ObjectsChanged&);
-    virtual ~ObjectsChanged() {}
 
-    virtual void Merge(StageNotice&&);
+    virtual void Merge(ObjectsChanged&&) override;
+
+    friend StageNoticeImpl<ObjectsChanged>;
 };
 
-class StageEditTargetChanged : public StageNotice {
-public:
+class StageEditTargetChanged : public StageNoticeImpl<StageEditTargetChanged> {
+protected:
     explicit StageEditTargetChanged(
         const UsdNotice::StageEditTargetChanged&) {}
-    virtual ~StageEditTargetChanged() {}
+
+    friend StageNoticeImpl<StageEditTargetChanged>;
+
 };
 
-class LayerMutingChanged : public StageNotice {
-public:
+class LayerMutingChanged : public StageNoticeImpl<LayerMutingChanged> {
+protected:
     explicit LayerMutingChanged(const UsdNotice::LayerMutingChanged&);
-    virtual ~LayerMutingChanged() {}
 
-    virtual void Merge(StageNotice&&);
+    virtual void Merge(LayerMutingChanged&&) override;
+
+    friend StageNoticeImpl<LayerMutingChanged>;
 };
 
 } // namespace UsdBrokerNotice
