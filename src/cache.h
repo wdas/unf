@@ -15,7 +15,7 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-class BaseNoticeCache : public PXR_NS::TfWeakBase
+class BaseNoticeCache : public TfWeakBase
 {
 public:
     BaseNoticeCache() {}
@@ -33,23 +33,23 @@ public:
     NoticeCache()
     {
         static_assert(std::is_base_of<UsdBrokerNotice::StageNotice, T>::value);
-        _key = PXR_NS::TfNotice::Register(
-            PXR_NS::TfCreateWeakPtr(this), 
+        _key = TfNotice::Register(
+            TfCreateWeakPtr(this), 
             &NoticeCache::_OnReceiving);
     }
 
-    NoticeCache(const PXR_NS::TfAnyWeakPtr &sender)
+    NoticeCache(const TfAnyWeakPtr &sender)
     {
         static_assert(std::is_base_of<UsdBrokerNotice::StageNotice, T>::value);
-        _key = PXR_NS::TfNotice::Register(
-            PXR_NS::TfCreateWeakPtr(this), 
+        _key = TfNotice::Register(
+            TfCreateWeakPtr(this), 
             &NoticeCache::_OnReceiving, 
             sender);
     }
 
     ~NoticeCache()
     {
-        PXR_NS::TfNotice::Revoke(_key);
+        TfNotice::Revoke(_key);
     }
 
     virtual const UsdBrokerNotice::StageNoticeConstPtrList& GetAll() const override
@@ -87,7 +87,7 @@ private:
     }
 
     UsdBrokerNotice::StageNoticeConstPtrList _notices;
-    PXR_NS::TfNotice::Key _key;
+    TfNotice::Key _key;
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE

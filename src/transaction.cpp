@@ -16,7 +16,7 @@ NoticeTransaction::NoticeTransaction(
 
 // TODO: Add a register to ensure a unique Broker per Stage
 NoticeTransaction::NoticeTransaction(
-    const PXR_NS::UsdStageRefPtr& stage, 
+    const UsdStageRefPtr& stage, 
     const NoticeCaturePredicateFunc& predicate)
     : _broker(NoticeBroker::Create(stage))
 {

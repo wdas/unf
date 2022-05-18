@@ -14,7 +14,7 @@ public:
         const NoticeBrokerPtr&, 
         const NoticeCaturePredicateFunc& predicate=nullptr);
     NoticeTransaction(
-        const PXR_NS::UsdStageRefPtr&, 
+        const UsdStageRefPtr&, 
         const NoticeCaturePredicateFunc& predicate=nullptr);
 
     ~NoticeTransaction();
