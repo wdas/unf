@@ -25,26 +25,31 @@ class StageNotice : public TfNotice, public TfRefBase {
 public:
     virtual ~StageNotice() = default;
 
+    StageNotice(const StageNotice &) = default;
+    StageNotice &operator=(const StageNotice &) = default;
+
+    // TODO: Should those methods be pure virtual?
     virtual bool IsMergeable() const { return true; }
     virtual void Merge(StageNotice&&) {};
 
 protected:
-    StageNotice() {}
+    StageNotice() = default;
 };
 
 template<class Self>
 class StageNoticeImpl : public StageNotice {
 public:
     template <class... Args>
-    static TfRefPtr<Self> Create(Args&&... args) { 
+    static TfRefPtr<Self> Create(Args&&... args) 
+    { 
         return TfCreateRefPtr(new Self(std::forward<Args>(args)...)); 
     }
 
-    virtual void Merge(StageNotice&& notice) override {
+    virtual void Merge(StageNotice&& notice) override 
+    {
         Merge(static_cast<Self&&>(notice));
     }
 
-protected:
     virtual void Merge(Self&&) {}
 };
 
@@ -57,10 +62,15 @@ protected:
 };
 
 class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
-protected:
-    explicit ObjectsChanged(const UsdNotice::ObjectsChanged&);
+public:
+    // TODO: Define copy constructors and copy assignment operator
+    ObjectsChanged(const ObjectsChanged &) = default;
+    ObjectsChanged &operator=(const ObjectsChanged &) = default;
 
     virtual void Merge(ObjectsChanged&&) override;
+
+protected:
+    explicit ObjectsChanged(const UsdNotice::ObjectsChanged&);
 
     friend StageNoticeImpl<ObjectsChanged>;
 };
@@ -75,10 +85,15 @@ protected:
 };
 
 class LayerMutingChanged : public StageNoticeImpl<LayerMutingChanged> {
-protected:
-    explicit LayerMutingChanged(const UsdNotice::LayerMutingChanged&);
+public:
+    // TODO: Define copy constructors and copy assignment operator
+    LayerMutingChanged(const LayerMutingChanged &) = default;
+    LayerMutingChanged &operator=(const LayerMutingChanged &) = default;
 
     virtual void Merge(LayerMutingChanged&&) override;
+
+protected:
+    explicit LayerMutingChanged(const UsdNotice::LayerMutingChanged&);
 
     friend StageNoticeImpl<LayerMutingChanged>;
 };

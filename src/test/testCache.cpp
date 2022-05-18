@@ -30,7 +30,7 @@ TEST(NoticeCache, base)
     caches.push_back(std::make_unique<NoticeCache<UnMergeableNotice> >());
 
     for (auto& cache: caches) {
-        ASSERT_EQ(cache->GetAll().size(), 0);
+        ASSERT_EQ(cache->Size(), 0);
     }
 }
 
@@ -50,25 +50,25 @@ TEST(NoticeCache, addPrim)
 
     stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
 
-    ASSERT_EQ(caches.at(0)->GetAll().size(), 2);
-    ASSERT_EQ(caches.at(1)->GetAll().size(), 1);
-    ASSERT_EQ(caches.at(2)->GetAll().size(), 1);
-    ASSERT_EQ(caches.at(3)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(4)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(5)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(6)->GetAll().size(), 0);
+    ASSERT_EQ(caches.at(0)->Size(), 2);
+    ASSERT_EQ(caches.at(1)->Size(), 1);
+    ASSERT_EQ(caches.at(2)->Size(), 1);
+    ASSERT_EQ(caches.at(3)->Size(), 0);
+    ASSERT_EQ(caches.at(4)->Size(), 0);
+    ASSERT_EQ(caches.at(5)->Size(), 0);
+    ASSERT_EQ(caches.at(6)->Size(), 0);
 
     for (auto& cache: caches) {
         cache->MergeAll();
     }
 
-    ASSERT_EQ(caches.at(0)->GetAll().size(), 1);
-    ASSERT_EQ(caches.at(1)->GetAll().size(), 1);
-    ASSERT_EQ(caches.at(2)->GetAll().size(), 1);
-    ASSERT_EQ(caches.at(3)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(4)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(5)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(6)->GetAll().size(), 0);
+    ASSERT_EQ(caches.at(0)->Size(), 1);
+    ASSERT_EQ(caches.at(1)->Size(), 1);
+    ASSERT_EQ(caches.at(2)->Size(), 1);
+    ASSERT_EQ(caches.at(3)->Size(), 0);
+    ASSERT_EQ(caches.at(4)->Size(), 0);
+    ASSERT_EQ(caches.at(5)->Size(), 0);
+    ASSERT_EQ(caches.at(6)->Size(), 0);
 }
 
 TEST(NoticeCache, addPrims)
@@ -89,25 +89,25 @@ TEST(NoticeCache, addPrims)
     stage->DefinePrim(PXR_NS::SdfPath {"/Bar"});
     stage->DefinePrim(PXR_NS::SdfPath {"/Baz"});
 
-    ASSERT_EQ(caches.at(0)->GetAll().size(), 6);
-    ASSERT_EQ(caches.at(1)->GetAll().size(), 3);
-    ASSERT_EQ(caches.at(2)->GetAll().size(), 3);
-    ASSERT_EQ(caches.at(3)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(4)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(5)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(6)->GetAll().size(), 0);
+    ASSERT_EQ(caches.at(0)->Size(), 6);
+    ASSERT_EQ(caches.at(1)->Size(), 3);
+    ASSERT_EQ(caches.at(2)->Size(), 3);
+    ASSERT_EQ(caches.at(3)->Size(), 0);
+    ASSERT_EQ(caches.at(4)->Size(), 0);
+    ASSERT_EQ(caches.at(5)->Size(), 0);
+    ASSERT_EQ(caches.at(6)->Size(), 0);
 
     for (auto& cache: caches) {
         cache->MergeAll();
     }
 
-    ASSERT_EQ(caches.at(0)->GetAll().size(), 1);
-    ASSERT_EQ(caches.at(1)->GetAll().size(), 1);
-    ASSERT_EQ(caches.at(2)->GetAll().size(), 1);
-    ASSERT_EQ(caches.at(3)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(4)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(5)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(6)->GetAll().size(), 0);
+    ASSERT_EQ(caches.at(0)->Size(), 1);
+    ASSERT_EQ(caches.at(1)->Size(), 1);
+    ASSERT_EQ(caches.at(2)->Size(), 1);
+    ASSERT_EQ(caches.at(3)->Size(), 0);
+    ASSERT_EQ(caches.at(4)->Size(), 0);
+    ASSERT_EQ(caches.at(5)->Size(), 0);
+    ASSERT_EQ(caches.at(6)->Size(), 0);
 }
 
 TEST(NoticeCache, muteLayer)
@@ -130,25 +130,25 @@ TEST(NoticeCache, muteLayer)
     stage->MuteLayer("/Foo");
     stage->MuteLayer("/Bar");
 
-    ASSERT_EQ(caches.at(0)->GetAll().size(), 2);
-    ASSERT_EQ(caches.at(1)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(2)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(3)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(4)->GetAll().size(), 2);
-    ASSERT_EQ(caches.at(5)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(6)->GetAll().size(), 0);
+    ASSERT_EQ(caches.at(0)->Size(), 2);
+    ASSERT_EQ(caches.at(1)->Size(), 0);
+    ASSERT_EQ(caches.at(2)->Size(), 0);
+    ASSERT_EQ(caches.at(3)->Size(), 0);
+    ASSERT_EQ(caches.at(4)->Size(), 2);
+    ASSERT_EQ(caches.at(5)->Size(), 0);
+    ASSERT_EQ(caches.at(6)->Size(), 0);
 
     for (auto& cache: caches) {
         cache->MergeAll();
     }
 
-    ASSERT_EQ(caches.at(0)->GetAll().size(), 1);
-    ASSERT_EQ(caches.at(1)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(2)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(3)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(4)->GetAll().size(), 1);
-    ASSERT_EQ(caches.at(5)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(6)->GetAll().size(), 0);
+    ASSERT_EQ(caches.at(0)->Size(), 1);
+    ASSERT_EQ(caches.at(1)->Size(), 0);
+    ASSERT_EQ(caches.at(2)->Size(), 0);
+    ASSERT_EQ(caches.at(3)->Size(), 0);
+    ASSERT_EQ(caches.at(4)->Size(), 1);
+    ASSERT_EQ(caches.at(5)->Size(), 0);
+    ASSERT_EQ(caches.at(6)->Size(), 0);
 }
 
 TEST(NoticeCache, changeEditTarget)
@@ -177,25 +177,25 @@ TEST(NoticeCache, changeEditTarget)
     stage->SetEditTarget(PXR_NS::UsdEditTarget(s1));
     stage->SetEditTarget(PXR_NS::UsdEditTarget(s2));
 
-    ASSERT_EQ(caches.at(0)->GetAll().size(), 2);
-    ASSERT_EQ(caches.at(1)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(2)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(3)->GetAll().size(), 2);
-    ASSERT_EQ(caches.at(4)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(5)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(6)->GetAll().size(), 0);
+    ASSERT_EQ(caches.at(0)->Size(), 2);
+    ASSERT_EQ(caches.at(1)->Size(), 0);
+    ASSERT_EQ(caches.at(2)->Size(), 0);
+    ASSERT_EQ(caches.at(3)->Size(), 2);
+    ASSERT_EQ(caches.at(4)->Size(), 0);
+    ASSERT_EQ(caches.at(5)->Size(), 0);
+    ASSERT_EQ(caches.at(6)->Size(), 0);
 
     for (auto& cache: caches) {
         cache->MergeAll();
     }
 
-    ASSERT_EQ(caches.at(0)->GetAll().size(), 1);
-    ASSERT_EQ(caches.at(1)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(2)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(3)->GetAll().size(), 1);
-    ASSERT_EQ(caches.at(4)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(5)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(6)->GetAll().size(), 0);
+    ASSERT_EQ(caches.at(0)->Size(), 1);
+    ASSERT_EQ(caches.at(1)->Size(), 0);
+    ASSERT_EQ(caches.at(2)->Size(), 0);
+    ASSERT_EQ(caches.at(3)->Size(), 1);
+    ASSERT_EQ(caches.at(4)->Size(), 0);
+    ASSERT_EQ(caches.at(5)->Size(), 0);
+    ASSERT_EQ(caches.at(6)->Size(), 0);
 }
 
 TEST(NoticeCache, customNotices)
@@ -220,26 +220,26 @@ TEST(NoticeCache, customNotices)
     broker->Send<UnMergeableNotice>();
     broker->Send<UnMergeableNotice>();
 
-    ASSERT_EQ(caches.at(0)->GetAll().size(), 6);
-    ASSERT_EQ(caches.at(1)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(2)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(3)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(4)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(5)->GetAll().size(), 3);
-    ASSERT_EQ(caches.at(6)->GetAll().size(), 3);
+    ASSERT_EQ(caches.at(0)->Size(), 6);
+    ASSERT_EQ(caches.at(1)->Size(), 0);
+    ASSERT_EQ(caches.at(2)->Size(), 0);
+    ASSERT_EQ(caches.at(3)->Size(), 0);
+    ASSERT_EQ(caches.at(4)->Size(), 0);
+    ASSERT_EQ(caches.at(5)->Size(), 3);
+    ASSERT_EQ(caches.at(6)->Size(), 3);
 
     for (auto& cache: caches) {
         cache->MergeAll();
     }
 
     // TODO: Does it make sense that base class is instantiable?
-    ASSERT_EQ(caches.at(0)->GetAll().size(), 1);
-    ASSERT_EQ(caches.at(1)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(2)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(3)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(4)->GetAll().size(), 0);
-    ASSERT_EQ(caches.at(5)->GetAll().size(), 1);
-    ASSERT_EQ(caches.at(6)->GetAll().size(), 3);
+    ASSERT_EQ(caches.at(0)->Size(), 1);
+    ASSERT_EQ(caches.at(1)->Size(), 0);
+    ASSERT_EQ(caches.at(2)->Size(), 0);
+    ASSERT_EQ(caches.at(3)->Size(), 0);
+    ASSERT_EQ(caches.at(4)->Size(), 0);
+    ASSERT_EQ(caches.at(5)->Size(), 1);
+    ASSERT_EQ(caches.at(6)->Size(), 3);
 }
 
 int main(int argc, char** argv)

@@ -21,7 +21,7 @@ public:
     BaseNoticeCache() {}
     BaseNoticeCache(BaseNoticeCache&&) = default;
 
-    virtual const UsdBrokerNotice::StageNoticeConstPtrList& GetAll() const = 0;
+    virtual size_t Size() const = 0;
     virtual void Clear() = 0;
     virtual void MergeAll() = 0;
 };
@@ -52,7 +52,12 @@ public:
         TfNotice::Revoke(_key);
     }
 
-    virtual const UsdBrokerNotice::StageNoticeConstPtrList& GetAll() const override
+    virtual size_t Size() const override
+    {
+        return _notices.size();
+    }
+
+    virtual const std::vector<TfRefPtr<const T> >& GetAll() const
     { 
         return _notices; 
     }
@@ -64,17 +69,17 @@ public:
         }
 
         // Copy and merge all notices.
-        UsdBrokerNotice::StageNotice notice = *_notices.at(0);
+        T notice = *_notices.at(0);
         auto it = std::next(_notices.begin());
 
         while(it != _notices.end()) {
-            UsdBrokerNotice::StageNotice notice2 = **it++;
+            T notice2 = **it++;
             notice.Merge(std::move(notice2));
         }
 
         // Replace list of notices with merged notice.
-        _notices = UsdBrokerNotice::StageNoticeConstPtrList {
-            UsdBrokerNotice::StageNoticePtr(&notice)
+        _notices = std::vector<TfRefPtr<const T> > { 
+            TfRefPtr<const T>(&notice) 
         };
     }
 
@@ -83,10 +88,10 @@ public:
 private:
     void _OnReceiving(const T& notice)
     {
-        _notices.push_back(UsdBrokerNotice::StageNoticeConstPtr(&notice));
+        _notices.push_back(TfRefPtr<const T>(&notice));
     }
 
-    UsdBrokerNotice::StageNoticeConstPtrList _notices;
+    std::vector<TfRefPtr<const T> > _notices;
     TfNotice::Key _key;
 };
 
