@@ -4,6 +4,9 @@
 #include "pxr/base/tf/notice.h"
 #include "pxr/usd/usd/notice.h"
 
+#include <iostream>
+#include <utility>
+
 PXR_NAMESPACE_OPEN_SCOPE
 
 namespace UsdBrokerNotice {
@@ -20,23 +23,100 @@ TF_REGISTRY_FUNCTION(TfType)
 
 ObjectsChanged::ObjectsChanged(const UsdNotice::ObjectsChanged& notice)
 {
-    // TODO: Extract logic from Stage notice
+    // TODO: Update Usd Notice to give easier access to fields.
+
+    for (const auto& path: notice.GetResyncedPaths()) {
+        _resyncChanges.push_back(path);
+    }
+    for (const auto& path: notice.GetChangedInfoOnlyPaths()) {
+        _infoChanges.push_back(path);
+    }
+}
+
+ObjectsChanged::ObjectsChanged(const ObjectsChanged& other)
+    : _resyncChanges(other._resyncChanges)
+    , _infoChanges(other._infoChanges)
+{
+
+}
+
+ObjectsChanged& ObjectsChanged::operator=(const ObjectsChanged& other)
+{
+    ObjectsChanged copy(other);
+    std::swap(_resyncChanges, copy._resyncChanges);
+    std::swap(_infoChanges, copy._infoChanges);
+    return *this;
 }
 
 void ObjectsChanged::Merge(ObjectsChanged&& notice)
 {
-    // TODO: Write merge logic
+    // TODO: Update merging logic to prevent duplicated paths.
+    for (const auto& path: notice._resyncChanges) {
+        _resyncChanges.push_back(std::move(path));
+    }
+    for (const auto& path: notice._infoChanges) {
+        _infoChanges.push_back(std::move(path));
+    }
 }
 
 LayerMutingChanged::LayerMutingChanged(
     const UsdNotice::LayerMutingChanged& notice)
 {
-    // TODO: Extract logic from Stage notice
+    for (const auto& layer: notice.GetMutedLayers()) {
+        _mutedLayers.push_back(layer);
+    }
+
+    for (const auto& layer: notice.GetUnmutedLayers()) {
+        _unmutedLayers.push_back(layer);
+    }
+}
+
+LayerMutingChanged::LayerMutingChanged(const LayerMutingChanged& other)
+    : _mutedLayers(other._mutedLayers)
+    , _unmutedLayers(other._unmutedLayers)
+{
+
+}
+
+LayerMutingChanged& LayerMutingChanged::operator=(
+    const LayerMutingChanged& other)
+{
+    LayerMutingChanged copy(other);
+    std::swap(_mutedLayers, copy._mutedLayers);
+    std::swap(_unmutedLayers, copy._unmutedLayers);
+    return *this;
 }
 
 void LayerMutingChanged::Merge(LayerMutingChanged&& notice)
 {
-    // TODO: Write merge logic
+    size_t mutedLayersSize = _mutedLayers.size();
+    size_t unmutedLayersSize = _unmutedLayers.size();
+
+    for (const auto& layer: notice._mutedLayers) {
+        auto begin = _unmutedLayers.begin();
+        auto end = begin + unmutedLayersSize;
+        auto it = std::find(begin, end, layer);
+        if (it != end) {
+            _unmutedLayers.erase(it);
+            unmutedLayersSize -= 1;
+        }
+        else {
+            _mutedLayers.push_back(std::move(layer));
+        }
+    }
+
+    for (const auto& layer: notice._unmutedLayers) {
+        auto begin = _mutedLayers.begin();
+        auto end = begin + mutedLayersSize;
+        auto it = std::find(begin, end, layer);
+        if (it != end) {
+            _mutedLayers.erase(it);
+            mutedLayersSize -= 1;
+        }
+        else {
+            _unmutedLayers.push_back(std::move(layer));
+        }
+    }
 }
 
 } // namespace UsdBrokerNotice

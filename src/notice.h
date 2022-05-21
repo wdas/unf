@@ -5,8 +5,11 @@
 #include "pxr/base/tf/refPtr.h"
 #include "pxr/base/tf/refBase.h"
 #include "pxr/base/tf/notice.h"
+#include "pxr/usd/sdf/path.h"
 #include "pxr/usd/usd/notice.h"
 
+#include <map>
+#include <string>
 #include <vector>
 
 PXR_NAMESPACE_OPEN_SCOPE
@@ -17,9 +20,6 @@ class StageNotice;
 
 using StageNoticePtr = TfRefPtr<StageNotice>;
 using StageNoticePtrList = std::vector<StageNoticePtr>;
-
-using StageNoticeConstPtr = TfRefPtr<const StageNotice>;
-using StageNoticeConstPtrList = std::vector<StageNoticeConstPtr>;
 
 class StageNotice : public TfNotice, public TfRefBase {
 public:
@@ -33,7 +33,7 @@ public:
     virtual void Merge(StageNotice&&) {};
 
 protected:
-    StageNotice() = default;
+    StageNotice() = default;    
 };
 
 template<class Self>
@@ -43,6 +43,11 @@ public:
     static TfRefPtr<Self> Create(Args&&... args) 
     { 
         return TfCreateRefPtr(new Self(std::forward<Args>(args)...)); 
+    }
+
+    TfRefPtr<Self> Copy() const
+    {
+        return TfCreateRefPtr(new Self(static_cast<const Self&>(*this)));
     }
 
     virtual void Merge(StageNotice&& notice) override 
@@ -63,14 +68,27 @@ protected:
 
 class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
 public:
-    // TODO: Define copy constructors and copy assignment operator
-    ObjectsChanged(const ObjectsChanged &) = default;
-    ObjectsChanged &operator=(const ObjectsChanged &) = default;
+    ObjectsChanged(const ObjectsChanged&);
+    ObjectsChanged &operator=(const ObjectsChanged&);
 
     virtual void Merge(ObjectsChanged&&) override;
 
+    const std::vector<SdfPath>& GetResyncedPaths() const
+    {
+        return _resyncChanges;
+    }
+
+    const std::vector<SdfPath>& GetChangedInfoOnlyPaths() const
+    {
+        return _infoChanges;
+    }
+
 protected:
     explicit ObjectsChanged(const UsdNotice::ObjectsChanged&);
+
+private:
+    std::vector<SdfPath> _resyncChanges;
+    std::vector<SdfPath> _infoChanges;
 
     friend StageNoticeImpl<ObjectsChanged>;
 };
@@ -81,19 +99,31 @@ protected:
         const UsdNotice::StageEditTargetChanged&) {}
 
     friend StageNoticeImpl<StageEditTargetChanged>;
-
 };
 
 class LayerMutingChanged : public StageNoticeImpl<LayerMutingChanged> {
 public:
-    // TODO: Define copy constructors and copy assignment operator
-    LayerMutingChanged(const LayerMutingChanged &) = default;
-    LayerMutingChanged &operator=(const LayerMutingChanged &) = default;
+    LayerMutingChanged(const LayerMutingChanged&);
+    LayerMutingChanged &operator=(const LayerMutingChanged&);
 
     virtual void Merge(LayerMutingChanged&&) override;
 
+    const std::vector<std::string>& GetMutedLayers() const
+    {
+        return _mutedLayers;
+    }
+
+    const std::vector<std::string>& GetUnmutedLayers() const
+    {
+        return _unmutedLayers;
+    }
+
 protected:
     explicit LayerMutingChanged(const UsdNotice::LayerMutingChanged&);
+
+private:
+    std::vector<std::string> _mutedLayers;
+    std::vector<std::string> _unmutedLayers;
 
     friend StageNoticeImpl<LayerMutingChanged>;
 };

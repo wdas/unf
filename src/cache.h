@@ -32,7 +32,12 @@ class NoticeCache : public BaseNoticeCache
 public:
     NoticeCache()
     {
-        static_assert(std::is_base_of<UsdBrokerNotice::StageNotice, T>::value);
+        static_assert(
+            std::is_base_of<UsdBrokerNotice::StageNotice, T>::value
+            && !std::is_same<UsdBrokerNotice::StageNotice, T>::value,
+            "Expecting a notice derived from UsdBrokerNotice::StageNotice."
+        );
+
         _key = TfNotice::Register(
             TfCreateWeakPtr(this), 
             &NoticeCache::_OnReceiving);
@@ -40,8 +45,13 @@ public:
 
     NoticeCache(const TfAnyWeakPtr &sender)
     {
-        static_assert(std::is_base_of<UsdBrokerNotice::StageNotice, T>::value);
-        _key = TfNotice::Register(
+        static_assert(
+            std::is_base_of<UsdBrokerNotice::StageNotice, T>::value
+            && !std::is_same<UsdBrokerNotice::StageNotice, T>::value,
+            "Expecting a notice derived from UsdBrokerNotice::StageNotice."
+        );
+
+       _key = TfNotice::Register(
             TfCreateWeakPtr(this), 
             &NoticeCache::_OnReceiving, 
             sender);
@@ -69,18 +79,17 @@ public:
         }
 
         // Copy and merge all notices.
-        T notice = *_notices.at(0);
+        TfRefPtr<T> notice = _notices.at(0)->Copy();
         auto it = std::next(_notices.begin());
 
         while(it != _notices.end()) {
-            T notice2 = **it++;
-            notice.Merge(std::move(notice2));
+            TfRefPtr<T> notice2 = (*it)->Copy();
+            notice->Merge(std::move(*notice2));
+            it++;
         }
 
         // Replace list of notices with merged notice.
-        _notices = std::vector<TfRefPtr<const T> > { 
-            TfRefPtr<const T>(&notice) 
-        };
+        _notices = std::vector<TfRefPtr<const T> > {notice};
     }
 
     virtual void Clear() override { _notices.clear(); } 

@@ -12,13 +12,9 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-class Dispatcher;
-
-using DispatcherPtr = TfRefPtr<Dispatcher>;
-
 class Dispatcher : public TfRefBase, public TfWeakBase {
 public:
-    virtual ~Dispatcher() {}
+    virtual ~Dispatcher() = default;
 
 protected:
     Dispatcher(const NoticeBrokerWeakPtr&);

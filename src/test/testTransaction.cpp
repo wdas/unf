@@ -1,6 +1,7 @@
 #include "../broker.h"
 #include "../transaction.h"
-#include "./listener.h"
+
+#include "./utility.h"
 
 #include "gtest/gtest.h"
 #include "pxr/pxr.h"
@@ -8,69 +9,129 @@
 #include "pxr/usd/usd/primRange.h"
 #include "pxr/usd/usd/stage.h"
 
-TEST(NoticeTransaction, withBroker)
+TEST(Batching, WithBroker)
 {
-    auto stage = PXR_NS::UsdStage::CreateInMemory();
+    auto stage = ::Test::CreateStageWithLayers();
     auto broker = PXR_NS::NoticeBroker::Create(stage);
 
     ASSERT_FALSE(broker->IsInTransaction());
 
-    Listener listener(stage);
+    namespace _Broker = PXR_NS::UsdBrokerNotice;
+    using _USD = PXR_NS::UsdNotice;
+
+    // Subscribe to notices emitted by the broker.
+    ::Test::Listener<
+        _Broker::StageNotice,
+        _Broker::StageContentsChanged,
+        _Broker::ObjectsChanged,
+        _Broker::StageEditTargetChanged,
+        _Broker::LayerMutingChanged
+    > listener1(stage);
+
+    // Subscribe to Usd Notices emitted by the stage.
+    ::Test::Listener<
+        _USD::StageNotice,
+        _USD::StageContentsChanged,
+        _USD::ObjectsChanged,
+        _USD::StageEditTargetChanged,
+        _USD::LayerMutingChanged
+    > listener2(stage);
 
     {
         PXR_NS::NoticeTransaction transaction(broker);
 
         ASSERT_TRUE(broker->IsInTransaction());
 
-        stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
-        stage->MuteLayer("/Foo");
+        // Edit the stage...
+        auto layers = stage->GetRootLayer()->GetSubLayerPaths();
+        auto layer1 = PXR_NS::SdfLayer::Find(layers[0]);
 
-        ASSERT_EQ(listener.StageNotices(), 0);
-        ASSERT_EQ(listener.StageContentsChangedNotices(), 0);
-        ASSERT_EQ(listener.ObjectsChangedNotices(), 0);
-        ASSERT_EQ(listener.StageEditTargetChangedNotices(), 0);
-        ASSERT_EQ(listener.LayerMutingChangedNotices(), 0);
-        ASSERT_EQ(listener.CustomMergeableNotices(), 0);
-        ASSERT_EQ(listener.CustomUnMergeableNotices(), 0);
+        stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
+        stage->MuteLayer(layers[1]);
+        stage->SetEditTarget(PXR_NS::UsdEditTarget(layer1));
+
+        // Ensure that broker notices are not sent during a transaction. 
+        ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 0);
+        ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 0);
+        ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 0);
+        ASSERT_EQ(listener1.Received<_Broker::StageEditTargetChanged>(), 0);
+        ASSERT_EQ(listener1.Received<_Broker::LayerMutingChanged>(), 0);
+
+        // While USD Notices are being sent as expected.
+        ASSERT_EQ(listener2.Received<_USD::StageNotice>(), 6);
+        ASSERT_EQ(listener2.Received<_USD::StageContentsChanged>(), 2);
+        ASSERT_EQ(listener2.Received<_USD::ObjectsChanged>(), 2);
+        ASSERT_EQ(listener2.Received<_USD::StageEditTargetChanged>(), 1);
+        ASSERT_EQ(listener2.Received<_USD::LayerMutingChanged>(), 1);
     }
 
-    ASSERT_EQ(listener.StageNotices(), 3);
-    ASSERT_EQ(listener.StageContentsChangedNotices(), 1);
-    ASSERT_EQ(listener.ObjectsChangedNotices(), 1);
-    ASSERT_EQ(listener.StageEditTargetChangedNotices(), 0);
-    ASSERT_EQ(listener.LayerMutingChangedNotices(), 1);
-    ASSERT_EQ(listener.CustomMergeableNotices(), 0);
-    ASSERT_EQ(listener.CustomUnMergeableNotices(), 0);
+    // Ensure that consolidated broker notices are sent after a transaction.
+    ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 4);
+    ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 1);
+    ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 1);
+    ASSERT_EQ(listener1.Received<_Broker::StageEditTargetChanged>(), 1);
+    ASSERT_EQ(listener1.Received<_Broker::LayerMutingChanged>(), 1);
 }
 
-TEST(Transaction, withoutBroker)
+TEST(Batching, WithoutBroker)
 {
-    auto stage = PXR_NS::UsdStage::CreateInMemory();
+    auto stage = ::Test::CreateStageWithLayers();
 
-    Listener listener(stage);
+    using namespace PXR_NS::UsdBrokerNotice;
+
+    namespace _Broker = PXR_NS::UsdBrokerNotice;
+    using _USD = PXR_NS::UsdNotice;
+
+    // Subscribe to notices emitted by the broker.
+    ::Test::Listener<
+        _Broker::StageNotice,
+        _Broker::StageContentsChanged,
+        _Broker::ObjectsChanged,
+        _Broker::StageEditTargetChanged,
+        _Broker::LayerMutingChanged
+    > listener1(stage);
+
+    // Subscribe to Usd Notices emitted by the stage.
+    ::Test::Listener<
+        _USD::StageNotice,
+        _USD::StageContentsChanged,
+        _USD::ObjectsChanged,
+        _USD::StageEditTargetChanged,
+        _USD::LayerMutingChanged
+    > listener2(stage);
 
     {
         PXR_NS::NoticeTransaction transaction(stage);
 
-        stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
-        stage->MuteLayer("/Foo");
+        // Edit the stage...
+        auto layers = stage->GetRootLayer()->GetSubLayerPaths();
+        auto layer1 = PXR_NS::SdfLayer::Find(layers[0]);
 
-        ASSERT_EQ(listener.StageNotices(), 0);
-        ASSERT_EQ(listener.StageContentsChangedNotices(), 0);
-        ASSERT_EQ(listener.ObjectsChangedNotices(), 0);
-        ASSERT_EQ(listener.StageEditTargetChangedNotices(), 0);
-        ASSERT_EQ(listener.LayerMutingChangedNotices(), 0);
-        ASSERT_EQ(listener.CustomMergeableNotices(), 0);
-        ASSERT_EQ(listener.CustomUnMergeableNotices(), 0);
+        stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
+        stage->MuteLayer(layers[1]);
+        stage->SetEditTarget(PXR_NS::UsdEditTarget(layer1));
+
+        // Ensure that broker notices are not sent during a transaction. 
+        ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 0);
+        ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 0);
+        ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 0);
+        ASSERT_EQ(listener1.Received<_Broker::StageEditTargetChanged>(), 0);
+        ASSERT_EQ(listener1.Received<_Broker::LayerMutingChanged>(), 0);
+
+        // While USD Notices are being sent as expected.
+        ASSERT_EQ(listener2.Received<_USD::StageNotice>(), 6);
+        ASSERT_EQ(listener2.Received<_USD::StageContentsChanged>(), 2);
+        ASSERT_EQ(listener2.Received<_USD::ObjectsChanged>(), 2);
+        ASSERT_EQ(listener2.Received<_USD::StageEditTargetChanged>(), 1);
+        ASSERT_EQ(listener2.Received<_USD::LayerMutingChanged>(), 1);
     }
 
-    ASSERT_EQ(listener.StageNotices(), 3);
-    ASSERT_EQ(listener.StageContentsChangedNotices(), 1);
-    ASSERT_EQ(listener.ObjectsChangedNotices(), 1);
-    ASSERT_EQ(listener.StageEditTargetChangedNotices(), 0);
-    ASSERT_EQ(listener.LayerMutingChangedNotices(), 1);
-    ASSERT_EQ(listener.CustomMergeableNotices(), 0);
-    ASSERT_EQ(listener.CustomUnMergeableNotices(), 0);
+    // Ensure that consolidated broker notices are sent after a transaction.
+    ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 4);
+    ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 1);
+    ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 1);
+    ASSERT_EQ(listener1.Received<_Broker::StageEditTargetChanged>(), 1);
+    ASSERT_EQ(listener1.Received<_Broker::LayerMutingChanged>(), 1);
 }
 
 int main(int argc, char** argv)
