@@ -42,7 +42,7 @@ private:
         const UsdNotice& notice, const UsdStageWeakPtr& stage)
     {
          TfRefPtr<BrokerNotice> _notice = BrokerNotice::Create(notice);
-        _broker->Send(_notice);
+        _broker->Process(_notice);
     }
 
     std::vector<TfNotice::Key> _keys;

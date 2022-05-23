@@ -255,9 +255,9 @@ TEST(CustomNotices, Handling)
         ::Test::UnMergeableNotice
     > listener(stage);
 
-    broker->Send<::Test::MergeableNotice>();
-    broker->Send<::Test::MergeableNotice>();
-    broker->Send<::Test::MergeableNotice>();
+    broker->Send<::Test::MergeableNotice>(::Test::DataMap({{"Foo", "Test1"}}));
+    broker->Send<::Test::MergeableNotice>(::Test::DataMap({{"Foo", "Test2"}}));
+    broker->Send<::Test::MergeableNotice>(::Test::DataMap({{"Bar", "Test3"}}));
 
     broker->Send<::Test::UnMergeableNotice>();
     broker->Send<::Test::UnMergeableNotice>();

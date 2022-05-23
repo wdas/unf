@@ -45,11 +45,11 @@ public:
     void BeginTransaction(const NoticeCaturePredicateFunc& predicate=nullptr);
     void EndTransaction();
 
-    template<class BrokerNotice>
-    void Send();
+    template<class BrokerNotice, class... Args>
+    void Send(Args&&... args);
 
     template<class BrokerNotice>
-    void Send(TfRefPtr<BrokerNotice>&);
+    void Process(TfRefPtr<BrokerNotice>&);
 
     // Don't allow copies
     NoticeBroker(const NoticeBroker &) = delete;
@@ -85,15 +85,17 @@ private:
     std::vector<DispatcherPtr> _dispatchers;
 };
 
-template<class BrokerNotice>
-void NoticeBroker::Send()
+template<class BrokerNotice, class... Args>
+void NoticeBroker::Send(Args&&... args)
 {
-    TfRefPtr<BrokerNotice> _notice = BrokerNotice::Create();
-    Send(_notice);
+    TfRefPtr<BrokerNotice> _notice = BrokerNotice::Create(
+        std::forward<Args>(args)...);
+
+    Process(_notice);
 }
 
 template<class BrokerNotice>
-void NoticeBroker::Send(TfRefPtr<BrokerNotice>& notice)
+void NoticeBroker::Process(TfRefPtr<BrokerNotice>& notice)
 {
     // Capture the notice to be processed later if a transaction is pending.
     if (_transactions.size() > 0) {

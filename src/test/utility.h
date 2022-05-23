@@ -20,6 +20,8 @@
 
 namespace Test {
 
+using DataMap = std::unordered_map<std::string, std::string>;
+
 PXR_NS::UsdStageRefPtr CreateStageWithLayers()
 {
     auto stage = PXR_NS::UsdStage::CreateInMemory();
@@ -105,8 +107,34 @@ class MergeableNotice
 : public PXR_NS::UsdBrokerNotice::StageNoticeImpl<MergeableNotice>
 {
 public:
-    MergeableNotice() =default;
-    virtual ~MergeableNotice() =default;
+    MergeableNotice(const DataMap& data)
+    : _data(data) 
+    {}
+
+    MergeableNotice(const MergeableNotice& other)
+    : _data(other._data)
+    {}
+
+    MergeableNotice& operator=(const MergeableNotice& other)
+    {
+        MergeableNotice copy(other);
+        std::swap(_data, copy._data);
+        return *this;
+    }
+
+    virtual ~MergeableNotice() = default;
+
+    virtual void Merge(MergeableNotice&& notice) override
+    {
+        for (const auto& it: notice.GetData()) {
+            _data[it.first] = std::move(it.second);
+        }
+    }
+
+    const DataMap& GetData() const { return _data; }
+
+private:
+    DataMap _data;
 };
 
 // Custom notice with can not be consolidated within broker transactions.

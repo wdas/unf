@@ -339,9 +339,9 @@ TEST(CustomNotices, Handling)
 
     ASSERT_TRUE(broker->IsInTransaction());
 
-    broker->Send<::Test::MergeableNotice>();
-    broker->Send<::Test::MergeableNotice>();
-    broker->Send<::Test::MergeableNotice>();
+    broker->Send<::Test::MergeableNotice>(::Test::DataMap({{"Foo", "Test1"}}));
+    broker->Send<::Test::MergeableNotice>(::Test::DataMap({{"Foo", "Test1"}}));
+    broker->Send<::Test::MergeableNotice>(::Test::DataMap({{"Foo", "Test1"}}));
 
     broker->Send<::Test::UnMergeableNotice>();
     broker->Send<::Test::UnMergeableNotice>();
