@@ -248,13 +248,9 @@ TEST(MuteLayers, ObjectsChanged)
 
     // Ensure that the content of the notice is correct.
     {
-        // TODO: Update merging logic to prevent duplicated paths.
         auto& n = cache.GetAll().at(0);
-        ASSERT_EQ(n->GetResyncedPaths().size(), 4);
+        ASSERT_EQ(n->GetResyncedPaths().size(), 1);
         ASSERT_EQ(n->GetResyncedPaths().at(0), PXR_NS::SdfPath {"/"});
-        ASSERT_EQ(n->GetResyncedPaths().at(1), PXR_NS::SdfPath {"/"});
-        ASSERT_EQ(n->GetResyncedPaths().at(2), PXR_NS::SdfPath {"/"});
-        ASSERT_EQ(n->GetResyncedPaths().at(3), PXR_NS::SdfPath {"/"});
         ASSERT_EQ(n->GetChangedInfoOnlyPaths().size(), 0);
     }
 }

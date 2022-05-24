@@ -436,12 +436,8 @@ TEST(MuteLayers, ObjectsChanged)
             const Notice& n, 
             const PXR_NS::UsdStageWeakPtr&) override 
         {
-            // TODO: Update merging logic to prevent duplicated paths.
-            ASSERT_EQ(n.GetResyncedPaths().size(), 4);
+            ASSERT_EQ(n.GetResyncedPaths().size(), 1);
             ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath {"/"});
-            ASSERT_EQ(n.GetResyncedPaths().at(1), PXR_NS::SdfPath {"/"});
-            ASSERT_EQ(n.GetResyncedPaths().at(2), PXR_NS::SdfPath {"/"});
-            ASSERT_EQ(n.GetResyncedPaths().at(3), PXR_NS::SdfPath {"/"});
             ASSERT_EQ(n.GetChangedInfoOnlyPaths().size(), 0);
         }
     };

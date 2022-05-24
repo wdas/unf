@@ -50,12 +50,26 @@ ObjectsChanged& ObjectsChanged::operator=(const ObjectsChanged& other)
 
 void ObjectsChanged::Merge(ObjectsChanged&& notice)
 {
-    // TODO: Update merging logic to prevent duplicated paths.
+    size_t resyncChangesSize = _resyncChanges.size();
+
     for (const auto& path: notice._resyncChanges) {
-        _resyncChanges.push_back(std::move(path));
+        auto begin = _resyncChanges.begin();
+        auto end = begin + resyncChangesSize;
+        auto it = std::find(begin, end, path);
+        if (it == end) {
+            _resyncChanges.push_back(std::move(path));
+        }
     }
+
+    size_t infoChangesSize = _infoChanges.size();
+
     for (const auto& path: notice._infoChanges) {
-        _infoChanges.push_back(std::move(path));
+        auto begin = _infoChanges.begin();
+        auto end = begin + infoChangesSize;
+        auto it = std::find(begin, end, path);
+        if (it == end) {
+            _infoChanges.push_back(std::move(path));
+        }
     }
 }
 
