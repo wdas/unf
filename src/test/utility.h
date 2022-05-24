@@ -11,6 +11,7 @@
 #include "pxr/usd/usd/stage.h"
 
 #include <algorithm>
+#include <functional>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -46,6 +47,27 @@ PXR_NS::UsdStageRefPtr CreateStageWithLayers()
     return stage;
 }
 
+// Interface to examine content of notice received.
+template <class T>
+class ListenerBase : public PXR_NS::TfWeakBase
+{
+public:
+    ListenerBase(const PXR_NS::UsdStageWeakPtr &stage) {
+        auto self = PXR_NS::TfCreateWeakPtr(this);
+        _key =  PXR_NS::TfNotice::Register(
+            PXR_NS::TfCreateWeakPtr(this), 
+            &ListenerBase::OnReceiving, 
+            stage);
+    }
+
+    virtual ~ListenerBase() { TfNotice::Revoke(_key); }
+
+private:
+    virtual void OnReceiving(const T&, const PXR_NS::UsdStageWeakPtr&) =0;
+
+    TfNotice::Key _key;
+};
+
 // Container to listen to several types of Tf notices.
 template <class... Types>
 class Listener : public PXR_NS::TfWeakBase
@@ -56,6 +78,12 @@ public:
         _keys = std::unordered_map<std::string, PXR_NS::TfNotice::Key>({
             _Register<Types>(self, stage)...
         });
+    }
+
+    virtual ~Listener() {
+        for (auto& element: _keys) {
+            TfNotice::Revoke(element.second);
+        }
     }
 
     template <class T>
