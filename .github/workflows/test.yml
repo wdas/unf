@@ -42,8 +42,7 @@ jobs:
             -   name: Buid
                 run: |
                     mkdir build && cd build
-                    echo ${{ steps.python.outputs.python-path }}
-                    cmake -DPython_ROOT_DIR="$(dirname ${{ steps.python.outputs.python-path }})" ..
+                    cmake -DPython_ROOT_DIR="$pythonLocation" ..
                     make
             -   name: Run tests
                 run: |
