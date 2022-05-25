@@ -20,12 +20,12 @@ jobs:
                 ]
 
                 include:
-                    -   name: "22.05-py37"
-                        usd-tag: "v22.05"
-                        python: "3.7"
-                   -   name: "22.05-py27"
-                        usd-tag: "v22.05"
-                        python: "2.7"
+                  -   name: "22.05-py37"
+                      usd-tag: "v22.05"
+                      python: "3.7"
+                  -   name: "22.05-py27"
+                      usd-tag: "v22.05"
+                      python: "2.7"
 
         steps:
             -   name: Set up Python ${{ matrix.python }}
