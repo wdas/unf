@@ -1,0 +1,48 @@
+name: Tests
+
+on:
+    push:
+        branches: [ main, prototype, ci-test ]
+    pull_request:
+        branches: [ main, prototype ]
+
+jobs:
+    build:
+        runs-on: ${{ matrix.os }}
+        timeout-minutes: 90
+
+        strategy:
+            fail-fast: false
+            matrix:
+                name: [
+                    "ubuntu-py37",
+                ]
+
+                include:
+                    -   name: "ubuntu-py37"
+                        os: ubuntu-latest
+                        python: "3.7"
+                    -   name: "windows-py37"
+                        os: windows-latest
+                        python: "3.7"
+
+        steps:
+            -   uses: actions/checkout@v2
+            -   name: Set up Python ${{ matrix.python }}
+                uses: actions/setup-python@v2
+                with:
+                    python-version: ${{ matrix.python }}
+            -   name: Install USD
+                run: |
+                    mkdir -p USD/build && cd USD/build
+                    git clone https://github.com/PixarAnimationStudios/USD.git --depth 1 --branch v22.05 .
+                    python ./build_scripts/build_usd.py .. --no-imaging
+            -   name: Buid
+                run: |
+                    mkdir build && cd build
+                    cmake -DPXR_USD_LOCATION=./USD ..
+                    make
+            -   name: Run tests
+                run: |
+                    CTEST_OUTPUT_ON_FAILURE=1 make test
+
