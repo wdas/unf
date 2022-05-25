@@ -47,7 +47,7 @@ public:
 
     virtual void Merge(StageNotice&& notice) override 
     {
-        Merge(static_cast<Self&&>(notice));
+        Merge(dynamic_cast<Self&&>(notice));
     }
 
     virtual void Merge(Self&&) {}
