@@ -267,6 +267,59 @@ TEST(CustomNotices, Handling)
     ASSERT_EQ(listener.Received<::Test::UnMergeableNotice>(), 3);
 }
 
+TEST(Registry, DuplicateRegistry)
+{
+    auto stage1 = PXR_NS::UsdStage::CreateInMemory();
+    auto broker1 = PXR_NS::NoticeBroker::Create(stage1);
+    // Attempt to create another broker for the same stage.
+    auto broker2 = PXR_NS::NoticeBroker::Create(stage1);
+
+    // Ensure no new brokers were created.
+    ASSERT_TRUE(broker1->GetCurrentCount() == 3);
+    ASSERT_TRUE(broker1 == broker2);
+    
+    // Create a broker for a different stage.
+    auto stage2 = PXR_NS::UsdStage::CreateInMemory();
+    auto broker3 = PXR_NS::NoticeBroker::Create(stage2);
+
+    // Ensure a new broker was created.
+    ASSERT_TRUE(broker3 != broker2);
+
+    auto broker4 = PXR_NS::NoticeBroker::Create(stage1);
+    auto broker5 = PXR_NS::NoticeBroker::Create(stage2);
+    
+    // Ensure that the existing broker returned is the correct broker.
+    ASSERT_TRUE(broker4 == broker1);
+    ASSERT_TRUE(broker5 == broker3);
+}
+
+TEST(Registry, CleanRegistry)
+{
+    auto stage1 = PXR_NS::UsdStage::CreateInMemory();
+    auto broker1 = PXR_NS::NoticeBroker::Create(stage1);
+
+    ASSERT_TRUE(broker1->GetCurrentCount() == 2);
+
+    auto stage2 = PXR_NS::UsdStage::CreateInMemory();
+    auto broker3 = PXR_NS::NoticeBroker::Create(stage2);
+
+    ASSERT_TRUE(broker3->GetCurrentCount() == 2);
+    
+    //Stage is destroyed.
+    stage1.Reset();
+
+    // The refcount should still stay the same since no new broker was created
+    // after the stage is destroyed.
+    ASSERT_TRUE(broker1->GetCurrentCount() == 2);
+
+    auto broker4 = PXR_NS::NoticeBroker::Create(stage2);
+
+    // The refcount should now decrease since the broker reference in the registry
+    // was deleted.
+    ASSERT_TRUE(broker1->GetCurrentCount() == 1);
+    ASSERT_TRUE(broker3->GetCurrentCount() == 3);
+}
+
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

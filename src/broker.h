@@ -17,6 +17,7 @@
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
+#include <unordered_map>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -33,9 +34,7 @@ using DispatcherPtr = TfRefPtr<Dispatcher>;
 
 class NoticeBroker : public TfRefBase, public TfWeakBase {
 public:
-    static NoticeBrokerPtr Create(const UsdStageWeakPtr& stage) {
-        return TfCreateRefPtr(new NoticeBroker(stage));
-    }
+    static NoticeBrokerPtr Create(const UsdStageWeakPtr& stage);
 
     virtual ~NoticeBroker() {}
 
@@ -87,6 +86,10 @@ private:
     };
 
     void _SendNotices(_TransactionHandler&);
+    static void _CleanCache();
+    
+    // A registry of hashed stage ptr to the corresponding stage's broker ptr.
+    static std::unordered_map<size_t, TfRefPtr<NoticeBroker>> noticeBrokerRegistry;
 
 private:
     UsdStageWeakPtr _stage;

@@ -9,10 +9,27 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
+// This is here because we have to declare the static variable somewhere.
+std::unordered_map<size_t, TfRefPtr<NoticeBroker>> NoticeBroker::noticeBrokerRegistry;
+
 NoticeBroker::NoticeBroker(const UsdStageWeakPtr& stage)
     : _stage(stage)
 {
     AddDispatcher<StageDispatcher>();
+}
+
+NoticeBrokerPtr NoticeBroker::Create(const UsdStageWeakPtr& stage)
+{
+    size_t stageHash = hash_value(stage);
+
+    NoticeBroker::_CleanCache();
+
+    // If there doesn't exist a broker for the given stage, create a new broker.
+    if(noticeBrokerRegistry.find(stageHash) == noticeBrokerRegistry.end()) {
+        noticeBrokerRegistry[stageHash] = TfCreateRefPtr(new NoticeBroker(stage));
+    }
+
+    return noticeBrokerRegistry[stageHash];
 }
 
 bool NoticeBroker::IsInTransaction()
@@ -73,6 +90,20 @@ void NoticeBroker::_SendNotices(_TransactionHandler& transaction)
         // Send all remaining notices.
         for (const auto& notice: notices) {
             notice->Send(_stage);
+        }
+    }
+}
+
+void NoticeBroker::_CleanCache() {
+    for (std::unordered_map<size_t, TfRefPtr<NoticeBroker>>::iterator it = noticeBrokerRegistry.begin(); it != noticeBrokerRegistry.end();)
+    {
+        // If the stage doesn't exist anymore, delete the corresponding
+        // broker from the registry.
+        if (it->second->GetStage().IsExpired()) {
+            it = noticeBrokerRegistry.erase(it);
+        }
+        else {
+            it++;
         }
     }
 }
