@@ -16,11 +16,6 @@ PXR_NAMESPACE_OPEN_SCOPE
 
 namespace UsdBrokerNotice {
 
-class StageNotice;
-
-using StageNoticePtr = TfRefPtr<StageNotice>;
-using StageNoticePtrList = std::vector<StageNoticePtr>;
-
 class StageNotice : public TfNotice, public TfRefBase {
 public:
     virtual ~StageNotice() = default;

@@ -14,6 +14,7 @@ PXR_NAMESPACE_OPEN_SCOPE
 
 class Dispatcher : public TfRefBase, public TfWeakBase {
 public:
+    virtual std::string GetIdentifier() const =0;
     virtual ~Dispatcher() = default;
 
 protected:
@@ -24,7 +25,13 @@ protected:
 
 class StageDispatcher : public Dispatcher {
 public:
-    virtual ~StageDispatcher() {}
+    virtual std::string GetIdentifier() const { return "default"; };
+
+    virtual ~StageDispatcher() {
+        for (auto& key: _keys) {
+            TfNotice::Revoke(key);
+        }
+    }
 
 private:
     StageDispatcher(const NoticeBrokerWeakPtr& broker);

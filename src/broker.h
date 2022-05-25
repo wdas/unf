@@ -15,6 +15,7 @@
 #include <memory>
 #include <string>
 #include <typeinfo>
+#include <unordered_map>
 #include <vector>
 
 PXR_NAMESPACE_OPEN_SCOPE
@@ -59,7 +60,12 @@ public:
     void AddDispatcher() {
         static_assert(std::is_base_of<Dispatcher, T>::value);
         auto self = TfCreateWeakPtr(this);
-        _dispatchers.push_back(TfCreateRefPtr(new T(self)));
+        auto dispatcher = TfCreateRefPtr(new T(self));
+        _dispatcherMap[dispatcher->GetIdentifier()] = dispatcher;
+    }
+
+    DispatcherPtr& GetDispatcher(std::string identifier) {
+        return _dispatcherMap.at(identifier);
     }
 
 private:
@@ -71,7 +77,10 @@ private:
             : noticeMap(std::move(t.noticeMap))
             , predicate(t.predicate) {}
 
-        std::map<std::string, UsdBrokerNotice::StageNoticePtrList> noticeMap;
+        using _StageNoticePtrList = 
+            std::vector<TfRefPtr<UsdBrokerNotice::StageNotice>>;
+
+        std::unordered_map<std::string, _StageNoticePtrList> noticeMap;
         NoticeCaturePredicateFunc predicate = nullptr;
 
         void Join(_TransactionHandler&);
@@ -82,7 +91,7 @@ private:
 private:
     UsdStageWeakPtr _stage;
     std::vector<_TransactionHandler> _transactions;
-    std::vector<DispatcherPtr> _dispatchers;
+    std::unordered_map<std::string, DispatcherPtr> _dispatcherMap;
 };
 
 template<class BrokerNotice, class... Args>
