@@ -9,41 +9,85 @@ on:
 jobs:
     Test-Linux:
         runs-on: ubuntu-latest
-        timeout-minutes: 90
+        timeout-minutes: 300
 
         strategy:
             fail-fast: false
             matrix:
                 name: [
                     "USD-22.05-py37",
-                    # "USD-22.05-py27",
+                    "USD-20.11-py37",
                 ]
 
                 include:
                   -   name: "USD-22.05-py37"
                       usd-tag: "v22.05"
                       python: "3.7"
-                #   -   name: "USD-22.05-py27"
-                #       usd-tag: "v22.05"
-                #       python: "2.7"
+                  -   name: "USD-20.11-py37"
+                      usd-tag: "v20.11"
+                      python: "3.7"
 
         steps:
             -   name: Set up Python ${{ matrix.python }}
-                uses: actions/setup-python@v2
+                uses: actions/setup-python@v3
                 with:
                     python-version: ${{ matrix.python }}
-            # -   name: Install dependencies
-            #     run: |
-            #         mkdir -p _deps_usd && cd _deps_usd
-            #         git clone https://github.com/PixarAnimationStudios/USD.git --depth 1 --branch ${{ matrix.usd-tag }} .
-            #         sudo python ./build_scripts/build_usd.py /usr --no-imaging -v
             -   uses: actions/checkout@v3
+            -   name: Install Conan
+                run: |
+                    pip install conan numpy
+                    conan profile new default --detect
+                    conan profile update settings.compiler.libcxx=libstdc++11 default
+                    conan profile show default
+            -   name: Install Boost + TBB
+                run: |
+                    mkdir -p build && cd build
+                    conan install boost/1.70.0@ \
+                        --options=boost:shared=True \
+                        --options=boost:without_python=False \
+                        --generator=cmake_find_package \
+                        --build=missing
+                    conan install tbb/2020.3@ \
+                        --generator=cmake_find_package \
+                        --build=missing
+            -   name: Install USD
+                run: |
+                    mkdir -p USD/build && cd USD/build
+                    git clone https://github.com/PixarAnimationStudios/USD.git \
+                        --depth 1 --branch ${{ matrix.usd-tag }} .
+                    NUM_JOBS=$(python -c "import multiprocessing; \
+                        print(multiprocessing.cpu_count())")
+                    PY_EXE=$(python -c "import sys; print(sys.executable)")
+                    PY_LIBDIR=$(python -c "import sysconfig as sc; \
+                        print(sc.get_config_var(\"LIBDIR\"))")
+                    PY_LIBNAME=$(python -c "import sysconfig as sc; \
+                        print(sc.get_config_var(\"LDLIBRARY\"))")
+                    PY_INCLUDE=$(python -c "import sysconfig as sc; \
+                        print(sc.get_config_var(\"INCLUDEPY\"))")
+                    cmake \
+                        -DCMAKE_MODULE_PATH:FILEPATH="$(pwd)/../../build" \
+                        -DPXR_BUILD_IMAGING=False \
+                        -DPYTHON_EXECUTABLE="${PY_EXE}" \
+                        -DPYTHON_INCLUDE_DIR="${PY_INCLUDE}" \
+                        -DPXR_BUILD_DOCUMENTATION=False \
+                        -DPXR_BUILD_TESTS=False \
+                        -DPXR_BUILD_EXAMPLES=False \
+                        -DPXR_BUILD_TUTORIALS=False \
+                        -DPXR_BUILD_USD_TOOLS=False \
+                        -DPXR_ENABLE_HDF5_SUPPORT=False \
+                        -DPXR_ENABLE_PTEX_SUPPORT=False \
+                        -DCMAKE_INSTALL_PREFIX="$(pwd)/.." \
+                        .
+                    cmake --build . --target install -- -j ${NUM_JOBS}
             -   name: Buid
                 run: |
-                    env
-                    mkdir build && cd build
-                    cmake -DPython_FIND_STRATEGY=LOCATION ..
-                    make
+                    cd build
+                    cmake \
+                        -DPXR_USD_LOCATION="$(pwd)/../USD" \
+                        -DCMAKE_MODULE_PATH:FILEPATH="$(pwd)" \
+                        -DPython_FIND_STRATEGY=LOCATION \
+                        ..
+                    cmake --build .
             -   name: Run tests
                 run: |
                     cd build
