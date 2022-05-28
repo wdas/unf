@@ -10,6 +10,7 @@ _add_unit_tests(
         ${USD_INCLUDE_DIR} 
         ${GTEST_INCLUDE_DIRS} 
         ${Boost_INCLUDE_DIRS}
+        ${Python_INCLUDE_DIRS}
 
     LIBRARIES
         ${GTEST_LIBRARIES}
