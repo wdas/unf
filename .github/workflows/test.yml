@@ -39,7 +39,7 @@ jobs:
                     conan profile new default --detect
                     conan profile update settings.compiler.libcxx=libstdc++11 default
                     conan profile show default
-            -   name: Install Boost + TBB
+            -   name: Install Boost + TBB + Gtest
                 run: |
                     mkdir -p build && cd build
                     conan install boost/1.70.0@ \
@@ -48,6 +48,9 @@ jobs:
                         --generator=cmake_find_package \
                         --build=missing
                     conan install tbb/2020.3@ \
+                        --generator=cmake_find_package \
+                        --build=missing
+                    conan install gtest/1.11.0@ \
                         --generator=cmake_find_package \
                         --build=missing
             -   name: Install USD

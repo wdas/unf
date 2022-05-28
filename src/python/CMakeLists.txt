@@ -15,7 +15,7 @@ _add_python_binding(
         ${USD_INCLUDE_DIR} 
         ${TBB_INCLUDE_DIR} 
         ${Boost_INCLUDE_DIRS}
-        ${PYTHON_INCLUDE_DIRS}
+        ${Python_INCLUDE_DIRS}
 
     PYTHON_SOURCES
         __init__.py

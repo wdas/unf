@@ -13,7 +13,7 @@ _add_unit_tests(
 
     LIBRARIES
         ${GTEST_LIBRARIES}
-        ${PYTHON_LIBRARY}
+        ${Python_LIBRARIES}
         ${Boost_LIBRARIES}
         ${USD_LIBRARIES}
         UsdNoticeBroker
