@@ -50,7 +50,7 @@ jobs:
                     conan install tbb/2020.3@ \
                         --generator=cmake_find_package \
                         --build=missing
-                    conan install gtest/1.11.0@ \
+                    conan install gtest/1.10.0@ \
                         --generator=cmake_find_package \
                         --build=missing
             -   name: Install USD
