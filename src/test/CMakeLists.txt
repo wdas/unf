@@ -14,9 +14,9 @@ _add_unit_tests(
         ${Python_INCLUDE_DIRS}
 
     LIBRARIES
-        ${GTEST_BOTH_LIBRARIES}
-        ${Python_LIBRARIES}
-        ${Boost_LIBRARIES}
         ${USD_LIBRARIES}
+        GTest::GTest
+        Python::Python
+        Boost::python
         UsdNoticeBroker
 )

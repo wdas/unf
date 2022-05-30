@@ -30,7 +30,7 @@ PXR_NS::UsdStageRefPtr CreateStageWithLayers()
 
     size_t layersNb = 3;
 
-    std::vector<SdfLayerRefPtr> layers;
+    std::vector<PXR_NS::SdfLayerRefPtr> layers;
     layers.reserve(layersNb);
 
     std::vector<std::string> identifiers;
@@ -60,12 +60,12 @@ public:
             stage);
     }
 
-    virtual ~ListenerBase() { TfNotice::Revoke(_key); }
+    virtual ~ListenerBase() { PXR_NS::TfNotice::Revoke(_key); }
 
 private:
     virtual void OnReceiving(const T&, const PXR_NS::UsdStageWeakPtr&) =0;
 
-    TfNotice::Key _key;
+    PXR_NS::TfNotice::Key _key;
 };
 
 // Container to listen to several types of Tf notices.
@@ -82,7 +82,7 @@ public:
 
     virtual ~Listener() {
         for (auto& element: _keys) {
-            TfNotice::Revoke(element.second);
+            PXR_NS::TfNotice::Revoke(element.second);
         }
     }
 

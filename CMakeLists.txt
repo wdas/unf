@@ -6,7 +6,7 @@ project(UsdNoticeBroker VERSION 0.1.0)
 
 find_package(Python COMPONENTS Interpreter Development REQUIRED)
 find_package(Boost 1.70.0 COMPONENTS python REQUIRED)
-find_package(TBB 2020.3 EXACT REQUIRED)
+find_package(TBB 2020.3 EXACT COMPONENTS tbb REQUIRED)
 find_package(USD 0.20.11 REQUIRED)
 
 include(Config)

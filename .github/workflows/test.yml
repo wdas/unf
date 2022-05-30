@@ -71,7 +71,10 @@ jobs:
                         -DCMAKE_MODULE_PATH:FILEPATH="$(pwd)/../../build" \
                         -DPXR_BUILD_IMAGING=False \
                         -DPYTHON_EXECUTABLE="${PY_EXE}" \
+                        -DPYTHON_LIBRARY="${PY_LIBDIR}/${PY_LIBNAME}" \
                         -DPYTHON_INCLUDE_DIR="${PY_INCLUDE}" \
+                        -DBoost_PYTHON_LIBRARY="Boost::python" \
+                        -DTBB_tbb_LIBRARY="TBB::tbb" \
                         -DPXR_BUILD_DOCUMENTATION=False \
                         -DPXR_BUILD_TESTS=False \
                         -DPXR_BUILD_EXAMPLES=False \
