@@ -1,3 +1,5 @@
+[![Tests](https://github.com/wdas/usd-notice-broker/actions/workflows/test.yml/badge.svg?branch=ci-test)](https://github.com/wdas/usd-notice-broker/actions/workflows/test.yml)
+
 # USD Notice Broker
 
 Notice management library built over USD Notices
