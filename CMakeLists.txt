@@ -1,18 +1,18 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 project(UsdNoticeBroker VERSION 0.1.0)
 
-find_package(PythonLibs 2.7 REQUIRED)
-find_package(Boost COMPONENTS python REQUIRED)
-find_package(TBB REQUIRED)
-find_package(USD REQUIRED)
+find_package(Python COMPONENTS Interpreter Development REQUIRED)
+find_package(Boost 1.70.0 COMPONENTS python REQUIRED)
+find_package(TBB 2020.3 EXACT COMPONENTS tbb REQUIRED)
+find_package(USD 0.20.11 REQUIRED)
 
 include(Config)
 
 if (BUILD_TESTS)
-    find_package(GTest)
+    find_package(GTest REQUIRED)
     enable_testing()
 endif()   
 

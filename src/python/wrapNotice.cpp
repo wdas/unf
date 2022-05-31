@@ -5,7 +5,7 @@
 #include "pxr/base/tf/pyNoticeWrapper.h"
 
 using namespace boost::python;
-using namespace UsdBrokerNotice;
+using namespace PXR_NS::UsdBrokerNotice;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 

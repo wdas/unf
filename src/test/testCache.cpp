@@ -18,7 +18,7 @@ TEST(AddPrim, ObjectsChanged)
 
     namespace _Broker = PXR_NS::UsdBrokerNotice;
 
-    NoticeCache<_Broker::ObjectsChanged> cache;
+    PXR_NS::NoticeCache<_Broker::ObjectsChanged> cache;
 
     // Edit the stage...
     stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
@@ -55,7 +55,7 @@ TEST(AddPrims, ObjectsChanged)
 
     namespace _Broker = PXR_NS::UsdBrokerNotice;
 
-    NoticeCache<_Broker::ObjectsChanged> cache;
+    PXR_NS::NoticeCache<_Broker::ObjectsChanged> cache;
 
     // Edit the stage...
     stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
@@ -106,7 +106,7 @@ TEST(AddPrim, StageContentsChanged)
 
     namespace _Broker = PXR_NS::UsdBrokerNotice;
 
-    NoticeCache<_Broker::StageContentsChanged> cache;
+    PXR_NS::NoticeCache<_Broker::StageContentsChanged> cache;
 
     // Edit the stage...
     stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
@@ -127,7 +127,7 @@ TEST(AddPrims, StageContentsChanged)
 
     namespace _Broker = PXR_NS::UsdBrokerNotice;
 
-    NoticeCache<_Broker::StageContentsChanged> cache;
+    PXR_NS::NoticeCache<_Broker::StageContentsChanged> cache;
 
     // Edit the stage...
     stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
@@ -156,7 +156,7 @@ TEST(MuteLayer, ObjectsChanged)
 
     namespace _Broker = PXR_NS::UsdBrokerNotice;
 
-    NoticeCache<_Broker::ObjectsChanged> cache;
+    PXR_NS::NoticeCache<_Broker::ObjectsChanged> cache;
 
     // Edit the stage...
     stage->MuteLayer(layers[0]);
@@ -205,7 +205,7 @@ TEST(MuteLayers, ObjectsChanged)
 
     namespace _Broker = PXR_NS::UsdBrokerNotice;
 
-    NoticeCache<_Broker::ObjectsChanged> cache;
+    PXR_NS::NoticeCache<_Broker::ObjectsChanged> cache;
 
     // Edit the stage...
     stage->MuteLayer(layers[0]);
@@ -262,7 +262,7 @@ TEST(MuteLayer, StageContentsChanged)
 
     namespace _Broker = PXR_NS::UsdBrokerNotice;
 
-    NoticeCache<_Broker::StageContentsChanged> cache;
+    PXR_NS::NoticeCache<_Broker::StageContentsChanged> cache;
 
     // Edit the stage...
     auto layers = stage->GetRootLayer()->GetSubLayerPaths();
@@ -284,7 +284,7 @@ TEST(MuteLayers, StageContentsChanged)
 
     namespace _Broker = PXR_NS::UsdBrokerNotice;
 
-    NoticeCache<_Broker::StageContentsChanged> cache;
+    PXR_NS::NoticeCache<_Broker::StageContentsChanged> cache;
 
     // Edit the stage...
     auto layers = stage->GetRootLayer()->GetSubLayerPaths();
@@ -316,7 +316,7 @@ TEST(MuteLayer, LayerMutingChanged)
 
     namespace _Broker = PXR_NS::UsdBrokerNotice;
 
-    NoticeCache<_Broker::LayerMutingChanged> cache;
+    PXR_NS::NoticeCache<_Broker::LayerMutingChanged> cache;
 
     // Edit the stage...
     auto layers = stage->GetRootLayer()->GetSubLayerPaths();
@@ -354,7 +354,7 @@ TEST(MuteLayers, LayerMutingChanged)
 
     namespace _Broker = PXR_NS::UsdBrokerNotice;
 
-    NoticeCache<_Broker::LayerMutingChanged> cache;
+    PXR_NS::NoticeCache<_Broker::LayerMutingChanged> cache;
 
     // Edit the stage...
     auto layers = stage->GetRootLayer()->GetSubLayerPaths();
@@ -420,7 +420,7 @@ TEST(ChangeEditTarget, StageEditTargetChanged)
 
     namespace _Broker = PXR_NS::UsdBrokerNotice;
 
-    NoticeCache<_Broker::StageEditTargetChanged> cache;
+    PXR_NS::NoticeCache<_Broker::StageEditTargetChanged> cache;
 
     // Edit the stage...
     auto layers = stage->GetRootLayer()->GetSubLayerPaths();
@@ -444,7 +444,7 @@ TEST(CustomNotices, MergeableNotice)
     auto stage = PXR_NS::UsdStage::CreateInMemory();
     auto broker = PXR_NS::NoticeBroker::Create(stage);
 
-    NoticeCache<::Test::MergeableNotice> cache;
+    PXR_NS::NoticeCache<::Test::MergeableNotice> cache;
 
     broker->Send<::Test::MergeableNotice>(::Test::DataMap({{"Foo", "Test1"}}));
     broker->Send<::Test::MergeableNotice>(::Test::DataMap({{"Foo", "Test2"}}));
@@ -483,7 +483,7 @@ TEST(CustomNotices, UnMergeableNotice)
     auto stage = PXR_NS::UsdStage::CreateInMemory();
     auto broker = PXR_NS::NoticeBroker::Create(stage);
 
-    NoticeCache<::Test::UnMergeableNotice> cache;
+    PXR_NS::NoticeCache<::Test::UnMergeableNotice> cache;
 
     broker->Send<::Test::UnMergeableNotice>();
     broker->Send<::Test::UnMergeableNotice>();

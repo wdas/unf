@@ -106,7 +106,7 @@ function(_add_python_binding NAME)
     _add_library(
         SHARED ${NAME} NO_PREFIX
         DESTINATION ${args_DESTINATION}
-        INCLUDE_DIRS ${PYTHON_INCLUDE_DIRS}
+        INCLUDE_DIRS ${Python_INCLUDE_DIRS}
         SOURCES ${args_SOURCES}
     )
 

@@ -7,14 +7,16 @@ _add_unit_tests(
         testTransaction
 
     INCLUDE_DIRS
-        ${USD_INCLUDE_DIR} 
         ${GTEST_INCLUDE_DIRS} 
+        ${USD_INCLUDE_DIR} 
+        ${TBB_INCLUDE_DIR} 
         ${Boost_INCLUDE_DIRS}
+        ${Python_INCLUDE_DIRS}
 
     LIBRARIES
-        ${GTEST_LIBRARIES}
-        ${PYTHON_LIBRARY}
-        ${Boost_LIBRARIES}
         ${USD_LIBRARIES}
+        GTest::GTest
+        Python::Python
+        Boost::python
         UsdNoticeBroker
 )

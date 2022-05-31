@@ -18,7 +18,7 @@ _add_library(
         ${USD_INCLUDE_DIR} 
         ${TBB_INCLUDE_DIR} 
         ${Boost_INCLUDE_DIRS}
-        ${PYTHON_INCLUDE_DIRS}
+        ${Python_INCLUDE_DIRS}
 
     LIBRARIES
         ${USD_LIBRARIES}
