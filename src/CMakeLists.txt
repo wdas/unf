@@ -1,3 +1,4 @@
+add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 _add_library(
     SHARED 
     UsdNoticeBroker
@@ -13,6 +14,7 @@ _add_library(
         dispatcher.h
         notice.h
         transaction.h
+        noticeWrapper.h
 
     INCLUDE_DIRS
         ${USD_INCLUDE_DIR} 

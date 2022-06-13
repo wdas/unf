@@ -2,10 +2,10 @@
 #include "notice.h"
 #include "dispatcher.h"
 
-#include "pxr/pxr.h"
-#include "pxr/base/tf/weakPtr.h"
-#include "pxr/usd/usd/common.h"
-#include "pxr/usd/usd/notice.h"
+#include <pxr/pxr.h>
+#include <pxr/base/tf/weakPtr.h>
+#include <pxr/usd/usd/common.h>
+#include <pxr/usd/usd/notice.h>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -67,6 +67,32 @@ void NoticeBroker::EndTransaction()
     _transactions.pop_back();
 }
 
+void NoticeBroker::Process(const UsdBrokerNotice::StageNoticeRefPtr notice)
+{
+    // Capture the notice to be processed later if a transaction is pending.
+    if (_transactions.size() > 0) {
+        _TransactionHandler& transaction = _transactions.back();
+
+        // Indicate whether the notice needs to be captured.
+        if (transaction.predicate && !transaction.predicate(*notice))
+            return;
+
+        // Store notices per type name, so that each type can be merged if 
+        // required.
+        std::string name = notice->GetTypeId();
+        transaction.noticeMap[name].push_back(notice);
+    }
+    // Otherwise, send the notice.
+    else {
+        notice->Send(_stage);
+    }
+}
+
+void NoticeBroker::ProcessWrap(const TfRefPtr<NoticeWrapper> notice){
+    Process(notice->Get());
+}
+
+
 void NoticeBroker::_SendNotices(_TransactionHandler& transaction)
 {
     for (auto& element : transaction.noticeMap) {
@@ -124,5 +150,11 @@ void NoticeBroker::_TransactionHandler::Join(
     }
     transaction.noticeMap.clear();
 }
+
+void NoticeBroker::BeginTransactionWrap(_CaturePredicateFunc predicate) {
+    BeginTransaction(WrapPredicate(predicate));
+
+}
+
 
 PXR_NAMESPACE_CLOSE_SCOPE

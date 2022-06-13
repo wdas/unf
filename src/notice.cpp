@@ -1,8 +1,8 @@
 #include "notice.h"
 
-#include "pxr/pxr.h"
-#include "pxr/base/tf/notice.h"
-#include "pxr/usd/usd/notice.h"
+#include <pxr/pxr.h>
+#include <pxr/base/tf/notice.h>
+#include <pxr/usd/usd/notice.h>
 
 #include <iostream>
 #include <utility>
@@ -19,6 +19,7 @@ TF_REGISTRY_FUNCTION(TfType)
     TfType::Define<StageEditTargetChanged, TfType::Bases<StageNotice> >();
     TfType::Define<ObjectsChanged, TfType::Bases<StageNotice> >();
     TfType::Define<LayerMutingChanged, TfType::Bases<StageNotice> >();
+    TfType::Define<TestNotice, TfType::Bases<StageNotice> >();
 }
 
 ObjectsChanged::ObjectsChanged(const UsdNotice::ObjectsChanged& notice)

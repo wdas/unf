@@ -2,14 +2,15 @@
 #define NOTICE_BROKER_BROKER_H
 
 #include "notice.h"
+#include "noticeWrapper.h"
 
-#include "pxr/pxr.h"
-#include "pxr/base/tf/refBase.h"
-#include "pxr/base/tf/refPtr.h"
-#include "pxr/base/tf/weakBase.h"
-#include "pxr/base/tf/weakPtr.h"
-#include "pxr/usd/usd/stage.h"
-#include "pxr/usd/usd/common.h"
+#include <pxr/pxr.h>
+#include <pxr/base/tf/refBase.h>
+#include <pxr/base/tf/refPtr.h>
+#include <pxr/base/tf/weakBase.h>
+#include <pxr/base/tf/weakPtr.h>
+#include <pxr/usd/usd/stage.h>
+#include <pxr/usd/usd/common.h>
 
 #include <functional>
 #include <memory>
@@ -19,6 +20,8 @@
 #include <vector>
 #include <unordered_map>
 
+#include "python/predicate.h"
+
 PXR_NAMESPACE_OPEN_SCOPE
 
 class NoticeBroker;
@@ -26,9 +29,6 @@ class Dispatcher;
 
 using NoticeBrokerPtr = TfRefPtr<NoticeBroker>;
 using NoticeBrokerWeakPtr = TfWeakPtr<NoticeBroker>;
-
-using NoticeCaturePredicateFunc = 
-    std::function<bool (const UsdBrokerNotice::StageNotice &)>;
 
 using DispatcherPtr = TfRefPtr<Dispatcher>;
 
@@ -45,11 +45,17 @@ public:
     void BeginTransaction(const NoticeCaturePredicateFunc& predicate=nullptr);
     void EndTransaction();
 
+    void BeginTransactionWrap(_CaturePredicateFunc predicate);
+
     template<class BrokerNotice, class... Args>
     void Send(Args&&... args);
 
-    template<class BrokerNotice>
-    void Process(TfRefPtr<BrokerNotice>&);
+    void Process(const UsdBrokerNotice::StageNoticeRefPtr notice);
+
+    //This Process function is created to support NoticeWrappers; essentially, C++ "Process" goes
+    //through the normal Process function while Python function goes through ProcessWrap.
+    void ProcessWrap(const TfRefPtr<NoticeWrapper> notice);
+
 
     // Don't allow copies
     NoticeBroker(const NoticeBroker &) = delete;
@@ -77,7 +83,7 @@ private:
             , predicate(t.predicate) {}
 
         using _StageNoticePtrList = 
-            std::vector<TfRefPtr<UsdBrokerNotice::StageNotice>>;
+            std::vector<UsdBrokerNotice::StageNoticeRefPtr>;
 
         std::unordered_map<std::string, _StageNoticePtrList> noticeMap;
         NoticeCaturePredicateFunc predicate = nullptr;
@@ -104,28 +110,6 @@ void NoticeBroker::Send(Args&&... args)
         std::forward<Args>(args)...);
 
     Process(_notice);
-}
-
-template<class BrokerNotice>
-void NoticeBroker::Process(TfRefPtr<BrokerNotice>& notice)
-{
-    // Capture the notice to be processed later if a transaction is pending.
-    if (_transactions.size() > 0) {
-        _TransactionHandler& transaction = _transactions.back();
-
-        // Indicate whether the notice needs to be captured.
-        if (transaction.predicate && !transaction.predicate(*notice))
-            return;
-
-        // Store notices per type name, so that each type can be merged if 
-        // required.
-        std::string name = typeid(notice).name();
-        transaction.noticeMap[name].push_back(std::move(notice));
-    }
-    // Otherwise, send the notice.
-    else {
-        notice->Send(_stage);
-    }
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

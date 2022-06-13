@@ -1,12 +1,12 @@
 #ifndef NOTICE_BROKER_NOTICE_H
 #define NOTICE_BROKER_NOTICE_H
 
-#include "pxr/pxr.h"
-#include "pxr/base/tf/refPtr.h"
-#include "pxr/base/tf/refBase.h"
-#include "pxr/base/tf/notice.h"
-#include "pxr/usd/sdf/path.h"
-#include "pxr/usd/usd/notice.h"
+#include <pxr/pxr.h>
+#include <pxr/base/tf/refPtr.h>
+#include <pxr/base/tf/refBase.h>
+#include <pxr/base/tf/notice.h>
+#include <pxr/usd/sdf/path.h>
+#include <pxr/usd/usd/notice.h>
 
 #include <map>
 #include <string>
@@ -16,7 +16,7 @@ PXR_NAMESPACE_OPEN_SCOPE
 
 namespace UsdBrokerNotice {
 
-class StageNotice : public TfNotice, public TfRefBase {
+class StageNotice : public TfNotice, public TfRefBase, public TfWeakBase {
 public:
     virtual ~StageNotice() = default;
 
@@ -26,10 +26,13 @@ public:
     // TODO: Should those methods be pure virtual?
     virtual bool IsMergeable() const { return true; }
     virtual void Merge(StageNotice&&) {};
+    virtual std::string GetTypeId() {return "";}
 
 protected:
     StageNotice() = default;    
 };
+
+TF_DECLARE_WEAK_AND_REF_PTRS(StageNotice);
 
 template<class Self>
 class StageNoticeImpl : public StageNotice {
@@ -51,6 +54,10 @@ public:
     }
 
     virtual void Merge(Self&&) {}
+
+    virtual std::string GetTypeId() {
+        return typeid(Self).name();
+    }
 };
 
 class StageContentsChanged : public StageNoticeImpl<StageContentsChanged> {
@@ -121,6 +128,27 @@ private:
     std::vector<std::string> _unmutedLayers;
 
     friend StageNoticeImpl<LayerMutingChanged>;
+};
+
+
+// TODO: DELETE -- TEST ONLY
+
+class TestNotice
+: public PXR_NS::UsdBrokerNotice::StageNotice
+{
+public:
+    TestNotice(int count)
+    : _count(count) 
+    {}
+
+    TestNotice(const TestNotice& other)
+    : _count(other._count)
+    {}
+
+    int GetCount() const { return _count; }
+
+private:
+    int _count;
 };
 
 } // namespace UsdBrokerNotice

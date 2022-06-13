@@ -5,6 +5,7 @@ _add_python_binding(
         module.cpp
         wrapBroker.cpp
         wrapNotice.cpp
+        wrapNoticeWrapper.cpp
         wrapTransaction.cpp
 
     LIBRARIES
