@@ -35,7 +35,8 @@ protected:
     StageNotice() = default;    
 };
 
-TF_DECLARE_WEAK_AND_REF_PTRS(StageNotice);
+using StageNoticeRefPtr = TfRefPtr<StageNotice>;
+using StageNoticeWeakPtr = TfWeakPtr<StageNotice>;
 
 template<class Self>
 class StageNoticeImpl : public StageNotice {

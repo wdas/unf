@@ -88,11 +88,6 @@ void NoticeBroker::Process(const UsdBrokerNotice::StageNoticeRefPtr notice)
     }
 }
 
-void NoticeBroker::ProcessWrap(const TfRefPtr<NoticeWrapper> notice){
-    Process(notice->Get());
-}
-
-
 void NoticeBroker::_SendNotices(_TransactionHandler& transaction)
 {
     for (auto& element : transaction.noticeMap) {
@@ -149,11 +144,6 @@ void NoticeBroker::_TransactionHandler::Join(
         source.clear();
     }
     transaction.noticeMap.clear();
-}
-
-void NoticeBroker::BeginTransactionWrap(_CaturePredicateFunc predicate) {
-    BeginTransaction(WrapPredicate(predicate));
-
 }
 
 

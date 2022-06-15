@@ -12,7 +12,7 @@
 PXR_NAMESPACE_OPEN_SCOPE
 
 /*
-TfNotices could be passed by TfRefPtrs through Python. We needed a workaround for the issue.
+TfNotices could not be passed by TfRefPtrs through Python. We needed a workaround for the issue.
 The solution was the NoticeWrapper interface that gives back a TfRefPtr of the notice.
 */
 class NoticeWrapper : public TfRefBase, public TfWeakBase {

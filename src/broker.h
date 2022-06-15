@@ -20,8 +20,6 @@
 #include <vector>
 #include <unordered_map>
 
-#include "python/predicate.h"
-
 PXR_NAMESPACE_OPEN_SCOPE
 
 class NoticeBroker;
@@ -31,6 +29,8 @@ using NoticeBrokerPtr = TfRefPtr<NoticeBroker>;
 using NoticeBrokerWeakPtr = TfWeakPtr<NoticeBroker>;
 
 using DispatcherPtr = TfRefPtr<Dispatcher>;
+using NoticeCaturePredicateFunc = 
+    std::function<bool (const UsdBrokerNotice::StageNotice &)>;
 
 class NoticeBroker : public TfRefBase, public TfWeakBase {
 public:
@@ -45,17 +45,10 @@ public:
     void BeginTransaction(const NoticeCaturePredicateFunc& predicate=nullptr);
     void EndTransaction();
 
-    void BeginTransactionWrap(_CaturePredicateFunc predicate);
-
     template<class BrokerNotice, class... Args>
     void Send(Args&&... args);
 
     void Process(const UsdBrokerNotice::StageNoticeRefPtr notice);
-
-    //This Process function is created to support NoticeWrappers; essentially, C++ "Process" goes
-    //through the normal Process function while Python function goes through ProcessWrap.
-    void ProcessWrap(const TfRefPtr<NoticeWrapper> notice);
-
 
     // Don't allow copies
     NoticeBroker(const NoticeBroker &) = delete;

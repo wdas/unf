@@ -23,15 +23,13 @@ PXR_NAMESPACE_USING_DIRECTIVE
 
 void NoticeBroker_BeginTransaction_aux(NoticeBroker& self, boost::python::object obj)
 {
-  self.BeginTransactionWrap(obj);
+  self.BeginTransaction(WrapPredicate(obj));
 }
 
-
-void NoticeBroker_Process_aux(NoticeBroker& self, UsdBrokerNotice::StageNoticeRefPtr notice)
+void NoticeBroker_Process_aux(NoticeBroker& self, TfRefPtr<NoticeWrapper> notice)
 {
-  self.Process(notice);
+  self.Process(notice->Get());
 }
-
 
 void wrapBroker()
 {
@@ -55,7 +53,7 @@ void wrapBroker()
         //For now, the Python clients can go through the Process function
         //We would need to look at some of the stakeholders who use Python-only notice
         //systems to understand what sort of API they really want.
-        .def("Process", &NoticeBroker::ProcessWrap, arg("notice"))
+        .def("Process", &NoticeBroker_Process_aux)
 
         //This definitely passes the wrong arguments -- don't do it like this!!
         //.def("BeginTransaction2", &NoticeBroker::BeginTransaction2, arg("predicate")=object());

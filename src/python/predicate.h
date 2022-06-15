@@ -16,9 +16,6 @@ PXR_NAMESPACE_USING_DIRECTIVE
 using _CaturePredicateFuncRaw = bool (object const &);
 using _CaturePredicateFunc = std::function<_CaturePredicateFuncRaw>;
 
-using NoticeCaturePredicateFunc = 
-    std::function<bool (const UsdBrokerNotice::StageNotice &)>;
-
 //When passing by reference, boost doesn't know how long to keep the object around because it's only giving us a reference.
 //And boost is the one that's holding onto the obj -- not us. Boost is probably creating the wrapper for the function and then
 //Giving it to us, and afterwards destorying it -- otherwise it would be a memory leak to keep it around forever.
