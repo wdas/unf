@@ -28,10 +28,10 @@ void wrapNotice()
 {    
     TfPyNoticeWrapper<StageNotice, TfNotice>::Wrap();
     TfPyNoticeWrapper<StageContentsChanged, StageNotice>::Wrap();
-    TfPyNoticeWrapper<ObjectsChanged, StageNotice>::Wrap();
+    TfPyNoticeWrapper<ObjectsChanged, StageNotice>::Wrap().def("GetResyncedPaths", &ObjectsChanged::GetResyncedPaths, return_value_policy<return_by_value>());
     TfPyNoticeWrapper<StageEditTargetChanged, StageNotice>::Wrap();
     TfPyNoticeWrapper<LayerMutingChanged, StageNotice>::Wrap();
 
     //TODO: REMOVE
-    TfPyNoticeWrapper<TestNotice, StageNotice>::Wrap();
+    TfPyNoticeWrapper<TestNotice, StageNotice>::Wrap().def("GetCount", &TestNotice::GetCount);
 }

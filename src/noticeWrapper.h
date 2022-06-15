@@ -20,6 +20,14 @@ public:
     NoticeWrapper(){};
 
     virtual TfRefPtr<UsdBrokerNotice::StageNotice> Get(){return nullptr;}
+
+    virtual boost::python::object GetWrap() { return {}; }
+
+    virtual void Send() {}
+
+    virtual size_t Register(std::function<void(TfRefPtr<const UsdBrokerNotice::StageNotice>)> callback) {return -1;}
+
+    virtual void UnRegister(size_t key){}
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE

@@ -4,6 +4,7 @@ _add_python_binding(
     SOURCES
         module.cpp
         wrapBroker.cpp
+        wrapCache.cpp
         wrapNotice.cpp
         wrapNoticeWrapper.cpp
         wrapTransaction.cpp

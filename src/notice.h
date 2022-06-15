@@ -28,6 +28,9 @@ public:
     virtual void Merge(StageNotice&&) {};
     virtual std::string GetTypeId() {return "";}
 
+    //Exposes the Copy function to the interface
+    virtual TfRefPtr<StageNotice> CopyAsStageNotice() const { return nullptr; }
+
 protected:
     StageNotice() = default;    
 };
@@ -46,6 +49,11 @@ public:
     TfRefPtr<Self> Copy() const
     {
         return TfCreateRefPtr(new Self(static_cast<const Self&>(*this)));
+    }
+
+    virtual TfRefPtr<StageNotice> CopyAsStageNotice() const override
+    {
+        return Copy();
     }
 
     virtual void Merge(StageNotice&& notice) override 
@@ -134,7 +142,7 @@ private:
 // TODO: DELETE -- TEST ONLY
 
 class TestNotice
-: public PXR_NS::UsdBrokerNotice::StageNotice
+: public StageNoticeImpl<TestNotice>
 {
 public:
     TestNotice(int count)
@@ -145,10 +153,15 @@ public:
     : _count(other._count)
     {}
 
+    virtual void Merge(TestNotice&& notice) override{
+        _count += notice.GetCount();
+    }
+
     int GetCount() const { return _count; }
 
 private:
     int _count;
+    friend StageNoticeImpl<TestNotice>;
 };
 
 } // namespace UsdBrokerNotice

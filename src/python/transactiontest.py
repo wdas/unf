@@ -6,7 +6,10 @@ s = Usd.Stage.CreateInMemory()
 def testPredicate(notice):
     print("predicate")
     print(notice)
+    #print(dir(notice))
     return True
+
+cache = u.NoticeCache(u.TestNoticeWrapper())
 
 print(dir(u))
 a = u.TestNoticeWrapper.Init(5)
@@ -17,6 +20,20 @@ s.DefinePrim("/root")
 myBroker.Process(a)
 myBroker.EndTransaction()
 print(myBroker.IsInTransaction())
+
+
+print("INIT B")
+b = u.TestNoticeWrapper.Init(2)
+b.Send()
+b.Send()
+print("GETALL")
+print(cache.GetAll())
+print("MERGEALL")
+print(cache.MergeAll())
+print("GETALL")
+print(cache.GetAll())
+print(cache.GetAll()[0].GetCount())
+
 '''
 myBroker = u.NoticeBroker.Create(s)
 print(dir(u))
