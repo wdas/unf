@@ -1,4 +1,4 @@
-#include "../notice.h"
+#include "notice.h"
 
 #include "pxr/pxr.h"
 #include "pxr/base/tf/notice.h"

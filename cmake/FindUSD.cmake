@@ -1,17 +1,15 @@
-# Discover Pixar USD package.
+# Discover required Pixar USD targets.
 #
-# Variable defined by this module:
-#     USD_INCLUDE_DIR
-#     USD_LIBRARY_DIR
-#     USD_LIBRARY
-#     USD_MAJOR_VERSION
-#     USD_MINOR_VERSION
-#     USD_PATCH_VERSION
-#     USD_VERSION
+# This module defines the following imorted targets:
+#     pxr::usd
+#     pxr::sdf
+#     pxr::tf
+#     pxr::arch
 #
 # Usage:
 #     find_package(USD)
 #     find_package(USD REQUIRED)
+#     find_package(USD 0.20.11 REQUIRED)
 # 
 # Note:
 #     The PXR_USD_LOCATION environment variable can be used as a hint.
@@ -21,70 +19,84 @@
 #
 #     We do not use pxrConfig.cmake to keep compatibility with USD included
 #     within Presto.
-#
+
+include(FindPackageHandleStandardArgs)
 
 if (NOT DEFINED PXR_USD_PREFIX)
     set(PXR_USD_PREFIX "usd_")
 endif()
 
 find_path(
-    USD_INCLUDE_DIR
-    NAMES
+    PXR_INCLUDE_DIR 
         pxr/pxr.h
     HINTS
         ${PXR_USD_LOCATION}
         $ENV{PXR_USD_LOCATION}
     PATH_SUFFIXES
         include
-    DOC "USD Include directory"
 )
 
-set(USD_LIBRARIES, "")
+set(PXR_LIBRARIES usd sdf tf arch)
 
-foreach(component usd sdf tf arch) 
+mark_as_advanced(PXR_INCLUDE_DIR PXR_LIBRARIES)
+
+foreach(NAME IN LISTS PXR_LIBRARIES)
     find_library(
-        "${component}_LIBRARY"
+        "${NAME}_LIBRARY"
         NAMES
-            ${PXR_USD_PREFIX}${component}
-            ${component}
+            ${PXR_USD_PREFIX}${NAME}
+            ${NAME}
         HINTS
             ${PXR_USD_LOCATION}
             $ENV{PXR_USD_LOCATION}
         PATH_SUFFIXES
             ${CMAKE_INSTALL_LIBDIR}
             lib
-        DOC
-            "${component} library"
     )
 
-    list(APPEND USD_LIBRARIES "${${component}_LIBRARY}")
-
+    mark_as_advanced("${NAME}_LIBRARY")
 endforeach()
 
-get_filename_component(USD_LIBRARY_DIR ${usd_LIBRARY} DIRECTORY)
-
-if(USD_INCLUDE_DIR AND EXISTS "${USD_INCLUDE_DIR}/pxr/pxr.h")
-    file(READ "${USD_INCLUDE_DIR}/pxr/pxr.h" _pxr_header)
-    foreach(_element MAJOR MINOR PATCH)
+if(PXR_INCLUDE_DIR AND EXISTS "${PXR_INCLUDE_DIR}/pxr/pxr.h")
+    file(READ "${PXR_INCLUDE_DIR}/pxr/pxr.h" _pxr_header)
+    foreach(label MAJOR MINOR PATCH)
         string(
-            REGEX REPLACE ".*#define PXR_${_element}_VERSION ([0-9]+).*" "\\1"
-            USD_${_element}_VERSION "${_pxr_header}"
+            REGEX REPLACE ".*#define PXR_${label}_VERSION ([0-9]+).*" "\\1"
+            _pxr_${label} "${_pxr_header}"
         )
     endforeach()
-    set(
-        USD_VERSION 
-        ${USD_MAJOR_VERSION}.${USD_MINOR_VERSION}.${USD_PATCH_VERSION}
+
+    set(USD_VERSION ${_pxr_MAJOR}.${_pxr_MINOR}.${_pxr_PATCH})
+
+    mark_as_advanced(
+        _pxr_MAJOR
+        _pxr_MINOR
+        _pxr_PATCH
+        USD_VERSION
     )
 endif()
-
-include(FindPackageHandleStandardArgs)
 
 find_package_handle_standard_args(
     USD
     REQUIRED_VARS
-        USD_INCLUDE_DIR
-        USD_LIBRARY_DIR
-        USD_LIBRARIES
+        PXR_INCLUDE_DIR
+        usd_LIBRARY
+        sdf_LIBRARY
+        tf_LIBRARY
+        arch_LIBRARY
     VERSION_VAR
         USD_VERSION
 )
+
+if (USD_FOUND)
+    foreach(NAME IN LISTS PXR_LIBRARIES)
+        if (NOT TARGET pxr::${NAME})
+            add_library(pxr::${NAME} UNKNOWN IMPORTED)
+            set_target_properties(pxr::${NAME} PROPERTIES
+                IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
+                IMPORTED_LOCATION "${${NAME}_LIBRARY}"
+                INTERFACE_INCLUDE_DIRECTORIES "${PXR_INCLUDE_DIR}"
+            )
+        endif()
+    endforeach()
+endif()
