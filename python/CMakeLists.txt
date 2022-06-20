@@ -23,6 +23,7 @@ target_include_directories(PyUsdNoticeBroker
 target_link_libraries(PyUsdNoticeBroker
     PUBLIC 
         UsdNoticeBroker
+        Boost::python
 )
 
 target_link_libraries(PyUsdNoticeBroker
