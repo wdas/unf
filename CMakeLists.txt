@@ -4,6 +4,10 @@ project(UsdNoticeBroker LANGUAGES CXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
+# Discover Python per best matching location instead of highest version.
+# https://cmake.org/cmake/help/latest/policy/CMP0094.html
+cmake_policy(SET CMP0094 NEW)
+
 find_package(USD 0.20.11 REQUIRED)
 find_package(Python COMPONENTS Interpreter Development REQUIRED)
 find_package(Boost 1.70.0 COMPONENTS python REQUIRED)
@@ -17,7 +21,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 option(BUILD_TESTS "Build tests" ON)
 option(BUILD_PYTHON_BINDINGS "Build Python Bindings" ON)
 option(BUILD_SHARED_LIBS "Build Shared Library" ON)
-option(Python_FIND_STRATEGY "Python Discovery Strategy" LOCATION)
 
 add_subdirectory(src)
 
