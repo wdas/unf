@@ -8,6 +8,9 @@ _add_python_binding(
         wrapNotice.cpp
         wrapNoticeWrapper.cpp
         wrapTransaction.cpp
+    
+    PUBLIC_HEADERS
+        noticeWrapper.h
 
     LIBRARIES
         ${USD_LIBRARIES}

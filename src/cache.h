@@ -26,6 +26,7 @@ public:
     virtual void MergeAll() = 0;
 };
 
+
 template <class T>
 class NoticeCache : public BaseNoticeCache
 {

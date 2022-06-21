@@ -1,5 +1,5 @@
 #include "../notice.h"
-#include "../noticeWrapper.h"
+#include "noticeWrapper.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/notice.h>

@@ -1,5 +1,5 @@
 import usd_notice_broker as u
-from pxr import Usd
+from pxr import Usd, Tf
 
 s = Usd.Stage.CreateInMemory()
 
@@ -9,18 +9,25 @@ def testPredicate(notice):
     #print(dir(notice))
     return True
 
-cache = u.NoticeCache(u.TestNoticeWrapper())
+def _objectsChanged(self, notice, sender=None):
+    print("OBJECTS CHANGED RECEIVED!")
+objectsChangedNotice = Tf.Notice.Register(u.ObjectsChanged,
+                                                        _objectsChanged,
+                                                        s)
 
-print(dir(u))
 a = u.TestNoticeWrapper.Init(5)
+
+cache = u.NoticeCache(u.TestNotice)
+
 myBroker = u.NoticeBroker.Create(s)
 myBroker.BeginTransaction(testPredicate)
+print("BEGIN TRANSACTION")
 print(myBroker.IsInTransaction())
 s.DefinePrim("/root")
 myBroker.Process(a)
+print("END TRANSACTION")
 myBroker.EndTransaction()
 print(myBroker.IsInTransaction())
-
 
 print("INIT B")
 b = u.TestNoticeWrapper.Init(2)

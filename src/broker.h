@@ -2,7 +2,7 @@
 #define NOTICE_BROKER_BROKER_H
 
 #include "notice.h"
-#include "noticeWrapper.h"
+#include "python/noticeWrapper.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/refBase.h>

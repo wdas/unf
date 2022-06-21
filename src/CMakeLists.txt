@@ -14,7 +14,6 @@ _add_library(
         dispatcher.h
         notice.h
         transaction.h
-        noticeWrapper.h
 
     INCLUDE_DIRS
         ${USD_INCLUDE_DIR} 

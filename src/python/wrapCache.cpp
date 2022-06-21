@@ -1,5 +1,5 @@
 #include "../cache.h"
-#include "../noticeWrapper.h"
+#include "noticeWrapper.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/stage.h>
@@ -21,21 +21,29 @@ PXR_NAMESPACE_USING_DIRECTIVE
 /*
 An alternate NoticeCache for the purpose of Python Wrapping: the original NoticeCache used templates, and this implementation
 avoids the use of templates.
-Question: Do we want to use this NoticeCache for both C++ & Python or keep the two separate?
 */
-class NoticeCache2 : public BaseNoticeCache
+class PythonNoticeCache : public BaseNoticeCache
 {
 public:
-    NoticeCache2() {}
+    PythonNoticeCache() {}
 
-    NoticeCache2(TfRefPtr<NoticeWrapper> wrapper):_wrapper(wrapper)
+    PythonNoticeCache(const TfType type)
     {
-        //Registers the _OnReceiving handler to be invoked when the notice is received.
-        _key = wrapper->Register(std::bind(&NoticeCache2::_OnReceiving, this, std::placeholders::_1));
+        _key = TfNotice::Register(
+            TfCreateWeakPtr(this), 
+            &PythonNoticeCache::_OnReceiving, type, nullptr);
     }
 
-    ~NoticeCache2() {
-        _wrapper->UnRegister(_key);
+    PythonNoticeCache(const TfType type, const TfAnyWeakPtr &sender)
+    {
+        _key = TfNotice::Register(
+            TfCreateWeakPtr(this), 
+            &PythonNoticeCache::_OnReceiving, type, sender);
+    }
+
+
+    ~PythonNoticeCache() {
+        TfNotice::Revoke(_key);
     }
 
     virtual size_t Size() const override
@@ -78,21 +86,21 @@ public:
     virtual void Clear() override { _notices.clear(); } 
 
 private:
-    void _OnReceiving(TfRefPtr<const UsdBrokerNotice::StageNotice> notice)
+    void _OnReceiving(const TfNotice& notice, const TfType& noticeType, TfWeakBase *sender, const void *senderUniqueId, const std::type_info& senderType)
     {
-        _notices.push_back(notice);
+        _notices.push_back(TfRefPtr<const UsdBrokerNotice::StageNotice>(&dynamic_cast<const UsdBrokerNotice::StageNotice&>(notice)));
     }
+ 
+   std::vector<TfRefPtr<const UsdBrokerNotice::StageNotice>> _notices;
+   TfNotice::Key _key;
 
-    TfRefPtr<NoticeWrapper> _wrapper;
-    std::vector<TfRefPtr<const UsdBrokerNotice::StageNotice>> _notices;
-    size_t _key;
 
 };
 
 void wrapCache()
 {
-    class_<NoticeCache2, boost::noncopyable>("NoticeCache")
-        .def(init<TfRefPtr<NoticeWrapper>>())
-        .def("GetAll", &NoticeCache2::GetAll)
-        .def("MergeAll", &NoticeCache2::MergeAll);
+    class_<PythonNoticeCache, boost::noncopyable>("NoticeCache")
+        .def(init<TfType>())
+        .def("GetAll", &PythonNoticeCache::GetAll)
+        .def("MergeAll", &PythonNoticeCache::MergeAll);
 }
