@@ -91,10 +91,9 @@ jobs:
                     cmake \
                         -DPXR_USD_LOCATION="$(pwd)/../USD" \
                         -DCMAKE_MODULE_PATH:FILEPATH="$(pwd)" \
-                        -DPython_FIND_STRATEGY=LOCATION \
                         ..
                     cmake --build .
             -   name: Run tests
                 run: |
                     cd build
-                    CTEST_OUTPUT_ON_FAILURE=1 make test
+                    ctest -VV

@@ -1,7 +1,7 @@
 #ifndef NOTICE_BROKER_NOTICE_WRAPPER_H
 #define NOTICE_BROKER_NOTICE_WRAPPER_H
 
-#include "../notice.h"
+#include "notice.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/refPtr.h>

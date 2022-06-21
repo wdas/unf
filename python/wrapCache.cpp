@@ -1,5 +1,6 @@
-#include "../cache.h"
-#include "noticeWrapper.h"
+#include "./noticeWrapper.h"
+
+#include "cache.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/stage.h>

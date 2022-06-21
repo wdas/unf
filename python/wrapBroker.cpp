@@ -1,5 +1,7 @@
-#include "../broker.h"
 #include "./predicate.h"
+#include "./noticeWrapper.h"
+
+#include "broker.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/stage.h>
