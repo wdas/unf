@@ -1,5 +1,6 @@
-#include "../transaction.h"
 #include "./predicate.h"
+
+#include "transaction.h"
 
 #include "pxr/pxr.h"
 #include "pxr/usd/usd/stage.h"

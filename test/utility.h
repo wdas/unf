@@ -1,7 +1,7 @@
 #ifndef NOTICE_BROKER_TEST_UTILITY_H
 #define NOTICE_BROKER_TEST_UTILITY_H
 
-#include "../notice.h"
+#include "notice.h"
 
 #include "pxr/pxr.h"
 #include "pxr/base/tf/notice.h"

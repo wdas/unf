@@ -1,4 +1,4 @@
-#include "../broker.h"
+#include "broker.h"
 
 #include "pxr/pxr.h"
 #include "pxr/usd/usd/stage.h"
