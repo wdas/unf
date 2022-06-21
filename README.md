@@ -15,7 +15,7 @@ cmake -DCMAKE_INSTALL_PREFIX=/tmp ..
 cmake --build . --target install
 ```
 
-Here are the available options that can be used:
+Here a few options that can be used:
 
 | Option                 | Description                                                         |
 | ---------------------- | ------------------------------------------------------------------- |
