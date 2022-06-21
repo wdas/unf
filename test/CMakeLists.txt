@@ -10,12 +10,8 @@ foreach(NAME IN LISTS CLASSES)
     add_executable(${NAME} "${NAME}.cpp")
 
     target_link_libraries(${NAME}
-        PUBLIC 
-            UsdNoticeBroker
-    )
-
-    target_link_libraries(${NAME}
         PRIVATE 
+            UsdNoticeBroker
             Boost::boost
             Boost::python
             Python::Python

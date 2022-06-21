@@ -5,8 +5,6 @@ add_library(UsdNoticeBroker
     transaction.cpp
 )
 
-target_compile_features(UsdNoticeBroker PUBLIC cxx_std_14)
-
 # Suppress warning sfrom USD regarding deprecated TBB features.
 # https://github.com/PixarAnimationStudios/USD/issues/1471
 target_compile_definitions(UsdNoticeBroker 

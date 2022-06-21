@@ -1,6 +1,6 @@
 # Discover required Pixar USD targets.
 #
-# This module defines the following imorted targets:
+# This module defines the following imported targets:
 #     pxr::usd
 #     pxr::sdf
 #     pxr::tf
@@ -53,6 +53,8 @@ foreach(NAME IN LISTS PXR_LIBRARIES)
             ${CMAKE_INSTALL_LIBDIR}
             lib
     )
+
+    get_filename_component(${NAME}_LIBRARY "${${NAME}_LIBRARY}" REALPATH)
 
     mark_as_advanced("${NAME}_LIBRARY")
 endforeach()
