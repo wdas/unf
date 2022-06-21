@@ -15,7 +15,7 @@ cmake -DCMAKE_INSTALL_PREFIX=/tmp ..
 cmake --build . --target install
 ```
 
-Here a few options that can be used:
+Here a few CMake options that can be used to influence the building process:
 
 | Option                 | Description                                                         |
 | ---------------------- | ------------------------------------------------------------------- |
@@ -23,6 +23,12 @@ Here a few options that can be used:
 | BUILD_TESTS            | Indicate whether tests should be built. Default is true.            |
 | BUILD_PYTHON_BINDINGS  | Indicate whether Python bindings should be built. Default is true.  |
 | BUILD_SHARED_LIBS      | Indicate whether library should be built shared. Default is true.   |
+
+For instance:
+
+```bash
+cmake -DPXR_USD_LOCATION=/path/to/usd -DCMAKE_INSTALL_PREFIX=/tmp ..
+```
 
 ## Testing
 
