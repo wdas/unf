@@ -27,9 +27,10 @@ class Dispatcher;
 using NoticeBrokerPtr = TfRefPtr<NoticeBroker>;
 using NoticeBrokerWeakPtr = TfWeakPtr<NoticeBroker>;
 
-using DispatcherPtr = TfRefPtr<Dispatcher>;
 using NoticeCaturePredicateFunc = 
     std::function<bool (const UsdBrokerNotice::StageNotice &)>;
+
+using DispatcherPtr = TfRefPtr<Dispatcher>;
 
 class NoticeBroker : public TfRefBase, public TfWeakBase {
 public:
