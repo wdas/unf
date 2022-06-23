@@ -21,8 +21,8 @@ struct PythonNoticeTransaction
         const _CaturePredicateFunc &predicate)
         : _predicate(predicate)
     {
-        _makeContext = [&]() { 
-            return new NoticeTransaction(broker, WrapPredicate(_predicate)); 
+        _makeContext = [&]() {
+            return new NoticeTransaction(broker, WrapPredicate(_predicate));
         };
     }
 
@@ -31,8 +31,8 @@ struct PythonNoticeTransaction
         const _CaturePredicateFunc &predicate)
         : _predicate(predicate)
     {
-        _makeContext = [&]() { 
-            return new NoticeTransaction(stage, WrapPredicate(_predicate)); 
+        _makeContext = [&]() {
+            return new NoticeTransaction(stage, WrapPredicate(_predicate));
         };
     }
 
@@ -51,10 +51,10 @@ private:
 
 void
 wrapTransaction()
-{  
+{
     // Ensure that predicate function can be passed from Python.
     TfPyFunctionFromPython<_CaturePredicateFuncRaw>();
-  
+
     class_<PythonNoticeTransaction>("NoticeTransaction", no_init)
         .def(init<const NoticeBrokerWeakPtr&, const _CaturePredicateFunc&>
              ((arg("broker"), arg("predicate")=object())))

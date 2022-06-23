@@ -37,7 +37,7 @@ TEST(AddPrim, NoticesComparison)
     // Edit the stage...
     stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
 
-    // Ensure that similar notices are received via the stage and the broker. 
+    // Ensure that similar notices are received via the stage and the broker.
     ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 2);
     ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 1);
     ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 1);
@@ -77,12 +77,12 @@ TEST(AddPrims, NoticesComparison)
         _USD::LayerMutingChanged
     > listener2(stage);
 
-    // Edit the stage...    
+    // Edit the stage...
     stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
     stage->DefinePrim(PXR_NS::SdfPath {"/Bar"});
     stage->DefinePrim(PXR_NS::SdfPath {"/Baz"});
 
-    // Ensure that similar notices are received via the stage and the broker. 
+    // Ensure that similar notices are received via the stage and the broker.
     ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 6);
     ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 3);
     ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 3);
@@ -122,11 +122,11 @@ TEST(MuteLayer, NoticesComparison)
         _USD::LayerMutingChanged
     > listener2(stage);
 
-    // Edit the stage...    
+    // Edit the stage...
     auto layers = stage->GetRootLayer()->GetSubLayerPaths();
     stage->MuteLayer(layers[0]);
 
-    // Ensure that similar notices are received via the stage and the broker. 
+    // Ensure that similar notices are received via the stage and the broker.
     ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 3);
     ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 1);
     ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 1);
@@ -166,7 +166,7 @@ TEST(MuteLayers, NoticesComparison)
         _USD::LayerMutingChanged
     > listener2(stage);
 
-    // Edit the stage...    
+    // Edit the stage...
     auto layers = stage->GetRootLayer()->GetSubLayerPaths();
 
     // Keep ref pointer to the layer we try to mute and unmute to
@@ -177,10 +177,10 @@ TEST(MuteLayers, NoticesComparison)
     stage->MuteLayer(layers[1]);
     stage->UnmuteLayer(layers[1]);
     stage->MuteAndUnmuteLayers(
-        std::vector<std::string>{layers[2], layers[1]}, 
+        std::vector<std::string>{layers[2], layers[1]},
         std::vector<std::string>{});
 
-    // Ensure that similar notices are received via the stage and the broker. 
+    // Ensure that similar notices are received via the stage and the broker.
     ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 12);
     ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 4);
     ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 4);
@@ -228,7 +228,7 @@ TEST(ChangeEditTarget, NoticesComparison)
     stage->SetEditTarget(PXR_NS::UsdEditTarget(layer1));
     stage->SetEditTarget(PXR_NS::UsdEditTarget(layer2));
 
-    // Ensure that similar notices are received via the stage and the broker. 
+    // Ensure that similar notices are received via the stage and the broker.
     ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 2);
     ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 0);
     ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 0);
@@ -277,7 +277,7 @@ TEST(Registry, DuplicateRegistry)
     // Ensure no new brokers were created.
     ASSERT_TRUE(broker1->GetCurrentCount() == 3);
     ASSERT_TRUE(broker1 == broker2);
-    
+
     // Create a broker for a different stage.
     auto stage2 = PXR_NS::UsdStage::CreateInMemory();
     auto broker3 = PXR_NS::NoticeBroker::Create(stage2);
@@ -287,7 +287,7 @@ TEST(Registry, DuplicateRegistry)
 
     auto broker4 = PXR_NS::NoticeBroker::Create(stage1);
     auto broker5 = PXR_NS::NoticeBroker::Create(stage2);
-    
+
     // Ensure that the existing broker returned is the correct broker.
     ASSERT_TRUE(broker4 == broker1);
     ASSERT_TRUE(broker5 == broker3);
@@ -304,7 +304,7 @@ TEST(Registry, CleanRegistry)
     auto broker3 = PXR_NS::NoticeBroker::Create(stage2);
 
     ASSERT_TRUE(broker3->GetCurrentCount() == 2);
-    
+
     //Stage is destroyed.
     stage1.Reset();
 

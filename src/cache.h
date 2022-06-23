@@ -40,7 +40,7 @@ public:
         );
 
         _key = TfNotice::Register(
-            TfCreateWeakPtr(this), 
+            TfCreateWeakPtr(this),
             &NoticeCache::_OnReceiving);
     }
 
@@ -53,8 +53,8 @@ public:
         );
 
        _key = TfNotice::Register(
-            TfCreateWeakPtr(this), 
-            &NoticeCache::_OnReceiving, 
+            TfCreateWeakPtr(this),
+            &NoticeCache::_OnReceiving,
             sender);
     }
 
@@ -69,12 +69,12 @@ public:
     }
 
     virtual const std::vector<TfRefPtr<const T> >& GetAll() const
-    { 
-        return _notices; 
+    {
+        return _notices;
     }
 
     virtual void MergeAll() override
-    { 
+    {
         if (!(_notices.size() > 1 && _notices[0]->IsMergeable())) {
             return;
         }
@@ -93,7 +93,7 @@ public:
         _notices = std::vector<TfRefPtr<const T> > {notice};
     }
 
-    virtual void Clear() override { _notices.clear(); } 
+    virtual void Clear() override { _notices.clear(); }
 
 private:
     void _OnReceiving(const T& notice)

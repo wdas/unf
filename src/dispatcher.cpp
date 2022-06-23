@@ -10,7 +10,7 @@
 PXR_NAMESPACE_OPEN_SCOPE
 
 Dispatcher::Dispatcher(const NoticeBrokerWeakPtr& broker)
-    : _broker(broker) 
+    : _broker(broker)
 {
 
 }
@@ -21,16 +21,16 @@ StageDispatcher::StageDispatcher(const NoticeBrokerWeakPtr& broker)
     _keys.reserve(4);
 
     _Register<
-        UsdBrokerNotice::StageContentsChanged, 
+        UsdBrokerNotice::StageContentsChanged,
         UsdNotice::StageContentsChanged>();
     _Register<
-        UsdBrokerNotice::ObjectsChanged, 
+        UsdBrokerNotice::ObjectsChanged,
         UsdNotice::ObjectsChanged>();
     _Register<
-        UsdBrokerNotice::StageEditTargetChanged, 
+        UsdBrokerNotice::StageEditTargetChanged,
         UsdNotice::StageEditTargetChanged>();
     _Register<
-        UsdBrokerNotice::LayerMutingChanged, 
+        UsdBrokerNotice::LayerMutingChanged,
         UsdNotice::LayerMutingChanged>();
 }
 

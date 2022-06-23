@@ -27,7 +27,7 @@ class Dispatcher;
 using NoticeBrokerPtr = TfRefPtr<NoticeBroker>;
 using NoticeBrokerWeakPtr = TfWeakPtr<NoticeBroker>;
 
-using NoticeCaturePredicateFunc = 
+using NoticeCaturePredicateFunc =
     std::function<bool (const UsdBrokerNotice::StageNotice &)>;
 
 using DispatcherPtr = TfRefPtr<Dispatcher>;
@@ -75,7 +75,7 @@ private:
             : noticeMap(std::move(t.noticeMap))
             , predicate(t.predicate) {}
 
-        using _StageNoticePtrList = 
+        using _StageNoticePtrList =
             std::vector<UsdBrokerNotice::StageNoticeRefPtr>;
 
         std::unordered_map<std::string, _StageNoticePtrList> noticeMap;
@@ -86,7 +86,7 @@ private:
 
     void _SendNotices(_TransactionHandler&);
     static void _CleanCache();
-    
+
     // A registry of hashed stage ptr to the corresponding stage's broker ptr.
     static std::unordered_map<size_t, TfRefPtr<NoticeBroker>> noticeBrokerRegistry;
 

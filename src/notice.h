@@ -32,7 +32,7 @@ public:
     virtual TfRefPtr<StageNotice> CopyAsStageNotice() const { return nullptr; }
 
 protected:
-    StageNotice() = default;    
+    StageNotice() = default;
 };
 
 using StageNoticeRefPtr = TfRefPtr<StageNotice>;
@@ -42,9 +42,9 @@ template<class Self>
 class StageNoticeImpl : public StageNotice {
 public:
     template <class... Args>
-    static TfRefPtr<Self> Create(Args&&... args) 
-    { 
-        return TfCreateRefPtr(new Self(std::forward<Args>(args)...)); 
+    static TfRefPtr<Self> Create(Args&&... args)
+    {
+        return TfCreateRefPtr(new Self(std::forward<Args>(args)...));
     }
 
     TfRefPtr<Self> Copy() const
@@ -57,7 +57,7 @@ public:
         return Copy();
     }
 
-    virtual void Merge(StageNotice&& notice) override 
+    virtual void Merge(StageNotice&& notice) override
     {
         Merge(dynamic_cast<Self&&>(notice));
     }
@@ -147,7 +147,7 @@ class TestNotice
 {
 public:
     TestNotice(int count)
-    : _count(count) 
+    : _count(count)
     {}
 
     TestNotice(const TestNotice& other)

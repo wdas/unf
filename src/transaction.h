@@ -11,10 +11,10 @@ PXR_NAMESPACE_OPEN_SCOPE
 class NoticeTransaction {
 public:
     NoticeTransaction(
-        const NoticeBrokerPtr&, 
+        const NoticeBrokerPtr&,
         const NoticeCaturePredicateFunc& predicate=nullptr);
     NoticeTransaction(
-        const UsdStageRefPtr&, 
+        const UsdStageRefPtr&,
         const NoticeCaturePredicateFunc& predicate=nullptr);
 
     ~NoticeTransaction();

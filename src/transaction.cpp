@@ -7,7 +7,7 @@
 PXR_NAMESPACE_OPEN_SCOPE
 
 NoticeTransaction::NoticeTransaction(
-    const NoticeBrokerPtr& broker, 
+    const NoticeBrokerPtr& broker,
     const NoticeCaturePredicateFunc& predicate)
     : _broker(broker)
 {
@@ -16,7 +16,7 @@ NoticeTransaction::NoticeTransaction(
 
 // TODO: Add a register to ensure a unique Broker per Stage
 NoticeTransaction::NoticeTransaction(
-    const UsdStageRefPtr& stage, 
+    const UsdStageRefPtr& stage,
     const NoticeCaturePredicateFunc& predicate)
     : _broker(NoticeBroker::Create(stage))
 {

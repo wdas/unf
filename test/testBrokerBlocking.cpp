@@ -46,7 +46,7 @@ TEST(AddPrims, NoticesComparison)
     stage->DefinePrim(PXR_NS::SdfPath {"/Bar"});
     stage->DefinePrim(PXR_NS::SdfPath {"/Baz"});
 
-    // Ensure that broker notices are not sent during a transaction. 
+    // Ensure that broker notices are not sent during a transaction.
     ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 0);
     ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 0);
     ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 0);
@@ -115,10 +115,10 @@ TEST(MuteLayers, NoticesComparison)
     stage->MuteLayer(layers[1]);
     stage->UnmuteLayer(layers[1]);
     stage->MuteAndUnmuteLayers(
-        std::vector<std::string>{layers[2], layers[1]}, 
+        std::vector<std::string>{layers[2], layers[1]},
         std::vector<std::string>{});
 
-    // Ensure that broker notices are not sent during a transaction. 
+    // Ensure that broker notices are not sent during a transaction.
     ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 0);
     ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 0);
     ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 0);
@@ -184,7 +184,7 @@ TEST(ChangeEditTarget, NoticesComparison)
     stage->SetEditTarget(PXR_NS::UsdEditTarget(layer1));
     stage->SetEditTarget(PXR_NS::UsdEditTarget(layer2));
 
-    // Ensure that broker notices are not sent during a transaction. 
+    // Ensure that broker notices are not sent during a transaction.
     ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 0);
     ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 0);
     ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 0);
@@ -239,7 +239,7 @@ TEST(CustomNotices, Handling)
     broker->Send<::Test::UnMergeableNotice>();
     broker->Send<::Test::UnMergeableNotice>();
 
-    // Ensure that broker notices are not sent during a transaction. 
+    // Ensure that broker notices are not sent during a transaction.
     ASSERT_EQ(listener.Received<::Test::MergeableNotice>(), 0);
     ASSERT_EQ(listener.Received<::Test::UnMergeableNotice>(), 0);
 

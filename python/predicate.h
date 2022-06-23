@@ -21,7 +21,7 @@ using _CaturePredicateFunc = std::function<_CaturePredicateFuncRaw>;
 static NoticeCaturePredicateFunc WrapPredicate(_CaturePredicateFunc fn)
 {
     // Capture by-copy to prevent boost object from being destroyed.
-    return [=](const UsdBrokerNotice::StageNotice& notice) { 
+    return [=](const UsdBrokerNotice::StageNotice& notice) {
         TfPyLock lock;
 
         if (!fn)

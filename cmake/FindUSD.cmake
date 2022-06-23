@@ -10,11 +10,11 @@
 #     find_package(USD)
 #     find_package(USD REQUIRED)
 #     find_package(USD 0.20.11 REQUIRED)
-# 
+#
 # Note:
 #     The PXR_USD_LOCATION environment variable can be used as a hint.
 #
-#     The PXR_USD_PREFIX environment variable can be used to indicate the 
+#     The PXR_USD_PREFIX environment variable can be used to indicate the
 #     expected library prefix. By default, it will look for "libusd_" and "lib".
 #
 #     We do not use pxrConfig.cmake to keep compatibility with USD included
@@ -27,7 +27,7 @@ if (NOT DEFINED PXR_USD_PREFIX)
 endif()
 
 find_path(
-    PXR_INCLUDE_DIR 
+    PXR_INCLUDE_DIR
         pxr/pxr.h
     HINTS
         ${PXR_USD_LOCATION}

@@ -26,7 +26,7 @@ TF_INSTANTIATE_NOTICE_WRAPPER(LayerMutingChanged, StageNotice);
 TF_INSTANTIATE_NOTICE_WRAPPER(TestNotice, StageNotice);
 
 void wrapNotice()
-{    
+{
     TfPyNoticeWrapper<StageNotice, TfNotice>::Wrap();
     TfPyNoticeWrapper<StageContentsChanged, StageNotice>::Wrap();
     TfPyNoticeWrapper<ObjectsChanged, StageNotice>::Wrap().def("GetResyncedPaths", &ObjectsChanged::GetResyncedPaths, return_value_policy<return_by_value>());

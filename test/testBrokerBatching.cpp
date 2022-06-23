@@ -41,7 +41,7 @@ TEST(AddPrim, NoticesComparison)
     // Edit the stage...
     stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
 
-    // Ensure that broker notices are not sent during a transaction. 
+    // Ensure that broker notices are not sent during a transaction.
     ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 0);
     ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 0);
     ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 0);
@@ -82,8 +82,8 @@ TEST(AddPrim, ObjectsChanged)
 
     private:
         void OnReceiving(
-            const Notice& n, 
-            const PXR_NS::UsdStageWeakPtr&) override 
+            const Notice& n,
+            const PXR_NS::UsdStageWeakPtr&) override
         {
             ASSERT_EQ(n.GetResyncedPaths().size(), 1);
             ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath {"/Foo"});
@@ -136,7 +136,7 @@ TEST(AddPrims, NoticesComparison)
     stage->DefinePrim(PXR_NS::SdfPath {"/Bar"});
     stage->DefinePrim(PXR_NS::SdfPath {"/Baz"});
 
-    // Ensure that broker notices are not sent during a transaction. 
+    // Ensure that broker notices are not sent during a transaction.
     ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 0);
     ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 0);
     ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 0);
@@ -177,8 +177,8 @@ TEST(AddPrims, ObjectsChanged)
 
     private:
         void OnReceiving(
-            const Notice& n, 
-            const PXR_NS::UsdStageWeakPtr&) override 
+            const Notice& n,
+            const PXR_NS::UsdStageWeakPtr&) override
         {
             ASSERT_EQ(n.GetResyncedPaths().size(), 3);
             ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath {"/Foo"});
@@ -234,7 +234,7 @@ TEST(MuteLayer, NoticesComparison)
     auto layers = stage->GetRootLayer()->GetSubLayerPaths();
     stage->MuteLayer(layers[0]);
 
-    // Ensure that broker notices are not sent during a transaction. 
+    // Ensure that broker notices are not sent during a transaction.
     ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 0);
     ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 0);
     ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 0);
@@ -281,8 +281,8 @@ TEST(MuteLayer, ObjectsChanged)
 
     private:
         void OnReceiving(
-            const Notice& n, 
-            const PXR_NS::UsdStageWeakPtr&) override 
+            const Notice& n,
+            const PXR_NS::UsdStageWeakPtr&) override
         {
             ASSERT_EQ(n.GetResyncedPaths().size(), 1);
             ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath {"/"});
@@ -315,8 +315,8 @@ TEST(MuteLayer, LayerMutingChanged)
 
     private:
         void OnReceiving(
-            const Notice& n, 
-            const PXR_NS::UsdStageWeakPtr& stage) override 
+            const Notice& n,
+            const PXR_NS::UsdStageWeakPtr& stage) override
         {
             auto _layers = stage->GetRootLayer()->GetSubLayerPaths();
             ASSERT_EQ(n.GetMutedLayers().size(), 1);
@@ -377,10 +377,10 @@ TEST(MuteLayers, NoticesComparison)
     stage->MuteLayer(layers[1]);
     stage->UnmuteLayer(layers[1]);
     stage->MuteAndUnmuteLayers(
-        std::vector<std::string>{layers[2], layers[1]}, 
+        std::vector<std::string>{layers[2], layers[1]},
         std::vector<std::string>{});
 
-    // Ensure that broker notices are not sent during a transaction. 
+    // Ensure that broker notices are not sent during a transaction.
     ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 0);
     ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 0);
     ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 0);
@@ -433,8 +433,8 @@ TEST(MuteLayers, ObjectsChanged)
 
     private:
         void OnReceiving(
-            const Notice& n, 
-            const PXR_NS::UsdStageWeakPtr&) override 
+            const Notice& n,
+            const PXR_NS::UsdStageWeakPtr&) override
         {
             ASSERT_EQ(n.GetResyncedPaths().size(), 1);
             ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath {"/"});
@@ -451,7 +451,7 @@ TEST(MuteLayers, ObjectsChanged)
     stage->MuteLayer(layers[1]);
     stage->UnmuteLayer(layers[1]);
     stage->MuteAndUnmuteLayers(
-        std::vector<std::string>{layers[2], layers[1]}, 
+        std::vector<std::string>{layers[2], layers[1]},
         std::vector<std::string>{});
 
     broker->EndTransaction();
@@ -472,8 +472,8 @@ TEST(MuteLayers, LayerMutingChanged)
 
     private:
         void OnReceiving(
-            const Notice& n, 
-            const PXR_NS::UsdStageWeakPtr& stage) override 
+            const Notice& n,
+            const PXR_NS::UsdStageWeakPtr& stage) override
         {
             auto _layers = stage->GetRootLayer()->GetSubLayerPaths();
             ASSERT_EQ(n.GetMutedLayers().size(), 3);
@@ -499,7 +499,7 @@ TEST(MuteLayers, LayerMutingChanged)
     stage->MuteLayer(layers[1]);
     stage->UnmuteLayer(layers[1]);
     stage->MuteAndUnmuteLayers(
-        std::vector<std::string>{layers[2], layers[1]}, 
+        std::vector<std::string>{layers[2], layers[1]},
         std::vector<std::string>{});
 
     broker->EndTransaction();
@@ -543,7 +543,7 @@ TEST(ChangeEditTarget, NoticesComparison)
     stage->SetEditTarget(PXR_NS::UsdEditTarget(layer1));
     stage->SetEditTarget(PXR_NS::UsdEditTarget(layer2));
 
-    // Ensure that broker notices are not sent during a transaction. 
+    // Ensure that broker notices are not sent during a transaction.
     ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 0);
     ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 0);
     ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 0);
@@ -592,7 +592,7 @@ TEST(CustomNotices, Comparison)
     broker->Send<::Test::UnMergeableNotice>();
     broker->Send<::Test::UnMergeableNotice>();
 
-    // Ensure that broker notices are not sent during a transaction. 
+    // Ensure that broker notices are not sent during a transaction.
     ASSERT_EQ(listener.Received<::Test::MergeableNotice>(), 0);
     ASSERT_EQ(listener.Received<::Test::UnMergeableNotice>(), 0);
 
@@ -621,10 +621,10 @@ TEST(CustomNotices, MergeableNotice)
 
     private:
         void OnReceiving(
-            const Notice& n, 
-            const PXR_NS::UsdStageWeakPtr&) override 
+            const Notice& n,
+            const PXR_NS::UsdStageWeakPtr&) override
         {
-            ASSERT_EQ(n.GetData(), 
+            ASSERT_EQ(n.GetData(),
                 ::Test::DataMap({{"Foo", "Test2"}, {"Bar", "Test3"}}));
         }
     };
