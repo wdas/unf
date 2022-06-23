@@ -21,7 +21,7 @@ void wrapBroker()
 
         .def(TfPyRefAndWeakPtr())
 
-        .def("Create", &NoticeBroker::Create, arg("stage"), 
+        .def("Create", &NoticeBroker::Create, arg("stage"),
             return_value_policy<TfPyRefPtrFactory<> >())
         .staticmethod("Create")
 

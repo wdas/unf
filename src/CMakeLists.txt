@@ -7,22 +7,22 @@ add_library(UsdNoticeBroker
 
 # Suppress warning sfrom USD regarding deprecated TBB features.
 # https://github.com/PixarAnimationStudios/USD/issues/1471
-target_compile_definitions(UsdNoticeBroker 
+target_compile_definitions(UsdNoticeBroker
     PUBLIC TBB_SUPPRESS_DEPRECATED_MESSAGES)
 
 # Suppress warnings from USD library including <ext/hash_set> .
 # https://github.com/PixarAnimationStudios/USD/issues/1057
-target_compile_definitions(UsdNoticeBroker 
+target_compile_definitions(UsdNoticeBroker
     PUBLIC _GLIBCXX_PERMIT_BACKWARD_HASH)
 
-target_include_directories(UsdNoticeBroker 
-    PUBLIC 
+target_include_directories(UsdNoticeBroker
+    PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 target_link_libraries(UsdNoticeBroker
-    PUBLIC 
+    PUBLIC
         pxr::arch
         pxr::sdf
         pxr::tf
@@ -30,14 +30,15 @@ target_link_libraries(UsdNoticeBroker
 )
 
 target_link_libraries(UsdNoticeBroker
-    PRIVATE 
+    PRIVATE
         Boost::boost
         Python::Python
+        tbb::tbb
 )
 
 install(TARGETS UsdNoticeBroker EXPORT ${PROJECT_NAME})
 install(
-    FILES 
+    FILES
         broker.h
         dispatcher.h
         notice.h

@@ -50,7 +50,7 @@ TEST(Batching, WithBroker)
         stage->MuteLayer(layers[1]);
         stage->SetEditTarget(PXR_NS::UsdEditTarget(layer1));
 
-        // Ensure that broker notices are not sent during a transaction. 
+        // Ensure that broker notices are not sent during a transaction.
         ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 0);
         ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 0);
         ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 0);
@@ -111,7 +111,7 @@ TEST(Batching, WithoutBroker)
         stage->MuteLayer(layers[1]);
         stage->SetEditTarget(PXR_NS::UsdEditTarget(layer1));
 
-        // Ensure that broker notices are not sent during a transaction. 
+        // Ensure that broker notices are not sent during a transaction.
         ASSERT_EQ(listener1.Received<_Broker::StageNotice>(), 0);
         ASSERT_EQ(listener1.Received<_Broker::StageContentsChanged>(), 0);
         ASSERT_EQ(listener1.Received<_Broker::ObjectsChanged>(), 0);

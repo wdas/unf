@@ -20,7 +20,7 @@ using _CaturePredicateFunc = std::function<_CaturePredicateFuncRaw>;
 
 static NoticeCaturePredicateFunc WrapPredicate(const _CaturePredicateFunc &fn)
 {
-    return [&](const UsdBrokerNotice::StageNotice& notice) { 
+    return [&](const UsdBrokerNotice::StageNotice& notice) {
         TfPyLock lock;
 
         if (!fn)

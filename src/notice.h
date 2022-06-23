@@ -28,16 +28,16 @@ public:
     virtual void Merge(StageNotice&&) {};
 
 protected:
-    StageNotice() = default;    
+    StageNotice() = default;
 };
 
 template<class Self>
 class StageNoticeImpl : public StageNotice {
 public:
     template <class... Args>
-    static TfRefPtr<Self> Create(Args&&... args) 
-    { 
-        return TfCreateRefPtr(new Self(std::forward<Args>(args)...)); 
+    static TfRefPtr<Self> Create(Args&&... args)
+    {
+        return TfCreateRefPtr(new Self(std::forward<Args>(args)...));
     }
 
     TfRefPtr<Self> Copy() const
@@ -45,7 +45,7 @@ public:
         return TfCreateRefPtr(new Self(static_cast<const Self&>(*this)));
     }
 
-    virtual void Merge(StageNotice&& notice) override 
+    virtual void Merge(StageNotice&& notice) override
     {
         Merge(dynamic_cast<Self&&>(notice));
     }

@@ -16,7 +16,7 @@ TF_INSTANTIATE_NOTICE_WRAPPER(StageEditTargetChanged, StageNotice);
 TF_INSTANTIATE_NOTICE_WRAPPER(LayerMutingChanged, StageNotice);
 
 void wrapNotice()
-{    
+{
     TfPyNoticeWrapper<StageNotice, TfNotice>::Wrap();
     TfPyNoticeWrapper<StageContentsChanged, StageNotice>::Wrap();
     TfPyNoticeWrapper<ObjectsChanged, StageNotice>::Wrap();

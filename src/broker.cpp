@@ -74,7 +74,7 @@ void NoticeBroker::_SendNotices(_TransactionHandler& transaction)
 
         // If there are more than one notice for this type and
         // if the notices are mergeable, we only need to keep the
-        // first notice, and all other can be pruned. 
+        // first notice, and all other can be pruned.
         if (notices.size() > 1 && notices[0]->IsMergeable()) {
             auto& notice = notices.at(0);
             auto it = std::next(notices.begin());
@@ -117,8 +117,8 @@ void NoticeBroker::_TransactionHandler::Join(
 
         target.reserve(target.size() + source.size());
         std::move(
-            std::begin(source), 
-            std::end(source), 
+            std::begin(source),
+            std::end(source),
             std::back_inserter(target));
         source.clear();
     }

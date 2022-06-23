@@ -212,7 +212,7 @@ TEST(MuteLayers, ObjectsChanged)
     stage->MuteLayer(layers[1]);
     stage->UnmuteLayer(layers[1]);
     stage->MuteAndUnmuteLayers(
-        std::vector<std::string>{layers[2], layers[1]}, 
+        std::vector<std::string>{layers[2], layers[1]},
         std::vector<std::string>{});
 
     // Ensure that four notices have been cached.
@@ -297,7 +297,7 @@ TEST(MuteLayers, StageContentsChanged)
     stage->MuteLayer(layers[1]);
     stage->UnmuteLayer(layers[1]);
     stage->MuteAndUnmuteLayers(
-        std::vector<std::string>{layers[2], layers[1]}, 
+        std::vector<std::string>{layers[2], layers[1]},
         std::vector<std::string>{});
 
     // Ensure that four notices have been cached.
@@ -367,7 +367,7 @@ TEST(MuteLayers, LayerMutingChanged)
     stage->MuteLayer(layers[1]);
     stage->UnmuteLayer(layers[1]);
     stage->MuteAndUnmuteLayers(
-        std::vector<std::string>{layers[2], layers[1]}, 
+        std::vector<std::string>{layers[2], layers[1]},
         std::vector<std::string>{});
 
     // Ensure that four notices have been cached.
@@ -473,7 +473,7 @@ TEST(CustomNotices, MergeableNotice)
     // Ensure that the content of the notice is correct.
     {
         auto& n = cache.GetAll().at(0);
-        ASSERT_EQ(n->GetData(), 
+        ASSERT_EQ(n->GetData(),
             ::Test::DataMap({{"Foo", "Test2"}, {"Bar", "Test3"}}));
     }
 }

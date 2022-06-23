@@ -14,22 +14,23 @@ target_compile_definitions(
     PyUsdNoticeBroker PRIVATE BOOST_PYTHON_NO_PY_SIGNATURES)
 
 
-target_include_directories(PyUsdNoticeBroker 
-    PUBLIC 
+target_include_directories(PyUsdNoticeBroker
+    PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 target_link_libraries(PyUsdNoticeBroker
-    PUBLIC 
+    PUBLIC
         UsdNoticeBroker
         Boost::python
 )
 
 target_link_libraries(PyUsdNoticeBroker
-    PRIVATE 
+    PRIVATE
         Boost::boost
         Python::Python
+        tbb::tbb
 )
 
 set_target_properties(PyUsdNoticeBroker PROPERTIES PREFIX "")
@@ -48,7 +49,7 @@ target_compile_definitions(
 )
 
 set(PYTHON_VERSION "${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}")
-set(PYTHON_DESTINATION 
+set(PYTHON_DESTINATION
     "${CMAKE_INSTALL_LIBDIR}/python${PYTHON_VERSION}/site-packages")
 
 install(

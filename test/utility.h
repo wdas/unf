@@ -55,8 +55,8 @@ public:
     ListenerBase(const PXR_NS::UsdStageWeakPtr &stage) {
         auto self = PXR_NS::TfCreateWeakPtr(this);
         _key =  PXR_NS::TfNotice::Register(
-            PXR_NS::TfCreateWeakPtr(this), 
-            &ListenerBase::OnReceiving, 
+            PXR_NS::TfCreateWeakPtr(this),
+            &ListenerBase::OnReceiving,
             stage);
     }
 
@@ -106,7 +106,7 @@ public:
 private:
     template<class T>
     std::pair<std::string, PXR_NS::TfNotice::Key> _Register(
-        const PXR_NS::TfWeakPtr<Listener>& self, 
+        const PXR_NS::TfWeakPtr<Listener>& self,
         const PXR_NS::UsdStageWeakPtr &stage)
     {
         auto cb = &Listener::_Callback<T>;
@@ -131,12 +131,12 @@ private:
 };
 
 // Custom notice with can be consolidated within broker transactions.
-class MergeableNotice 
+class MergeableNotice
 : public PXR_NS::UsdBrokerNotice::StageNoticeImpl<MergeableNotice>
 {
 public:
     MergeableNotice(const DataMap& data)
-    : _data(data) 
+    : _data(data)
     {}
 
     MergeableNotice(const MergeableNotice& other)
@@ -166,7 +166,7 @@ private:
 };
 
 // Custom notice with can not be consolidated within broker transactions.
-class UnMergeableNotice 
+class UnMergeableNotice
 : public PXR_NS::UsdBrokerNotice::StageNoticeImpl<UnMergeableNotice>
 {
 public:
