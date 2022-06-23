@@ -30,7 +30,7 @@ target_link_libraries(PyUsdNoticeBroker
     PRIVATE
         Boost::boost
         Python::Python
-        tbb::tbb
+        TBB::tbb
 )
 
 set_target_properties(PyUsdNoticeBroker PROPERTIES PREFIX "")
