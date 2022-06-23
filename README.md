@@ -20,6 +20,7 @@ Here a few CMake options that can be used to influence the building process:
 | Option                 | Description                                                         |
 | ---------------------- | ------------------------------------------------------------------- |
 | PXR_USD_LOCATION       | Define path to USD location.                                        |
+| TBB_LOCATION           | Define path to TBB location.                                        |
 | BUILD_TESTS            | Indicate whether tests should be built. Default is true.            |
 | BUILD_PYTHON_BINDINGS  | Indicate whether Python bindings should be built. Default is true.  |
 | BUILD_SHARED_LIBS      | Indicate whether library should be built shared. Default is true.   |
