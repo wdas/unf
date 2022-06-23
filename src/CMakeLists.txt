@@ -33,7 +33,7 @@ target_link_libraries(UsdNoticeBroker
     PRIVATE
         Boost::boost
         Python::Python
-        tbb::tbb
+        TBB::tbb
 )
 
 install(TARGETS UsdNoticeBroker EXPORT ${PROJECT_NAME})

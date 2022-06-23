@@ -4,7 +4,7 @@
 # are ignored.
 #
 # This module defines the following imported targets:
-#     tbb::tbb
+#     TBB::tbb
 #
 # Usage:
 #     find_package(TBB)
@@ -54,7 +54,7 @@ find_package_handle_standard_args(
         TBB_VERSION
 )
 
-if (TBB_FOUND AND NOT TARGET tbb::tbb)
-    add_library(tbb::tbb INTERFACE IMPORTED)
-    target_include_directories(tbb::tbb INTERFACE "${TBB_INCLUDE_DIR}")
+if (TBB_FOUND AND NOT TARGET TBB::tbb)
+    add_library(TBB::tbb INTERFACE IMPORTED)
+    target_include_directories(TBB::tbb INTERFACE "${TBB_INCLUDE_DIR}")
 endif()
