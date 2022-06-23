@@ -15,7 +15,7 @@ foreach(NAME IN LISTS CLASSES)
             Boost::boost
             Boost::python
             Python::Python
-            tbb::tbb
+            TBB::tbb
             GTest::GTest
     )
 
