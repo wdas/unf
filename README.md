@@ -26,11 +26,11 @@ Here a few CMake options that can be used to influence the building process:
 Custom search paths to dependent packages can be provided with the following
 Cmake options (or environment variable):
 
-| Option / ENV    | Description                         |
-| --------------- | ----------------------------------- |
-| USD_ROOT        | Add search path to USD location.    |
-| TBB_ROOT        | Add search path to TBB location.    |
-| BOOST_ROOT      | Add search path to Boost location.  |
+| Option / Environment Variable  | Description                         |
+| ------------------------------ | ----------------------------------- |
+| USD_ROOT                       | Add search path to USD location.    |
+| TBB_ROOT                       | Add search path to TBB location.    |
+| BOOST_ROOT                     | Add search path to Boost location.  |
 
 For instance:
 
@@ -45,4 +45,3 @@ Once the library and all tests are build, run the tests as follows:
 ```bash
 ctest -VV
 ```
-
