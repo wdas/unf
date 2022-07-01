@@ -56,7 +56,8 @@ setup(
         "-DBUILD_TESTS=False",
         "-DBUILD_SHARED_LIBS=False",
         "-DCMAKE_BUILD_TYPE=Debug",
-        "-DCMAKE_POSITION_INDEPENDENT_CODE=True"
+        "-DCMAKE_POSITION_INDEPENDENT_CODE=True",
+        "-DBoost_USE_STATIC_LIBS=False"
     ],
     cmake_process_manifest_hook=cmake_process_manifest_hook,
     classifiers=[
