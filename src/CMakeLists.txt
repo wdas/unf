@@ -32,7 +32,7 @@ target_link_libraries(UsdNoticeBroker
 target_link_libraries(UsdNoticeBroker
     PRIVATE
         Boost::boost
-        Python::Module
+        Python::Python
         TBB::tbb
 )
 

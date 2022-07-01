@@ -14,7 +14,7 @@ foreach(NAME IN LISTS CLASSES)
             UsdNoticeBroker
             Boost::boost
             Boost::python
-            Python::Module
+            Python::Python
             TBB::tbb
             GTest::GTest
     )
