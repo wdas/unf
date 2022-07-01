@@ -46,9 +46,6 @@ foreach(NAME IN LISTS USD_LIBRARIES)
         NAMES
             ${PXR_LIB_PREFIX}${NAME}
             ${NAME}
-        HINTS
-            ${PXR_USD_LOCATION}
-            $ENV{PXR_USD_LOCATION}
         PATH_SUFFIXES
             ${CMAKE_INSTALL_LIBDIR}
             lib
