@@ -12,39 +12,39 @@
 #     find_package(USD 0.20.11 REQUIRED)
 #
 # Note:
-#     The PXR_USD_LOCATION environment variable can be used as a hint.
+#     The USD_ROOT environment variable or CMake variable can be used to
+#     prepend a custom search path.
+#     (https://cmake.org/cmake/help/latest/policy/CMP0074.html)
 #
-#     The PXR_USD_PREFIX environment variable can be used to indicate the
-#     expected library prefix. By default, it will look for "libusd_" and "lib".
+#     The PXR_LIB_PREFIX option can be used to indicate the expected
+#     library prefix. By default, it will look for "libusd_" and "lib".
+#     (https://github.com/PixarAnimationStudios/USD/blob/release/BUILDING.md)
 #
 #     We do not use pxrConfig.cmake to keep compatibility with USD included
 #     within Presto.
 
 include(FindPackageHandleStandardArgs)
 
-if (NOT DEFINED PXR_USD_PREFIX)
-    set(PXR_USD_PREFIX "usd_")
+if (NOT DEFINED PXR_LIB_PREFIX)
+    set(PXR_LIB_PREFIX "usd_")
 endif()
 
 find_path(
-    PXR_INCLUDE_DIR
+    USD_INCLUDE_DIR
         pxr/pxr.h
-    HINTS
-        ${PXR_USD_LOCATION}
-        $ENV{PXR_USD_LOCATION}
     PATH_SUFFIXES
         include
 )
 
-set(PXR_LIBRARIES usd sdf tf arch)
+set(USD_LIBRARIES usd sdf tf arch)
 
-mark_as_advanced(PXR_INCLUDE_DIR PXR_LIBRARIES)
+mark_as_advanced(USD_INCLUDE_DIR USD_LIBRARIES)
 
-foreach(NAME IN LISTS PXR_LIBRARIES)
+foreach(NAME IN LISTS USD_LIBRARIES)
     find_library(
         "${NAME}_LIBRARY"
         NAMES
-            ${PXR_USD_PREFIX}${NAME}
+            ${PXR_LIB_PREFIX}${NAME}
             ${NAME}
         HINTS
             ${PXR_USD_LOCATION}
@@ -59,8 +59,8 @@ foreach(NAME IN LISTS PXR_LIBRARIES)
     mark_as_advanced("${NAME}_LIBRARY")
 endforeach()
 
-if(PXR_INCLUDE_DIR AND EXISTS "${PXR_INCLUDE_DIR}/pxr/pxr.h")
-    file(READ "${PXR_INCLUDE_DIR}/pxr/pxr.h" _pxr_header)
+if(USD_INCLUDE_DIR AND EXISTS "${USD_INCLUDE_DIR}/pxr/pxr.h")
+    file(READ "${USD_INCLUDE_DIR}/pxr/pxr.h" _pxr_header)
     foreach(label MAJOR MINOR PATCH)
         string(
             REGEX REPLACE ".*#define PXR_${label}_VERSION ([0-9]+).*" "\\1"
@@ -81,7 +81,7 @@ endif()
 find_package_handle_standard_args(
     USD
     REQUIRED_VARS
-        PXR_INCLUDE_DIR
+        USD_INCLUDE_DIR
         usd_LIBRARY
         sdf_LIBRARY
         tf_LIBRARY
@@ -91,13 +91,13 @@ find_package_handle_standard_args(
 )
 
 if (USD_FOUND)
-    foreach(NAME IN LISTS PXR_LIBRARIES)
+    foreach(NAME IN LISTS USD_LIBRARIES)
         if (NOT TARGET pxr::${NAME})
             add_library(pxr::${NAME} UNKNOWN IMPORTED)
             set_target_properties(pxr::${NAME} PROPERTIES
                 IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
                 IMPORTED_LOCATION "${${NAME}_LIBRARY}"
-                INTERFACE_INCLUDE_DIRECTORIES "${PXR_INCLUDE_DIR}"
+                INTERFACE_INCLUDE_DIRECTORIES "${USD_INCLUDE_DIR}"
             )
         endif()
     endforeach()

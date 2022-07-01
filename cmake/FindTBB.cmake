@@ -12,16 +12,15 @@
 #     find_package(TBB 2020.3 REQUIRED)
 #
 # Note:
-#     The TBB_LOCATION environment variable can be used as a hint.
+#     The TBB_ROOT environment variable or CMake variable can be used to
+#     prepend a custom search path.
+#     (https://cmake.org/cmake/help/latest/policy/CMP0074.html)
 
 include(FindPackageHandleStandardArgs)
 
 find_path(
     TBB_INCLUDE_DIR
         tbb/tbb.h
-    HINTS
-        ${TBB_LOCATION}
-        $ENV{TBB_LOCATION}
     PATH_SUFFIXES
         include
 )
