@@ -24,10 +24,10 @@ if(BUILD_PYTHON_BINDINGS)
     # CMake >= 3.18 is required for this option to work as expected.
     # https://github.com/pypa/manylinux
     if (TARGET_PYTHON_MODULE OR ($ENV{TARGET_PYTHON_MODULE}))
-        find_package(Python COMPONENTS Development.Module REQUIRED)
+        find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
         add_library(Python::Python ALIAS Python::Module)
     else()
-        find_package(Python COMPONENTS Development REQUIRED)
+        find_package(Python COMPONENTS Interpreter Development REQUIRED)
     endif()
 
     # Convenient variable to fetch module against Python version found.
@@ -52,8 +52,4 @@ if (BUILD_TESTS)
     enable_testing()
 
     add_subdirectory(test)
-endif()
-
-if (BUILD_PYTHON_BINDINGS)
-    add_subdirectory(python)
 endif()

@@ -78,6 +78,7 @@ wheelhouse/
 .coverage.*
 .cache
 .pytest_cache/
+.benchmarks/
 
 # Environments
 .env

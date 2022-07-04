@@ -19,11 +19,10 @@ DOC_REQUIRES = [
 ]
 
 TEST_REQUIRES = [
-    "pytest-runner >= 2.7, < 3",
-    "pytest >= 4, < 5",
-    "pytest-mock >= 1.2, < 2",
-    "pytest-xdist >= 1.18, < 2",
-    "pytest-cov >= 2, < 3",
+    "pytest-runner >= 6, < 7",
+    "pytest >= 7, < 8",
+    "pytest-xdist >= 2, < 3",
+    "pytest-cov >= 3, < 4",
 ]
 
 def cmake_process_manifest_hook(cmake_manifiest):

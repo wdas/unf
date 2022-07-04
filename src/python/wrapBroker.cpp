@@ -19,12 +19,12 @@ PXR_NAMESPACE_USING_DIRECTIVE
 
 void NoticeBroker_BeginTransaction(NoticeBroker& self, object obj)
 {
-  self.BeginTransaction(WrapPredicate(obj));
+    self.BeginTransaction(WrapPredicate(obj));
 }
 
 void NoticeBroker_Process(NoticeBroker& self, TfRefPtr<NoticeWrapper> notice)
 {
-  self.Process(notice->Get());
+    self.Process(notice->Get());
 }
 
 void wrapBroker()
@@ -48,7 +48,9 @@ void wrapBroker()
 
         .def("Process", &NoticeBroker_Process)
 
-        .def("BeginTransaction", &NoticeBroker_BeginTransaction)
+        .def("BeginTransaction", &NoticeBroker_BeginTransaction,
+            ((arg("self"), arg("predicate")=object())))
+
         .def("EndTransaction", &NoticeBroker::EndTransaction);
 }
 

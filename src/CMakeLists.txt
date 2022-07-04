@@ -46,3 +46,7 @@ install(
     DESTINATION
         ${CMAKE_INSTALL_INCLUDEDIR}/UsdNoticeBroker
 )
+
+if (BUILD_PYTHON_BINDINGS)
+    add_subdirectory(python)
+endif()
