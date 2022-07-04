@@ -33,9 +33,11 @@ target_link_libraries(PyUsdNoticeBroker
         TBB::tbb
 )
 
-set_target_properties(PyUsdNoticeBroker PROPERTIES PREFIX "")
-set_target_properties(
-    PyUsdNoticeBroker PROPERTIES OUTPUT_NAME _usd_notice_broker)
+set_target_properties(PyUsdNoticeBroker
+    PROPERTIES
+        PREFIX ""
+        OUTPUT_NAME _usd_notice_broker
+)
 
 target_compile_definitions(
     PyUsdNoticeBroker

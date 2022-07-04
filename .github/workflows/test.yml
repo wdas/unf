@@ -89,7 +89,7 @@ jobs:
                 run: |
                     cd build
                     cmake \
-                        -DPXR_USD_LOCATION="$(pwd)/../USD" \
+                        -DUSD_ROOT="$(pwd)/../USD" \
                         -DCMAKE_MODULE_PATH:FILEPATH="$(pwd)" \
                         ..
                     cmake --build .
