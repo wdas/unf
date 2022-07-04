@@ -2,14 +2,13 @@
 
 #include "transaction.h"
 
-#include "pxr/pxr.h"
-#include "pxr/usd/usd/stage.h"
-#include "pxr/usd/usd/common.h"
-#include "pxr/base/tf/pyFunction.h"
-#include "pxr/base/tf/weakPtr.h"
+#include <pxr/pxr.h>
+#include <pxr/usd/usd/stage.h>
+#include <pxr/usd/usd/common.h>
+#include <pxr/base/tf/pyFunction.h>
 
-#include "boost/python.hpp"
-#include "boost/python/return_internal_reference.hpp"
+#include <boost/python.hpp>
+#include <boost/python/return_internal_reference.hpp>
 
 using namespace boost::python;
 

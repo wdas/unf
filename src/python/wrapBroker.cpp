@@ -1,12 +1,12 @@
 #include "broker.h"
 
-#include "pxr/pxr.h"
-#include "pxr/usd/usd/stage.h"
-#include "pxr/usd/usd/common.h"
-#include "pxr/base/tf/weakPtr.h"
-#include "pxr/base/tf/pyPtrHelpers.h"
-#include "pxr/base/tf/makePyConstructor.h"
-#include "pxr/base/tf/pyFunction.h"
+#include <pxr/pxr.h>
+#include <pxr/usd/usd/stage.h>
+#include <pxr/usd/usd/common.h>
+#include <pxr/base/tf/weakPtr.h>
+#include <pxr/base/tf/pyPtrHelpers.h>
+#include <pxr/base/tf/makePyConstructor.h>
+#include <pxr/base/tf/pyFunction.h>
 
 #include "boost/python.hpp"
 

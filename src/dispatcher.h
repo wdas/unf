@@ -4,11 +4,11 @@
 #include "notice.h"
 #include "broker.h"
 
-#include "pxr/pxr.h"
-#include "pxr/base/tf/refBase.h"
-#include "pxr/base/tf/refPtr.h"
-#include "pxr/base/tf/weakBase.h"
-#include "pxr/usd/usd/common.h"
+#include <pxr/pxr.h>
+#include <pxr/base/tf/refBase.h>
+#include <pxr/base/tf/refPtr.h>
+#include <pxr/base/tf/weakBase.h>
+#include <pxr/usd/usd/common.h>
 
 PXR_NAMESPACE_OPEN_SCOPE
 

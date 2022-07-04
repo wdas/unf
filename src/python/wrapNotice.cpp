@@ -1,8 +1,8 @@
 #include "notice.h"
 
-#include "pxr/pxr.h"
-#include "pxr/base/tf/notice.h"
-#include "pxr/base/tf/pyNoticeWrapper.h"
+#include <pxr/pxr.h>
+#include <pxr/base/tf/notice.h>
+#include <pxr/base/tf/pyNoticeWrapper.h>
 
 using namespace boost::python;
 using namespace PXR_NS::UsdBrokerNotice;

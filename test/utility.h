@@ -3,12 +3,12 @@
 
 #include "notice.h"
 
-#include "pxr/pxr.h"
-#include "pxr/base/tf/notice.h"
-#include "pxr/base/tf/weakBase.h"
-#include "pxr/usd/sdf/layer.h"
-#include "pxr/usd/usd/common.h"
-#include "pxr/usd/usd/stage.h"
+#include <pxr/pxr.h>
+#include <pxr/base/tf/notice.h>
+#include <pxr/base/tf/weakBase.h>
+#include <pxr/usd/sdf/layer.h>
+#include <pxr/usd/usd/common.h>
+#include <pxr/usd/usd/stage.h>
 
 #include <algorithm>
 #include <functional>
