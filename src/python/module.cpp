@@ -1,4 +1,4 @@
-#include "pxr/base/tf/pyModule.h"
+#include <pxr/base/tf/pyModule.h>
 
 TF_WRAP_MODULE
 {

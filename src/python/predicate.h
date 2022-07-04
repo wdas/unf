@@ -3,11 +3,11 @@
 
 #include "broker.h"
 
-#include "pxr/pxr.h"
-#include "pxr/base/tf/pyNoticeWrapper.h"
-#include "pxr/base/tf/pyLock.h"
+#include <pxr/pxr.h>
+#include <pxr/base/tf/pyNoticeWrapper.h>
+#include <pxr/base/tf/pyLock.h>
 
-#include "boost/python.hpp"
+#include <boost/python.hpp>
 
 #include <functional>
 

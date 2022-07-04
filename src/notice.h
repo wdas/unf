@@ -1,12 +1,12 @@
 #ifndef NOTICE_BROKER_NOTICE_H
 #define NOTICE_BROKER_NOTICE_H
 
-#include "pxr/pxr.h"
-#include "pxr/base/tf/refPtr.h"
-#include "pxr/base/tf/refBase.h"
-#include "pxr/base/tf/notice.h"
-#include "pxr/usd/sdf/path.h"
-#include "pxr/usd/usd/notice.h"
+#include <pxr/pxr.h>
+#include <pxr/base/tf/refPtr.h>
+#include <pxr/base/tf/refBase.h>
+#include <pxr/base/tf/notice.h>
+#include <pxr/usd/sdf/path.h>
+#include <pxr/usd/usd/notice.h>
 
 #include <map>
 #include <string>

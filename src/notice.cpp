@@ -1,8 +1,8 @@
 #include "notice.h"
 
-#include "pxr/pxr.h"
-#include "pxr/base/tf/notice.h"
-#include "pxr/usd/usd/notice.h"
+#include <pxr/pxr.h>
+#include <pxr/base/tf/notice.h>
+#include <pxr/usd/usd/notice.h>
 
 #include <iostream>
 #include <utility>

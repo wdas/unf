@@ -3,12 +3,12 @@
 
 #include "notice.h"
 
-#include "pxr/pxr.h"
-#include "pxr/base/tf/notice.h"
-#include "pxr/base/tf/weakBase.h"
-#include "pxr/base/tf/weakPtr.h"
-#include "pxr/base/tf/anyWeakPtr.h"
-#include "pxr/base/tf/refPtr.h"
+#include <pxr/pxr.h>
+#include <pxr/base/tf/notice.h>
+#include <pxr/base/tf/weakBase.h>
+#include <pxr/base/tf/weakPtr.h>
+#include <pxr/base/tf/anyWeakPtr.h>
+#include <pxr/base/tf/refPtr.h>
 
 #include <vector>
 #include <type_traits>

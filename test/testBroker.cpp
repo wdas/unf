@@ -2,11 +2,11 @@
 
 #include "./utility.h"
 
-#include "gtest/gtest.h"
-#include "pxr/pxr.h"
-#include "pxr/usd/sdf/path.h"
-#include "pxr/usd/usd/primRange.h"
-#include "pxr/usd/usd/stage.h"
+#include <gtest/gtest.h>
+#include <pxr/pxr.h>
+#include <pxr/usd/sdf/path.h>
+#include <pxr/usd/usd/primRange.h>
+#include <pxr/usd/usd/stage.h>
 
 TEST(AddPrim, NoticesComparison)
 {

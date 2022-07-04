@@ -2,10 +2,10 @@
 #include "broker.h"
 #include "notice.h"
 
-#include "pxr/pxr.h"
-#include "pxr/base/tf/weakPtr.h"
-#include "pxr/usd/usd/common.h"
-#include "pxr/usd/usd/notice.h"
+#include <pxr/pxr.h>
+#include <pxr/base/tf/weakPtr.h>
+#include <pxr/usd/usd/common.h>
+#include <pxr/usd/usd/notice.h>
 
 PXR_NAMESPACE_OPEN_SCOPE
 

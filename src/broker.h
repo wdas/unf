@@ -3,13 +3,13 @@
 
 #include "notice.h"
 
-#include "pxr/pxr.h"
-#include "pxr/base/tf/refBase.h"
-#include "pxr/base/tf/refPtr.h"
-#include "pxr/base/tf/weakBase.h"
-#include "pxr/base/tf/weakPtr.h"
-#include "pxr/usd/usd/stage.h"
-#include "pxr/usd/usd/common.h"
+#include <pxr/pxr.h>
+#include <pxr/base/tf/refBase.h>
+#include <pxr/base/tf/refPtr.h>
+#include <pxr/base/tf/weakBase.h>
+#include <pxr/base/tf/weakPtr.h>
+#include <pxr/usd/usd/stage.h>
+#include <pxr/usd/usd/common.h>
 
 #include <functional>
 #include <memory>

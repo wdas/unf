@@ -32,9 +32,6 @@ endif()
 find_path(
     USD_INCLUDE_DIR
         pxr/pxr.h
-    HINTS
-        ${PXR_USD_LOCATION}
-        $ENV{PXR_USD_LOCATION}
     PATH_SUFFIXES
         include
 )
@@ -47,7 +44,7 @@ foreach(NAME IN LISTS USD_LIBRARIES)
     find_library(
         "${NAME}_LIBRARY"
         NAMES
-            ${PXR_USD_PREFIX}${NAME}
+            ${PXR_LIB_PREFIX}${NAME}
             ${NAME}
         PATH_SUFFIXES
             ${CMAKE_INSTALL_LIBDIR}
