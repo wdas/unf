@@ -24,6 +24,28 @@ public:
     virtual size_t Size() const = 0;
     virtual void Clear() = 0;
     virtual void MergeAll() = 0;
+
+protected:
+    template <class T>
+    std::vector<TfRefPtr<const T> > _MergeNotices(
+        std::vector<TfRefPtr<const T> > notices)
+    {
+        if (!(notices.size() > 1 && notices[0]->IsMergeable())) {
+            return notices;
+        }
+
+        // Copy and merge all notices.
+        TfRefPtr<T> notice = notices.at(0)->Copy();
+        auto it = std::next(notices.begin());
+
+        while(it != notices.end()) {
+            TfRefPtr<T> notice2 = (*it)->Copy();
+            notice->Merge(std::move(*notice2));
+            it++;
+        }
+
+        return std::vector<TfRefPtr<const T> > {notice};
+    }
 };
 
 
@@ -75,27 +97,12 @@ public:
 
     virtual void MergeAll() override
     {
-        if (!(_notices.size() > 1 && _notices[0]->IsMergeable())) {
-            return;
-        }
-
-        // Copy and merge all notices.
-        TfRefPtr<T> notice = _notices.at(0)->Copy();
-        auto it = std::next(_notices.begin());
-
-        while(it != _notices.end()) {
-            TfRefPtr<T> notice2 = (*it)->Copy();
-            notice->Merge(std::move(*notice2));
-            it++;
-        }
-
-        // Replace list of notices with merged notice.
-        _notices = std::vector<TfRefPtr<const T> > {notice};
+        _notices = _MergeNotices<T>(_notices);
     }
 
     virtual void Clear() override { _notices.clear(); }
 
-private:
+protected:
     void _OnReceiving(const T& notice)
     {
         _notices.push_back(TfRefPtr<const T>(&notice));

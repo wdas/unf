@@ -15,11 +15,23 @@ TF_INSTANTIATE_NOTICE_WRAPPER(ObjectsChanged, StageNotice);
 TF_INSTANTIATE_NOTICE_WRAPPER(StageEditTargetChanged, StageNotice);
 TF_INSTANTIATE_NOTICE_WRAPPER(LayerMutingChanged, StageNotice);
 
+//TODO: REMOVE -- Just for testing purposes
+TF_INSTANTIATE_NOTICE_WRAPPER(TestNotice, StageNotice);
+
 void wrapNotice()
 {
     TfPyNoticeWrapper<StageNotice, TfNotice>::Wrap();
     TfPyNoticeWrapper<StageContentsChanged, StageNotice>::Wrap();
+
+    TfPyNoticeWrapper<ObjectsChanged, StageNotice>::Wrap()
+        .def("GetResyncedPaths", &ObjectsChanged::GetResyncedPaths,
+            return_value_policy<return_by_value>());
+
     TfPyNoticeWrapper<ObjectsChanged, StageNotice>::Wrap();
     TfPyNoticeWrapper<StageEditTargetChanged, StageNotice>::Wrap();
     TfPyNoticeWrapper<LayerMutingChanged, StageNotice>::Wrap();
+
+    //TODO: REMOVE
+    TfPyNoticeWrapper<TestNotice, StageNotice>::Wrap()
+        .def("GetCount", &TestNotice::GetCount);
 }

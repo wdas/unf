@@ -1,3 +1,6 @@
+#include "./predicate.h"
+#include "./noticeWrapper.h"
+
 #include "broker.h"
 
 #include <pxr/pxr.h>
@@ -8,14 +11,27 @@
 #include <pxr/base/tf/makePyConstructor.h>
 #include <pxr/base/tf/pyFunction.h>
 
-#include "boost/python.hpp"
+#include <boost/python.hpp>
 
 using namespace boost::python;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
+void NoticeBroker_BeginTransaction(NoticeBroker& self, object obj)
+{
+    self.BeginTransaction(WrapPredicate(obj));
+}
+
+void NoticeBroker_Process(NoticeBroker& self, TfRefPtr<NoticeWrapper> notice)
+{
+    self.Process(notice->Get());
+}
+
 void wrapBroker()
 {
+    // Ensure that predicate function can be passed from Python.
+    TfPyFunctionFromPython<_CaturePredicateFuncRaw>();
+
     class_<NoticeBroker, NoticeBrokerWeakPtr, boost::noncopyable>
         ("NoticeBroker", no_init)
 
@@ -29,10 +45,13 @@ void wrapBroker()
             return_value_policy<return_by_value>())
 
         .def("IsInTransaction", &NoticeBroker::IsInTransaction)
-        ;
 
-        // TODO: Add bindings for BeginTransaction and EndTransaction
-        // TODO: Add binding for Send
+        .def("Process", &NoticeBroker_Process)
+
+        .def("BeginTransaction", &NoticeBroker_BeginTransaction,
+            ((arg("self"), arg("predicate")=object())))
+
+        .def("EndTransaction", &NoticeBroker::EndTransaction);
 }
 
 TF_REFPTR_CONST_VOLATILE_GET(Broker)
