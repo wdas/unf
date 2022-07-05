@@ -27,7 +27,6 @@ void wrapNotice()
         .def("GetResyncedPaths", &ObjectsChanged::GetResyncedPaths,
             return_value_policy<return_by_value>());
 
-    TfPyNoticeWrapper<ObjectsChanged, StageNotice>::Wrap();
     TfPyNoticeWrapper<StageEditTargetChanged, StageNotice>::Wrap();
     TfPyNoticeWrapper<LayerMutingChanged, StageNotice>::Wrap();
 
