@@ -11,13 +11,13 @@ def testPredicate(notice):
 
 def _objectsChanged(self, notice, sender=None):
     print("OBJECTS CHANGED RECEIVED!")
-objectsChangedNotice = Tf.Notice.Register(u.ObjectsChanged,
+objectsChangedNotice = Tf.Notice.Register(u.BrokerNotice.ObjectsChanged,
                                                         _objectsChanged,
                                                         s)
 
 a = u.TestNoticeWrapper.Init(5)
 
-cache = u.NoticeCache(u.TestNotice)
+cache = u.NoticeCache(u.BrokerNotice.TestNotice)
 
 myBroker = u.NoticeBroker.Create(s)
 myBroker.BeginTransaction(testPredicate)

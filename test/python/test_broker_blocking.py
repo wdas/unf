@@ -8,24 +8,12 @@ from usd_notice_broker import NoticeBroker, BrokerNotice
 import pytest
 
 
-def test_create():
-    """Create a broker from stage."""
-    stage = Usd.Stage.CreateInMemory()
-    broker = NoticeBroker.Create(stage)
-    assert broker.GetStage() == stage
-    assert broker.IsInTransaction() is False
-
-def test_create_twice():
-    """Create two brokers from stage."""
-    stage = Usd.Stage.CreateInMemory()
-    broker1 = NoticeBroker.Create(stage)
-    broker2 = NoticeBroker.Create(stage)
-    assert broker1 == broker2
-
 @contextlib.contextmanager
-def listen_and_validate_notices(stage, notice_type, excepted):
-    """Edit stage and validate that USD and Broker notices are received."""
-    NoticeBroker.Create(stage)
+def listen_and_validate_notices(stage, notice_type, excepted_usd):
+    """Edit stage and validate that USD notices are received
+    while Broker notices are blocked.
+    """
+    broker = NoticeBroker.Create(stage)
 
     # Listen to broker notice.
     received_broker = []
@@ -39,14 +27,28 @@ def listen_and_validate_notices(stage, notice_type, excepted):
         getattr(Usd.Notice, notice_type),
         lambda n, _: received_usd.append(n), stage)
 
+    # Predicate blocking all broker notices.
+    broker.BeginTransaction(predicate=lambda _: False)
+
+    assert broker.IsInTransaction() is True
+
     # Edit the stage...
     yield
 
-    # Ensure that we received the same number of notices.
-    assert len(received_broker) == excepted
-    assert len(received_usd) == excepted
+    # Ensure that broker notices are not sent during a transaction.
+    assert len(received_broker) == 0
 
-@pytest.mark.parametrize("notice_type, excepted", [
+    # While USD Notices are being sent as expected.
+    assert len(received_usd) == excepted_usd
+
+    broker.EndTransaction()
+
+    assert broker.IsInTransaction() is False
+
+    # Ensure that no broker notices have been received.
+    assert len(received_broker) == 0
+
+@pytest.mark.parametrize("notice_type, excepted_usd", [
     ("StageNotice", 2),
     ("StageContentsChanged", 1),
     ("ObjectsChanged", 1),
@@ -59,15 +61,17 @@ def listen_and_validate_notices(stage, notice_type, excepted):
     "StageEditTargetChanged",
     "LayerMutingChanged",
 ])
-def test_add_prim(notice_type, excepted):
+def test_add_prim(notice_type, excepted_usd):
     """Add one prim to the stage and listen to notices.
     """
     stage = Usd.Stage.CreateInMemory()
 
-    with listen_and_validate_notices(stage, notice_type, excepted):
+    with listen_and_validate_notices(
+        stage, notice_type, excepted_usd
+    ):
         stage.DefinePrim("/Foo")
 
-@pytest.mark.parametrize("notice_type, excepted", [
+@pytest.mark.parametrize("notice_type, expected_usd", [
     ("StageNotice", 6),
     ("StageContentsChanged", 3),
     ("ObjectsChanged", 3),
@@ -80,17 +84,19 @@ def test_add_prim(notice_type, excepted):
     "StageEditTargetChanged",
     "LayerMutingChanged",
 ])
-def test_add_prims(notice_type, excepted):
+def test_add_prims(notice_type, expected_usd):
     """Add several prims to the stage and listen to notices.
     """
     stage = Usd.Stage.CreateInMemory()
 
-    with listen_and_validate_notices(stage, notice_type, excepted):
+    with listen_and_validate_notices(
+        stage, notice_type, expected_usd
+    ):
         stage.DefinePrim("/Foo")
         stage.DefinePrim("/Bar")
         stage.DefinePrim("/Baz")
 
-@pytest.mark.parametrize("notice_type, excepted", [
+@pytest.mark.parametrize("notice_type, expected_usd", [
     ("StageNotice", 3),
     ("StageContentsChanged", 1),
     ("ObjectsChanged", 1),
@@ -103,16 +109,20 @@ def test_add_prims(notice_type, excepted):
     "StageEditTargetChanged",
     "LayerMutingChanged",
 ])
-def test_mute_layer(notice_type, excepted, stage_with_layers):
+def test_mute_layer(
+    notice_type, expected_usd, stage_with_layers
+):
     """Mute one layer and listen to notices.
     """
     stage = stage_with_layers
 
-    with listen_and_validate_notices(stage, notice_type, excepted):
+    with listen_and_validate_notices(
+        stage, notice_type, expected_usd
+    ):
         layers = stage.GetRootLayer().subLayerPaths
         stage.MuteLayer(layers[0])
 
-@pytest.mark.parametrize("notice_type, excepted", [
+@pytest.mark.parametrize("notice_type, expected_usd", [
     ("StageNotice", 12),
     ("StageContentsChanged", 4),
     ("ObjectsChanged", 4),
@@ -125,12 +135,16 @@ def test_mute_layer(notice_type, excepted, stage_with_layers):
     "StageEditTargetChanged",
     "LayerMutingChanged",
 ])
-def test_mute_layers(notice_type, excepted, stage_with_layers):
+def test_mute_layers(
+    notice_type, expected_usd, stage_with_layers
+):
     """Mute several layers and listen to notices.
     """
     stage = stage_with_layers
 
-    with listen_and_validate_notices(stage, notice_type, excepted):
+    with listen_and_validate_notices(
+        stage, notice_type, expected_usd
+    ):
         layers = stage.GetRootLayer().subLayerPaths
 
         # Keep ref pointer to the layer we try to mute and unmute to
@@ -142,7 +156,7 @@ def test_mute_layers(notice_type, excepted, stage_with_layers):
         stage.UnmuteLayer(layers[1])
         stage.MuteAndUnmuteLayers([layers[2], layers[1]], [])
 
-@pytest.mark.parametrize("notice_type, excepted", [
+@pytest.mark.parametrize("notice_type, expected_usd", [
     ("StageNotice", 2),
     ("StageContentsChanged", 0),
     ("ObjectsChanged", 0),
@@ -155,12 +169,16 @@ def test_mute_layers(notice_type, excepted, stage_with_layers):
     "StageEditTargetChanged",
     "LayerMutingChanged",
 ])
-def test_change_edit_target(notice_type, excepted, stage_with_layers):
-    """Change edit target and listen to notices.
+def test_change_edit_target(
+    notice_type, expected_usd, stage_with_layers
+):
+    """Mute several layers and listen to notices.
     """
     stage = stage_with_layers
 
-    with listen_and_validate_notices(stage, notice_type, excepted):
+    with listen_and_validate_notices(
+        stage, notice_type, expected_usd
+    ):
         layers = stage.GetRootLayer().subLayerPaths
         layer1 = Sdf.Layer.Find(layers[0])
         layer2 = Sdf.Layer.Find(layers[1])

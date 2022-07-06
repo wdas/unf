@@ -19,7 +19,13 @@ PXR_NAMESPACE_USING_DIRECTIVE
 
 void NoticeBroker_BeginTransaction(NoticeBroker& self, object obj)
 {
-    self.BeginTransaction(WrapPredicate(obj));
+    NoticeCaturePredicateFunc predicate = nullptr;
+
+    if (obj) {
+        predicate = WrapPredicate(obj);
+    }
+
+    self.BeginTransaction(predicate);
 }
 
 void NoticeBroker_Process(NoticeBroker& self, TfRefPtr<NoticeWrapper> notice)
