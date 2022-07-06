@@ -40,8 +40,12 @@ cmake -DUSD_ROOT=/path/to/usd -DCMAKE_INSTALL_PREFIX=/tmp ..
 
 ## Testing
 
-Once the library and all tests are build, run the tests as follows:
+Once the library and all tests are build (with the `BUILD_TESTS` option), run
+the tests as follows:
 
 ```bash
 ctest -VV
 ```
+
+Ensure that [pytest](https://docs.pytest.org/en/stable/) is installed to test
+python bindings.
