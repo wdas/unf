@@ -11,6 +11,7 @@
 #include <pxr/base/tf/pyFunction.h>
 #include <pxr/base/tf/pyNoticeWrapper.h>
 #include <pxr/base/tf/pyLock.h>
+#include <pxr/base/tf/pyUtils.h>
 
 #include <boost/python.hpp>
 
@@ -26,6 +27,13 @@ public:
 
     PythonNoticeCache(const TfType type)
     {
+        if (type == TfType::Find<UsdBrokerNotice::StageNotice>()
+            || !type.IsA<UsdBrokerNotice::StageNotice>())
+        {
+            TfPyThrowRuntimeError(
+                "Expecting a notice derived from UsdBrokerNotice::StageNotice.");
+        }
+
         _key = TfNotice::Register(
             TfCreateWeakPtr(this),
             &PythonNoticeCache::_OnReceiving,
@@ -34,13 +42,21 @@ public:
 
     PythonNoticeCache(const TfType type, const TfAnyWeakPtr &sender)
     {
+        if (type == TfType::Find<UsdBrokerNotice::StageNotice>()
+            || !type.IsA<UsdBrokerNotice::StageNotice>())
+        {
+            TfPyThrowRuntimeError(
+                "Expecting a notice derived from UsdBrokerNotice::StageNotice.");
+        }
+
         _key = TfNotice::Register(
             TfCreateWeakPtr(this),
             &PythonNoticeCache::_OnReceiving,
             type, sender);
     }
 
-    ~PythonNoticeCache() {
+    ~PythonNoticeCache()
+    {
         TfNotice::Revoke(_key);
     }
 
@@ -64,7 +80,23 @@ public:
 
     virtual void MergeAll() override
     {
-        _notices = _MergeNotices<UsdBrokerNotice::StageNotice>(_notices);
+        if (!(_notices.size() > 1 && _notices[0]->IsMergeable())) {
+            return;
+        }
+
+        // Copy and merge all notices.
+        auto notice = _notices.at(0)->CopyAsStageNotice();
+        auto it = std::next(_notices.begin());
+
+        while(it != _notices.end()) {
+            auto notice2 = (*it)->CopyAsStageNotice();
+            notice->Merge(std::move(*notice2));
+            it++;
+        }
+
+        // Replace list of notices with merged notice.
+        _notices =
+            std::vector<TfRefPtr<const UsdBrokerNotice::StageNotice> > {notice};
     }
 
     virtual void Clear() override { _notices.clear(); }
@@ -83,7 +115,7 @@ private:
         );
     }
 
-   std::vector<TfRefPtr<const UsdBrokerNotice::StageNotice>> _notices;
+   std::vector<TfRefPtr<const UsdBrokerNotice::StageNotice> > _notices;
    TfNotice::Key _key;
 };
 

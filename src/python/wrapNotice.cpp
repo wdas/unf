@@ -4,6 +4,8 @@
 #include <pxr/base/tf/notice.h>
 #include <pxr/base/tf/pyNoticeWrapper.h>
 
+#include <boost/python.hpp>
+
 using namespace boost::python;
 using namespace PXR_NS::UsdBrokerNotice;
 
@@ -18,13 +20,20 @@ TF_INSTANTIATE_NOTICE_WRAPPER(LayerMutingChanged, StageNotice);
 //TODO: REMOVE -- Just for testing purposes
 TF_INSTANTIATE_NOTICE_WRAPPER(TestNotice, StageNotice);
 
+// Dummy class to reproduce namespace in Python.
+class PythonBrokerNotice {};
+
 void wrapNotice()
 {
+    scope s = class_<PythonBrokerNotice>("BrokerNotice", no_init);
+
     TfPyNoticeWrapper<StageNotice, TfNotice>::Wrap();
     TfPyNoticeWrapper<StageContentsChanged, StageNotice>::Wrap();
 
     TfPyNoticeWrapper<ObjectsChanged, StageNotice>::Wrap()
         .def("GetResyncedPaths", &ObjectsChanged::GetResyncedPaths,
+            return_value_policy<return_by_value>())
+        .def("GetChangedInfoOnlyPaths", &ObjectsChanged::GetChangedInfoOnlyPaths,
             return_value_policy<return_by_value>());
 
     TfPyNoticeWrapper<StageEditTargetChanged, StageNotice>::Wrap();

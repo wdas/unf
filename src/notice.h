@@ -23,16 +23,13 @@ public:
     StageNotice(const StageNotice &) = default;
     StageNotice &operator=(const StageNotice &) = default;
 
-    // Copy notice as a StageNotice, whatever the sub-type.
-    TfRefPtr<StageNotice> Copy() const {
-        return TfCreateRefPtr(
-            new StageNotice(static_cast<const StageNotice&>(*this)));
-    }
-
     // TODO: Should those methods be pure virtual?
     virtual bool IsMergeable() const { return true; }
     virtual void Merge(StageNotice&&) {};
     virtual std::string GetTypeId() {return "";}
+
+    // Exposes the Copy function to the interface
+    virtual TfRefPtr<StageNotice> CopyAsStageNotice() const { return nullptr; }
 
 protected:
     StageNotice() = default;
@@ -48,6 +45,11 @@ public:
     static TfRefPtr<Self> Create(Args&&... args)
     {
         return TfCreateRefPtr(new Self(std::forward<Args>(args)...));
+    }
+
+    virtual TfRefPtr<StageNotice> CopyAsStageNotice() const override
+    {
+        return Copy();
     }
 
     TfRefPtr<Self> Copy() const
