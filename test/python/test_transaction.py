@@ -1,3 +1,5 @@
+# :coding: utf-8
+
 from pxr import Usd
 from usd_notice_broker import NoticeBroker, NoticeTransaction
 
@@ -13,7 +15,6 @@ def test_create_from_stage():
 
     assert broker.IsInTransaction() is False
 
-
 def test_create_from_broker():
     """Create a transaction from broker."""
     stage = Usd.Stage.CreateInMemory()
@@ -27,7 +28,6 @@ def test_create_from_broker():
         assert broker.IsInTransaction() is True
 
     assert broker.IsInTransaction() is False
-
 
 def test_nested():
     """Create nested transactions."""

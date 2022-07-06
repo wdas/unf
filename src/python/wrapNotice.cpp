@@ -28,6 +28,7 @@ void wrapNotice()
     scope s = class_<PythonBrokerNotice>("BrokerNotice", no_init);
 
     TfPyNoticeWrapper<StageNotice, TfNotice>::Wrap();
+
     TfPyNoticeWrapper<StageContentsChanged, StageNotice>::Wrap();
 
     TfPyNoticeWrapper<ObjectsChanged, StageNotice>::Wrap()
@@ -37,7 +38,12 @@ void wrapNotice()
             return_value_policy<return_by_value>());
 
     TfPyNoticeWrapper<StageEditTargetChanged, StageNotice>::Wrap();
-    TfPyNoticeWrapper<LayerMutingChanged, StageNotice>::Wrap();
+
+    TfPyNoticeWrapper<LayerMutingChanged, StageNotice>::Wrap()
+        .def("GetMutedLayers", &LayerMutingChanged::GetMutedLayers,
+            return_value_policy<return_by_value>())
+        .def("GetUnmutedLayers", &LayerMutingChanged::GetUnmutedLayers,
+            return_value_policy<return_by_value>());
 
     //TODO: REMOVE
     TfPyNoticeWrapper<TestNotice, StageNotice>::Wrap()
