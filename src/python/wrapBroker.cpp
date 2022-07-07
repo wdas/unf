@@ -1,7 +1,7 @@
 #include "./predicate.h"
-#include "./noticeWrapper.h"
 
 #include "broker.h"
+#include "pyNoticeWrapper.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/stage.h>
@@ -17,18 +17,18 @@ using namespace boost::python;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
-void NoticeBroker_BeginTransaction(NoticeBroker& self, object obj)
+void NoticeBroker_BeginTransaction(NoticeBroker& self, object predicate)
 {
-    NoticeCaturePredicateFunc predicate = nullptr;
-
-    if (obj) {
-        predicate = WrapPredicate(obj);
+    NoticeCaturePredicateFunc _predicate = nullptr;
+    if (predicate) {
+        _predicate = WrapPredicate(predicate);
     }
 
-    self.BeginTransaction(predicate);
+    self.BeginTransaction(_predicate);
 }
 
-void NoticeBroker_Process(NoticeBroker& self, TfRefPtr<NoticeWrapper> notice)
+void NoticeBroker_Process(
+    NoticeBroker& self, TfRefPtr<PyBrokerNoticeWrapperBase> notice)
 {
     self.Process(notice->Get());
 }

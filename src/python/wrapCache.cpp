@@ -1,5 +1,3 @@
-#include "./noticeWrapper.h"
-
 #include "cache.h"
 
 #include <pxr/pxr.h>

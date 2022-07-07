@@ -17,9 +17,6 @@ TF_INSTANTIATE_NOTICE_WRAPPER(ObjectsChanged, StageNotice);
 TF_INSTANTIATE_NOTICE_WRAPPER(StageEditTargetChanged, StageNotice);
 TF_INSTANTIATE_NOTICE_WRAPPER(LayerMutingChanged, StageNotice);
 
-//TODO: REMOVE -- Just for testing purposes
-TF_INSTANTIATE_NOTICE_WRAPPER(TestNotice, StageNotice);
-
 // Dummy class to reproduce namespace in Python.
 class PythonBrokerNotice {};
 
@@ -44,8 +41,4 @@ void wrapNotice()
             return_value_policy<return_by_value>())
         .def("GetUnmutedLayers", &LayerMutingChanged::GetUnmutedLayers,
             return_value_policy<return_by_value>());
-
-    //TODO: REMOVE
-    TfPyNoticeWrapper<TestNotice, StageNotice>::Wrap()
-        .def("GetCount", &TestNotice::GetCount);
 }

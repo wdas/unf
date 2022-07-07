@@ -139,32 +139,6 @@ private:
     friend StageNoticeImpl<LayerMutingChanged>;
 };
 
-
-// TODO: DELETE -- TEST ONLY
-
-class TestNotice
-: public StageNoticeImpl<TestNotice>
-{
-public:
-    TestNotice(int count)
-    : _count(count)
-    {}
-
-    TestNotice(const TestNotice& other)
-    : _count(other._count)
-    {}
-
-    virtual void Merge(TestNotice&& notice) override{
-        _count += notice.GetCount();
-    }
-
-    int GetCount() const { return _count; }
-
-private:
-    int _count;
-    friend StageNoticeImpl<TestNotice>;
-};
-
 } // namespace UsdBrokerNotice
 
 PXR_NAMESPACE_CLOSE_SCOPE

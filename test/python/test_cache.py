@@ -2,6 +2,7 @@
 
 from pxr import Usd, Sdf
 from usd_notice_broker import NoticeCache, NoticeBroker, BrokerNotice
+from usd_notice_broker_test import CustomNotice
 
 import pytest
 
@@ -395,10 +396,34 @@ def test_change_edit_target(stage_with_layers):
     stage.SetEditTarget(Usd.EditTarget(layer1))
     stage.SetEditTarget(Usd.EditTarget(layer2))
 
-    # Ensure that one notice has been cached.
+    # Ensure that two notices has been cached.
     assert cache.Size() == 2
 
     cache.MergeAll()
 
-    # Ensure that we have still one notice after consolidation.
+    # Ensure that we have one notice after consolidation.
     assert cache.Size() == 1
+
+def test_custom_unmergeable_notice():
+    """Cache custom mergeable notices."""
+    stage = Usd.Stage.CreateInMemory()
+    NoticeBroker.Create(stage)
+
+    cache = NoticeCache(CustomNotice.UnMergeableNotice)
+
+    notice1 = CustomNotice.UnMergeableNoticeWrapper.Init()
+    notice1.Send()
+
+    notice2 = CustomNotice.UnMergeableNoticeWrapper.Init()
+    notice2.Send()
+
+    notice3 = CustomNotice.UnMergeableNoticeWrapper.Init()
+    notice3.Send()
+
+    # Ensure that three notices has been cached.
+    assert cache.Size() == 3
+
+    cache.MergeAll()
+
+    # Ensure that we still have three notice after consolidation.
+    assert cache.Size() == 3

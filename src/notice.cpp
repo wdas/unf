@@ -19,7 +19,6 @@ TF_REGISTRY_FUNCTION(TfType)
     TfType::Define<StageEditTargetChanged, TfType::Bases<StageNotice> >();
     TfType::Define<ObjectsChanged, TfType::Bases<StageNotice> >();
     TfType::Define<LayerMutingChanged, TfType::Bases<StageNotice> >();
-    TfType::Define<TestNotice, TfType::Bases<StageNotice> >();
 }
 
 ObjectsChanged::ObjectsChanged(const UsdNotice::ObjectsChanged& notice)
