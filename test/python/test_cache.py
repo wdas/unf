@@ -407,18 +407,18 @@ def test_change_edit_target(stage_with_layers):
 def test_custom_unmergeable_notice():
     """Cache custom mergeable notices."""
     stage = Usd.Stage.CreateInMemory()
-    NoticeBroker.Create(stage)
+    broker = NoticeBroker.Create(stage)
 
     cache = NoticeCache(CustomNotice.UnMergeableNotice)
 
     notice1 = CustomNotice.UnMergeableNoticeWrapper.Init()
-    notice1.Send()
+    broker.Process(notice1)
 
     notice2 = CustomNotice.UnMergeableNoticeWrapper.Init()
-    notice2.Send()
+    broker.Process(notice2)
 
     notice3 = CustomNotice.UnMergeableNoticeWrapper.Init()
-    notice3.Send()
+    broker.Process(notice3)
 
     # Ensure that three notices has been cached.
     assert cache.Size() == 3
