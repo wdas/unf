@@ -38,6 +38,16 @@ For instance:
 cmake -DUSD_ROOT=/path/to/usd -DCMAKE_INSTALL_PREFIX=/tmp ..
 ```
 
+The Python library can also be built and installed locally using
+[pip](https://pip.pypa.io/en/stable/) and
+[scikit-build](https://scikit-build.readthedocs.io/en/stable/):
+
+```bash
+pip install .
+```
+
+NOTE: The Python distribution workflow is not clearly defined yet.
+
 ## Testing
 
 Once the library and all tests are build (with the `BUILD_TESTS` option), run
