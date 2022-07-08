@@ -16,7 +16,7 @@ PXR_NAMESPACE_OPEN_SCOPE
 
 namespace UsdBrokerNotice {
 
-class StageNotice : public TfNotice, public TfRefBase, public TfWeakBase {
+class StageNotice : public TfNotice, public TfRefBase {
 public:
     virtual ~StageNotice() = default;
 
