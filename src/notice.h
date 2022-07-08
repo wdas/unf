@@ -26,10 +26,17 @@ public:
     // TODO: Should those methods be pure virtual?
     virtual bool IsMergeable() const { return true; }
     virtual void Merge(StageNotice&&) {};
+    virtual std::string GetTypeId() {return "";}
+
+    // Exposes the Copy function to the interface
+    virtual TfRefPtr<StageNotice> CopyAsStageNotice() const { return nullptr; }
 
 protected:
     StageNotice() = default;
 };
+
+using StageNoticeRefPtr = TfRefPtr<StageNotice>;
+using StageNoticeWeakPtr = TfWeakPtr<StageNotice>;
 
 template<class Self>
 class StageNoticeImpl : public StageNotice {
@@ -38,6 +45,11 @@ public:
     static TfRefPtr<Self> Create(Args&&... args)
     {
         return TfCreateRefPtr(new Self(std::forward<Args>(args)...));
+    }
+
+    virtual TfRefPtr<StageNotice> CopyAsStageNotice() const override
+    {
+        return Copy();
     }
 
     TfRefPtr<Self> Copy() const
@@ -51,6 +63,10 @@ public:
     }
 
     virtual void Merge(Self&&) {}
+
+    virtual std::string GetTypeId() {
+        return typeid(Self).name();
+    }
 };
 
 class StageContentsChanged : public StageNoticeImpl<StageContentsChanged> {

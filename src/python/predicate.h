@@ -18,15 +18,17 @@ PXR_NAMESPACE_USING_DIRECTIVE
 using _CaturePredicateFuncRaw = bool (object const &);
 using _CaturePredicateFunc = std::function<_CaturePredicateFuncRaw>;
 
-static NoticeCaturePredicateFunc WrapPredicate(const _CaturePredicateFunc &fn)
+static NoticeCaturePredicateFunc WrapPredicate(_CaturePredicateFunc fn)
 {
-    return [&](const UsdBrokerNotice::StageNotice& notice) {
+    // Capture by-copy to prevent boost object from being destroyed.
+    return [=](const UsdBrokerNotice::StageNotice& notice) {
         TfPyLock lock;
 
         if (!fn)
             return true;
 
-        // TODO:: Not sure whether this works with Python notices.
+        // Creates a Python version of the notice by inspecting its type and
+        // converting the generic StageNotice to the real notice inside.
         object _notice = Tf_PyNoticeObjectGenerator::Invoke(notice);
         return fn(_notice);
     };

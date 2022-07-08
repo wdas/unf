@@ -23,7 +23,7 @@ public:
     NoticeTransaction(const NoticeTransaction &) = delete;
     NoticeTransaction &operator=(const NoticeTransaction &) = delete;
 
-    // TODO: Add Getter to access broker
+    NoticeBrokerPtr GetBroker() { return _broker; }
 
 private:
     NoticeBrokerPtr _broker;

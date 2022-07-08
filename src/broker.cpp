@@ -9,8 +9,8 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-// This is here because we have to declare the static variable somewhere.
-std::unordered_map<size_t, TfRefPtr<NoticeBroker>> NoticeBroker::noticeBrokerRegistry;
+// Initiate static registry.
+std::unordered_map<size_t, NoticeBrokerPtr> NoticeBroker::noticeBrokerRegistry;
 
 NoticeBroker::NoticeBroker(const UsdStageWeakPtr& stage)
     : _stage(stage)
@@ -67,6 +67,27 @@ void NoticeBroker::EndTransaction()
     _transactions.pop_back();
 }
 
+void NoticeBroker::Process(const UsdBrokerNotice::StageNoticeRefPtr notice)
+{
+    // Capture the notice to be processed later if a transaction is pending.
+    if (_transactions.size() > 0) {
+        _TransactionHandler& transaction = _transactions.back();
+
+        // Indicate whether the notice needs to be captured.
+        if (transaction.predicate && !transaction.predicate(*notice))
+            return;
+
+        // Store notices per type name, so that each type can be merged if
+        // required.
+        std::string name = notice->GetTypeId();
+        transaction.noticeMap[name].push_back(notice);
+    }
+    // Otherwise, send the notice.
+    else {
+        notice->Send(_stage);
+    }
+}
+
 void NoticeBroker::_SendNotices(_TransactionHandler& transaction)
 {
     for (auto& element : transaction.noticeMap) {
@@ -95,7 +116,8 @@ void NoticeBroker::_SendNotices(_TransactionHandler& transaction)
 }
 
 void NoticeBroker::_CleanCache() {
-    for (std::unordered_map<size_t, TfRefPtr<NoticeBroker>>::iterator it = noticeBrokerRegistry.begin(); it != noticeBrokerRegistry.end();)
+    for (auto it = noticeBrokerRegistry.begin();
+        it != noticeBrokerRegistry.end();)
     {
         // If the stage doesn't exist anymore, delete the corresponding
         // broker from the registry.

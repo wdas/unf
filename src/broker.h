@@ -48,8 +48,7 @@ public:
     template<class BrokerNotice, class... Args>
     void Send(Args&&... args);
 
-    template<class BrokerNotice>
-    void Process(TfRefPtr<BrokerNotice>&);
+    void Process(const UsdBrokerNotice::StageNoticeRefPtr notice);
 
     // Don't allow copies
     NoticeBroker(const NoticeBroker &) = delete;
@@ -77,7 +76,7 @@ private:
             , predicate(t.predicate) {}
 
         using _StageNoticePtrList =
-            std::vector<TfRefPtr<UsdBrokerNotice::StageNotice>>;
+            std::vector<UsdBrokerNotice::StageNoticeRefPtr>;
 
         std::unordered_map<std::string, _StageNoticePtrList> noticeMap;
         NoticeCaturePredicateFunc predicate = nullptr;
@@ -104,28 +103,6 @@ void NoticeBroker::Send(Args&&... args)
         std::forward<Args>(args)...);
 
     Process(_notice);
-}
-
-template<class BrokerNotice>
-void NoticeBroker::Process(TfRefPtr<BrokerNotice>& notice)
-{
-    // Capture the notice to be processed later if a transaction is pending.
-    if (_transactions.size() > 0) {
-        _TransactionHandler& transaction = _transactions.back();
-
-        // Indicate whether the notice needs to be captured.
-        if (transaction.predicate && !transaction.predicate(*notice))
-            return;
-
-        // Store notices per type name, so that each type can be merged if
-        // required.
-        std::string name = typeid(notice).name();
-        transaction.noticeMap[name].push_back(std::move(notice));
-    }
-    // Otherwise, send the notice.
-    else {
-        notice->Send(_stage);
-    }
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

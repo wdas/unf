@@ -103,6 +103,8 @@ TEST(Batching, WithoutBroker)
     {
         PXR_NS::NoticeTransaction transaction(stage);
 
+        ASSERT_TRUE(transaction.GetBroker()->IsInTransaction());
+
         // Edit the stage...
         auto layers = stage->GetRootLayer()->GetSubLayerPaths();
         auto layer1 = PXR_NS::SdfLayer::Find(layers[0]);

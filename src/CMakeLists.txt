@@ -42,6 +42,7 @@ install(
         broker.h
         dispatcher.h
         notice.h
+        pyNoticeWrapper.h
         transaction.h
     DESTINATION
         ${CMAKE_INSTALL_INCLUDEDIR}/UsdNoticeBroker

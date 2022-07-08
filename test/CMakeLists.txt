@@ -21,3 +21,7 @@ foreach(NAME IN LISTS CLASSES)
 
     add_test(${NAME} ${NAME})
 endforeach()
+
+if (BUILD_PYTHON_BINDINGS)
+    add_subdirectory(python)
+endif()
