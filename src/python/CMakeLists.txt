@@ -52,10 +52,6 @@ target_compile_definitions(
         MFB_ALT_PACKAGE_NAME=usd_notice_broker
 )
 
-set(PYTHON_VERSION "${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}")
-set(PYTHON_DESTINATION
-    "${CMAKE_INSTALL_LIBDIR}/python${PYTHON_VERSION}/site-packages")
-
 install(
     TARGETS PyUsdNoticeBroker
     DESTINATION ${PYTHON_DESTINATION}/usd_notice_broker

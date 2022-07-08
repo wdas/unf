@@ -96,4 +96,6 @@ jobs:
             -   name: Run tests
                 run: |
                     cd build
+                    cmake -E env \
+                    PYTHONPATH="$(pwd)/../USD/lib/python" \
                     ctest -VV

@@ -40,6 +40,15 @@ if(BUILD_PYTHON_BINDINGS)
     if (NOT TARGET Boost::python)
         add_library(Boost::python ALIAS "Boost::python${_py_version}")
     endif()
+
+    # Set variable to identify the path to install and test python libraries.
+    set(PYTHON_VERSION
+        "${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}"
+        CACHE INTERNAL "Python version.")
+
+    set(PYTHON_DESTINATION
+        "${CMAKE_INSTALL_LIBDIR}/python${PYTHON_VERSION}/site-packages"
+        CACHE INTERNAL "Python library path.")
 endif()
 
 find_package(USD 0.20.11 REQUIRED)
