@@ -48,7 +48,7 @@ private:
     void _OnReceiving(
         const UsdNotice& notice, const UsdStageWeakPtr& stage)
     {
-         TfRefPtr<BrokerNotice> _notice = BrokerNotice::Create(notice);
+        TfRefPtr<BrokerNotice> _notice = BrokerNotice::Create(notice);
         _broker->Process(_notice);
     }
 
