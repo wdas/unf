@@ -88,14 +88,13 @@ jobs:
             -   name: Buid
                 run: |
                     cd build
-                    cmake \
+                    PYTHONPATH="$(pwd)/../USD/lib/python" cmake \
                         -DUSD_ROOT="$(pwd)/../USD" \
                         -DCMAKE_MODULE_PATH:FILEPATH="$(pwd)" \
+                        -DCMAKE_INSTALL_PREFIX="$(pwd)/inst" \
                         ..
-                    cmake --build .
+                    cmake --build . --target install
             -   name: Run tests
                 run: |
                     cd build
-                    cmake -E env \
-                    PYTHONPATH="$(pwd)/../USD/lib/python" \
                     ctest -VV
