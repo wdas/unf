@@ -7,6 +7,7 @@
 #include <pxr/pxr.h>
 #include <pxr/base/tf/refBase.h>
 #include <pxr/base/tf/refPtr.h>
+#include <pxr/base/tf/type.h>
 #include <pxr/base/tf/weakBase.h>
 #include <pxr/usd/usd/common.h>
 
@@ -56,6 +57,23 @@ private:
 
     friend class NoticeBroker;
 };
+
+template <class T>
+class DispatcherFactory : public TfType::FactoryBase
+{
+public:
+    virtual Dispatcher* New() const override
+    {
+        return new T;
+    }
+};
+
+template <class Dispatcher, class ...Bases>
+void DefineDispatcher()
+{
+    TfType::Define<Dispatcher, TfType::Bases<Bases...>>()
+        .template SetFactory<DispatcherFactory<Dispatcher> >();
+}
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

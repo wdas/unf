@@ -6,6 +6,8 @@
 #include <pxr/base/tf/weakPtr.h>
 #include <pxr/usd/usd/common.h>
 #include <pxr/usd/usd/notice.h>
+#include <pxr/base/plug/plugin.h>
+#include <pxr/base/plug/registry.h>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -15,6 +17,8 @@ std::unordered_map<size_t, NoticeBrokerPtr> NoticeBroker::noticeBrokerRegistry;
 NoticeBroker::NoticeBroker(const UsdStageWeakPtr& stage)
     : _stage(stage)
 {
+    DiscoverDispatchers();
+
     AddDispatcher<StageDispatcher>();
 }
 
@@ -145,6 +149,11 @@ void NoticeBroker::_TransactionHandler::Join(
         source.clear();
     }
     transaction.noticeMap.clear();
+}
+
+void NoticeBroker::DiscoverDispatchers()
+{
+    
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

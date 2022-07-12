@@ -9,6 +9,11 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
+TF_REGISTRY_FUNCTION(TfType)
+{
+    TfType::Define<Dispatcher>();
+}
+
 Dispatcher::Dispatcher(const NoticeBrokerWeakPtr& broker)
     : _broker(broker)
 {

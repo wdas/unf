@@ -66,6 +66,8 @@ public:
         return _dispatcherMap.at(identifier);
     }
 
+    void DiscoverDispatchers();
+
 private:
     NoticeBroker(const UsdStageWeakPtr&);
 
