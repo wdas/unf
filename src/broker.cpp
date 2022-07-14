@@ -12,7 +12,7 @@
 PXR_NAMESPACE_OPEN_SCOPE
 
 // Initiate static registry.
-std::unordered_map<size_t, NoticeBrokerPtr> NoticeBroker::noticeBrokerRegistry;
+std::unordered_map<size_t, NoticeBrokerPtr> NoticeBroker::Registry;
 
 NoticeBroker::NoticeBroker(const UsdStageWeakPtr& stage)
     : _stage(stage)
@@ -29,11 +29,11 @@ NoticeBrokerPtr NoticeBroker::Create(const UsdStageWeakPtr& stage)
     NoticeBroker::_CleanCache();
 
     // If there doesn't exist a broker for the given stage, create a new broker.
-    if(noticeBrokerRegistry.find(stageHash) == noticeBrokerRegistry.end()) {
-        noticeBrokerRegistry[stageHash] = TfCreateRefPtr(new NoticeBroker(stage));
+    if(Registry.find(stageHash) == Registry.end()) {
+        Registry[stageHash] = TfCreateRefPtr(new NoticeBroker(stage));
     }
 
-    return noticeBrokerRegistry[stageHash];
+    return Registry[stageHash];
 }
 
 bool NoticeBroker::IsInTransaction()
@@ -120,13 +120,13 @@ void NoticeBroker::_SendNotices(_TransactionHandler& transaction)
 }
 
 void NoticeBroker::_CleanCache() {
-    for (auto it = noticeBrokerRegistry.begin();
-        it != noticeBrokerRegistry.end();)
+    for (auto it = Registry.begin();
+        it != Registry.end();)
     {
         // If the stage doesn't exist anymore, delete the corresponding
         // broker from the registry.
         if (it->second->GetStage().IsExpired()) {
-            it = noticeBrokerRegistry.erase(it);
+            it = Registry.erase(it);
         }
         else {
             it++;
