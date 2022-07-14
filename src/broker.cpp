@@ -153,7 +153,46 @@ void NoticeBroker::_TransactionHandler::Join(
 
 void NoticeBroker::DiscoverDispatchers()
 {
-    
+    std::set<TfType> dispatcherTypes;
+    PlugRegistry::GetAllDerivedTypes(
+        TfType::Find<Dispatcher>(), &dispatcherTypes);
+
+    std::vector<DispatcherPtr> dispatchers;
+
+    auto self = TfCreateWeakPtr(this);
+
+    for (const TfType& dispatcherType : dispatcherTypes) {
+        const PlugPluginPtr plugin =
+            PlugRegistry::GetInstance().GetPluginForType(dispatcherType);
+
+        if (!plugin) {
+            continue;
+        }
+
+        if (!plugin->Load()) {
+            TF_CODING_ERROR("Failed to load plugin %s for %s",
+                plugin->GetName().c_str(),
+                dispatcherType.GetTypeName().c_str());
+            continue;
+        }
+
+        DispatcherPtr dispatcher;
+        DispatcherFactoryBase* factory =
+            dispatcherType.GetFactory<DispatcherFactoryBase>();
+
+        if (factory) {
+            dispatcher = factory->New(self);
+        }
+
+        if (!dispatcher) {
+            TF_CODING_ERROR(
+                "Failed to manufacture dispatcher %s from plugin %s",
+                dispatcherType.GetTypeName().c_str(),
+                plugin->GetName().c_str());
+        }
+
+        dispatchers.push_back(dispatcher);
+    }
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

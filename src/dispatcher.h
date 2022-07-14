@@ -58,21 +58,29 @@ private:
     friend class NoticeBroker;
 };
 
-template <class T>
-class DispatcherFactory : public TfType::FactoryBase
+class DispatcherFactoryBase : public TfType::FactoryBase
 {
 public:
-    virtual Dispatcher* New() const override
+    virtual TfRefPtr<Dispatcher> New(
+        const NoticeBrokerWeakPtr& broker) const = 0;
+};
+
+template <class T>
+class DispatcherFactory : public DispatcherFactoryBase
+{
+public:
+    virtual TfRefPtr<Dispatcher> New(
+        const NoticeBrokerWeakPtr& broker) const override
     {
-        return new T;
+        return TfCreateRefPtr(new T(broker));
     }
 };
 
-template <class Dispatcher, class ...Bases>
-void DefineDispatcher()
+template <class T, class ...Bases>
+void DispatcherDefine()
 {
-    TfType::Define<Dispatcher, TfType::Bases<Bases...>>()
-        .template SetFactory<DispatcherFactory<Dispatcher> >();
+    TfType::Define<T, TfType::Bases<Bases...> >()
+        .template SetFactory<DispatcherFactory<T> >();
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
