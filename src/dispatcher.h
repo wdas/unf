@@ -18,6 +18,8 @@ public:
     virtual std::string GetIdentifier() const =0;
     virtual ~Dispatcher() = default;
 
+    virtual void Register() =0;
+
 protected:
     Dispatcher(const NoticeBrokerWeakPtr&);
 
@@ -33,6 +35,8 @@ public:
             TfNotice::Revoke(key);
         }
     }
+
+    virtual void Register();
 
 private:
     StageDispatcher(const NoticeBrokerWeakPtr& broker);

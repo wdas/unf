@@ -9,6 +9,11 @@ public:
     TestDispatcher(const PXR_NS::NoticeBrokerWeakPtr& broker)
     : PXR_NS::Dispatcher(broker) {}
 
+    void Register()
+    {
+
+    }
+
     virtual std::string GetIdentifier() const { return "test"; };
 };
 

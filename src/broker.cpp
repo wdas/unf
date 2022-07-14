@@ -17,9 +17,17 @@ std::unordered_map<size_t, NoticeBrokerPtr> NoticeBroker::Registry;
 NoticeBroker::NoticeBroker(const UsdStageWeakPtr& stage)
     : _stage(stage)
 {
+    // Add default dispatcher.
+    AddDispatcher<StageDispatcher>();
+
+    // Discover dispatchers added via plugin to complete or override
+    // default dispatcher.
     DiscoverDispatchers();
 
-    AddDispatcher<StageDispatcher>();
+    // Register all dispatchers
+    for (auto& d: _dispatcherMap) {
+        d.second->Register();
+    }
 }
 
 NoticeBrokerPtr NoticeBroker::Create(const UsdStageWeakPtr& stage)
@@ -157,8 +165,6 @@ void NoticeBroker::DiscoverDispatchers()
     PlugRegistry::GetAllDerivedTypes(
         TfType::Find<Dispatcher>(), &dispatcherTypes);
 
-    std::vector<DispatcherPtr> dispatchers;
-
     auto self = TfCreateWeakPtr(this);
 
     for (const TfType& dispatcherType : dispatcherTypes) {
@@ -191,7 +197,7 @@ void NoticeBroker::DiscoverDispatchers()
                 plugin->GetName().c_str());
         }
 
-        dispatchers.push_back(dispatcher);
+        _dispatcherMap[dispatcher->GetIdentifier()] = dispatcher;
     }
 }
 

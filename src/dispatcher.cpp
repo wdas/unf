@@ -23,6 +23,11 @@ Dispatcher::Dispatcher(const NoticeBrokerWeakPtr& broker)
 StageDispatcher::StageDispatcher(const NoticeBrokerWeakPtr& broker)
     : Dispatcher(broker)
 {
+
+}
+
+void StageDispatcher::Register()
+{
     _keys.reserve(4);
 
     _Register<
