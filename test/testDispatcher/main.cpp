@@ -14,11 +14,6 @@ public:
 
     }
 
-    void Revoke()
-    {
-
-    }
-
     virtual std::string GetIdentifier() const { return "test"; };
 };
 
