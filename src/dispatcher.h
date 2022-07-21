@@ -19,24 +19,23 @@ public:
     virtual ~Dispatcher() = default;
 
     virtual void Register() =0;
+    virtual void Revoke() =0;
 
 protected:
     Dispatcher(const NoticeBrokerWeakPtr&);
 
     NoticeBrokerWeakPtr _broker;
+    std::vector<TfNotice::Key> _keys;
 };
 
 class StageDispatcher : public Dispatcher {
 public:
     virtual std::string GetIdentifier() const { return "default"; };
 
-    virtual ~StageDispatcher() {
-        for (auto& key: _keys) {
-            TfNotice::Revoke(key);
-        }
-    }
+    virtual ~StageDispatcher() { Revoke(); }
 
     virtual void Register();
+    virtual void Revoke();
 
 private:
     StageDispatcher(const NoticeBrokerWeakPtr& broker);
@@ -56,8 +55,6 @@ private:
         TfRefPtr<BrokerNotice> _notice = BrokerNotice::Create(notice);
         _broker->Process(_notice);
     }
-
-    std::vector<TfNotice::Key> _keys;
 
     friend class NoticeBroker;
 };

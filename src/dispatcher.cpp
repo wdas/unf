@@ -44,4 +44,11 @@ void StageDispatcher::Register()
         UsdNotice::LayerMutingChanged>();
 }
 
+void StageDispatcher::Revoke()
+{
+    for (auto& key: _keys) {
+        TfNotice::Revoke(key);
+    }
+}
+
 PXR_NAMESPACE_CLOSE_SCOPE
