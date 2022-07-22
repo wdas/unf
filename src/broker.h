@@ -38,6 +38,10 @@ public:
 
     virtual ~NoticeBroker() {}
 
+    // Don't allow copies
+    NoticeBroker(const NoticeBroker &) = delete;
+    NoticeBroker &operator=(const NoticeBroker &) = delete;
+
     const UsdStageWeakPtr& GetStage() const { return _stage; }
 
     bool IsInTransaction();
@@ -49,10 +53,6 @@ public:
     void Send(Args&&... args);
 
     void Send(const UsdBrokerNotice::StageNoticeRefPtr notice);
-
-    // Don't allow copies
-    NoticeBroker(const NoticeBroker &) = delete;
-    NoticeBroker &operator=(const NoticeBroker &) = delete;
 
     template<class T>
     void AddDispatcher() {
