@@ -48,7 +48,7 @@ public:
     template<class BrokerNotice, class... Args>
     void Send(Args&&... args);
 
-    void Process(const UsdBrokerNotice::StageNoticeRefPtr notice);
+    void Send(const UsdBrokerNotice::StageNoticeRefPtr notice);
 
     // Don't allow copies
     NoticeBroker(const NoticeBroker &) = delete;
@@ -104,7 +104,7 @@ void NoticeBroker::Send(Args&&... args)
     TfRefPtr<BrokerNotice> _notice = BrokerNotice::Create(
         std::forward<Args>(args)...);
 
-    Process(_notice);
+    Send(_notice);
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

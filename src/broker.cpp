@@ -79,7 +79,7 @@ void NoticeBroker::EndTransaction()
     _transactions.pop_back();
 }
 
-void NoticeBroker::Process(const UsdBrokerNotice::StageNoticeRefPtr notice)
+void NoticeBroker::Send(const UsdBrokerNotice::StageNoticeRefPtr notice)
 {
     // Capture the notice to be processed later if a transaction is pending.
     if (_transactions.size() > 0) {

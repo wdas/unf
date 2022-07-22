@@ -50,7 +50,7 @@ private:
         const UsdNotice& notice, const UsdStageWeakPtr& stage)
     {
         TfRefPtr<BrokerNotice> _notice = BrokerNotice::Create(notice);
-        _broker->Process(_notice);
+        _broker->Send(_notice);
     }
 
     friend class NoticeBroker;
