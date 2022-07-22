@@ -412,13 +412,13 @@ def test_custom_unmergeable_notice():
     cache = NoticeCache(CustomNotice.UnMergeableNotice)
 
     notice1 = CustomNotice.UnMergeableNoticeWrapper.Init()
-    broker.Process(notice1)
+    broker.Send(notice1)
 
     notice2 = CustomNotice.UnMergeableNoticeWrapper.Init()
-    broker.Process(notice2)
+    broker.Send(notice2)
 
     notice3 = CustomNotice.UnMergeableNoticeWrapper.Init()
-    broker.Process(notice3)
+    broker.Send(notice3)
 
     # Ensure that three notices has been cached.
     assert cache.Size() == 3
