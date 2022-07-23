@@ -2,6 +2,7 @@
 #define NOTICE_BROKER_BROKER_H
 
 #include "notice.h"
+#include "merger.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/refBase.h>
@@ -17,7 +18,6 @@
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
-#include <unordered_map>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -26,9 +26,6 @@ class Dispatcher;
 
 using NoticeBrokerPtr = TfRefPtr<NoticeBroker>;
 using NoticeBrokerWeakPtr = TfWeakPtr<NoticeBroker>;
-
-using NoticeCaturePredicateFunc =
-    std::function<bool (const UsdBrokerNotice::StageNotice &)>;
 
 using DispatcherPtr = TfRefPtr<Dispatcher>;
 
@@ -71,30 +68,13 @@ public:
 private:
     NoticeBroker(const UsdStageWeakPtr&);
 
-    struct _TransactionHandler {
-        _TransactionHandler() {}
-        _TransactionHandler(_TransactionHandler&& t)
-            : noticeMap(std::move(t.noticeMap))
-            , predicate(t.predicate) {}
-
-        using _StageNoticePtrList =
-            std::vector<UsdBrokerNotice::StageNoticeRefPtr>;
-
-        std::unordered_map<std::string, _StageNoticePtrList> noticeMap;
-        NoticeCaturePredicateFunc predicate = nullptr;
-
-        void Join(_TransactionHandler&);
-    };
-
-    void _SendNotices(_TransactionHandler&);
     static void _CleanCache();
 
     // A registry of hashed stage ptr to the corresponding stage's broker ptr.
     static std::unordered_map<size_t, NoticeBrokerPtr> Registry;
 
-private:
     UsdStageWeakPtr _stage;
-    std::vector<_TransactionHandler> _transactions;
+    std::vector<NoticeMerger> _mergers;
     std::unordered_map<std::string, DispatcherPtr> _dispatcherMap;
 };
 

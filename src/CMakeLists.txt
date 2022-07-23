@@ -1,6 +1,7 @@
 add_library(UsdNoticeBroker
     broker.cpp
     dispatcher.cpp
+    merger.cpp
     notice.cpp
     transaction.cpp
 )
