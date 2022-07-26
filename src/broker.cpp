@@ -77,18 +77,6 @@ void NoticeBroker::EndTransaction()
     _mergers.pop_back();
 }
 
-void NoticeBroker::Send(const UsdBrokerNotice::StageNoticeRefPtr notice)
-{
-    // Capture the notice to be processed later if a merger is pending.
-    if (_mergers.size() > 0) {
-        _mergers.back().Capture(notice);
-    }
-    // Otherwise, send the notice.
-    else {
-        notice->Send(_stage);
-    }
-}
-
 void NoticeBroker::_CleanCache() {
     for (auto it = Registry.begin();
         it != Registry.end();)

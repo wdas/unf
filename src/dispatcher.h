@@ -15,8 +15,9 @@ PXR_NAMESPACE_OPEN_SCOPE
 
 class Dispatcher : public TfRefBase, public TfWeakBase {
 public:
-    virtual std::string GetIdentifier() const =0;
     virtual ~Dispatcher() { Revoke(); };
+
+    virtual std::string GetIdentifier() const =0;
 
     virtual void Register() =0;
     virtual void Revoke();

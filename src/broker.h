@@ -49,7 +49,24 @@ public:
     template<class BrokerNotice, class... Args>
     void Send(Args&&... args);
 
-    void Send(const UsdBrokerNotice::StageNoticeRefPtr notice);
+    void Send(const UsdBrokerNotice::StageNoticeRefPtr notice)
+    {
+        Send(notice, _stage);
+    }
+
+    template <class SenderPtr>
+    void Send(
+        const UsdBrokerNotice::StageNoticeRefPtr notice,
+        const SenderPtr &sender)
+    {
+        if (_mergers.size() > 0) {
+            _mergers.back().Capture(notice);
+        }
+        // Otherwise, send the notice.
+        else {
+            notice->Send(sender);
+        }
+    }
 
     template<class T>
     void AddDispatcher() {
