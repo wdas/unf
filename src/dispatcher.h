@@ -15,7 +15,7 @@ PXR_NAMESPACE_OPEN_SCOPE
 
 class Dispatcher : public TfRefBase, public TfWeakBase {
 public:
-    virtual ~Dispatcher() { Revoke(); };
+    virtual ~Dispatcher() { Revoke(); }
 
     virtual std::string GetIdentifier() const =0;
 
@@ -24,6 +24,21 @@ public:
 
 protected:
     Dispatcher(const NoticeBrokerWeakPtr&);
+
+    template<class InputNotice, class OutputNotice>
+    void _Register()
+    {
+        auto self = TfCreateWeakPtr(this);
+        auto cb = &StageDispatcher::_OnReceiving<InputNotice, OutputNotice>;
+        _keys.push_back(TfNotice::Register(self, cb, _broker->GetStage()));
+    }
+
+    template<class InputNotice, class OutputNotice>
+    void _OnReceiving(const InputNotice& notice)
+    {
+        TfRefPtr<OutputNotice> _notice = OutputNotice::Create(notice);
+        _broker->Send(_notice);
+    }
 
     NoticeBrokerWeakPtr _broker;
     std::vector<TfNotice::Key> _keys;
@@ -37,22 +52,6 @@ public:
 
 private:
     StageDispatcher(const NoticeBrokerWeakPtr& broker);
-
-    template<class BrokerNotice, class UsdNotice>
-    void _Register()
-    {
-        auto self = TfCreateWeakPtr(this);
-        auto cb = &StageDispatcher::_OnReceiving<BrokerNotice, UsdNotice>;
-        _keys.push_back(TfNotice::Register(self, cb, _broker->GetStage()));
-    }
-
-    template<class BrokerNotice, class UsdNotice>
-    void _OnReceiving(
-        const UsdNotice& notice, const UsdStageWeakPtr& stage)
-    {
-        TfRefPtr<BrokerNotice> _notice = BrokerNotice::Create(notice);
-        _broker->Send(_notice);
-    }
 
     friend class NoticeBroker;
 };

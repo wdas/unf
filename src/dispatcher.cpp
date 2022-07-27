@@ -38,17 +38,17 @@ void StageDispatcher::Register()
     _keys.reserve(4);
 
     _Register<
-        UsdBrokerNotice::StageContentsChanged,
-        UsdNotice::StageContentsChanged>();
+        UsdNotice::StageContentsChanged,
+        UsdBrokerNotice::StageContentsChanged>();
     _Register<
-        UsdBrokerNotice::ObjectsChanged,
-        UsdNotice::ObjectsChanged>();
+        UsdNotice::ObjectsChanged,
+        UsdBrokerNotice::ObjectsChanged>();
     _Register<
-        UsdBrokerNotice::StageEditTargetChanged,
-        UsdNotice::StageEditTargetChanged>();
+        UsdNotice::StageEditTargetChanged,
+        UsdBrokerNotice::StageEditTargetChanged>();
     _Register<
-        UsdBrokerNotice::LayerMutingChanged,
-        UsdNotice::LayerMutingChanged>();
+        UsdNotice::LayerMutingChanged,
+        UsdBrokerNotice::LayerMutingChanged>();
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
