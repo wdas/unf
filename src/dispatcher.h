@@ -29,7 +29,7 @@ protected:
     void _Register()
     {
         auto self = TfCreateWeakPtr(this);
-        auto cb = &StageDispatcher::_OnReceiving<InputNotice, OutputNotice>;
+        auto cb = &Dispatcher::_OnReceiving<InputNotice, OutputNotice>;
         _keys.push_back(TfNotice::Register(self, cb, _broker->GetStage()));
     }
 
