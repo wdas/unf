@@ -3,15 +3,11 @@
 
 #include <pxr/pxr.h>
 
-#include <iostream>
-
 class TestDispatcher : public PXR_NS::Dispatcher
 {
 public:
     TestDispatcher(const PXR_NS::NoticeBrokerWeakPtr& broker)
-    : PXR_NS::Dispatcher(broker) {
-        std::cout << "....TestDispatcher\n";
-    }
+    : PXR_NS::Dispatcher(broker) {}
 
     void Register()
     {

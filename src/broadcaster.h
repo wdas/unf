@@ -14,15 +14,37 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
+class BroadcasterContext {
+public:
+    NoticePtrList& Get(const std::string&);
+
+    virtual ~BroadcasterContext() {}
+
+private:
+    BroadcasterContext(const UsdBrokerNotice::StageNoticeRefPtr&);
+    BroadcasterContext(NoticePtrMap&);
+
+    NoticePtrMap _noticeMap;
+
+    friend class Broadcaster;
+};
+
 class Broadcaster : public TfRefBase, public TfWeakBase {
 public:
-    virtual ~Broadcaster() {}
+    virtual ~Broadcaster() = default;
 
     virtual std::string GetIdentifier() const =0;
     virtual std::string GetParentIdentifier() const { return std::string(); }
 
+    virtual void Execute(BroadcasterContext&) =0;
+
 protected:
     Broadcaster(const NoticeBrokerWeakPtr&);
+
+    void _Execute(const UsdBrokerNotice::StageNoticeRefPtr&);
+    void _Execute(NoticePtrMap&);
+
+    void _ExecuteChildren(BroadcasterContext&);
 
     NoticeBrokerWeakPtr _broker;
 

@@ -13,6 +13,11 @@ public:
     virtual std::string GetParentIdentifier() const {
         return "TestBroadcaster";
     };
+
+    virtual void Execute(BroadcasterContext& context)
+    {
+
+    }
 };
 
 PXR_NAMESPACE_OPEN_SCOPE

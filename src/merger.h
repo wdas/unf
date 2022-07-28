@@ -17,6 +17,10 @@ PXR_NAMESPACE_OPEN_SCOPE
 using NoticeCaturePredicateFunc =
     std::function<bool (const UsdBrokerNotice::StageNotice &)>;
 
+using NoticePtrList = std::vector<UsdBrokerNotice::StageNoticeRefPtr>;
+
+using NoticePtrMap = std::unordered_map<std::string, NoticePtrList>;
+
 class NoticeMerger {
 public:
     NoticeMerger(const NoticeCaturePredicateFunc& predicate=nullptr)
@@ -27,10 +31,7 @@ public:
     void MergeAndSend(const UsdStageWeakPtr&);
 
 private:
-    using _StageNoticePtrList =
-        std::vector<UsdBrokerNotice::StageNoticeRefPtr>;
-
-    std::unordered_map<std::string, _StageNoticePtrList> _noticeMap;
+    NoticePtrMap _noticeMap;
     NoticeCaturePredicateFunc _predicate = nullptr;
 };
 
