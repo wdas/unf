@@ -56,7 +56,7 @@ private:
     friend class NoticeBroker;
 };
 
-class DispatcherFactoryBase : public TfType::FactoryBase
+class DispatcherFactory : public TfType::FactoryBase
 {
 public:
     virtual TfRefPtr<Dispatcher> New(
@@ -64,7 +64,7 @@ public:
 };
 
 template <class T>
-class DispatcherFactory : public DispatcherFactoryBase
+class DispatcherFactoryImpl : public DispatcherFactory
 {
 public:
     virtual TfRefPtr<Dispatcher> New(
@@ -78,7 +78,7 @@ template <class T, class ...Bases>
 void DispatcherDefine()
 {
     TfType::Define<T, TfType::Bases<Bases...> >()
-        .template SetFactory<DispatcherFactory<T> >();
+        .template SetFactory<DispatcherFactoryImpl<T> >();
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

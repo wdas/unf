@@ -3,18 +3,22 @@
 
 #include <pxr/pxr.h>
 
+#include <iostream>
+
 class TestDispatcher : public PXR_NS::Dispatcher
 {
 public:
     TestDispatcher(const PXR_NS::NoticeBrokerWeakPtr& broker)
-    : PXR_NS::Dispatcher(broker) {}
+    : PXR_NS::Dispatcher(broker) {
+        std::cout << "....TestDispatcher\n";
+    }
 
     void Register()
     {
 
     }
 
-    virtual std::string GetIdentifier() const { return "test"; };
+    virtual std::string GetIdentifier() const { return "TestDispatcher"; };
 };
 
 PXR_NAMESPACE_OPEN_SCOPE

@@ -1,14 +1,13 @@
 #include "broker.h"
 #include "notice.h"
 #include "dispatcher.h"
+#include "broadcaster.h"
 #include "merger.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/weakPtr.h>
 #include <pxr/usd/usd/common.h>
 #include <pxr/usd/usd/notice.h>
-#include <pxr/base/plug/plugin.h>
-#include <pxr/base/plug/registry.h>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -23,12 +22,15 @@ NoticeBroker::NoticeBroker(const UsdStageWeakPtr& stage)
 
     // Discover dispatchers added via plugin to complete or override
     // default dispatcher.
-    DiscoverDispatchers();
+    _DiscoverDispatchers();
 
     // Register all dispatchers
-    for (auto& d: _dispatcherMap) {
-        d.second->Register();
+    for (auto& element: _dispatcherMap) {
+        element.second->Register();
     }
+
+    // Discover broadcaster added via plugin to infer granular notices.
+    _DiscoverBroadcasters();
 }
 
 NoticeBrokerPtr NoticeBroker::Create(const UsdStageWeakPtr& stage)
@@ -92,46 +94,54 @@ void NoticeBroker::_CleanCache() {
     }
 }
 
-void NoticeBroker::DiscoverDispatchers()
+void NoticeBroker::_DiscoverDispatchers()
 {
-    std::set<TfType> dispatcherTypes;
-    PlugRegistry::GetAllDerivedTypes(
-        TfType::Find<Dispatcher>(), &dispatcherTypes);
+    TfType root = TfType::Find<Dispatcher>();
+    std::set<TfType> types;
+    PlugRegistry::GetAllDerivedTypes(root, &types);
 
-    auto self = TfCreateWeakPtr(this);
-
-    for (const TfType& dispatcherType : dispatcherTypes) {
-        const PlugPluginPtr plugin =
-            PlugRegistry::GetInstance().GetPluginForType(dispatcherType);
-
-        if (!plugin) {
-            continue;
-        }
-
-        if (!plugin->Load()) {
-            TF_CODING_ERROR("Failed to load plugin %s for %s",
-                plugin->GetName().c_str(),
-                dispatcherType.GetTypeName().c_str());
-            continue;
-        }
-
-        DispatcherPtr dispatcher;
-        DispatcherFactoryBase* factory =
-            dispatcherType.GetFactory<DispatcherFactoryBase>();
-
-        if (factory) {
-            dispatcher = factory->New(self);
-        }
-
-        if (!dispatcher) {
-            TF_CODING_ERROR(
-                "Failed to manufacture dispatcher %s from plugin %s",
-                dispatcherType.GetTypeName().c_str(),
-                plugin->GetName().c_str());
-        }
-
-        _dispatcherMap[dispatcher->GetIdentifier()] = dispatcher;
+    for (const TfType& type : types) {
+        _LoadFromPlugin<DispatcherPtr, DispatcherFactory>(type);
     }
+}
+
+void NoticeBroker::_DiscoverBroadcasters()
+{
+    TfType root = TfType::Find<Broadcaster>();
+    std::set<TfType> types;
+    PlugRegistry::GetAllDerivedTypes(root, &types);
+
+    for (const TfType& type : types) {
+        _LoadFromPlugin<BroadcasterPtr, BroadcasterFactory>(type);
+    }
+
+    // Construct hierarchy.
+    for (auto& element: _broadcasterMap) {
+        const auto& identifier = element.first;
+        auto& broadcaster = element.second;
+
+        const auto& parentId = broadcaster->GetParentIdentifier();
+        if (!parentId.size()) {
+            _rootBroadcasters.push_back(identifier);
+        }
+        else {
+            auto& parent = GetBroadcaster(parentId);
+            parent->_AddChild(broadcaster);
+        }
+    }
+
+    // Detect errors
+    // TODO: Detect cycles
+}
+
+void NoticeBroker::_Add(const DispatcherPtr& dispatcher)
+{
+    _dispatcherMap[dispatcher->GetIdentifier()] = dispatcher;
+}
+
+void NoticeBroker::_Add(const BroadcasterPtr& broadcaster)
+{
+    _broadcasterMap[broadcaster->GetIdentifier()] = broadcaster;
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

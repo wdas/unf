@@ -6,7 +6,9 @@ set(CLASSES
     testTransaction
 )
 
-set(dispatcher_path "${CMAKE_CURRENT_BINARY_DIR}/testDispatcher/resources")
+set(dispatcher_path "${CMAKE_CURRENT_BINARY_DIR}/plugins/*/resources/")
+
+add_subdirectory(plugins)
 
 foreach(NAME IN LISTS CLASSES)
     add_executable(${NAME} "${NAME}.cpp")
@@ -28,8 +30,6 @@ foreach(NAME IN LISTS CLASSES)
         PROPERTY ENVIRONMENT
             PXR_PLUGINPATH_NAME=${dispatcher_path}:$ENV{PXR_PLUGINPATH_NAME})
 endforeach()
-
-add_subdirectory(testDispatcher)
 
 if (BUILD_PYTHON_BINDINGS)
     add_subdirectory(python)

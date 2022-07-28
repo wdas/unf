@@ -1,0 +1,16 @@
+{
+    "Plugins": [
+        {
+            "Info": {
+                "Types" : {
+                    "TestBroadcaster2" : {
+                        "bases": [ "Broadcaster" ]
+                    }
+                }
+            },
+            "LibraryPath": "../libTestBroadcaster2.so",
+            "Name": "TestBroadcaster2",
+            "Type": "library"
+        }
+    ]
+}
