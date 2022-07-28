@@ -1,6 +1,6 @@
 #include "broadcaster.h"
 #include "broker.h"
-#include "context.h"
+#include "merger.h"
 #include "notice.h"
 
 #include <pxr/pxr.h>
@@ -23,7 +23,7 @@ void Broadcaster::_AddChild(const BroadcasterPtr& child)
     _children.push_back(child);
 }
 
-void Broadcaster::_Execute(NoticeContext& context)
+void Broadcaster::_Execute(NoticeMerger& context)
 {
     Execute(context);
 

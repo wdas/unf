@@ -1,6 +1,7 @@
 #include "dispatcher.h"
 #include "broker.h"
 #include "notice.h"
+#include "merger.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/weakPtr.h>
@@ -30,12 +31,7 @@ void Dispatcher::Revoke()
 StageDispatcher::StageDispatcher(const NoticeBrokerWeakPtr& broker)
     : Dispatcher(broker)
 {
-
-}
-
-void StageDispatcher::Register()
-{
-    _keys.reserve(4);
+     _keys.reserve(4);
 
     _Register<
         UsdNotice::StageContentsChanged,
@@ -50,5 +46,11 @@ void StageDispatcher::Register()
         UsdNotice::LayerMutingChanged,
         UsdBrokerNotice::LayerMutingChanged>();
 }
+
+void StageDispatcher::Execute(NoticeMerger& merger) {
+    _noticeMap = merger.GetNotices();
+    Dispatcher::Execute(nullptr);
+}
+
 
 PXR_NAMESPACE_CLOSE_SCOPE

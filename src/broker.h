@@ -2,7 +2,7 @@
 #define NOTICE_BROKER_BROKER_H
 
 #include "notice.h"
-#include "context.h"
+#include "merger.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/refBase.h>
@@ -89,15 +89,14 @@ private:
     template<class OutputPtr, class OutputFactory>
     void _LoadFromPlugin(const TfType& type);
 
-    void _ExecuteBroadcasters(NoticeContext& context);
+    void _ExecuteBroadcasters(NoticeMerger& merger);
 
     // A registry of hashed stage ptr to the corresponding stage's broker ptr.
     static std::unordered_map<size_t, NoticeBrokerPtr> Registry;
 
     UsdStageWeakPtr _stage;
 
-    std::vector<NoticeContext> _transactions;
-    std::shared_ptr<NoticeContext> _latestTransaction;
+    std::vector<NoticeMerger> _mergers;
 
     std::unordered_map<std::string, DispatcherPtr> _dispatcherMap;
     std::unordered_map<std::string, BroadcasterPtr> _broadcasterMap;

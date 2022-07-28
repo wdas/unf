@@ -2,7 +2,7 @@
 #include "notice.h"
 #include "dispatcher.h"
 #include "broadcaster.h"
-#include "context.h"
+#include "merger.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/weakPtr.h>
@@ -49,14 +49,13 @@ NoticeBrokerPtr NoticeBroker::Create(const UsdStageWeakPtr& stage)
 
 bool NoticeBroker::IsInTransaction()
 {
-    return _transactions.size() > 0;
+    return _mergers.size() > 0;
 }
 
 void NoticeBroker::BeginTransaction(
     const NoticeCaturePredicateFunc& predicate)
 {
-    _transactions.push_back(NoticeContext());
-    _transactions.back().SetFilterPredicate(predicate);
+    _mergers.push_back(NoticeMerger(predicate));
 }
 
 void NoticeBroker::EndTransaction()
@@ -65,46 +64,33 @@ void NoticeBroker::EndTransaction()
         return;
     }
 
-    NoticeContext& context = _transactions.back();
+    NoticeMerger& merger = _mergers.back();
 
-    // Merge all notices captured in this transaction and run
-    // all broadcasters.
-    context.Merge();
-    _ExecuteBroadcasters(context);
-
-    // Join previous transaction if necessary.
-    if (_latestTransaction) {
-        context.Join(*_latestTransaction);
-        _latestTransaction.reset();
+    // If there are only one merger left, process all notices.
+    if (_mergers.size() == 1) {
+        merger.Merge();
+        _ExecuteBroadcasters(merger);
+        merger.Merge();
+        merger.Send(_stage);
     }
-
-    // Merge again to ensure that new notices added by broadcasters
-    // and previous transaction are optimized.
-    context.Merge();
-
-    // If there are only one transaction left, send all notices.
-    if (_transactions.size() == 1) {
-        context.SendAll(_stage);
-    }
-    // Otherwise, it means that we are in a nested transaction that
-    //should not be processed yet. Save it for joining it with next
-    // transaction later.
+    // Otherwise, it means that we are in a nested transaction that should
+    // not be processed yet. Join merger data with next merger.
     else {
-        _latestTransaction = std::make_shared<NoticeContext>(context);;
+       (_mergers.end()-2)->Join(merger);
     }
 
-    _transactions.pop_back();
+    _mergers.pop_back();
 }
 
 void NoticeBroker::Send(
     const UsdBrokerNotice::StageNoticeRefPtr& notice)
 {
-    if (_transactions.size() > 0) {
-        _transactions.back().Add(notice);
+    if (_mergers.size() > 0) {
+        _mergers.back().Add(notice);
     }
     // Otherwise, send the notice via broadcaster.
     else {
-        NoticeContext context(notice);
+        NoticeMerger context(notice);
         _ExecuteBroadcasters(context);
 
         context.SendAll(_stage);
@@ -186,7 +172,7 @@ void NoticeBroker::_Add(const BroadcasterPtr& broadcaster)
     _broadcasterMap[broadcaster->GetIdentifier()] = broadcaster;
 }
 
-void NoticeBroker::_ExecuteBroadcasters(NoticeContext& context)
+void NoticeBroker::_ExecuteBroadcasters(NoticeMerger& context)
 {
     for (const auto& identifier: _rootBroadcasters) {
         GetBroadcaster(identifier)->_Execute(context);

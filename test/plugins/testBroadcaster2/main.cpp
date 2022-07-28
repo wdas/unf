@@ -1,6 +1,6 @@
 #include "broker.h"
 #include "broadcaster.h"
-#include "context.h"
+#include "merger.h"
 
 #include <pxr/pxr.h>
 
@@ -15,7 +15,7 @@ public:
         return "TestBroadcaster";
     };
 
-    virtual void Execute(NoticeContext& context)
+    virtual void Execute(NoticeMerger& context)
     {
 
     }

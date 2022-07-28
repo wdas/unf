@@ -2,7 +2,7 @@
 #define NOTICE_BROKER_BROADCASTER_H
 
 #include "broker.h"
-#include "context.h"
+#include "merger.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/refBase.h>
@@ -23,14 +23,14 @@ public:
     virtual std::string GetIdentifier() const =0;
     virtual std::string GetParentIdentifier() const { return std::string(); }
 
-    virtual void Execute(NoticeContext&) =0;
+    virtual void Execute(NoticeMerger&) =0;
 
 protected:
     Broadcaster(const NoticeBrokerWeakPtr&);
 
 private:
     void _AddChild(const BroadcasterPtr&);
-    void _Execute(NoticeContext&);
+    void _Execute(NoticeMerger&);
 
     std::vector<BroadcasterPtr> _children;
 
