@@ -65,19 +65,32 @@ void NoticeBroker::EndTransaction()
         return;
     }
 
-    NoticeContext& transaction = _transactions.back();
+    NoticeContext& context = _transactions.back();
 
-    // TODO: Figure out how to execute broadcasters properly.
+    // Merge all notices captured in this transaction and run
+    // all broadcasters.
+    context.Merge();
+    _ExecuteBroadcasters(context);
 
-    // If there are only one transaction left, process all notices.
-    if (_transactions.size() == 1) {
-        transaction.Merge();
-        transaction.SendAll(_stage);
+    // Join previous transaction if necessary.
+    if (_latestTransaction) {
+        context.Join(*_latestTransaction);
+        _latestTransaction.reset();
     }
-    // Otherwise, it means that we are in a nested transaction that should
-    // not be processed yet. Join transaction data with next transaction.
+
+    // Merge again to ensure that new notices added by broadcasters
+    // and previous transaction are optimized.
+    context.Merge();
+
+    // If there are only one transaction left, send all notices.
+    if (_transactions.size() == 1) {
+        context.SendAll(_stage);
+    }
+    // Otherwise, it means that we are in a nested transaction that
+    //should not be processed yet. Save it for joining it with next
+    // transaction later.
     else {
-       (_transactions.end()-2)->Join(transaction);
+        _latestTransaction = std::make_shared<NoticeContext>(context);;
     }
 
     _transactions.pop_back();
@@ -87,15 +100,12 @@ void NoticeBroker::Send(
     const UsdBrokerNotice::StageNoticeRefPtr& notice)
 {
     if (_transactions.size() > 0) {
-        _transactions.back().Capture(notice);
+        _transactions.back().Add(notice);
     }
     // Otherwise, send the notice via broadcaster.
     else {
         NoticeContext context(notice);
-
-        for (const auto& identifier: _rootBroadcasters) {
-            GetBroadcaster(identifier)->_Execute(context);
-        }
+        _ExecuteBroadcasters(context);
 
         context.SendAll(_stage);
     }
@@ -174,6 +184,13 @@ void NoticeBroker::_Add(const DispatcherPtr& dispatcher)
 void NoticeBroker::_Add(const BroadcasterPtr& broadcaster)
 {
     _broadcasterMap[broadcaster->GetIdentifier()] = broadcaster;
+}
+
+void NoticeBroker::_ExecuteBroadcasters(NoticeContext& context)
+{
+    for (const auto& identifier: _rootBroadcasters) {
+        GetBroadcaster(identifier)->_Execute(context);
+    }
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

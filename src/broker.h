@@ -89,11 +89,16 @@ private:
     template<class OutputPtr, class OutputFactory>
     void _LoadFromPlugin(const TfType& type);
 
+    void _ExecuteBroadcasters(NoticeContext& context);
+
     // A registry of hashed stage ptr to the corresponding stage's broker ptr.
     static std::unordered_map<size_t, NoticeBrokerPtr> Registry;
 
     UsdStageWeakPtr _stage;
+
     std::vector<NoticeContext> _transactions;
+    std::shared_ptr<NoticeContext> _latestTransaction;
+
     std::unordered_map<std::string, DispatcherPtr> _dispatcherMap;
     std::unordered_map<std::string, BroadcasterPtr> _broadcasterMap;
     std::vector<std::string> _rootBroadcasters;

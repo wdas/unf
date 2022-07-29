@@ -24,18 +24,16 @@ using NoticePtrMap = std::unordered_map<std::string, NoticePtrList>;
 class NoticeContext {
 public:
     NoticeContext() = default;
-    NoticeContext(NoticePtrMap&);
     NoticeContext(const UsdBrokerNotice::StageNoticeRefPtr&);
 
     void SetFilterPredicate(const NoticeCaturePredicateFunc&);
 
-    void Capture(const UsdBrokerNotice::StageNoticeRefPtr&);
+    void Add(const UsdBrokerNotice::StageNoticeRefPtr&);
     const NoticePtrList& Get(const std::string&) const;
+
     void Join(NoticeContext&);
     void Merge();
     void SendAll(const UsdStageWeakPtr& stage);
-
-    NoticePtrMap& GetMap() { return _noticeMap; }
 
 private:
     NoticePtrMap _noticeMap;

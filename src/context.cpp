@@ -6,16 +6,10 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-NoticeContext::NoticeContext(NoticePtrMap& noticeMap)
-: _noticeMap(noticeMap)
-{
-
-}
-
 NoticeContext::NoticeContext(
     const UsdBrokerNotice::StageNoticeRefPtr& notice)
 {
-    Capture(notice);
+    Add(notice);
 }
 
 void NoticeContext::SetFilterPredicate(
@@ -24,7 +18,7 @@ void NoticeContext::SetFilterPredicate(
     _predicate = predicate;
 }
 
-void NoticeContext::Capture(
+void NoticeContext::Add(
     const UsdBrokerNotice::StageNoticeRefPtr& notice)
 {
     // Indicate whether the notice needs to be captured.
