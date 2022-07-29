@@ -16,10 +16,10 @@ PXR_NAMESPACE_OPEN_SCOPE
 class Dispatcher : public TfRefBase, public TfWeakBase {
 public:
     virtual std::string GetIdentifier() const =0;
-    virtual ~Dispatcher() = default;
+    virtual ~Dispatcher() { Revoke(); };
 
     virtual void Register() =0;
-    virtual void Revoke() =0;
+    virtual void Revoke();
 
 protected:
     Dispatcher(const NoticeBrokerWeakPtr&);
@@ -32,10 +32,7 @@ class StageDispatcher : public Dispatcher {
 public:
     virtual std::string GetIdentifier() const { return "default"; };
 
-    virtual ~StageDispatcher() { Revoke(); }
-
     virtual void Register();
-    virtual void Revoke();
 
 private:
     StageDispatcher(const NoticeBrokerWeakPtr& broker);
@@ -53,7 +50,7 @@ private:
         const UsdNotice& notice, const UsdStageWeakPtr& stage)
     {
         TfRefPtr<BrokerNotice> _notice = BrokerNotice::Create(notice);
-        _broker->Process(_notice);
+        _broker->Send(_notice);
     }
 
     friend class NoticeBroker;

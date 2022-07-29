@@ -20,6 +20,13 @@ Dispatcher::Dispatcher(const NoticeBrokerWeakPtr& broker)
 
 }
 
+void Dispatcher::Revoke()
+{
+    for (auto& key: _keys) {
+        TfNotice::Revoke(key);
+    }
+}
+
 StageDispatcher::StageDispatcher(const NoticeBrokerWeakPtr& broker)
     : Dispatcher(broker)
 {
@@ -42,13 +49,6 @@ void StageDispatcher::Register()
     _Register<
         UsdBrokerNotice::LayerMutingChanged,
         UsdNotice::LayerMutingChanged>();
-}
-
-void StageDispatcher::Revoke()
-{
-    for (auto& key: _keys) {
-        TfNotice::Revoke(key);
-    }
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

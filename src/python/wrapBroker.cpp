@@ -27,10 +27,10 @@ void NoticeBroker_BeginTransaction(NoticeBroker& self, object predicate)
     self.BeginTransaction(_predicate);
 }
 
-void NoticeBroker_Process(
+void NoticeBroker_Send(
     NoticeBroker& self, TfRefPtr<PyBrokerNoticeWrapperBase> notice)
 {
-    self.Process(notice->Get());
+    self.Send(notice->Get());
 }
 
 void wrapBroker()
@@ -52,7 +52,7 @@ void wrapBroker()
 
         .def("IsInTransaction", &NoticeBroker::IsInTransaction)
 
-        .def("Process", &NoticeBroker_Process)
+        .def("Send", &NoticeBroker_Send)
 
         .def("BeginTransaction", &NoticeBroker_BeginTransaction,
             ((arg("self"), arg("predicate")=object())))
