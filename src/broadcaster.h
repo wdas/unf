@@ -23,14 +23,13 @@ public:
     virtual std::string GetIdentifier() const =0;
     virtual std::string GetParentIdentifier() const { return std::string(); }
 
-    virtual void Execute(NoticeMerger&) =0;
+    //TODO: User interface
 
 protected:
     Broadcaster(const NoticeBrokerWeakPtr&);
 
 private:
     void _AddChild(const BroadcasterPtr&);
-    void _Execute(NoticeMerger&);
 
     std::vector<BroadcasterPtr> _children;
 

@@ -69,8 +69,7 @@ void NoticeBroker::EndTransaction()
     // If there are only one merger left, process all notices.
     if (_mergers.size() == 1) {
         merger.Merge();
-        _ExecuteBroadcasters(merger);
-        merger.Merge();
+        //TODO: Execute Broadcasters
         merger.Send(_stage);
     }
     // Otherwise, it means that we are in a nested transaction that should
@@ -90,11 +89,7 @@ void NoticeBroker::Send(
     }
     // Otherwise, send the notice via broadcaster.
     else {
-        NoticeMerger merger;
-        merger.Add(notice);
-        _ExecuteBroadcasters(merger);
-
-        merger.Send(_stage);
+        notice->Send(_stage);
     }
 }
 
@@ -171,13 +166,6 @@ void NoticeBroker::_Add(const DispatcherPtr& dispatcher)
 void NoticeBroker::_Add(const BroadcasterPtr& broadcaster)
 {
     _broadcasterMap[broadcaster->GetIdentifier()] = broadcaster;
-}
-
-void NoticeBroker::_ExecuteBroadcasters(NoticeMerger& merger)
-{
-    for (const auto& identifier: _rootBroadcasters) {
-        GetBroadcaster(identifier)->_Execute(merger);
-    }
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

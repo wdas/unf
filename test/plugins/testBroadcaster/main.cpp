@@ -11,11 +11,6 @@ public:
     : PXR_NS::Broadcaster(broker) {}
 
     virtual std::string GetIdentifier() const { return "TestBroadcaster"; };
-
-    virtual void Execute(NoticeMerger& merger)
-    {
-
-    }
 };
 
 PXR_NAMESPACE_OPEN_SCOPE

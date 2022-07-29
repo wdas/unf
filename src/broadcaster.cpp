@@ -23,13 +23,4 @@ void Broadcaster::_AddChild(const BroadcasterPtr& child)
     _children.push_back(child);
 }
 
-void Broadcaster::_Execute(NoticeMerger& merger)
-{
-    Execute(merger);
-
-    for (auto& child: _children) {
-        child->Execute(merger);
-    }
-}
-
 PXR_NAMESPACE_CLOSE_SCOPE
