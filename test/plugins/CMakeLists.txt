@@ -1,0 +1,3 @@
+add_subdirectory(testDispatcher)
+add_subdirectory(testBroadcaster)
+add_subdirectory(testBroadcaster2)

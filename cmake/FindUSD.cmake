@@ -4,6 +4,7 @@
 #     pxr::usd
 #     pxr::sdf
 #     pxr::tf
+#     pxr::plug
 #     pxr::arch
 #
 # Usage:
@@ -36,7 +37,7 @@ find_path(
         include
 )
 
-set(USD_LIBRARIES usd sdf tf arch)
+set(USD_LIBRARIES usd sdf tf plug arch)
 
 mark_as_advanced(USD_INCLUDE_DIR USD_LIBRARIES)
 
@@ -82,6 +83,7 @@ find_package_handle_standard_args(
         usd_LIBRARY
         sdf_LIBRARY
         tf_LIBRARY
+        plug_LIBRARY
         arch_LIBRARY
     VERSION_VAR
         USD_VERSION
