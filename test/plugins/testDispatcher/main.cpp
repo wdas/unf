@@ -14,7 +14,7 @@ public:
 
     }
 
-    virtual std::string GetIdentifier() const { return "test"; };
+    virtual std::string GetIdentifier() const { return "TestDispatcher"; };
 };
 
 PXR_NAMESPACE_OPEN_SCOPE

@@ -1,13 +1,13 @@
 #include "broker.h"
 #include "notice.h"
 #include "dispatcher.h"
+#include "broadcaster.h"
+#include "merger.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/weakPtr.h>
 #include <pxr/usd/usd/common.h>
 #include <pxr/usd/usd/notice.h>
-#include <pxr/base/plug/plugin.h>
-#include <pxr/base/plug/registry.h>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -22,12 +22,15 @@ NoticeBroker::NoticeBroker(const UsdStageWeakPtr& stage)
 
     // Discover dispatchers added via plugin to complete or override
     // default dispatcher.
-    DiscoverDispatchers();
+    _DiscoverDispatchers();
 
     // Register all dispatchers
-    for (auto& d: _dispatcherMap) {
-        d.second->Register();
+    for (auto& element: _dispatcherMap) {
+        element.second->Register();
     }
+
+    // Discover broadcaster added via plugin to infer granular notices.
+    _DiscoverBroadcasters();
 }
 
 NoticeBrokerPtr NoticeBroker::Create(const UsdStageWeakPtr& stage)
@@ -46,85 +49,58 @@ NoticeBrokerPtr NoticeBroker::Create(const UsdStageWeakPtr& stage)
 
 bool NoticeBroker::IsInTransaction()
 {
-    return _transactions.size() > 0;
+    return _mergers.size() > 0;
 }
 
 void NoticeBroker::BeginTransaction(
     const NoticeCaturePredicateFunc& predicate)
 {
-    _TransactionHandler transaction;
-    transaction.predicate = predicate;
-
-    _transactions.push_back(std::move(transaction));
+    _mergers.push_back(NoticeMerger(predicate));
 }
 
 void NoticeBroker::EndTransaction()
 {
-    if (_transactions.size() == 0) {
+    if (!IsInTransaction()) {
         return;
     }
 
-    _TransactionHandler& transaction = _transactions.back();
+    NoticeMerger& merger = _mergers.back();
 
-    // If there are only one transaction left, process all notices.
-    if (_transactions.size() == 1) {
-        _SendNotices(transaction);
+    // If there are only one merger left, process all notices.
+    if (_mergers.size() == 1) {
+        merger.Merge();
+        //TODO: Execute Broadcasters
+        merger.Send(_stage);
     }
     // Otherwise, it means that we are in a nested transaction that should
-    // not be processed yet. Join transaction data with next broker.
+    // not be processed yet. Join merger data with next merger.
     else {
-       (_transactions.end()-2)->Join(transaction);
+       (_mergers.end()-2)->Join(merger);
     }
 
-    _transactions.pop_back();
+    _mergers.pop_back();
 }
 
-void NoticeBroker::Send(const UsdBrokerNotice::StageNoticeRefPtr notice)
+void NoticeBroker::Send(
+    const UsdBrokerNotice::StageNoticeRefPtr& notice)
 {
-    // Capture the notice to be processed later if a transaction is pending.
-    if (_transactions.size() > 0) {
-        _TransactionHandler& transaction = _transactions.back();
-
-        // Indicate whether the notice needs to be captured.
-        if (transaction.predicate && !transaction.predicate(*notice))
-            return;
-
-        // Store notices per type name, so that each type can be merged if
-        // required.
-        std::string name = notice->GetTypeId();
-        transaction.noticeMap[name].push_back(notice);
+    if (_mergers.size() > 0) {
+        _mergers.back().Add(notice);
     }
-    // Otherwise, send the notice.
+    // Otherwise, send the notice via broadcaster.
     else {
         notice->Send(_stage);
     }
 }
 
-void NoticeBroker::_SendNotices(_TransactionHandler& transaction)
+DispatcherPtr& NoticeBroker::GetDispatcher(std::string identifier)
 {
-    for (auto& element : transaction.noticeMap) {
-        auto& notices = element.second;
+    return _dispatcherMap.at(identifier);
+}
 
-        // If there are more than one notice for this type and
-        // if the notices are mergeable, we only need to keep the
-        // first notice, and all other can be pruned.
-        if (notices.size() > 1 && notices[0]->IsMergeable()) {
-            auto& notice = notices.at(0);
-            auto it = std::next(notices.begin());
-
-            while(it != notices.end()) {
-                // Attempt to merge content of notice with first notice
-                // if this is possible.
-                notice->Merge(std::move(**it));
-                it = notices.erase(it);
-            }
-        }
-
-        // Send all remaining notices.
-        for (const auto& notice: notices) {
-            notice->Send(_stage);
-        }
-    }
+BroadcasterPtr& NoticeBroker::GetBroadcaster(std::string identifier)
+{
+    return _broadcasterMap.at(identifier);
 }
 
 void NoticeBroker::_CleanCache() {
@@ -142,63 +118,54 @@ void NoticeBroker::_CleanCache() {
     }
 }
 
-void NoticeBroker::_TransactionHandler::Join(
-    _TransactionHandler& transaction)
+void NoticeBroker::_DiscoverDispatchers()
 {
-    for (auto& element : transaction.noticeMap) {
-        auto& source = element.second;
-        auto& target = noticeMap[element.first];
+    TfType root = TfType::Find<Dispatcher>();
+    std::set<TfType> types;
+    PlugRegistry::GetAllDerivedTypes(root, &types);
 
-        target.reserve(target.size() + source.size());
-        std::move(
-            std::begin(source),
-            std::end(source),
-            std::back_inserter(target));
-        source.clear();
+    for (const TfType& type : types) {
+        _LoadFromPlugin<DispatcherPtr, DispatcherFactory>(type);
     }
-    transaction.noticeMap.clear();
 }
 
-void NoticeBroker::DiscoverDispatchers()
+void NoticeBroker::_DiscoverBroadcasters()
 {
-    std::set<TfType> dispatcherTypes;
-    PlugRegistry::GetAllDerivedTypes(
-        TfType::Find<Dispatcher>(), &dispatcherTypes);
+    TfType root = TfType::Find<Broadcaster>();
+    std::set<TfType> types;
+    PlugRegistry::GetAllDerivedTypes(root, &types);
 
-    auto self = TfCreateWeakPtr(this);
-
-    for (const TfType& dispatcherType : dispatcherTypes) {
-        const PlugPluginPtr plugin =
-            PlugRegistry::GetInstance().GetPluginForType(dispatcherType);
-
-        if (!plugin) {
-            continue;
-        }
-
-        if (!plugin->Load()) {
-            TF_CODING_ERROR("Failed to load plugin %s for %s",
-                plugin->GetName().c_str(),
-                dispatcherType.GetTypeName().c_str());
-            continue;
-        }
-
-        DispatcherPtr dispatcher;
-        DispatcherFactoryBase* factory =
-            dispatcherType.GetFactory<DispatcherFactoryBase>();
-
-        if (factory) {
-            dispatcher = factory->New(self);
-        }
-
-        if (!dispatcher) {
-            TF_CODING_ERROR(
-                "Failed to manufacture dispatcher %s from plugin %s",
-                dispatcherType.GetTypeName().c_str(),
-                plugin->GetName().c_str());
-        }
-
-        _dispatcherMap[dispatcher->GetIdentifier()] = dispatcher;
+    for (const TfType& type : types) {
+        _LoadFromPlugin<BroadcasterPtr, BroadcasterFactory>(type);
     }
+
+    // Construct hierarchy.
+    for (auto& element: _broadcasterMap) {
+        const auto& identifier = element.first;
+        auto& broadcaster = element.second;
+
+        const auto& parentId = broadcaster->GetParentIdentifier();
+        if (!parentId.size()) {
+            _rootBroadcasters.push_back(identifier);
+        }
+        else {
+            auto& parent = GetBroadcaster(parentId);
+            parent->_AddChild(broadcaster);
+        }
+    }
+
+    // Detect errors
+    // TODO: Detect cycles
+}
+
+void NoticeBroker::_Add(const DispatcherPtr& dispatcher)
+{
+    _dispatcherMap[dispatcher->GetIdentifier()] = dispatcher;
+}
+
+void NoticeBroker::_Add(const BroadcasterPtr& broadcaster)
+{
+    _broadcasterMap[broadcaster->GetIdentifier()] = broadcaster;
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

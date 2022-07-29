@@ -35,9 +35,9 @@ configure_file(
 
 install(
     TARGETS TestDispatcher
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/testDispatcher
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/plugins/testDispatcher
 )
 install(
     FILES plugInfo.json
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/testDispatcher/resources
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/plugins/testDispatcher/resources
 )

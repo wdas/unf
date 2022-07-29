@@ -13,10 +13,13 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
+class NoticeMerger;
+
 class Dispatcher : public TfRefBase, public TfWeakBase {
 public:
-    virtual std::string GetIdentifier() const =0;
     virtual ~Dispatcher() { Revoke(); };
+
+    virtual std::string GetIdentifier() const =0;
 
     virtual void Register() =0;
     virtual void Revoke();
@@ -24,39 +27,38 @@ public:
 protected:
     Dispatcher(const NoticeBrokerWeakPtr&);
 
+    template<class InputNotice, class OutputNotice>
+    void _Register()
+    {
+        auto self = TfCreateWeakPtr(this);
+        auto cb = &Dispatcher::_OnReceiving<InputNotice, OutputNotice>;
+        _keys.push_back(TfNotice::Register(self, cb, _broker->GetStage()));
+    }
+
+    template<class InputNotice, class OutputNotice>
+    void _OnReceiving(const InputNotice& notice)
+    {
+        TfRefPtr<OutputNotice> _notice = OutputNotice::Create(notice);
+        _broker->Send(_notice);
+    }
+
     NoticeBrokerWeakPtr _broker;
     std::vector<TfNotice::Key> _keys;
 };
 
 class StageDispatcher : public Dispatcher {
 public:
-    virtual std::string GetIdentifier() const { return "default"; };
+    virtual std::string GetIdentifier() const { return "StageDispatcher"; }
 
     virtual void Register();
 
 private:
     StageDispatcher(const NoticeBrokerWeakPtr& broker);
 
-    template<class BrokerNotice, class UsdNotice>
-    void _Register()
-    {
-        auto self = TfCreateWeakPtr(this);
-        auto cb = &StageDispatcher::_OnReceiving<BrokerNotice, UsdNotice>;
-        _keys.push_back(TfNotice::Register(self, cb, _broker->GetStage()));
-    }
-
-    template<class BrokerNotice, class UsdNotice>
-    void _OnReceiving(
-        const UsdNotice& notice, const UsdStageWeakPtr& stage)
-    {
-        TfRefPtr<BrokerNotice> _notice = BrokerNotice::Create(notice);
-        _broker->Send(_notice);
-    }
-
     friend class NoticeBroker;
 };
 
-class DispatcherFactoryBase : public TfType::FactoryBase
+class DispatcherFactory : public TfType::FactoryBase
 {
 public:
     virtual TfRefPtr<Dispatcher> New(
@@ -64,7 +66,7 @@ public:
 };
 
 template <class T>
-class DispatcherFactory : public DispatcherFactoryBase
+class DispatcherFactoryImpl : public DispatcherFactory
 {
 public:
     virtual TfRefPtr<Dispatcher> New(
@@ -78,7 +80,7 @@ template <class T, class ...Bases>
 void DispatcherDefine()
 {
     TfType::Define<T, TfType::Bases<Bases...> >()
-        .template SetFactory<DispatcherFactory<T> >();
+        .template SetFactory<DispatcherFactoryImpl<T> >();
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

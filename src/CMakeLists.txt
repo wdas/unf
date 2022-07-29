@@ -1,6 +1,8 @@
 add_library(UsdNoticeBroker
+    broadcaster.cpp
     broker.cpp
     dispatcher.cpp
+    merger.cpp
     notice.cpp
     transaction.cpp
 )
@@ -40,8 +42,10 @@ target_link_libraries(UsdNoticeBroker
 install(TARGETS UsdNoticeBroker EXPORT ${PROJECT_NAME})
 install(
     FILES
+        broadcaster.h
         broker.h
         dispatcher.h
+        merger.h
         notice.h
         pyNoticeWrapper.h
         transaction.h
