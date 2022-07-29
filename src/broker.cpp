@@ -2,7 +2,7 @@
 #include "notice.h"
 #include "dispatcher.h"
 #include "broadcaster.h"
-#include "merger.h"
+#include "context.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/weakPtr.h>
@@ -49,13 +49,14 @@ NoticeBrokerPtr NoticeBroker::Create(const UsdStageWeakPtr& stage)
 
 bool NoticeBroker::IsInTransaction()
 {
-    return _mergers.size() > 0;
+    return _transactions.size() > 0;
 }
 
 void NoticeBroker::BeginTransaction(
     const NoticeCaturePredicateFunc& predicate)
 {
-    _mergers.push_back(NoticeMerger(predicate));
+    _transactions.push_back(NoticeContext());
+    _transactions.back().SetFilterPredicate(predicate);
 }
 
 void NoticeBroker::EndTransaction()
@@ -64,19 +65,50 @@ void NoticeBroker::EndTransaction()
         return;
     }
 
-    NoticeMerger& merger = _mergers.back();
+    NoticeContext& transaction = _transactions.back();
 
-    // If there are only one merger left, process all notices.
-    if (_mergers.size() == 1) {
-        merger.MergeAndSend(_stage);
+    // TODO: Figure out how to execute broadcasters properly.
+
+    // If there are only one transaction left, process all notices.
+    if (_transactions.size() == 1) {
+        transaction.Merge();
+        transaction.SendAll(_stage);
     }
     // Otherwise, it means that we are in a nested transaction that should
-    // not be processed yet. Join merger data with next merger.
+    // not be processed yet. Join transaction data with next transaction.
     else {
-       (_mergers.end()-2)->Join(merger);
+       (_transactions.end()-2)->Join(transaction);
     }
 
-    _mergers.pop_back();
+    _transactions.pop_back();
+}
+
+void NoticeBroker::Send(
+    const UsdBrokerNotice::StageNoticeRefPtr& notice)
+{
+    if (_transactions.size() > 0) {
+        _transactions.back().Capture(notice);
+    }
+    // Otherwise, send the notice via broadcaster.
+    else {
+        NoticeContext context(notice);
+
+        for (const auto& identifier: _rootBroadcasters) {
+            GetBroadcaster(identifier)->_Execute(context);
+        }
+
+        context.SendAll(_stage);
+    }
+}
+
+DispatcherPtr& NoticeBroker::GetDispatcher(std::string identifier)
+{
+    return _dispatcherMap.at(identifier);
+}
+
+BroadcasterPtr& NoticeBroker::GetBroadcaster(std::string identifier)
+{
+    return _broadcasterMap.at(identifier);
 }
 
 void NoticeBroker::_CleanCache() {

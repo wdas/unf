@@ -1,5 +1,6 @@
 #include "broker.h"
 #include "broadcaster.h"
+#include "context.h"
 
 #include <pxr/pxr.h>
 
@@ -11,7 +12,7 @@ public:
 
     virtual std::string GetIdentifier() const { return "TestBroadcaster"; };
 
-    virtual void Execute(BroadcasterContext& context)
+    virtual void Execute(NoticeContext& context)
     {
 
     }

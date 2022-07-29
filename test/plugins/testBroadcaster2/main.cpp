@@ -1,5 +1,6 @@
 #include "broker.h"
 #include "broadcaster.h"
+#include "context.h"
 
 #include <pxr/pxr.h>
 
@@ -14,7 +15,7 @@ public:
         return "TestBroadcaster";
     };
 
-    virtual void Execute(BroadcasterContext& context)
+    virtual void Execute(NoticeContext& context)
     {
 
     }

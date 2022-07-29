@@ -1,4 +1,4 @@
-#include "merger.h"
+#include "context.h"
 #include "notice.h"
 
 #include <pxr/pxr.h>
@@ -6,22 +6,46 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-void NoticeMerger::Capture(
+NoticeContext::NoticeContext(NoticePtrMap& noticeMap)
+: _noticeMap(noticeMap)
+{
+
+}
+
+NoticeContext::NoticeContext(
+    const UsdBrokerNotice::StageNoticeRefPtr& notice)
+{
+    Capture(notice);
+}
+
+void NoticeContext::SetFilterPredicate(
+    const NoticeCaturePredicateFunc& predicate)
+{
+    _predicate = predicate;
+}
+
+void NoticeContext::Capture(
     const UsdBrokerNotice::StageNoticeRefPtr& notice)
 {
     // Indicate whether the notice needs to be captured.
     if (_predicate && !_predicate(*notice))
         return;
 
-    // Store notices per type name, so that each type can be merged if
-    // required.
+    // Store notices per type name, so that each type can
+    // be merged if required.
     std::string name = notice->GetTypeId();
     _noticeMap[name].push_back(notice);
 }
 
-void NoticeMerger::Join(NoticeMerger& merger)
+const NoticePtrList& NoticeContext::Get(
+    const std::string& identifier) const
 {
-    for (auto& element : merger._noticeMap) {
+    return _noticeMap.at(identifier);
+}
+
+void NoticeContext::Join(NoticeContext& context)
+{
+    for (auto& element : context._noticeMap) {
         auto& source = element.second;
         auto& target = _noticeMap[element.first];
 
@@ -33,10 +57,10 @@ void NoticeMerger::Join(NoticeMerger& merger)
         source.clear();
     }
 
-    merger._noticeMap.clear();
+    context._noticeMap.clear();
 }
 
-void NoticeMerger::MergeAndSend(const UsdStageWeakPtr& stage)
+void NoticeContext::Merge()
 {
     for (auto& element : _noticeMap) {
         auto& notices = element.second;
@@ -55,8 +79,12 @@ void NoticeMerger::MergeAndSend(const UsdStageWeakPtr& stage)
                 it = notices.erase(it);
             }
         }
+    }
+}
 
-        // Send all remaining notices.
+void NoticeContext::SendAll(const UsdStageWeakPtr& stage)
+{
+    for (auto& element : _noticeMap) {
         for (const auto& notice: element.second) {
             notice->Send(stage);
         }

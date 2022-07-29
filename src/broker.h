@@ -2,7 +2,7 @@
 #define NOTICE_BROKER_BROKER_H
 
 #include "notice.h"
-#include "merger.h"
+#include "context.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/refBase.h>
@@ -32,6 +32,7 @@ using NoticeBrokerWeakPtr = TfWeakPtr<NoticeBroker>;
 
 using DispatcherPtr = TfRefPtr<Dispatcher>;
 using BroadcasterPtr = TfRefPtr<Broadcaster>;
+using BroadcasterPtrList = std::vector<BroadcasterPtr>;
 
 class NoticeBroker : public TfRefBase, public TfWeakBase {
 public:
@@ -53,24 +54,10 @@ public:
     template<class BrokerNotice, class... Args>
     void Send(Args&&... args);
 
-    void Send(const UsdBrokerNotice::StageNoticeRefPtr notice)
-    {
-        Send(notice, _stage);
-    }
+    void Send(const UsdBrokerNotice::StageNoticeRefPtr&);
 
-    template <class SenderPtr>
-    void Send(
-        const UsdBrokerNotice::StageNoticeRefPtr notice,
-        const SenderPtr &sender)
-    {
-        if (_mergers.size() > 0) {
-            _mergers.back().Capture(notice);
-        }
-        // Otherwise, send the notice.
-        else {
-            notice->Send(sender);
-        }
-    }
+    DispatcherPtr& GetDispatcher(std::string identifier);
+    BroadcasterPtr& GetBroadcaster(std::string identifier);
 
     template<class T>
     void AddDispatcher() {
@@ -80,20 +67,12 @@ public:
         _Add(dispatcher);
     }
 
-    DispatcherPtr& GetDispatcher(std::string identifier) {
-        return _dispatcherMap.at(identifier);
-    }
-
     template<class T>
     void AddBroadcaster() {
         static_assert(std::is_base_of<Broadcaster, T>::value);
         auto self = TfCreateWeakPtr(this);
         BroadcasterPtr broadcaster = TfCreateRefPtr(new T(self));
         _Add(broadcaster);
-    }
-
-    BroadcasterPtr& GetBroadcaster(std::string identifier) {
-        return _broadcasterMap.at(identifier);
     }
 
 private:
@@ -114,7 +93,7 @@ private:
     static std::unordered_map<size_t, NoticeBrokerPtr> Registry;
 
     UsdStageWeakPtr _stage;
-    std::vector<NoticeMerger> _mergers;
+    std::vector<NoticeContext> _transactions;
     std::unordered_map<std::string, DispatcherPtr> _dispatcherMap;
     std::unordered_map<std::string, BroadcasterPtr> _broadcasterMap;
     std::vector<std::string> _rootBroadcasters;

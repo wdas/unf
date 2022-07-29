@@ -2,6 +2,7 @@
 #define NOTICE_BROKER_BROADCASTER_H
 
 #include "broker.h"
+#include "context.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/refBase.h>
@@ -10,24 +11,10 @@
 #include <pxr/base/tf/weakBase.h>
 #include <pxr/usd/usd/common.h>
 
+#include <string>
 #include <vector>
 
 PXR_NAMESPACE_OPEN_SCOPE
-
-class BroadcasterContext {
-public:
-    NoticePtrList& Get(const std::string&);
-
-    virtual ~BroadcasterContext() {}
-
-private:
-    BroadcasterContext(const UsdBrokerNotice::StageNoticeRefPtr&);
-    BroadcasterContext(NoticePtrMap&);
-
-    NoticePtrMap _noticeMap;
-
-    friend class Broadcaster;
-};
 
 class Broadcaster : public TfRefBase, public TfWeakBase {
 public:
@@ -36,22 +23,18 @@ public:
     virtual std::string GetIdentifier() const =0;
     virtual std::string GetParentIdentifier() const { return std::string(); }
 
-    virtual void Execute(BroadcasterContext&) =0;
+    virtual void Execute(NoticeContext&) =0;
 
 protected:
     Broadcaster(const NoticeBrokerWeakPtr&);
 
-    void _Execute(const UsdBrokerNotice::StageNoticeRefPtr&);
-    void _Execute(NoticePtrMap&);
-
-    void _ExecuteChildren(BroadcasterContext&);
-
-    NoticeBrokerWeakPtr _broker;
-
 private:
     void _AddChild(const BroadcasterPtr&);
+    void _Execute(NoticeContext&);
 
     std::vector<BroadcasterPtr> _children;
+
+    NoticeBrokerWeakPtr _broker;
 
     friend class NoticeBroker;
 };

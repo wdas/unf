@@ -1,5 +1,5 @@
-#ifndef NOTICE_BROKER_MERGER_H
-#define NOTICE_BROKER_MERGER_H
+#ifndef NOTICE_BROKER_CONTEXT_H
+#define NOTICE_BROKER_CONTEXT_H
 
 #include "notice.h"
 
@@ -21,14 +21,21 @@ using NoticePtrList = std::vector<UsdBrokerNotice::StageNoticeRefPtr>;
 
 using NoticePtrMap = std::unordered_map<std::string, NoticePtrList>;
 
-class NoticeMerger {
+class NoticeContext {
 public:
-    NoticeMerger(const NoticeCaturePredicateFunc& predicate=nullptr)
-        : _predicate(predicate) {}
+    NoticeContext() = default;
+    NoticeContext(NoticePtrMap&);
+    NoticeContext(const UsdBrokerNotice::StageNoticeRefPtr&);
+
+    void SetFilterPredicate(const NoticeCaturePredicateFunc&);
 
     void Capture(const UsdBrokerNotice::StageNoticeRefPtr&);
-    void Join(NoticeMerger&);
-    void MergeAndSend(const UsdStageWeakPtr&);
+    const NoticePtrList& Get(const std::string&) const;
+    void Join(NoticeContext&);
+    void Merge();
+    void SendAll(const UsdStageWeakPtr& stage);
+
+    NoticePtrMap& GetMap() { return _noticeMap; }
 
 private:
     NoticePtrMap _noticeMap;
@@ -37,4 +44,4 @@ private:
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif // NOTICE_BROKER_MERGER_H
+#endif // NOTICE_BROKER_CONTEXT_H
