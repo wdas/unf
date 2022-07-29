@@ -66,6 +66,8 @@ public:
         return _dispatcherMap.at(identifier);
     }
 
+    void DiscoverDispatchers();
+
 private:
     NoticeBroker(const UsdStageWeakPtr&);
 
@@ -88,7 +90,7 @@ private:
     static void _CleanCache();
 
     // A registry of hashed stage ptr to the corresponding stage's broker ptr.
-    static std::unordered_map<size_t, TfRefPtr<NoticeBroker>> noticeBrokerRegistry;
+    static std::unordered_map<size_t, NoticeBrokerPtr> Registry;
 
 private:
     UsdStageWeakPtr _stage;

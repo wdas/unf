@@ -1,0 +1,16 @@
+{
+    "Plugins": [
+        {
+            "Info": {
+                "Types" : {
+                    "TestDispatcher" : {
+                        "bases": [ "Dispatcher" ]
+                    }
+                }
+            },
+            "LibraryPath": "../libTestDispatcher.so",
+            "Name": "TestDispatcher",
+            "Type": "library"
+        }
+    ]
+}

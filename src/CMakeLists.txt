@@ -24,6 +24,7 @@ target_include_directories(UsdNoticeBroker
 target_link_libraries(UsdNoticeBroker
     PUBLIC
         pxr::arch
+        pxr::plug
         pxr::sdf
         pxr::tf
         pxr::usd

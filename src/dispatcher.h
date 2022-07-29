@@ -7,6 +7,7 @@
 #include <pxr/pxr.h>
 #include <pxr/base/tf/refBase.h>
 #include <pxr/base/tf/refPtr.h>
+#include <pxr/base/tf/type.h>
 #include <pxr/base/tf/weakBase.h>
 #include <pxr/usd/usd/common.h>
 
@@ -17,21 +18,24 @@ public:
     virtual std::string GetIdentifier() const =0;
     virtual ~Dispatcher() = default;
 
+    virtual void Register() =0;
+    virtual void Revoke() =0;
+
 protected:
     Dispatcher(const NoticeBrokerWeakPtr&);
 
     NoticeBrokerWeakPtr _broker;
+    std::vector<TfNotice::Key> _keys;
 };
 
 class StageDispatcher : public Dispatcher {
 public:
     virtual std::string GetIdentifier() const { return "default"; };
 
-    virtual ~StageDispatcher() {
-        for (auto& key: _keys) {
-            TfNotice::Revoke(key);
-        }
-    }
+    virtual ~StageDispatcher() { Revoke(); }
+
+    virtual void Register();
+    virtual void Revoke();
 
 private:
     StageDispatcher(const NoticeBrokerWeakPtr& broker);
@@ -52,10 +56,33 @@ private:
         _broker->Process(_notice);
     }
 
-    std::vector<TfNotice::Key> _keys;
-
     friend class NoticeBroker;
 };
+
+class DispatcherFactoryBase : public TfType::FactoryBase
+{
+public:
+    virtual TfRefPtr<Dispatcher> New(
+        const NoticeBrokerWeakPtr& broker) const = 0;
+};
+
+template <class T>
+class DispatcherFactory : public DispatcherFactoryBase
+{
+public:
+    virtual TfRefPtr<Dispatcher> New(
+        const NoticeBrokerWeakPtr& broker) const override
+    {
+        return TfCreateRefPtr(new T(broker));
+    }
+};
+
+template <class T, class ...Bases>
+void DispatcherDefine()
+{
+    TfType::Define<T, TfType::Bases<Bases...> >()
+        .template SetFactory<DispatcherFactory<T> >();
+}
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

@@ -9,6 +9,11 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
+TF_REGISTRY_FUNCTION(TfType)
+{
+    TfType::Define<Dispatcher>();
+}
+
 Dispatcher::Dispatcher(const NoticeBrokerWeakPtr& broker)
     : _broker(broker)
 {
@@ -17,6 +22,11 @@ Dispatcher::Dispatcher(const NoticeBrokerWeakPtr& broker)
 
 StageDispatcher::StageDispatcher(const NoticeBrokerWeakPtr& broker)
     : Dispatcher(broker)
+{
+
+}
+
+void StageDispatcher::Register()
 {
     _keys.reserve(4);
 
@@ -32,6 +42,13 @@ StageDispatcher::StageDispatcher(const NoticeBrokerWeakPtr& broker)
     _Register<
         UsdBrokerNotice::LayerMutingChanged,
         UsdNotice::LayerMutingChanged>();
+}
+
+void StageDispatcher::Revoke()
+{
+    for (auto& key: _keys) {
+        TfNotice::Revoke(key);
+    }
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
