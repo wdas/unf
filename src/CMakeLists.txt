@@ -1,8 +1,8 @@
 add_library(UsdNoticeBroker
     broadcaster.cpp
     broker.cpp
-    context.cpp
     dispatcher.cpp
+    merger.cpp
     notice.cpp
     transaction.cpp
 )
@@ -44,8 +44,8 @@ install(
     FILES
         broadcaster.h
         broker.h
-        context.h
         dispatcher.h
+        merger.h
         notice.h
         pyNoticeWrapper.h
         transaction.h

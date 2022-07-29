@@ -12,7 +12,7 @@ public:
 
     virtual std::string GetIdentifier() const { return "TestBroadcaster"; };
 
-    virtual void Execute(NoticeMerger& context)
+    virtual void Execute(NoticeMerger& merger)
     {
 
     }

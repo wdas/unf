@@ -25,8 +25,8 @@ using _StageNoticePtrList =
 
 class NoticeMerger {
 public:
-    NoticeMerger(const NoticeCaturePredicateFunc& predicate=nullptr, bool topLevel = false)
-        : _predicate(predicate), _topLevel(topLevel) {}
+    NoticeMerger(const NoticeCaturePredicateFunc& predicate=nullptr)
+        : _predicate(predicate) {}
 
     void Add(const UsdBrokerNotice::StageNoticeRefPtr&);
     void Join(NoticeMerger&);
@@ -37,11 +37,14 @@ public:
         return _noticeMap;
     }
 
+    void Clear() {
+        _noticeMap.clear();
+    }
+
 private:
 
     std::unordered_map<std::string, _StageNoticePtrList> _noticeMap;
     NoticeCaturePredicateFunc _predicate = nullptr;
-    bool _topLevel;
 
 };
 

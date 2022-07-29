@@ -15,7 +15,7 @@ public:
         return "TestBroadcaster";
     };
 
-    virtual void Execute(NoticeMerger& context)
+    virtual void Execute(NoticeMerger& merger)
     {
 
     }

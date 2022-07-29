@@ -21,6 +21,7 @@ public:
 
     virtual std::string GetIdentifier() const =0;
 
+    virtual void Register() =0;
     virtual void Revoke();
 
 protected:
@@ -47,7 +48,9 @@ protected:
 
 class StageDispatcher : public Dispatcher {
 public:
-    virtual std::string GetIdentifier() const { return "StageDispatcher"; };
+    virtual std::string GetIdentifier() const { return "StageDispatcher"; }
+
+    virtual void Register();
 
 private:
     StageDispatcher(const NoticeBrokerWeakPtr& broker);
@@ -55,7 +58,7 @@ private:
     friend class NoticeBroker;
 };
 
-class DispatcherFactoryBase : public TfType::FactoryBase
+class DispatcherFactory : public TfType::FactoryBase
 {
 public:
     virtual TfRefPtr<Dispatcher> New(

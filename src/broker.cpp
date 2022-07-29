@@ -90,10 +90,11 @@ void NoticeBroker::Send(
     }
     // Otherwise, send the notice via broadcaster.
     else {
-        NoticeMerger context(notice);
-        _ExecuteBroadcasters(context);
+        NoticeMerger merger;
+        merger.Add(notice);
+        _ExecuteBroadcasters(merger);
 
-        context.SendAll(_stage);
+        merger.Send(_stage);
     }
 }
 
@@ -172,10 +173,10 @@ void NoticeBroker::_Add(const BroadcasterPtr& broadcaster)
     _broadcasterMap[broadcaster->GetIdentifier()] = broadcaster;
 }
 
-void NoticeBroker::_ExecuteBroadcasters(NoticeMerger& context)
+void NoticeBroker::_ExecuteBroadcasters(NoticeMerger& merger)
 {
     for (const auto& identifier: _rootBroadcasters) {
-        GetBroadcaster(identifier)->_Execute(context);
+        GetBroadcaster(identifier)->_Execute(merger);
     }
 }
 

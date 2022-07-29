@@ -23,12 +23,12 @@ void Broadcaster::_AddChild(const BroadcasterPtr& child)
     _children.push_back(child);
 }
 
-void Broadcaster::_Execute(NoticeMerger& context)
+void Broadcaster::_Execute(NoticeMerger& merger)
 {
-    Execute(context);
+    Execute(merger);
 
     for (auto& child: _children) {
-        child->Execute(context);
+        child->Execute(merger);
     }
 }
 

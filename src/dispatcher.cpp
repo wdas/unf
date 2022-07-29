@@ -31,7 +31,12 @@ void Dispatcher::Revoke()
 StageDispatcher::StageDispatcher(const NoticeBrokerWeakPtr& broker)
     : Dispatcher(broker)
 {
-     _keys.reserve(4);
+
+}
+
+void StageDispatcher::Register()
+{
+    _keys.reserve(4);
 
     _Register<
         UsdNotice::StageContentsChanged,
@@ -45,11 +50,6 @@ StageDispatcher::StageDispatcher(const NoticeBrokerWeakPtr& broker)
     _Register<
         UsdNotice::LayerMutingChanged,
         UsdBrokerNotice::LayerMutingChanged>();
-}
-
-void StageDispatcher::Execute(NoticeMerger& merger) {
-    _noticeMap = merger.GetNotices();
-    Dispatcher::Execute(nullptr);
 }
 
 
