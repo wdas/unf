@@ -2,7 +2,6 @@
 #define NOTICE_BROKER_BROADCASTER_H
 
 #include "broker.h"
-#include "merger.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/refBase.h>

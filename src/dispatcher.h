@@ -13,8 +13,6 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-class NoticeMerger;
-
 class Dispatcher : public TfRefBase, public TfWeakBase {
 public:
     virtual ~Dispatcher() { Revoke(); };

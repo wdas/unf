@@ -1,6 +1,5 @@
 #include "broker.h"
 #include "broadcaster.h"
-#include "merger.h"
 
 #include <pxr/pxr.h>
 

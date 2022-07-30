@@ -1,7 +1,6 @@
 #include "dispatcher.h"
 #include "broker.h"
 #include "notice.h"
-#include "merger.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/weakPtr.h>
