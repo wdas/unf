@@ -55,7 +55,7 @@ bool NoticeBroker::IsInTransaction()
 void NoticeBroker::BeginTransaction(
     const NoticeCaturePredicateFunc& predicate)
 {
-    _mergers.push_back(NoticeMerger(predicate));
+    _mergers.push_back(NoticeMerger(predicate, _mergers.empty()));
 }
 
 void NoticeBroker::EndTransaction()
@@ -69,7 +69,18 @@ void NoticeBroker::EndTransaction()
     // If there are only one merger left, process all notices.
     if (_mergers.size() == 1) {
         merger.Merge();
-        //TODO: Execute Broadcasters
+        // Send current notices out
+        merger.Send(_stage);
+        // Clear notices
+        std::unordered_map<std::string, _StageNoticePtrList> originalNotices = merger.GetNotices();
+        merger.Clear();
+        // Run broadcasters (will re-populate merger)
+        for (auto& broadcaster : _rootBroadcasters) {
+            GetBroadcaster(broadcaster)->Execute(&originalNotices);
+        }
+        // Merge and send again
+        merger.Merge();
+
         merger.Send(_stage);
     }
     // Otherwise, it means that we are in a nested transaction that should
@@ -89,7 +100,9 @@ void NoticeBroker::Send(
     }
     // Otherwise, send the notice via broadcaster.
     else {
-        notice->Send(_stage);
+        BeginTransaction();
+        Send(notice);
+        EndTransaction();
     }
 }
 
