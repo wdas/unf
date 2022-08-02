@@ -1,31 +1,48 @@
-set(CLASSES
-    testBroker
-    testBrokerBatching
-    testBrokerBlocking
-    testCache
-    testTransaction
+add_executable(testBroker testBroker.cpp)
+target_link_libraries(testBroker
+    PRIVATE
+        UsdNoticeBroker
+        GTest::GTest
+        GTest::Main
 )
+add_test(testBroker testBroker)
 
-set(dispatcher_path "${CMAKE_CURRENT_BINARY_DIR}/plugins/*/resources/")
+add_executable(testBrokerBlocking testBrokerBlocking.cpp)
+target_link_libraries(testBrokerBlocking
+    PRIVATE
+        UsdNoticeBroker
+        GTest::GTest
+        GTest::Main
+)
+add_test(testBrokerBlocking testBrokerBlocking)
 
-add_subdirectory(plugins)
+add_executable(testBrokerBatching testBrokerBatching.cpp)
+target_link_libraries(testBrokerBatching
+    PRIVATE
+        UsdNoticeBroker
+        GTest::GTest
+        GTest::Main
+)
+add_test(testBrokerBatching testBrokerBatching)
 
-foreach(NAME IN LISTS CLASSES)
-    add_executable(${NAME} "${NAME}.cpp")
+add_executable(testCache testCache.cpp)
+target_link_libraries(testCache
+    PRIVATE
+        UsdNoticeBroker
+        GTest::GTest
+        GTest::Main
+)
+add_test(testCache testCache)
 
-    target_link_libraries(${NAME}
-        PRIVATE
-            UsdNoticeBroker
-            GTest::GTest
-    )
+add_executable(testTransaction testTransaction.cpp)
+target_link_libraries(testTransaction
+    PRIVATE
+        UsdNoticeBroker
+        GTest::GTest
+        GTest::Main
+)
+add_test(testTransaction testTransaction)
 
-    add_test(${NAME} ${NAME})
-
-    set_property(
-        TEST ${NAME}
-        PROPERTY ENVIRONMENT
-            PXR_PLUGINPATH_NAME=${dispatcher_path}:$ENV{PXR_PLUGINPATH_NAME})
-endforeach()
 
 if (BUILD_PYTHON_BINDINGS)
     add_subdirectory(python)

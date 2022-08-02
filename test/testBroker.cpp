@@ -319,9 +319,3 @@ TEST(Registry, CleanRegistry)
     ASSERT_TRUE(broker1->GetCurrentCount() == 1);
     ASSERT_TRUE(broker3->GetCurrentCount() == 3);
 }
-
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}

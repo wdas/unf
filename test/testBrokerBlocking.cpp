@@ -251,9 +251,3 @@ TEST(CustomNotices, Handling)
     ASSERT_EQ(listener.Received<::Test::MergeableNotice>(), 0);
     ASSERT_EQ(listener.Received<::Test::UnMergeableNotice>(), 0);
 }
-
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}

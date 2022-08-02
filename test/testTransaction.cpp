@@ -135,9 +135,3 @@ TEST(Batching, WithoutBroker)
     ASSERT_EQ(listener1.Received<_Broker::StageEditTargetChanged>(), 1);
     ASSERT_EQ(listener1.Received<_Broker::LayerMutingChanged>(), 1);
 }
-
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
