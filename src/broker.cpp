@@ -55,7 +55,7 @@ bool NoticeBroker::IsInTransaction()
 void NoticeBroker::BeginTransaction(
     const NoticeCaturePredicateFunc& predicate)
 {
-    _mergers.push_back(NoticeMerger(predicate, _mergers.empty()));
+    _mergers.push_back(NoticeMerger(predicate));
 }
 
 void NoticeBroker::EndTransaction()

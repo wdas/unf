@@ -11,7 +11,7 @@ void NoticeMerger::Add(
     const UsdBrokerNotice::StageNoticeRefPtr& notice)
 {
     // Indicate whether the notice needs to be captured.
-    if (!_topLevel && _predicate && !_predicate(*notice))
+    if (_predicate && !_predicate(*notice))
         return;
 
     // Store notices per type name, so that each type can be merged if
@@ -26,14 +26,11 @@ void NoticeMerger::Join(NoticeMerger& merger)
         auto& source = element.second;
         auto& target = _noticeMap[element.first];
 
-        // Add child notice only if it passes prediate too.
-        for (auto& notice : source) {
-            // If not top level, and predicate fails, dont add notice
-            if (!_topLevel && _predicate && !_predicate(*notice)) {
-                continue;
-            }
-            target.push_back(std::move(notice));
-        }
+        target.reserve(target.size() + source.size());
+        std::move(
+            std::begin(source),
+            std::end(source),
+            std::back_inserter(target));
 
         source.clear();
     }
@@ -69,13 +66,6 @@ void NoticeMerger::Send(const UsdStageWeakPtr& stage)
 
         // Send all remaining notices.
         for (const auto& notice: element.second) {
-            // If we are a top level, and predicate fails, skip
-            // Let us filter ObjectsChanged after dispatchers ran with it
-            // Also lets us filter dispatcher outputs
-            if (_topLevel && _predicate && !_predicate(*notice)) {
-                continue;
-            }
-
             notice->Send(stage);
         }
     }
