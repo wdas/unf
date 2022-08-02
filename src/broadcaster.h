@@ -22,7 +22,11 @@ public:
     virtual std::string GetIdentifier() const =0;
     virtual std::string GetParentIdentifier() const { return std::string(); }
 
-    //TODO: User interface
+    virtual void Execute(void* parent) {
+        for(auto c : _children) {
+            c->Execute(this);
+        }
+    }
 
 protected:
     Broadcaster(const NoticeBrokerWeakPtr&);
