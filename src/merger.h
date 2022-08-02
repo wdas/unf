@@ -20,8 +20,9 @@ using NoticeCaturePredicateFunc =
 
 using DispatcherPtr = TfRefPtr<Dispatcher>;
 
-using _StageNoticePtrList =
-    std::vector<UsdBrokerNotice::StageNoticeRefPtr>;
+using _StageNoticePtrList = std::vector<UsdBrokerNotice::StageNoticeRefPtr>;
+
+using _StageNoticePtrMap = std::unordered_map<std::string, _StageNoticePtrList>;
 
 class NoticeMerger {
 public:
@@ -32,16 +33,12 @@ public:
     void Join(NoticeMerger&);
     void Merge();
     void Send(const UsdStageWeakPtr&);
-    std::unordered_map<std::string, _StageNoticePtrList>& GetNotices() {
-        return _noticeMap;
-    }
-    void Clear() {
-        _noticeMap.clear();
-    }
+
+    _StageNoticePtrMap& GetNotices() { return _noticeMap; }
 
 private:
 
-    std::unordered_map<std::string, _StageNoticePtrList> _noticeMap;
+    _StageNoticePtrMap _noticeMap;
     NoticeCaturePredicateFunc _predicate = nullptr;
 };
 

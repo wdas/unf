@@ -66,27 +66,30 @@ void NoticeBroker::EndTransaction()
 
     NoticeMerger& merger = _mergers.back();
 
+    // Merge all notices captured in this transaction and run
+    // all broadcasters.
+    merger.Merge();
+    _ExecuteBroadcasters(merger);
+
+    // Join previous transaction if necessary.
+    if (_latestMerger) {
+        merger.Join(*_latestMerger);
+        _latestMerger.reset();
+    }
+
+    // Merge again to ensure that new notices added by broadcasters
+    // and previous transaction are optimized.
+    merger.Merge();
+
     // If there are only one merger left, process all notices.
     if (_mergers.size() == 1) {
-        merger.Merge();
-        // Send current notices out
-        merger.Send(_stage);
-        // Clear notices
-        std::unordered_map<std::string, _StageNoticePtrList> originalNotices = merger.GetNotices();
-        merger.Clear();
-        // Run broadcasters (will re-populate merger)
-        for (auto& broadcaster : _rootBroadcasters) {
-            GetBroadcaster(broadcaster)->Execute(&originalNotices);
-        }
-        // Merge and send again
-        merger.Merge();
-
         merger.Send(_stage);
     }
-    // Otherwise, it means that we are in a nested transaction that should
-    // not be processed yet. Join merger data with next merger.
+    // Otherwise, it means that we are in a nested transaction that
+    // should not be processed yet. Save it for joining it with next
+    // transaction later.
     else {
-       (_mergers.end()-2)->Join(merger);
+        _latestMerger = std::make_shared<NoticeMerger>(merger);;
     }
 
     _mergers.pop_back();
@@ -179,6 +182,15 @@ void NoticeBroker::_Add(const DispatcherPtr& dispatcher)
 void NoticeBroker::_Add(const BroadcasterPtr& broadcaster)
 {
     _broadcasterMap[broadcaster->GetIdentifier()] = broadcaster;
+}
+
+void NoticeBroker::_ExecuteBroadcasters(NoticeMerger& merger)
+{
+    _StageNoticePtrMap rootNotices = merger.GetNotices();
+
+    for (auto& broadcaster : _rootBroadcasters) {
+        GetBroadcaster(broadcaster)->Execute(&rootNotices);
+    }
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

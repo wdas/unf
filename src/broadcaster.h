@@ -21,7 +21,7 @@ public:
 
     virtual std::string GetIdentifier() const =0;
     virtual std::string GetParentIdentifier() const { return std::string(); }
-    
+
     virtual void Execute(void* parent) {
         for(auto c : _children) {
             c->Execute(this);
@@ -38,8 +38,6 @@ private:
 
     NoticeBrokerWeakPtr _broker;
 
-    std::unordered_map<std::string, _StageNoticePtrList> _noticeMap;
-
     friend class NoticeBroker;
 };
 
@@ -54,7 +52,7 @@ public:
         for (auto& element : dispatcher.GetNotices()) {
             auto& notices = element.second;
         // Process notices into custo
-        
+
         m members / getter functions
     }
         */
