@@ -18,7 +18,7 @@ NoticeBroker::NoticeBroker(const UsdStageWeakPtr& stage)
     : _stage(stage)
 {
     // Add default dispatcher.
-    AddDispatcher<StageDispatcher>();
+    _AddDispatcher<StageDispatcher>();
 
     // Discover dispatchers added via plugin to complete or override
     // default dispatcher.
@@ -55,7 +55,7 @@ bool NoticeBroker::IsInTransaction()
 void NoticeBroker::BeginTransaction(
     const NoticeCaturePredicateFunc& predicate)
 {
-    _mergers.push_back(NoticeMerger(predicate));
+    _mergers.push_back(NoticeMerger::Create(predicate));
 }
 
 void NoticeBroker::EndTransaction()
@@ -64,29 +64,32 @@ void NoticeBroker::EndTransaction()
         return;
     }
 
-    NoticeMerger& merger = _mergers.back();
+    NoticeMergerPtr& merger = _mergers.back();
+
+    // Merge all notices captured in this transaction and run
+    // all broadcasters.
+    merger->Merge();
+    _ExecuteBroadcasters(merger);
+
+    // Join previous transaction if necessary.
+    if (_latestMerger) {
+        merger->Join(*_latestMerger);
+        _latestMerger = nullptr;
+    }
+
+    // Merge again to ensure that new notices added by broadcasters
+    // and previous transaction are optimized.
+    merger->Merge();
 
     // If there are only one merger left, process all notices.
     if (_mergers.size() == 1) {
-        merger.Merge();
-        // Send current notices out
-        merger.Send(_stage);
-        // Clear notices
-        std::unordered_map<std::string, _StageNoticePtrList> originalNotices = merger.GetNotices();
-        merger.Clear();
-        // Run broadcasters (will re-populate merger)
-        for (auto& broadcaster : _rootBroadcasters) {
-            GetBroadcaster(broadcaster)->Execute(&originalNotices);
-        }
-        // Merge and send again
-        merger.Merge();
-
-        merger.Send(_stage);
+        merger->Send(_stage);
     }
-    // Otherwise, it means that we are in a nested transaction that should
-    // not be processed yet. Join merger data with next merger.
+    // Otherwise, it means that we are in a nested transaction that
+    // should not be processed yet. Save it for joining it with next
+    // transaction later.
     else {
-       (_mergers.end()-2)->Join(merger);
+        _latestMerger = merger;
     }
 
     _mergers.pop_back();
@@ -96,7 +99,7 @@ void NoticeBroker::Send(
     const UsdBrokerNotice::StageNoticeRefPtr& notice)
 {
     if (_mergers.size() > 0) {
-        _mergers.back().Add(notice);
+        _mergers.back()->Add(notice);
     }
     // Otherwise, send the notice via broadcaster.
     else {
@@ -138,7 +141,7 @@ void NoticeBroker::_DiscoverDispatchers()
     PlugRegistry::GetAllDerivedTypes(root, &types);
 
     for (const TfType& type : types) {
-        _LoadFromPlugin<DispatcherPtr, DispatcherFactory>(type);
+        _LoadFromPlugins<DispatcherPtr, DispatcherFactory>(type);
     }
 }
 
@@ -149,22 +152,12 @@ void NoticeBroker::_DiscoverBroadcasters()
     PlugRegistry::GetAllDerivedTypes(root, &types);
 
     for (const TfType& type : types) {
-        _LoadFromPlugin<BroadcasterPtr, BroadcasterFactory>(type);
+        _LoadFromPlugins<BroadcasterPtr, BroadcasterFactory>(type);
     }
 
-    // Construct hierarchy.
+    // Register all broadcasters to build up dependency graph.
     for (auto& element: _broadcasterMap) {
-        const auto& identifier = element.first;
-        auto& broadcaster = element.second;
-
-        const auto& parentId = broadcaster->GetParentIdentifier();
-        if (!parentId.size()) {
-            _rootBroadcasters.push_back(identifier);
-        }
-        else {
-            auto& parent = GetBroadcaster(parentId);
-            parent->_AddChild(broadcaster);
-        }
+        _RegisterBroadcaster(element.second);
     }
 
     // Detect errors
@@ -179,6 +172,30 @@ void NoticeBroker::_Add(const DispatcherPtr& dispatcher)
 void NoticeBroker::_Add(const BroadcasterPtr& broadcaster)
 {
     _broadcasterMap[broadcaster->GetIdentifier()] = broadcaster;
+}
+
+void NoticeBroker::_RegisterBroadcaster(
+    const BroadcasterPtr& broadcaster)
+{
+    const auto& identifier = broadcaster->GetIdentifier();
+    const auto& parentId = broadcaster->GetParentIdentifier();
+
+    if (!parentId.size()) {
+        _rootBroadcasters.push_back(identifier);
+    }
+    else {
+        auto& parent = GetBroadcaster(parentId);
+        parent->_AddChild(broadcaster);
+    }
+}
+
+void NoticeBroker::_ExecuteBroadcasters(NoticeMergerPtr& merger)
+{
+    _StageNoticePtrMap rootNotices = merger->GetNotices();
+
+    for (auto& broadcaster : _rootBroadcasters) {
+        GetBroadcaster(broadcaster)->Execute(&rootNotices);
+    }
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

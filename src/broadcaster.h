@@ -21,7 +21,7 @@ public:
 
     virtual std::string GetIdentifier() const =0;
     virtual std::string GetParentIdentifier() const { return std::string(); }
-    
+
     virtual void Execute(void* parent) {
         for(auto c : _children) {
             c->Execute(this);
@@ -38,30 +38,8 @@ private:
 
     NoticeBrokerWeakPtr _broker;
 
-    std::unordered_map<std::string, _StageNoticePtrList> _noticeMap;
-
     friend class NoticeBroker;
 };
-
-class ChildBroadcaster : public Broadcaster {
-public:
-    ChildBroadcaster(const NoticeBrokerWeakPtr& broker) : Broadcaster(broker){}
-    virtual std::string GetIdentifier() const { return "ChildBroadcaster"; }
-
-    virtual void Execute(void* parent) {
-        /*
-        // (need to stage dispatcher static cast)
-        for (auto& element : dispatcher.GetNotices()) {
-            auto& notices = element.second;
-        // Process notices into custo
-        
-        m members / getter functions
-    }
-        */
-        Broadcaster::Execute(this);
-    }
-};
-
 
 class BroadcasterFactory : public TfType::FactoryBase
 {

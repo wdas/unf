@@ -5,6 +5,8 @@
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/common.h>
+#include <pxr/base/tf/refBase.h>
+#include <pxr/base/tf/refPtr.h>
 
 #include <functional>
 #include <string>
@@ -13,35 +15,37 @@
 #include <vector>
 
 PXR_NAMESPACE_OPEN_SCOPE
-class Dispatcher;
+class NoticeMerger;
+
+using NoticeMergerPtr = TfRefPtr<NoticeMerger>;
 
 using NoticeCaturePredicateFunc =
     std::function<bool (const UsdBrokerNotice::StageNotice &)>;
 
-using DispatcherPtr = TfRefPtr<Dispatcher>;
+using _StageNoticePtrList = std::vector<UsdBrokerNotice::StageNoticeRefPtr>;
 
-using _StageNoticePtrList =
-    std::vector<UsdBrokerNotice::StageNoticeRefPtr>;
+using _StageNoticePtrMap = std::unordered_map<std::string, _StageNoticePtrList>;
 
-class NoticeMerger {
+class NoticeMerger : public TfRefBase {
 public:
-    NoticeMerger(const NoticeCaturePredicateFunc& predicate=nullptr)
-        : _predicate(predicate) {}
+    static NoticeMergerPtr Create(
+        const NoticeCaturePredicateFunc& predicate=nullptr)
+    {
+        return TfCreateRefPtr(new NoticeMerger(predicate));
+    }
 
     void Add(const UsdBrokerNotice::StageNoticeRefPtr&);
     void Join(NoticeMerger&);
     void Merge();
     void Send(const UsdStageWeakPtr&);
-    std::unordered_map<std::string, _StageNoticePtrList>& GetNotices() {
-        return _noticeMap;
-    }
-    void Clear() {
-        _noticeMap.clear();
-    }
+
+    _StageNoticePtrMap& GetNotices() { return _noticeMap; }
 
 private:
+    NoticeMerger(const NoticeCaturePredicateFunc& predicate=nullptr)
+        : _predicate(predicate) {}
 
-    std::unordered_map<std::string, _StageNoticePtrList> _noticeMap;
+    _StageNoticePtrMap _noticeMap;
     NoticeCaturePredicateFunc _predicate = nullptr;
 };
 

@@ -60,20 +60,10 @@ public:
     BroadcasterPtr& GetBroadcaster(std::string identifier);
 
     template<class T>
-    void AddDispatcher() {
-        static_assert(std::is_base_of<Dispatcher, T>::value);
-        auto self = TfCreateWeakPtr(this);
-        DispatcherPtr dispatcher = TfCreateRefPtr(new T(self));
-        _Add(dispatcher);
-    }
+    void AddDispatcher();
 
     template<class T>
-    void AddBroadcaster() {
-        static_assert(std::is_base_of<Broadcaster, T>::value);
-        auto self = TfCreateWeakPtr(this);
-        BroadcasterPtr broadcaster = TfCreateRefPtr(new T(self));
-        _Add(broadcaster);
-    }
+    void AddBroadcaster();
 
 private:
     NoticeBroker(const UsdStageWeakPtr&);
@@ -86,15 +76,25 @@ private:
     void _Add(const BroadcasterPtr&);
     void _Add(const DispatcherPtr&);
 
+    template<class T>
+    DispatcherPtr _AddDispatcher();
+
+    template<class T>
+    BroadcasterPtr _AddBroadcaster();
+
     template<class OutputPtr, class OutputFactory>
-    void _LoadFromPlugin(const TfType& type);
+    void _LoadFromPlugins(const TfType& type);
+
+    void _RegisterBroadcaster(const BroadcasterPtr&);
+    void _ExecuteBroadcasters(NoticeMergerPtr&);
 
     // A registry of hashed stage ptr to the corresponding stage's broker ptr.
     static std::unordered_map<size_t, NoticeBrokerPtr> Registry;
 
     UsdStageWeakPtr _stage;
 
-    std::vector<NoticeMerger> _mergers;
+    std::vector<NoticeMergerPtr> _mergers;
+    NoticeMergerPtr _latestMerger = nullptr;
 
     std::unordered_map<std::string, DispatcherPtr> _dispatcherMap;
     std::unordered_map<std::string, BroadcasterPtr> _broadcasterMap;
@@ -110,8 +110,44 @@ void NoticeBroker::Send(Args&&... args)
     Send(_notice);
 }
 
+template<class T>
+DispatcherPtr NoticeBroker::_AddDispatcher()
+{
+    static_assert(std::is_base_of<Dispatcher, T>::value);
+    auto self = TfCreateWeakPtr(this);
+    DispatcherPtr dispatcher = TfCreateRefPtr(new T(self));
+    _Add(dispatcher);
+    return dispatcher;
+}
+
+template<class T>
+void NoticeBroker::AddDispatcher()
+{
+    const auto& dispatcher = _AddDispatcher<T>();
+    dispatcher->Register();
+}
+
+template<class T>
+BroadcasterPtr NoticeBroker::_AddBroadcaster()
+{
+    static_assert(std::is_base_of<Broadcaster, T>::value);
+    auto self = TfCreateWeakPtr(this);
+    BroadcasterPtr broadcaster = TfCreateRefPtr(new T(self));
+    _Add(broadcaster);
+    return broadcaster;
+}
+
+template<class T>
+void NoticeBroker::AddBroadcaster()
+{
+    const auto& broadcaster = _AddBroadcaster<T>();
+    _RegisterBroadcaster(broadcaster);
+
+    // TODO: Detect cycles
+}
+
 template<class OutputPtr, class OutputFactory>
-void NoticeBroker::_LoadFromPlugin(const TfType& type)
+void NoticeBroker::_LoadFromPlugins(const TfType& type)
 {
     const PlugPluginPtr plugin =
         PlugRegistry::GetInstance().GetPluginForType(type);
