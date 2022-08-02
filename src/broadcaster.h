@@ -41,26 +41,6 @@ private:
     friend class NoticeBroker;
 };
 
-class ChildBroadcaster : public Broadcaster {
-public:
-    ChildBroadcaster(const NoticeBrokerWeakPtr& broker) : Broadcaster(broker){}
-    virtual std::string GetIdentifier() const { return "ChildBroadcaster"; }
-
-    virtual void Execute(void* parent) {
-        /*
-        // (need to stage dispatcher static cast)
-        for (auto& element : dispatcher.GetNotices()) {
-            auto& notices = element.second;
-        // Process notices into custo
-
-        m members / getter functions
-    }
-        */
-        Broadcaster::Execute(this);
-    }
-};
-
-
 class BroadcasterFactory : public TfType::FactoryBase
 {
 public:
