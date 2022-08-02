@@ -155,19 +155,9 @@ void NoticeBroker::_DiscoverBroadcasters()
         _LoadFromPlugins<BroadcasterPtr, BroadcasterFactory>(type);
     }
 
-    // Construct hierarchy.
+    // Register all broadcasters to build up dependency graph.
     for (auto& element: _broadcasterMap) {
-        const auto& identifier = element.first;
-        auto& broadcaster = element.second;
-
-        const auto& parentId = broadcaster->GetParentIdentifier();
-        if (!parentId.size()) {
-            _rootBroadcasters.push_back(identifier);
-        }
-        else {
-            auto& parent = GetBroadcaster(parentId);
-            parent->_AddChild(broadcaster);
-        }
+        _RegisterBroadcaster(element.second);
     }
 
     // Detect errors
@@ -182,6 +172,21 @@ void NoticeBroker::_Add(const DispatcherPtr& dispatcher)
 void NoticeBroker::_Add(const BroadcasterPtr& broadcaster)
 {
     _broadcasterMap[broadcaster->GetIdentifier()] = broadcaster;
+}
+
+void NoticeBroker::_RegisterBroadcaster(
+    const BroadcasterPtr& broadcaster)
+{
+    const auto& identifier = broadcaster->GetIdentifier();
+    const auto& parentId = broadcaster->GetParentIdentifier();
+
+    if (!parentId.size()) {
+        _rootBroadcasters.push_back(identifier);
+    }
+    else {
+        auto& parent = GetBroadcaster(parentId);
+        parent->_AddChild(broadcaster);
+    }
 }
 
 void NoticeBroker::_ExecuteBroadcasters(NoticeMerger& merger)

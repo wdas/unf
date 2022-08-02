@@ -89,6 +89,7 @@ private:
     template<class OutputPtr, class OutputFactory>
     void _LoadFromPlugins(const TfType& type);
 
+    void _RegisterBroadcaster(const BroadcasterPtr&);
     void _ExecuteBroadcasters(NoticeMerger&);
 
     // A registry of hashed stage ptr to the corresponding stage's broker ptr.
