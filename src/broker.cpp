@@ -18,7 +18,7 @@ NoticeBroker::NoticeBroker(const UsdStageWeakPtr& stage)
     : _stage(stage)
 {
     // Add default dispatcher.
-    AddDispatcher<StageDispatcher>();
+    _AddDispatcher<StageDispatcher>();
 
     // Discover dispatchers added via plugin to complete or override
     // default dispatcher.
