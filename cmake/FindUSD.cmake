@@ -39,7 +39,13 @@ find_path(
 
 set(USD_LIBRARIES usd sdf tf plug arch)
 
-mark_as_advanced(USD_INCLUDE_DIR USD_LIBRARIES)
+set(USD_DEPENDENCIES "Boost::boost;TBB::tbb")
+
+if (BUILD_PYTHON_BINDINGS)
+    set(USD_DEPENDENCIES  "${USD_DEPENDENCIES};Python::Python;Boost::python")
+endif()
+
+mark_as_advanced(USD_INCLUDE_DIR USD_LIBRARIES USD_DEPENDENCIES)
 
 foreach(NAME IN LISTS USD_LIBRARIES)
     find_library(
@@ -95,6 +101,7 @@ if (USD_FOUND)
             add_library(pxr::${NAME} UNKNOWN IMPORTED)
             set_target_properties(pxr::${NAME} PROPERTIES
                 IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
+                INTERFACE_LINK_LIBRARIES "${USD_DEPENDENCIES}"
                 IMPORTED_LOCATION "${${NAME}_LIBRARY}"
                 INTERFACE_INCLUDE_DIRECTORIES "${USD_INCLUDE_DIR}"
             )

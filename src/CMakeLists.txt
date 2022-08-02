@@ -32,13 +32,6 @@ target_link_libraries(UsdNoticeBroker
         pxr::usd
 )
 
-target_link_libraries(UsdNoticeBroker
-    PRIVATE
-        Boost::boost
-        Python::Python
-        TBB::tbb
-)
-
 install(TARGETS UsdNoticeBroker EXPORT ${PROJECT_NAME})
 install(
     FILES

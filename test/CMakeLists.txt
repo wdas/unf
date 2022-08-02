@@ -16,10 +16,6 @@ foreach(NAME IN LISTS CLASSES)
     target_link_libraries(${NAME}
         PRIVATE
             UsdNoticeBroker
-            Boost::boost
-            Boost::python
-            Python::Python
-            TBB::tbb
             GTest::GTest
     )
 

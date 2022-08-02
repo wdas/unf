@@ -24,13 +24,6 @@ target_link_libraries(PyUsdNoticeBrokerTest
         Boost::python
 )
 
-target_link_libraries(PyUsdNoticeBrokerTest
-    PRIVATE
-        Boost::boost
-        Python::Python
-        TBB::tbb
-)
-
 set_target_properties(PyUsdNoticeBrokerTest
     PROPERTIES
         PREFIX ""
