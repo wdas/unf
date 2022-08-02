@@ -86,15 +86,15 @@ private:
     void _LoadFromPlugins(const TfType& type);
 
     void _RegisterBroadcaster(const BroadcasterPtr&);
-    void _ExecuteBroadcasters(NoticeMerger&);
+    void _ExecuteBroadcasters(NoticeMergerPtr&);
 
     // A registry of hashed stage ptr to the corresponding stage's broker ptr.
     static std::unordered_map<size_t, NoticeBrokerPtr> Registry;
 
     UsdStageWeakPtr _stage;
 
-    std::vector<NoticeMerger> _mergers;
-    std::shared_ptr<NoticeMerger> _latestMerger;
+    std::vector<NoticeMergerPtr> _mergers;
+    NoticeMergerPtr _latestMerger = nullptr;
 
     std::unordered_map<std::string, DispatcherPtr> _dispatcherMap;
     std::unordered_map<std::string, BroadcasterPtr> _broadcasterMap;

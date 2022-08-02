@@ -55,7 +55,7 @@ bool NoticeBroker::IsInTransaction()
 void NoticeBroker::BeginTransaction(
     const NoticeCaturePredicateFunc& predicate)
 {
-    _mergers.push_back(NoticeMerger(predicate));
+    _mergers.push_back(NoticeMerger::Create(predicate));
 }
 
 void NoticeBroker::EndTransaction()
@@ -64,32 +64,32 @@ void NoticeBroker::EndTransaction()
         return;
     }
 
-    NoticeMerger& merger = _mergers.back();
+    NoticeMergerPtr& merger = _mergers.back();
 
     // Merge all notices captured in this transaction and run
     // all broadcasters.
-    merger.Merge();
+    merger->Merge();
     _ExecuteBroadcasters(merger);
 
     // Join previous transaction if necessary.
     if (_latestMerger) {
-        merger.Join(*_latestMerger);
-        _latestMerger.reset();
+        merger->Join(*_latestMerger);
+        _latestMerger = nullptr;
     }
 
     // Merge again to ensure that new notices added by broadcasters
     // and previous transaction are optimized.
-    merger.Merge();
+    merger->Merge();
 
     // If there are only one merger left, process all notices.
     if (_mergers.size() == 1) {
-        merger.Send(_stage);
+        merger->Send(_stage);
     }
     // Otherwise, it means that we are in a nested transaction that
     // should not be processed yet. Save it for joining it with next
     // transaction later.
     else {
-        _latestMerger = std::make_shared<NoticeMerger>(merger);;
+        _latestMerger = merger;
     }
 
     _mergers.pop_back();
@@ -99,7 +99,7 @@ void NoticeBroker::Send(
     const UsdBrokerNotice::StageNoticeRefPtr& notice)
 {
     if (_mergers.size() > 0) {
-        _mergers.back().Add(notice);
+        _mergers.back()->Add(notice);
     }
     // Otherwise, send the notice via broadcaster.
     else {
@@ -189,9 +189,9 @@ void NoticeBroker::_RegisterBroadcaster(
     }
 }
 
-void NoticeBroker::_ExecuteBroadcasters(NoticeMerger& merger)
+void NoticeBroker::_ExecuteBroadcasters(NoticeMergerPtr& merger)
 {
-    _StageNoticePtrMap rootNotices = merger.GetNotices();
+    _StageNoticePtrMap rootNotices = merger->GetNotices();
 
     for (auto& broadcaster : _rootBroadcasters) {
         GetBroadcaster(broadcaster)->Execute(&rootNotices);
