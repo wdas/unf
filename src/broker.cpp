@@ -141,7 +141,7 @@ void NoticeBroker::_DiscoverDispatchers()
     PlugRegistry::GetAllDerivedTypes(root, &types);
 
     for (const TfType& type : types) {
-        _LoadFromPlugin<DispatcherPtr, DispatcherFactory>(type);
+        _LoadFromPlugins<DispatcherPtr, DispatcherFactory>(type);
     }
 }
 
@@ -152,7 +152,7 @@ void NoticeBroker::_DiscoverBroadcasters()
     PlugRegistry::GetAllDerivedTypes(root, &types);
 
     for (const TfType& type : types) {
-        _LoadFromPlugin<BroadcasterPtr, BroadcasterFactory>(type);
+        _LoadFromPlugins<BroadcasterPtr, BroadcasterFactory>(type);
     }
 
     // Construct hierarchy.

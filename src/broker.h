@@ -87,7 +87,7 @@ private:
     void _Add(const DispatcherPtr&);
 
     template<class OutputPtr, class OutputFactory>
-    void _LoadFromPlugin(const TfType& type);
+    void _LoadFromPlugins(const TfType& type);
 
     void _ExecuteBroadcasters(NoticeMerger&);
 
@@ -114,7 +114,7 @@ void NoticeBroker::Send(Args&&... args)
 }
 
 template<class OutputPtr, class OutputFactory>
-void NoticeBroker::_LoadFromPlugin(const TfType& type)
+void NoticeBroker::_LoadFromPlugins(const TfType& type)
 {
     const PlugPluginPtr plugin =
         PlugRegistry::GetInstance().GetPluginForType(type);
