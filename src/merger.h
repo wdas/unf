@@ -32,12 +32,17 @@ public:
     void Join(NoticeMerger&);
     void Merge();
     void Send(const UsdStageWeakPtr&);
+    std::unordered_map<std::string, _StageNoticePtrList>& GetNotices() {
+        return _noticeMap;
+    }
+    void Clear() {
+        _noticeMap.clear();
+    }
 
 private:
 
     std::unordered_map<std::string, _StageNoticePtrList> _noticeMap;
     NoticeCaturePredicateFunc _predicate = nullptr;
-
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE

@@ -31,6 +31,7 @@ void NoticeMerger::Join(NoticeMerger& merger)
             std::begin(source),
             std::end(source),
             std::back_inserter(target));
+
         source.clear();
     }
 
