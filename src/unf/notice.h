@@ -88,12 +88,12 @@ public:
 
     virtual void Merge(ObjectsChanged&&) override;
 
-    const std::vector<PXR_NS::SdfPath>& GetResyncedPaths() const
+    const PXR_NS::SdfPathVector& GetResyncedPaths() const
     {
         return _resyncChanges;
     }
 
-    const std::vector<PXR_NS::SdfPath>& GetChangedInfoOnlyPaths() const
+    const PXR_NS::SdfPathVector& GetChangedInfoOnlyPaths() const
     {
         return _infoChanges;
     }
@@ -102,8 +102,8 @@ protected:
     explicit ObjectsChanged(const PXR_NS::UsdNotice::ObjectsChanged&);
 
 private:
-    std::vector<PXR_NS::SdfPath> _resyncChanges;
-    std::vector<PXR_NS::SdfPath> _infoChanges;
+    PXR_NS::SdfPathVector _resyncChanges;
+    PXR_NS::SdfPathVector _infoChanges;
 
     friend StageNoticeImpl<ObjectsChanged>;
 };
