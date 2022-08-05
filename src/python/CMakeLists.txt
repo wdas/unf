@@ -32,6 +32,7 @@ set_target_properties(PyUsdNoticeBroker
     PROPERTIES
         PREFIX ""
         OUTPUT_NAME _usd_notice_broker
+        LIBRARY_OUTPUT_DIRECTORY usd_notice_broker
 )
 
 target_compile_definitions(
@@ -44,6 +45,10 @@ target_compile_definitions(
         MFB_PACKAGE_NAME=usd_notice_broker
         MFB_ALT_PACKAGE_NAME=usd_notice_broker
 )
+
+configure_file(
+    "__init__.py"
+    "${CMAKE_CURRENT_BINARY_DIR}/usd_notice_broker/__init__.py")
 
 install(
     TARGETS PyUsdNoticeBroker

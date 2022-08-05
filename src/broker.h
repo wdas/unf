@@ -175,6 +175,7 @@ void NoticeBroker::_LoadFromPlugins(const TfType& type)
             "Failed to manufacture %s from plugin %s",
             type.GetTypeName().c_str(),
             plugin->GetName().c_str());
+        return;
     }
 
     _Add(output);

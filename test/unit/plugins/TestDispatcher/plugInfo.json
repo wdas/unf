@@ -1,0 +1,16 @@
+{
+    "Plugins": [
+        {
+            "Info": {
+                "Types" : {
+                    "Test::TestDispatcher" : {
+                        "bases": [ "Dispatcher" ]
+                    }
+                }
+            },
+            "LibraryPath": "libUnitPluginTestDispatcher.so",
+            "Name": "TestDispatcher",
+            "Type": "library"
+        }
+    ]
+}
