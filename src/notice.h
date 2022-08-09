@@ -26,7 +26,7 @@ public:
     // TODO: Should those methods be pure virtual?
     virtual bool IsMergeable() const { return true; }
     virtual void Merge(StageNotice&&) {};
-    virtual std::string GetTypeId() {return "";}
+    virtual std::string GetTypeId() const {return "";}
 
     // Exposes the Copy function to the interface
     virtual TfRefPtr<StageNotice> CopyAsStageNotice() const { return nullptr; }
@@ -64,7 +64,7 @@ public:
 
     virtual void Merge(Self&&) {}
 
-    virtual std::string GetTypeId() {
+    virtual std::string GetTypeId() const {
         return typeid(Self).name();
     }
 };
