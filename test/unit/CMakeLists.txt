@@ -2,8 +2,8 @@ add_executable(testUnitBroker testBroker.cpp)
 target_link_libraries(testUnitBroker
     PRIVATE
         UsdNoticeBroker
-        GTest::GTest
-        GTest::Main
+        GTest::gtest
+        GTest::gtest_main
 )
 gtest_discover_tests(testUnitBroker)
 
@@ -12,8 +12,8 @@ target_link_libraries(testUnitBrokerFlow
     PRIVATE
         UsdNoticeBroker
         TestUsdNoticeBroker
-        GTest::GTest
-        GTest::Main
+        GTest::gtest
+        GTest::gtest_main
 )
 gtest_discover_tests(testUnitBrokerFlow)
 
@@ -22,8 +22,8 @@ target_link_libraries(testUnitDispatcher
     PRIVATE
         UsdNoticeBroker
         TestUsdNoticeBroker
-        GTest::GTest
-        GTest::Main
+        GTest::gtest
+        GTest::gtest_main
 )
 gtest_discover_tests(testUnitDispatcher)
 
@@ -34,8 +34,8 @@ target_link_libraries(testUnitDispatcherPlugin
         TestUsdNoticeBroker
         UnitPluginNewStageDispatcher
         UnitPluginTestDispatcher
-        GTest::GTest
-        GTest::Main
+        GTest::gtest
+        GTest::gtest_main
 )
 set(_path "${CMAKE_CURRENT_BINARY_DIR}/plugins/*Dispatcher/plugInfo.json")
 gtest_discover_tests(
@@ -49,8 +49,8 @@ target_link_libraries(testUnitCache
     PRIVATE
         UsdNoticeBroker
         TestUsdNoticeBroker
-        GTest::GTest
-        GTest::Main
+        GTest::gtest
+        GTest::gtest_main
 )
 gtest_discover_tests(testUnitCache)
 
@@ -59,8 +59,8 @@ target_link_libraries(testUnitTransaction
     PRIVATE
         UsdNoticeBroker
         TestUsdNoticeBroker
-        GTest::GTest
-        GTest::Main
+        GTest::gtest
+        GTest::gtest_main
 )
 gtest_discover_tests(testUnitTransaction)
 

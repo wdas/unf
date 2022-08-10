@@ -58,6 +58,17 @@ add_subdirectory(src)
 
 if (BUILD_TESTS)
     find_package(GTest REQUIRED)
+
+    # For compatibility with module fetched from CMake < 3.20
+    if (NOT TARGET GTest::gtest)
+        set_target_properties(GTest::GTest PROPERTIES IMPORTED_GLOBAL TRUE)
+        add_library(GTest::gtest ALIAS GTest::GTest)
+    endif()
+    if (NOT TARGET GTest::gtest_main)
+        set_target_properties(GTest::Main PROPERTIES IMPORTED_GLOBAL TRUE)
+        add_library(GTest::gtest_main ALIAS GTest::Main)
+    endif()
+
     include(GoogleTest)
 
     enable_testing()

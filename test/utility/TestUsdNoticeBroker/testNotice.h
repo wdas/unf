@@ -77,6 +77,4 @@ public:
 
 } // namespace Test
 
-PXR_NAMESPACE_CLOSE_SCOPE
-
 #endif // TEST_NOTICE_BROKER_NOTICE_H

@@ -3,8 +3,8 @@ target_link_libraries(testIntegrationAddPrims
     PRIVATE
         UsdNoticeBroker
         TestUsdNoticeBroker
-        GTest::GTest
-        GTest::Main
+        GTest::gtest
+        GTest::gtest_main
 )
 gtest_discover_tests(testIntegrationAddPrims)
 
@@ -13,8 +13,8 @@ target_link_libraries(testIntegrationMuteLayers
     PRIVATE
         UsdNoticeBroker
         TestUsdNoticeBroker
-        GTest::GTest
-        GTest::Main
+        GTest::gtest
+        GTest::gtest_main
 )
 gtest_discover_tests(testIntegrationMuteLayers)
 
@@ -23,8 +23,8 @@ target_link_libraries(testIntegrationChangeEditTarget
     PRIVATE
         UsdNoticeBroker
         TestUsdNoticeBroker
-        GTest::GTest
-        GTest::Main
+        GTest::gtest
+        GTest::gtest_main
 )
 gtest_discover_tests(testIntegrationChangeEditTarget)
 
