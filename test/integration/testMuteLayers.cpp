@@ -57,7 +57,7 @@ protected:
 
     }
 
-    UsdStageRefPtr _stage;
+    PXR_NS::UsdStageRefPtr _stage;
     std::vector<PXR_NS::SdfLayerRefPtr> _layers;
     std::vector<std::string> _layerIds;
 

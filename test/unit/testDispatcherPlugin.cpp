@@ -28,7 +28,7 @@ protected:
         _listener.SetStage(_stage);
     }
 
-    UsdStageRefPtr _stage;
+    PXR_NS::UsdStageRefPtr _stage;
     Listener _listener;
 };
 

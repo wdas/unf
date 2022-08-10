@@ -39,7 +39,7 @@ protected:
         _brokerListener.SetStage(_stage);
     }
 
-    UsdStageRefPtr _stage;
+    PXR_NS::UsdStageRefPtr _stage;
 
     UsdListener _usdListener;
     BrokerListener _brokerListener;
