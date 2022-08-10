@@ -13,9 +13,9 @@
 
 class DispatcherTest : public ::testing::Test {
 protected:
-    using StageDispatcherPtr = TfRefPtr<PXR_NS::StageDispatcher>;
-    using NewStageDispatcherPtr = TfRefPtr<::Test::NewStageDispatcher>;
-    using TestDispatcherPtr = TfRefPtr<::Test::TestDispatcher>;
+    using StageDispatcherPtr = PXR_NS::TfRefPtr<PXR_NS::StageDispatcher>;
+    using NewStageDispatcherPtr = PXR_NS::TfRefPtr<::Test::NewStageDispatcher>;
+    using TestDispatcherPtr = PXR_NS::TfRefPtr<::Test::TestDispatcher>;
 
     using Listener = ::Test::Listener<
         ::Test::InputNotice,
