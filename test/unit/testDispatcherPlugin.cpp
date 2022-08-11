@@ -38,8 +38,8 @@ TEST_F(DispatcherTest, Discover)
 
     // Ensure that stage dispacther has been replaced as expected.
     auto dispatcher = broker->GetDispatcher("StageDispatcher");
-    ASSERT_TRUE(TfDynamic_cast<NewStageDispatcherPtr>(dispatcher));
-    ASSERT_FALSE(TfDynamic_cast<StageDispatcherPtr>(dispatcher));
+    ASSERT_TRUE(PXR_NS::TfDynamic_cast<NewStageDispatcherPtr>(dispatcher));
+    ASSERT_FALSE(PXR_NS::TfDynamic_cast<StageDispatcherPtr>(dispatcher));
 
     // Sending InputNotice now triggers OutputNotice1 and OutputNotice2.
     ::Test::InputNotice().Send(PXR_NS::TfWeakPtr<PXR_NS::UsdStage>(_stage));

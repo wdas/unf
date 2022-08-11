@@ -36,7 +36,7 @@ TEST_F(DispatcherTest, Original)
 
     // Ensure that the stage dispatcher type is correct.
     auto dispatcher = broker->GetDispatcher("StageDispatcher");
-    ASSERT_TRUE(TfDynamic_cast<StageDispatcherPtr>(dispatcher));
+    ASSERT_TRUE(PXR_NS::TfDynamic_cast<StageDispatcherPtr>(dispatcher));
 
     // Sending InputNotice does not trigger any new notices.
     ::Test::InputNotice().Send(PXR_NS::TfWeakPtr<PXR_NS::UsdStage>(_stage));
@@ -52,8 +52,8 @@ TEST_F(DispatcherTest, ReplaceOriginal)
 
     // Ensure that stage dispacther has been replaced as expected.
     auto dispatcher = broker->GetDispatcher("StageDispatcher");
-    ASSERT_TRUE(TfDynamic_cast<NewStageDispatcherPtr>(dispatcher));
-    ASSERT_FALSE(TfDynamic_cast<StageDispatcherPtr>(dispatcher));
+    ASSERT_TRUE(PXR_NS::TfDynamic_cast<NewStageDispatcherPtr>(dispatcher));
+    ASSERT_FALSE(PXR_NS::TfDynamic_cast<StageDispatcherPtr>(dispatcher));
 
     // Sending InputNotice now triggers OutputNotice1.
     ::Test::InputNotice().Send(PXR_NS::TfWeakPtr<PXR_NS::UsdStage>(_stage));
@@ -69,12 +69,12 @@ TEST_F(DispatcherTest, AddNew)
 
     // Ensure that stage dispacther has not been replaced.
     auto dispatcher1 = broker->GetDispatcher("StageDispatcher");
-    ASSERT_TRUE(TfDynamic_cast<StageDispatcherPtr>(dispatcher1));
-    ASSERT_FALSE(TfDynamic_cast<TestDispatcherPtr>(dispatcher1));
+    ASSERT_TRUE(PXR_NS::TfDynamic_cast<StageDispatcherPtr>(dispatcher1));
+    ASSERT_FALSE(PXR_NS::TfDynamic_cast<TestDispatcherPtr>(dispatcher1));
 
     // Ensure that the new dispatcher is accessible from its identifier.
     auto dispatcher2 = broker->GetDispatcher("TestDispatcher");
-    ASSERT_TRUE(TfDynamic_cast<TestDispatcherPtr>(dispatcher2));
+    ASSERT_TRUE(PXR_NS::TfDynamic_cast<TestDispatcherPtr>(dispatcher2));
 
     // Sending the special InputNotice now triggers OutputNotice2.
     ::Test::InputNotice().Send(PXR_NS::TfWeakPtr<PXR_NS::UsdStage>(_stage));
