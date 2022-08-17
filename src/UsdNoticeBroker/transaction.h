@@ -1,17 +1,19 @@
 #ifndef NOTICE_BROKER_TRANSACTION_H
 #define NOTICE_BROKER_TRANSACTION_H
 
-#include "broker.h"
+#include "UsdNoticeBroker/broker.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/common.h>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
+namespace UNB {
+
 class NoticeTransaction {
 public:
     NoticeTransaction(
-        const NoticeBrokerPtr&,
+        const BrokerPtr&,
         const NoticeCaturePredicateFunc& predicate=nullptr);
     NoticeTransaction(
         const UsdStageRefPtr&,
@@ -23,11 +25,13 @@ public:
     NoticeTransaction(const NoticeTransaction &) = delete;
     NoticeTransaction &operator=(const NoticeTransaction &) = delete;
 
-    NoticeBrokerPtr GetBroker() { return _broker; }
+    BrokerPtr GetBroker() { return _broker; }
 
 private:
-    NoticeBrokerPtr _broker;
+    BrokerPtr _broker;
 };
+
+} // namespace UNB
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

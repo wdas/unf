@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd, Sdf, Tf
-from usd_notice_broker import NoticeBroker, BrokerNotice, NoticeCache
+from usd_notice_broker import Broker, BrokerNotice, NoticeCache
 
 import pytest
 
@@ -23,7 +23,7 @@ def test_change_edit_target(notice_type, excepted, stage_with_layers):
     """Change edit target.
     """
     stage = stage_with_layers
-    NoticeBroker.Create(stage)
+    Broker.Create(stage)
 
     # Listen to broker notice.
     received_broker = []
@@ -67,7 +67,7 @@ def test_change_edit_target_batching(
     """Change edit target and batch broker notices.
     """
     stage = stage_with_layers
-    broker = NoticeBroker.Create(stage)
+    broker = Broker.Create(stage)
 
     # Listen to broker notice.
     received_broker = []
@@ -120,7 +120,7 @@ def test_change_edit_target_blocking(
     """Change edit target and block broker notices.
     """
     stage = stage_with_layers
-    broker = NoticeBroker.Create(stage)
+    broker = Broker.Create(stage)
 
     # Listen to broker notice.
     received_broker = []
@@ -159,7 +159,7 @@ def test_change_edit_target_caching(stage_with_layers):
     """Change edit target while caching StageEditTargetChanged notices.
     """
     stage = stage_with_layers
-    NoticeBroker.Create(stage)
+    Broker.Create(stage)
 
     cache = NoticeCache(BrokerNotice.StageEditTargetChanged)
 

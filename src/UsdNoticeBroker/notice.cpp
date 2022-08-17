@@ -1,4 +1,4 @@
-#include "notice.h"
+#include "UsdNoticeBroker/notice.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/notice.h>
@@ -9,7 +9,9 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-namespace UsdBrokerNotice {
+namespace UNB {
+
+namespace BrokerNotice {
 
 TF_REGISTRY_FUNCTION(TfType)
 {
@@ -133,6 +135,8 @@ void LayerMutingChanged::Merge(LayerMutingChanged&& notice)
     }
 }
 
-} // namespace UsdBrokerNotice
+} // namespace BrokerNotice
+
+} // namespace UNB
 
 PXR_NAMESPACE_CLOSE_SCOPE

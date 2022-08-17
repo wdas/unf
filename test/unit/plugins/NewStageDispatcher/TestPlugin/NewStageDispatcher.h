@@ -1,7 +1,7 @@
 #ifndef TEST_NOTICE_BROKER_PLUGIN_NEW_STAGE_DISPATCHER_H
 #define TEST_NOTICE_BROKER_PLUGIN_NEW_STAGE_DISPATCHER_H
 
-#include "dispatcher.h"
+#include <UsdNoticeBroker/dispatcher.h>
 
 #include <TestUsdNoticeBroker/testNotice.h>
 
@@ -9,11 +9,11 @@
 
 namespace Test {
 
-class NewStageDispatcher : public PXR_NS::Dispatcher
+class NewStageDispatcher : public PXR_NS::UNB::Dispatcher
 {
 public:
-    NewStageDispatcher(const PXR_NS::NoticeBrokerWeakPtr& broker)
-    : PXR_NS::Dispatcher(broker) {}
+    NewStageDispatcher(const PXR_NS::UNB::BrokerWeakPtr& broker)
+    : PXR_NS::UNB::Dispatcher(broker) {}
 
     virtual std::string GetIdentifier() const { return "StageDispatcher"; };
 

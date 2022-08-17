@@ -1,13 +1,15 @@
-#include "transaction.h"
-#include "broker.h"
+#include "UsdNoticeBroker/transaction.h"
+#include "UsdNoticeBroker/broker.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/common.h>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
+namespace UNB {
+
 NoticeTransaction::NoticeTransaction(
-    const NoticeBrokerPtr& broker,
+    const BrokerPtr& broker,
     const NoticeCaturePredicateFunc& predicate)
     : _broker(broker)
 {
@@ -18,7 +20,7 @@ NoticeTransaction::NoticeTransaction(
 NoticeTransaction::NoticeTransaction(
     const UsdStageRefPtr& stage,
     const NoticeCaturePredicateFunc& predicate)
-    : _broker(NoticeBroker::Create(stage))
+    : _broker(Broker::Create(stage))
 {
     _broker->BeginTransaction(predicate);
 }
@@ -27,5 +29,7 @@ NoticeTransaction::~NoticeTransaction()
 {
     _broker->EndTransaction();
 }
+
+} // namespace UNB
 
 PXR_NAMESPACE_CLOSE_SCOPE

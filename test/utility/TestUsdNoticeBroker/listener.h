@@ -1,8 +1,6 @@
 #ifndef TEST_NOTICE_BROKER_LISTENER_H
 #define TEST_NOTICE_BROKER_LISTENER_H
 
-#include "notice.h"
-
 #include <pxr/pxr.h>
 #include <pxr/base/tf/notice.h>
 #include <pxr/base/tf/weakBase.h>

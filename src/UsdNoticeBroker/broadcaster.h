@@ -1,7 +1,7 @@
 #ifndef NOTICE_BROKER_BROADCASTER_H
 #define NOTICE_BROKER_BROADCASTER_H
 
-#include "broker.h"
+#include "UsdNoticeBroker/broker.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/refBase.h>
@@ -14,6 +14,8 @@
 #include <vector>
 
 PXR_NAMESPACE_OPEN_SCOPE
+
+namespace UNB {
 
 class Broadcaster : public TfRefBase, public TfWeakBase {
 public:
@@ -29,23 +31,23 @@ public:
     }
 
 protected:
-    Broadcaster(const NoticeBrokerWeakPtr&);
+    Broadcaster(const BrokerWeakPtr&);
 
 private:
     void _AddChild(const BroadcasterPtr&);
 
     std::vector<BroadcasterPtr> _children;
 
-    NoticeBrokerWeakPtr _broker;
+    BrokerWeakPtr _broker;
 
-    friend class NoticeBroker;
+    friend class Broker;
 };
 
 class BroadcasterFactory : public TfType::FactoryBase
 {
 public:
     virtual TfRefPtr<Broadcaster> New(
-        const NoticeBrokerWeakPtr& broker) const = 0;
+        const BrokerWeakPtr& broker) const = 0;
 };
 
 template <class T>
@@ -53,7 +55,7 @@ class BroadcasterFactoryImpl : public BroadcasterFactory
 {
 public:
     virtual TfRefPtr<Broadcaster> New(
-        const NoticeBrokerWeakPtr& broker) const override
+        const BrokerWeakPtr& broker) const override
     {
         return TfCreateRefPtr(new T(broker));
     }
@@ -65,6 +67,8 @@ void BroadcasterDefine()
     TfType::Define<T, TfType::Bases<Bases...> >()
         .template SetFactory<BroadcasterFactoryImpl<T> >();
 }
+
+} // namespace UNB
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

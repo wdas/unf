@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd
-from usd_notice_broker import NoticeBroker, NoticeTransaction
+from usd_notice_broker import Broker, NoticeTransaction
 
 
 def test_create_from_stage():
@@ -18,7 +18,7 @@ def test_create_from_stage():
 def test_create_from_broker():
     """Create a transaction from broker."""
     stage = Usd.Stage.CreateInMemory()
-    broker = NoticeBroker.Create(stage)
+    broker = Broker.Create(stage)
 
     assert broker.IsInTransaction() is False
 

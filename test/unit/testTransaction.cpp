@@ -1,5 +1,5 @@
-#include "broker.h"
-#include "transaction.h"
+#include <UsdNoticeBroker/broker.h>
+#include <UsdNoticeBroker/transaction.h>
 
 #include <TestUsdNoticeBroker/listener.h>
 #include <TestUsdNoticeBroker/testNotice.h>
@@ -25,12 +25,12 @@ protected:
 
 TEST_F(TransactionTest, Simple)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
     ASSERT_FALSE(broker->IsInTransaction());
 
     {
-        PXR_NS::NoticeTransaction transaction(broker);
+        PXR_NS::UNB::NoticeTransaction transaction(broker);
         ASSERT_EQ(transaction.GetBroker(), broker);
 
         ASSERT_TRUE(broker->IsInTransaction());
@@ -56,10 +56,10 @@ TEST_F(TransactionTest, Simple)
 TEST_F(TransactionTest, WithoutBroker)
 {
     {
-        PXR_NS::NoticeTransaction transaction(_stage);
+        PXR_NS::UNB::NoticeTransaction transaction(_stage);
 
         auto broker = transaction.GetBroker();
-        ASSERT_EQ(broker, PXR_NS::NoticeBroker::Create(_stage));
+        ASSERT_EQ(broker, PXR_NS::UNB::Broker::Create(_stage));
 
         broker->Send<::Test::MergeableNotice>();
         broker->Send<::Test::MergeableNotice>();
@@ -81,12 +81,12 @@ TEST_F(TransactionTest, WithoutBroker)
 
 TEST_F(TransactionTest, Nested)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
     ASSERT_FALSE(broker->IsInTransaction());
 
     {
-        PXR_NS::NoticeTransaction transaction1(broker);
+        PXR_NS::UNB::NoticeTransaction transaction1(broker);
         ASSERT_EQ(transaction1.GetBroker(), broker);
 
         ASSERT_TRUE(broker->IsInTransaction());
@@ -100,7 +100,7 @@ TEST_F(TransactionTest, Nested)
         broker->Send<::Test::UnMergeableNotice>();
 
         {
-            PXR_NS::NoticeTransaction transaction2(broker);
+            PXR_NS::UNB::NoticeTransaction transaction2(broker);
             ASSERT_EQ(transaction2.GetBroker(), broker);
 
             ASSERT_TRUE(broker->IsInTransaction());

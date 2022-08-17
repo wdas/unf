@@ -1,4 +1,4 @@
-#include "broker.h"
+#include <UsdNoticeBroker/broker.h>
 
 #include <TestUsdNoticeBroker/listener.h>
 #include <TestUsdNoticeBroker/testNotice.h>
@@ -24,7 +24,7 @@ protected:
 
 TEST_F(BrokerFlowTest, Send)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
     broker->Send<::Test::MergeableNotice>();
     broker->Send<::Test::MergeableNotice>();
@@ -40,7 +40,7 @@ TEST_F(BrokerFlowTest, Send)
 
 TEST_F(BrokerFlowTest, Transaction)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
     ASSERT_FALSE(broker->IsInTransaction());
 
@@ -69,7 +69,7 @@ TEST_F(BrokerFlowTest, Transaction)
 
 TEST_F(BrokerFlowTest, NestedTransaction)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
     ASSERT_FALSE(broker->IsInTransaction());
 
@@ -113,7 +113,7 @@ TEST_F(BrokerFlowTest, NestedTransaction)
 
 TEST_F(BrokerFlowTest, MergeableNotice)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
     class DataListener : public ::Test::ListenerBase<::Test::MergeableNotice>
     {

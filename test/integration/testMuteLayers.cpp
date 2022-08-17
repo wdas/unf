@@ -1,5 +1,5 @@
-#include "broker.h"
-#include "cache.h"
+#include <UsdNoticeBroker/broker.h>
+#include <UsdNoticeBroker/cache.h>
 
 #include <TestUsdNoticeBroker/listener.h>
 #include <TestUsdNoticeBroker/testNotice.h>
@@ -15,7 +15,7 @@
 
 // namespace aliases for convenience.
 using _USD = PXR_NS::UsdNotice;
-namespace _Broker = PXR_NS::UsdBrokerNotice;
+namespace _Broker = PXR_NS::UNB::BrokerNotice;
 
 class MuteLayersTest : public ::testing::Test {
 protected:
@@ -67,7 +67,7 @@ protected:
 
 TEST_F(MuteLayersTest, Simple)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
     _stage->MuteLayer(_layerIds[0]);
     _stage->MuteLayer(_layerIds[1]);
@@ -92,7 +92,7 @@ TEST_F(MuteLayersTest, Simple)
 
 TEST_F(MuteLayersTest, Batching)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
     broker->BeginTransaction();
 
@@ -129,7 +129,7 @@ TEST_F(MuteLayersTest, Batching)
 
 TEST_F(MuteLayersTest, Blocking)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
     // Pass a predicate to block all broker notices.
     broker->BeginTransaction(
@@ -168,7 +168,7 @@ TEST_F(MuteLayersTest, Blocking)
 
 TEST_F(MuteLayersTest, PartialBlocking)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
     std::string target = typeid(_Broker::LayerMutingChanged).name();
 
@@ -209,7 +209,7 @@ TEST_F(MuteLayersTest, PartialBlocking)
 
 TEST_F(MuteLayersTest, Transaction_ObjectsChanged)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
     // Create prim before caching to trigger resync path when muting.
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[0]));
@@ -249,7 +249,7 @@ TEST_F(MuteLayersTest, Transaction_ObjectsChanged)
 
 TEST_F(MuteLayersTest, Transaction_LayerMutingChanged)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
     using Notice = _Broker::LayerMutingChanged;
 
@@ -288,7 +288,7 @@ TEST_F(MuteLayersTest, Transaction_LayerMutingChanged)
 
 TEST_F(MuteLayersTest, Caching_ObjectsChanged)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
     // Create prims before caching to trigger resync path when muting.
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[0]));
@@ -297,7 +297,7 @@ TEST_F(MuteLayersTest, Caching_ObjectsChanged)
     _stage->DefinePrim(PXR_NS::SdfPath {"/Bar"});
 
 
-    PXR_NS::NoticeCache<_Broker::ObjectsChanged> cache;
+    PXR_NS::UNB::NoticeCache<_Broker::ObjectsChanged> cache;
 
     _stage->MuteLayer(_layerIds[0]);
     _stage->MuteLayer(_layerIds[1]);
@@ -348,9 +348,9 @@ TEST_F(MuteLayersTest, Caching_ObjectsChanged)
 
 TEST_F(MuteLayersTest, Caching_StageContentsChanged)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
-    PXR_NS::NoticeCache<_Broker::StageContentsChanged> cache;
+    PXR_NS::UNB::NoticeCache<_Broker::StageContentsChanged> cache;
 
     _stage->MuteLayer(_layerIds[0]);
     _stage->MuteLayer(_layerIds[1]);
@@ -370,9 +370,9 @@ TEST_F(MuteLayersTest, Caching_StageContentsChanged)
 
 TEST_F(MuteLayersTest, Caching_LayerMutingChanged)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
-    PXR_NS::NoticeCache<_Broker::LayerMutingChanged> cache;
+    PXR_NS::UNB::NoticeCache<_Broker::LayerMutingChanged> cache;
 
     _stage->MuteLayer(_layerIds[0]);
     _stage->MuteLayer(_layerIds[1]);

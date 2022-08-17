@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd, Tf
-from usd_notice_broker import NoticeBroker, BrokerNotice, NoticeCache
+from usd_notice_broker import Broker, BrokerNotice, NoticeCache
 
 import pytest
 
@@ -23,7 +23,7 @@ def test_add_prims(notice_type, excepted):
     """Add several prims to the stage.
     """
     stage = Usd.Stage.CreateInMemory()
-    NoticeBroker.Create(stage)
+    Broker.Create(stage)
 
     # Listen to broker notice.
     received_broker = []
@@ -62,7 +62,7 @@ def test_add_prims_batching(notice_type, expected_usd, expected_broker):
     """Add several prims to the stage and batch broker notices.
     """
     stage = Usd.Stage.CreateInMemory()
-    broker = NoticeBroker.Create(stage)
+    broker = Broker.Create(stage)
 
     # Listen to broker notice.
     received_broker = []
@@ -110,7 +110,7 @@ def test_add_prims_blocking(notice_type, expected_usd):
     """Add several prims to the stage and block broker notices.
     """
     stage = Usd.Stage.CreateInMemory()
-    broker = NoticeBroker.Create(stage)
+    broker = Broker.Create(stage)
 
     # Listen to broker notice.
     received_broker = []
@@ -148,7 +148,7 @@ def test_add_prims_transaction_objectschanged():
 
     """
     stage = Usd.Stage.CreateInMemory()
-    broker = NoticeBroker.Create(stage)
+    broker = Broker.Create(stage)
 
     received = []
 
@@ -178,7 +178,7 @@ def test_add_prims_caching_objectschanged():
     """Add several prims to stage while caching ObjectsChanged notices.
     """
     stage = Usd.Stage.CreateInMemory()
-    NoticeBroker.Create(stage)
+    Broker.Create(stage)
 
     cache = NoticeCache(BrokerNotice.ObjectsChanged)
 
@@ -219,7 +219,7 @@ def test_add_prims_caching_stagecontentschanged():
     """Add several prims to stage while caching StageContentsChanged notices.
     """
     stage = Usd.Stage.CreateInMemory()
-    NoticeBroker.Create(stage)
+    Broker.Create(stage)
 
     cache = NoticeCache(BrokerNotice.StageContentsChanged)
 

@@ -1,4 +1,4 @@
-#include "notice.h"
+#include "UsdNoticeBroker/notice.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/notice.h>
@@ -7,7 +7,7 @@
 #include <boost/python.hpp>
 
 using namespace boost::python;
-using namespace PXR_NS::UsdBrokerNotice;
+using namespace PXR_NS::UNB::BrokerNotice;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 

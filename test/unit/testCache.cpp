@@ -1,5 +1,5 @@
-#include "cache.h"
-#include "broker.h"
+#include <UsdNoticeBroker/cache.h>
+#include <UsdNoticeBroker/broker.h>
 
 #include <TestUsdNoticeBroker/testNotice.h>
 
@@ -9,9 +9,9 @@
 TEST(NoticeCacheTest, MergeableNotice)
 {
     auto stage = PXR_NS::UsdStage::CreateInMemory();
-    auto broker = PXR_NS::NoticeBroker::Create(stage);
+    auto broker = PXR_NS::UNB::Broker::Create(stage);
 
-    PXR_NS::NoticeCache<::Test::MergeableNotice> cache;
+    PXR_NS::UNB::NoticeCache<::Test::MergeableNotice> cache;
 
     broker->Send<::Test::MergeableNotice>(::Test::DataMap({{"Foo", "Test1"}}));
     broker->Send<::Test::MergeableNotice>(::Test::DataMap({{"Foo", "Test2"}}));
@@ -48,9 +48,9 @@ TEST(NoticeCacheTest, MergeableNotice)
 TEST(NoticeCacheTest, UnMergeableNotice)
 {
     auto stage = PXR_NS::UsdStage::CreateInMemory();
-    auto broker = PXR_NS::NoticeBroker::Create(stage);
+    auto broker = PXR_NS::UNB::Broker::Create(stage);
 
-    PXR_NS::NoticeCache<::Test::UnMergeableNotice> cache;
+    PXR_NS::UNB::NoticeCache<::Test::UnMergeableNotice> cache;
 
     broker->Send<::Test::UnMergeableNotice>();
     broker->Send<::Test::UnMergeableNotice>();

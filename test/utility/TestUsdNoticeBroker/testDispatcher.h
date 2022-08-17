@@ -3,19 +3,19 @@
 
 #include "testNotice.h"
 
-#include "dispatcher.h"
-#include "broker.h"
+#include <UsdNoticeBroker/dispatcher.h>
+#include <UsdNoticeBroker/broker.h>
 
 #include <pxr/pxr.h>
 
 namespace Test {
 
 // Declare test dispatchers.
-class NewStageDispatcher : public PXR_NS::Dispatcher
+class NewStageDispatcher : public PXR_NS::UNB::Dispatcher
 {
 public:
-    NewStageDispatcher(const PXR_NS::NoticeBrokerWeakPtr& broker)
-    : PXR_NS::Dispatcher(broker) {}
+    NewStageDispatcher(const PXR_NS::UNB::BrokerWeakPtr& broker)
+    : PXR_NS::UNB::Dispatcher(broker) {}
 
     virtual std::string GetIdentifier() const { return "StageDispatcher"; };
 
@@ -24,11 +24,11 @@ public:
     }
 };
 
-class TestDispatcher : public PXR_NS::Dispatcher
+class TestDispatcher : public PXR_NS::UNB::Dispatcher
 {
 public:
-    TestDispatcher(const PXR_NS::NoticeBrokerWeakPtr& broker)
-    : PXR_NS::Dispatcher(broker) {}
+    TestDispatcher(const PXR_NS::UNB::BrokerWeakPtr& broker)
+    : PXR_NS::UNB::Dispatcher(broker) {}
 
     virtual std::string GetIdentifier() const { return "TestDispatcher"; };
 

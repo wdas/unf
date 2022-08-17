@@ -14,7 +14,9 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-namespace UsdBrokerNotice {
+namespace UNB {
+
+namespace BrokerNotice {
 
 class StageNotice : public TfNotice, public TfRefBase {
 public:
@@ -139,7 +141,9 @@ private:
     friend StageNoticeImpl<LayerMutingChanged>;
 };
 
-} // namespace UsdBrokerNotice
+} // namespace BrokerNotice
+
+} // namespace UNB
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

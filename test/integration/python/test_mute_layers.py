@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd, Sdf, Tf
-from usd_notice_broker import NoticeBroker, BrokerNotice, NoticeCache
+from usd_notice_broker import Broker, BrokerNotice, NoticeCache
 
 import pytest
 
@@ -23,7 +23,7 @@ def test_mute_layers(notice_type, excepted, stage_with_layers):
     """Mute several layers.
     """
     stage = stage_with_layers
-    NoticeBroker.Create(stage)
+    Broker.Create(stage)
 
     # Listen to broker notice.
     received_broker = []
@@ -71,7 +71,7 @@ def test_mute_layers_batching(
     """Mute several layers and batch broker notices.
     """
     stage = stage_with_layers
-    broker = NoticeBroker.Create(stage)
+    broker = Broker.Create(stage)
 
     # Listen to broker notice.
     received_broker = []
@@ -128,7 +128,7 @@ def test_mute_layers_blocking(
     """Mute several layers and block broker notices.
     """
     stage = stage_with_layers
-    broker = NoticeBroker.Create(stage)
+    broker = Broker.Create(stage)
 
     # Listen to broker notice.
     received_broker = []
@@ -171,7 +171,7 @@ def test_mute_layers_transaction_objectschanged(stage_with_layers):
     """Mute several layers during transaction and analyze ObjectsChanged notice.
     """
     stage = stage_with_layers
-    broker = NoticeBroker.Create(stage)
+    broker = Broker.Create(stage)
 
     received = []
 
@@ -214,7 +214,7 @@ def test_mute_layers_transaction_layermutingchanged(stage_with_layers):
     stage = stage_with_layers
     layers = stage.GetRootLayer().subLayerPaths
 
-    broker = NoticeBroker.Create(stage)
+    broker = Broker.Create(stage)
 
     received = []
 
@@ -249,7 +249,7 @@ def test_mute_layers_caching_objectschanged(stage_with_layers):
     """Mute several layers while caching ObjectsChanged notices.
     """
     stage = stage_with_layers
-    NoticeBroker.Create(stage)
+    Broker.Create(stage)
 
     # Create prim before caching to trigger resync path when muting.
     layers = stage.GetRootLayer().subLayerPaths
@@ -303,7 +303,7 @@ def test_mute_layers_caching_stagecontentschanged(stage_with_layers):
     """Mute several layers while caching StageContentsChanged notices.
     """
     stage = stage_with_layers
-    NoticeBroker.Create(stage)
+    Broker.Create(stage)
 
     cache = NoticeCache(BrokerNotice.StageContentsChanged)
 
@@ -331,7 +331,7 @@ def test_mute_layers_caching_layermutingchanged(stage_with_layers):
     """Mute several layers while caching LayerMutingChanged notices.
     """
     stage = stage_with_layers
-    NoticeBroker.Create(stage)
+    Broker.Create(stage)
 
     cache = NoticeCache(BrokerNotice.LayerMutingChanged)
 

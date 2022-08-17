@@ -1,7 +1,7 @@
 #ifndef NOTICE_BROKER_NOTICE_CACHE_H
 #define NOTICE_BROKER_NOTICE_CACHE_H
 
-#include "notice.h"
+#include "UsdNoticeBroker/notice.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/notice.h>
@@ -14,6 +14,8 @@
 #include <type_traits>
 
 PXR_NAMESPACE_OPEN_SCOPE
+
+namespace UNB {
 
 class BaseNoticeCache : public TfWeakBase
 {
@@ -33,9 +35,9 @@ public:
     NoticeCache()
     {
         static_assert(
-            std::is_base_of<UsdBrokerNotice::StageNotice, T>::value
-            && !std::is_same<UsdBrokerNotice::StageNotice, T>::value,
-            "Expecting a notice derived from UsdBrokerNotice::StageNotice."
+            std::is_base_of<BrokerNotice::StageNotice, T>::value
+            && !std::is_same<BrokerNotice::StageNotice, T>::value,
+            "Expecting a notice derived from BrokerNotice::StageNotice."
         );
 
         _key = TfNotice::Register(
@@ -46,9 +48,9 @@ public:
     NoticeCache(const TfAnyWeakPtr &sender)
     {
         static_assert(
-            std::is_base_of<UsdBrokerNotice::StageNotice, T>::value
-            && !std::is_same<UsdBrokerNotice::StageNotice, T>::value,
-            "Expecting a notice derived from UsdBrokerNotice::StageNotice."
+            std::is_base_of<BrokerNotice::StageNotice, T>::value
+            && !std::is_same<BrokerNotice::StageNotice, T>::value,
+            "Expecting a notice derived from BrokerNotice::StageNotice."
         );
 
        _key = TfNotice::Register(
@@ -103,6 +105,8 @@ private:
     std::vector<TfRefPtr<const T> > _notices;
     TfNotice::Key _key;
 };
+
+} // namespace UNB
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

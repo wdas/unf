@@ -1,7 +1,7 @@
 #ifndef TEST_NOTICE_BROKER_NOTICE_H
 #define TEST_NOTICE_BROKER_NOTICE_H
 
-#include "notice.h"
+#include <UsdNoticeBroker/notice.h>
 
 #include <pxr/pxr.h>
 
@@ -15,7 +15,7 @@ using DataMap = std::unordered_map<std::string, std::string>;
 
 // Notice with can be consolidated within broker transactions.
 class MergeableNotice
-: public PXR_NS::UsdBrokerNotice::StageNoticeImpl<MergeableNotice>
+: public PXR_NS::UNB::BrokerNotice::StageNoticeImpl<MergeableNotice>
 {
 public:
     MergeableNotice() = default;
@@ -51,7 +51,7 @@ private:
 
 // Notice with can not be consolidated within broker transactions.
 class UnMergeableNotice
-: public PXR_NS::UsdBrokerNotice::StageNoticeImpl<UnMergeableNotice>
+: public PXR_NS::UNB::BrokerNotice::StageNoticeImpl<UnMergeableNotice>
 {
 public:
     UnMergeableNotice() = default;
@@ -64,13 +64,13 @@ public:
 class InputNotice : public PXR_NS::TfNotice {};
 
 class OutputNotice1
-: public PXR_NS::UsdBrokerNotice::StageNoticeImpl<OutputNotice1> {
+: public PXR_NS::UNB::BrokerNotice::StageNoticeImpl<OutputNotice1> {
 public:
     OutputNotice1(const InputNotice&) {}
 };
 
 class OutputNotice2
-: public PXR_NS::UsdBrokerNotice::StageNoticeImpl<OutputNotice2> {
+: public PXR_NS::UNB::BrokerNotice::StageNoticeImpl<OutputNotice2> {
 public:
     OutputNotice2(const InputNotice&) {}
 };

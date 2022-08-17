@@ -1,7 +1,7 @@
 #ifndef NOTICE_BROKER_MERGER_H
 #define NOTICE_BROKER_MERGER_H
 
-#include "notice.h"
+#include "UsdNoticeBroker/notice.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/common.h>
@@ -15,14 +15,17 @@
 #include <vector>
 
 PXR_NAMESPACE_OPEN_SCOPE
+
+namespace UNB {
+
 class NoticeMerger;
 
 using NoticeMergerPtr = TfRefPtr<NoticeMerger>;
 
 using NoticeCaturePredicateFunc =
-    std::function<bool (const UsdBrokerNotice::StageNotice &)>;
+    std::function<bool (const BrokerNotice::StageNotice &)>;
 
-using _StageNoticePtrList = std::vector<UsdBrokerNotice::StageNoticeRefPtr>;
+using _StageNoticePtrList = std::vector<BrokerNotice::StageNoticeRefPtr>;
 
 using _StageNoticePtrMap = std::unordered_map<std::string, _StageNoticePtrList>;
 
@@ -34,7 +37,7 @@ public:
         return TfCreateRefPtr(new NoticeMerger(predicate));
     }
 
-    void Add(const UsdBrokerNotice::StageNoticeRefPtr&);
+    void Add(const BrokerNotice::StageNoticeRefPtr&);
     void Join(NoticeMerger&);
     void Merge();
     void Send(const UsdStageWeakPtr&);
@@ -48,6 +51,8 @@ private:
     _StageNoticePtrMap _noticeMap;
     NoticeCaturePredicateFunc _predicate = nullptr;
 };
+
+} // namespace UNB
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

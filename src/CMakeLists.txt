@@ -1,10 +1,10 @@
 add_library(UsdNoticeBroker
-    broadcaster.cpp
-    broker.cpp
-    dispatcher.cpp
-    merger.cpp
-    notice.cpp
-    transaction.cpp
+    UsdNoticeBroker/broadcaster.cpp
+    UsdNoticeBroker/broker.cpp
+    UsdNoticeBroker/dispatcher.cpp
+    UsdNoticeBroker/merger.cpp
+    UsdNoticeBroker/notice.cpp
+    UsdNoticeBroker/transaction.cpp
 )
 
 # Suppress warning sfrom USD regarding deprecated TBB features.
@@ -34,16 +34,11 @@ target_link_libraries(UsdNoticeBroker
 
 install(TARGETS UsdNoticeBroker EXPORT ${PROJECT_NAME})
 install(
-    FILES
-        broadcaster.h
-        broker.h
-        dispatcher.h
-        merger.h
-        notice.h
-        pyNoticeWrapper.h
-        transaction.h
+    DIRECTORY
+        UsdNoticeBroker
     DESTINATION
-        ${CMAKE_INSTALL_INCLUDEDIR}/UsdNoticeBroker
+        ${CMAKE_INSTALL_INCLUDEDIR}
+    FILES_MATCHING PATTERN "*.h"
 )
 
 if (BUILD_PYTHON_BINDINGS)

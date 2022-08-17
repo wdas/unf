@@ -1,5 +1,5 @@
-#include "broker.h"
-#include "cache.h"
+#include <UsdNoticeBroker/broker.h>
+#include <UsdNoticeBroker/cache.h>
 
 #include <TestUsdNoticeBroker/listener.h>
 #include <TestUsdNoticeBroker/testNotice.h>
@@ -15,7 +15,7 @@
 
 // namespace aliases for convenience.
 using _USD = PXR_NS::UsdNotice;
-namespace _Broker = PXR_NS::UsdBrokerNotice;
+namespace _Broker = PXR_NS::UNB::BrokerNotice;
 
 class ChangeEditTargetTest : public ::testing::Test {
 protected:
@@ -67,7 +67,7 @@ protected:
 
 TEST_F(ChangeEditTargetTest, Simple)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[0]));
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[1]));
@@ -88,7 +88,7 @@ TEST_F(ChangeEditTargetTest, Simple)
 
 TEST_F(ChangeEditTargetTest, Batching)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
     broker->BeginTransaction();
 
@@ -121,7 +121,7 @@ TEST_F(ChangeEditTargetTest, Batching)
 
 TEST_F(ChangeEditTargetTest, Blocking)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
     // Pass a predicate to block all broker notices.
     broker->BeginTransaction(
@@ -156,9 +156,9 @@ TEST_F(ChangeEditTargetTest, Blocking)
 
 TEST_F(ChangeEditTargetTest, Caching_StageEditTargetChanged)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::UNB::Broker::Create(_stage);
 
-    PXR_NS::NoticeCache<_Broker::StageEditTargetChanged> cache;
+    PXR_NS::UNB::NoticeCache<_Broker::StageEditTargetChanged> cache;
 
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[0]));
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[1]));

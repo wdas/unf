@@ -1,4 +1,4 @@
-#include "pyNoticeWrapper.h"
+#include <UsdNoticeBroker/pyNoticeWrapper.h>
 
 #include <TestUsdNoticeBroker/testNotice.h>
 
@@ -10,7 +10,8 @@
 #include <boost/python.hpp>
 
 using namespace boost::python;
-using namespace PXR_NS::UsdBrokerNotice;
+using namespace PXR_NS::UNB::BrokerNotice;
+using namespace PXR_NS::UNB;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
