@@ -18,6 +18,7 @@
 PXR_NAMESPACE_OPEN_SCOPE
 
 namespace unf {
+using UnorderedSdfPathSet = std::unordered_set<SdfPath, SdfPath::Hash>;
 
 struct Node : public TfRefBase {
     Node(const UsdPrim& prim){
@@ -34,31 +35,60 @@ class Cache : public TfRefBase, TfWeakBase {
     public:
         Cache(const UsdStageWeakPtr stage) : _stage(stage) {
             _root = TfCreateRefPtr(new Node(stage->GetPseudoRoot()));
-
         }
 
-        void Update(const UsdBrokerNotice::ObjectsChanged& notice) {
+        void Update(SdfPathVector resynced) {
             //Remove Descendants
-            SdfPathVector resynced = notice.GetResyncedPaths();
             SdfPath::RemoveDescendentPaths(&resynced);
-
+            
             for(auto& p : resynced) {
+                UsdPrim prim = _stage->GetPrimAtPath(p);
+                if(prim){
+                    _addToModified(prim);
+                }
                 bool was_created;
-                TfRefPtr<Node> resynced_node = FindOrCreateNode(p, &was_created);
+                TfRefPtr<Node> resynced_node = CreateOrFindClosestNode(p, &was_created);
                 if(!was_created) {
-                    Sync(resynced_node, _stage->GetPrimAtPath(p));
+                    Sync(resynced_node, _stage->GetPrimAtPath(resynced_node->prim_path));
                 }
             }
+        }
+
+        bool FindNode(const SdfPath& path) {
+            std::vector<std::string> split_paths = _split(path.GetString(), "/");
+            TfRefPtr<Node> curr_node = _root;
+            //TODO: make this sdfpath
+            for(size_t i = 1; i < split_paths.size(); i++) {
+                TfToken p_token = TfToken(split_paths[i]);
+                if(!curr_node->children.count(p_token)) {
+                    return false;
+                }
+                curr_node = curr_node->children[p_token];
+            }
+           return true;
+        }
+
+        const UnorderedSdfPathSet& GetAdded() const {
+            return added;
+        }
+
+        const UnorderedSdfPathSet& GetRemoved() const {
+            return removed;
+        }
+
+        const UnorderedSdfPathSet& GetModified() const {
+            return modified;
         }
 
         void Clear() {
             added.clear();
             removed.clear();
+            modified.clear();
         }
 
     private:
         // for string delimiter
-        std::vector<std::string> split (const std::string& s, const std::string& delimiter) {
+        std::vector<std::string> _split (const std::string& s, const std::string& delimiter) {
             size_t pos_start = 0, pos_end, delim_len = delimiter.length();
             std::string token;
             std::vector<std::string> res;
@@ -73,18 +103,49 @@ class Cache : public TfRefBase, TfWeakBase {
             return res;
         }
 
-        TfRefPtr<Node> FindOrCreateNode(const SdfPath& path, bool* was_created) {
-            std::vector<std::string> split_paths = split(path.GetString(), "/");
+        
+        void _addToRemoved(TfRefPtr<Node> node) {
+            removed.insert(node->prim_path);
+            modified.erase(node->prim_path);
+
+            for(auto c : node->children) {
+                _addToRemoved(c.second);
+            }
+        }
+
+        void _addToAdded(TfRefPtr<Node> node) {
+            added.insert(node->prim_path);
+            modified.erase(node->prim_path);
+
+            for(auto c : node->children) {
+                _addToAdded(c.second);
+            }
+        }
+
+        void _addToModified(const UsdPrim& prim) {
+            modified.insert(prim.GetPath());
+
+            for(auto c : prim.GetChildren()) {
+                _addToModified(c);
+            }
+        }
+
+        TfRefPtr<Node> CreateOrFindClosestNode(const SdfPath& path, bool* was_created) {
+            std::vector<std::string> split_paths = _split(path.GetString(), "/");
             TfRefPtr<Node> curr_node = _root;
             //TODO: make this sdfpath
             std::string partial_path = "";
-            for(std::string& p : split_paths) {
-                partial_path += "/" + p;
-                TfToken p_token = TfToken(p);
-                if(curr_node->children.count(p_token)) {
-                    UsdPrim child = _stage->GetPrimAtPath(SdfPath(partial_path));
+            for(size_t i = 1; i < split_paths.size(); i++) {
+                partial_path += "/" + split_paths[i];
+                TfToken p_token = TfToken(split_paths[i]);
+                UsdPrim child = _stage->GetPrimAtPath(SdfPath(partial_path));
+                if (!child) {
+                    *was_created = false;
+                    return curr_node;
+                }
+                if(!curr_node->children.count(p_token)) {
                     curr_node->children[p_token] = TfCreateRefPtr(new Node(child));
-                    added.push_back(SdfPath(partial_path));
+                    _addToAdded(curr_node->children[p_token]);
                     *was_created = true;
                     return curr_node->children[p_token];
                 }
@@ -95,7 +156,6 @@ class Cache : public TfRefBase, TfWeakBase {
         }
 
         void Sync(TfRefPtr<Node> node, const UsdPrim& prim) {
-            modified.push_back(prim.GetPrimPath());
             //Used to track nodes that exist in tree but not in stage
             std::unordered_set<SdfPath, SdfPath::Hash> node_children_copy;
                 for(auto& child : node->children) {
@@ -113,21 +173,23 @@ class Cache : public TfRefBase, TfWeakBase {
                     } else {
                         //Doesn't exist in tree
                         node->children[child_prim.GetName()] = TfCreateRefPtr(new Node(child_prim));
-                        added.push_back(child_prim.GetPath());
+                        _addToAdded(node->children[child_prim.GetName()]);
+
                     }
                 }
 
                 //Add the non-existant children to the removed set
                 for (auto& child_prim_path : node_children_copy) {
-                    node->children.erase(TfToken(child_prim_path.GetName()));
-                    removed.push_back(child_prim_path);
+                    TfToken childName = TfToken(child_prim_path.GetName());
+                    _addToRemoved(node->children[childName]);
+                    node->children.erase(childName);
                 }
             }
 
         TfRefPtr<Node> _root;
-        SdfPathVector added;
-        SdfPathVector removed;
-        SdfPathVector modified;
+        UnorderedSdfPathSet added;
+        UnorderedSdfPathSet removed;
+        UnorderedSdfPathSet modified;
         UsdStageWeakPtr _stage;
 
 };
