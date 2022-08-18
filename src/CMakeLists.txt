@@ -1,29 +1,29 @@
-add_library(UsdNoticeBroker
-    broadcaster.cpp
-    broker.cpp
-    dispatcher.cpp
-    merger.cpp
-    notice.cpp
-    transaction.cpp
+add_library(unf
+    unf/broadcaster.cpp
+    unf/broker.cpp
+    unf/dispatcher.cpp
+    unf/merger.cpp
+    unf/notice.cpp
+    unf/transaction.cpp
 )
 
 # Suppress warning sfrom USD regarding deprecated TBB features.
 # https://github.com/PixarAnimationStudios/USD/issues/1471
-target_compile_definitions(UsdNoticeBroker
+target_compile_definitions(unf
     PUBLIC TBB_SUPPRESS_DEPRECATED_MESSAGES)
 
 # Suppress warnings from USD library including <ext/hash_set> .
 # https://github.com/PixarAnimationStudios/USD/issues/1057
-target_compile_definitions(UsdNoticeBroker
+target_compile_definitions(unf
     PUBLIC _GLIBCXX_PERMIT_BACKWARD_HASH)
 
-target_include_directories(UsdNoticeBroker
+target_include_directories(unf
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-target_link_libraries(UsdNoticeBroker
+target_link_libraries(unf
     PUBLIC
         pxr::arch
         pxr::plug
@@ -32,18 +32,13 @@ target_link_libraries(UsdNoticeBroker
         pxr::usd
 )
 
-install(TARGETS UsdNoticeBroker EXPORT ${PROJECT_NAME})
+install(TARGETS unf EXPORT ${PROJECT_NAME})
 install(
-    FILES
-        broadcaster.h
-        broker.h
-        dispatcher.h
-        merger.h
-        notice.h
-        pyNoticeWrapper.h
-        transaction.h
+    DIRECTORY
+        unf
     DESTINATION
-        ${CMAKE_INSTALL_INCLUDEDIR}/UsdNoticeBroker
+        ${CMAKE_INSTALL_INCLUDEDIR}
+    FILES_MATCHING PATTERN "*.h"
 )
 
 if (BUILD_PYTHON_BINDINGS)

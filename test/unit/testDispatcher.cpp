@@ -1,8 +1,8 @@
-#include "broker.h"
-#include "dispatcher.h"
+#include <unf/broker.h>
+#include <unf/dispatcher.h>
 
-#include <TestUsdNoticeBroker/listener.h>
-#include <TestUsdNoticeBroker/testDispatcher.h>
+#include <unfTest/listener.h>
+#include <unfTest/testDispatcher.h>
 
 #include <gtest/gtest.h>
 #include <pxr/usd/usd/stage.h>
@@ -11,7 +11,7 @@
 
 class DispatcherTest : public ::testing::Test {
 protected:
-    using StageDispatcherPtr = PXR_NS::TfRefPtr<PXR_NS::StageDispatcher>;
+    using StageDispatcherPtr = PXR_NS::TfRefPtr<PXR_NS::unf::StageDispatcher>;
     using NewStageDispatcherPtr = PXR_NS::TfRefPtr<::Test::NewStageDispatcher>;
     using TestDispatcherPtr = PXR_NS::TfRefPtr<::Test::TestDispatcher>;
 
@@ -32,7 +32,7 @@ protected:
 
 TEST_F(DispatcherTest, Original)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::unf::Broker::Create(_stage);
 
     // Ensure that the stage dispatcher type is correct.
     auto dispatcher = broker->GetDispatcher("StageDispatcher");
@@ -47,7 +47,7 @@ TEST_F(DispatcherTest, Original)
 
 TEST_F(DispatcherTest, ReplaceOriginal)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::unf::Broker::Create(_stage);
     broker->AddDispatcher<::Test::NewStageDispatcher>();
 
     // Ensure that stage dispacther has been replaced as expected.
@@ -64,7 +64,7 @@ TEST_F(DispatcherTest, ReplaceOriginal)
 
 TEST_F(DispatcherTest, AddNew)
 {
-    auto broker = PXR_NS::NoticeBroker::Create(_stage);
+    auto broker = PXR_NS::unf::Broker::Create(_stage);
     broker->AddDispatcher<::Test::TestDispatcher>();
 
     // Ensure that stage dispacther has not been replaced.

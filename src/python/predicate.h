@@ -1,7 +1,7 @@
 #ifndef NOTICE_BROKER_PYTHON_PREDICATE_H
 #define NOTICE_BROKER_PYTHON_PREDICATE_H
 
-#include "broker.h"
+#include "unf/broker.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/pyNoticeWrapper.h>
@@ -12,6 +12,7 @@
 #include <functional>
 
 using namespace boost::python;
+using namespace unf;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
@@ -21,7 +22,7 @@ using _CaturePredicateFunc = std::function<_CaturePredicateFuncRaw>;
 static NoticeCaturePredicateFunc WrapPredicate(_CaturePredicateFunc fn)
 {
     // Capture by-copy to prevent boost object from being destroyed.
-    return [=](const UsdBrokerNotice::StageNotice& notice) {
+    return [=](const BrokerNotice::StageNotice& notice) {
         TfPyLock lock;
 
         if (!fn)

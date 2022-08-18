@@ -34,7 +34,7 @@ def cmake_process_manifest_hook(cmake_manifiest):
 
 # Execute setup.
 setup(
-    name="usd-notice-broker",
+    name="usd-notice-framework",
     version="0.1.0",
     description="Notice management library built over USD Notices",
     long_description=LONG_DESCRIPTION,

@@ -1,6 +1,6 @@
 #include "./predicate.h"
 
-#include "transaction.h"
+#include "unf/transaction.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/stage.h>
@@ -11,6 +11,7 @@
 #include <boost/python/return_internal_reference.hpp>
 
 using namespace boost::python;
+using namespace unf;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
@@ -18,7 +19,7 @@ PXR_NAMESPACE_USING_DIRECTIVE
 struct PythonNoticeTransaction
 {
     PythonNoticeTransaction(
-        const NoticeBrokerWeakPtr& broker,
+        const BrokerWeakPtr& broker,
         const _CaturePredicateFunc &predicate)
         : _predicate(predicate)
     {
@@ -50,7 +51,7 @@ struct PythonNoticeTransaction
         _context.reset();
     }
 
-    NoticeBrokerPtr GetBroker()
+    BrokerPtr GetBroker()
     {
         return _context->GetBroker();
     }
@@ -70,7 +71,7 @@ wrapTransaction()
 
     class_<PythonNoticeTransaction>("NoticeTransaction", no_init)
 
-        .def(init<const NoticeBrokerWeakPtr&, const _CaturePredicateFunc&>
+        .def(init<const BrokerWeakPtr&, const _CaturePredicateFunc&>
              ((arg("broker"), arg("predicate")=object())))
 
         .def(init<const UsdStageWeakPtr&, const _CaturePredicateFunc&>

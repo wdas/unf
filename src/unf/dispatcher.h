@@ -1,8 +1,8 @@
 #ifndef NOTICE_BROKER_DISPATCHER_H
 #define NOTICE_BROKER_DISPATCHER_H
 
-#include "notice.h"
-#include "broker.h"
+#include "unf/notice.h"
+#include "unf/broker.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/refBase.h>
@@ -12,6 +12,8 @@
 #include <pxr/usd/usd/common.h>
 
 PXR_NAMESPACE_OPEN_SCOPE
+
+namespace unf {
 
 class Dispatcher : public TfRefBase, public TfWeakBase {
 public:
@@ -23,7 +25,7 @@ public:
     virtual void Revoke();
 
 protected:
-    Dispatcher(const NoticeBrokerWeakPtr&);
+    Dispatcher(const BrokerWeakPtr&);
 
     template<class InputNotice, class OutputNotice>
     void _Register()
@@ -40,7 +42,7 @@ protected:
         _broker->Send(_notice);
     }
 
-    NoticeBrokerWeakPtr _broker;
+    BrokerWeakPtr _broker;
     std::vector<TfNotice::Key> _keys;
 };
 
@@ -51,16 +53,16 @@ public:
     virtual void Register();
 
 private:
-    StageDispatcher(const NoticeBrokerWeakPtr& broker);
+    StageDispatcher(const BrokerWeakPtr& broker);
 
-    friend class NoticeBroker;
+    friend class Broker;
 };
 
 class DispatcherFactory : public TfType::FactoryBase
 {
 public:
     virtual TfRefPtr<Dispatcher> New(
-        const NoticeBrokerWeakPtr& broker) const = 0;
+        const BrokerWeakPtr& broker) const = 0;
 };
 
 template <class T>
@@ -68,7 +70,7 @@ class DispatcherFactoryImpl : public DispatcherFactory
 {
 public:
     virtual TfRefPtr<Dispatcher> New(
-        const NoticeBrokerWeakPtr& broker) const override
+        const BrokerWeakPtr& broker) const override
     {
         return TfCreateRefPtr(new T(broker));
     }
@@ -80,6 +82,8 @@ void DispatcherDefine()
     TfType::Define<T, TfType::Bases<Bases...> >()
         .template SetFactory<DispatcherFactoryImpl<T> >();
 }
+
+} // namespace unf
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd
-from usd_notice_broker import NoticeCache, NoticeBroker, BrokerNotice
-from usd_notice_broker_test import TestNotice
+from usd_notice_framework import NoticeCache, Broker, BrokerNotice
+from usd_notice_framework_test import TestNotice
 
 import pytest
 
@@ -28,14 +28,14 @@ def test_incorrect_notice(notice):
         NoticeCache(notice)
 
     assert (
-        "Expecting a notice derived from UsdBrokerNotice::StageNotice."
+        "Expecting a notice derived from BrokerNotice::StageNotice."
     ) in str(error)
 
 
 def test_custom_unmergeable_notice():
     """Cache custom mergeable notices."""
     stage = Usd.Stage.CreateInMemory()
-    broker = NoticeBroker.Create(stage)
+    broker = Broker.Create(stage)
 
     cache = NoticeCache(TestNotice.UnMergeableNotice)
 

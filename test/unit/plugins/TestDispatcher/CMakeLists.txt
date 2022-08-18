@@ -4,8 +4,8 @@ add_library(UnitPluginTestDispatcher
 
 target_link_libraries(UnitPluginTestDispatcher
     PUBLIC
-        UsdNoticeBroker
-        TestUsdNoticeBroker
+        unf
+        unfTest
 )
 
 target_include_directories(UnitPluginTestDispatcher

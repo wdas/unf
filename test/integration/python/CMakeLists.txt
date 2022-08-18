@@ -5,10 +5,10 @@ add_test(
 )
 
 # Ensure that environment is correct for Python tests to run.
-set(lib_path "$<TARGET_FILE_DIR:UsdNoticeBroker>")
-set(lib_path "${lib_path}:$<TARGET_FILE_DIR:PyUsdNoticeBroker>")
+set(lib_path "$<TARGET_FILE_DIR:unf>")
+set(lib_path "${lib_path}:$<TARGET_FILE_DIR:pyUnf>")
 
-set(python_path "$<TARGET_FILE_DIR:PyUsdNoticeBroker>/..")
+set(python_path "$<TARGET_FILE_DIR:pyUnf>/..")
 
 set_property(
     TEST IntegrationTestsPython

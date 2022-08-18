@@ -1,19 +1,19 @@
 #ifndef TEST_NOTICE_BROKER_PLUGIN_TEST_DISPATCHER_H
 #define TEST_NOTICE_BROKER_PLUGIN_TEST_DISPATCHER_H
 
-#include "dispatcher.h"
+#include <unf/dispatcher.h>
 
-#include <TestUsdNoticeBroker/testNotice.h>
+#include <unfTest/testNotice.h>
 
 #include <pxr/pxr.h>
 
 namespace Test {
 
-class TestDispatcher : public PXR_NS::Dispatcher
+class TestDispatcher : public PXR_NS::unf::Dispatcher
 {
 public:
-    TestDispatcher(const PXR_NS::NoticeBrokerWeakPtr& broker)
-    : PXR_NS::Dispatcher(broker) {}
+    TestDispatcher(const PXR_NS::unf::BrokerWeakPtr& broker)
+    : PXR_NS::unf::Dispatcher(broker) {}
 
     virtual std::string GetIdentifier() const { return "TestDispatcher"; };
 

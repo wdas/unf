@@ -1,4 +1,4 @@
-#include "cache.h"
+#include "unf/cache.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/stage.h>
@@ -14,6 +14,7 @@
 #include <boost/python.hpp>
 
 using namespace boost::python;
+using namespace unf;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
@@ -25,11 +26,11 @@ public:
 
     PythonNoticeCache(const TfType type)
     {
-        if (type == TfType::Find<UsdBrokerNotice::StageNotice>()
-            || !type.IsA<UsdBrokerNotice::StageNotice>())
+        if (type == TfType::Find<BrokerNotice::StageNotice>()
+            || !type.IsA<BrokerNotice::StageNotice>())
         {
             TfPyThrowRuntimeError(
-                "Expecting a notice derived from UsdBrokerNotice::StageNotice.");
+                "Expecting a notice derived from BrokerNotice::StageNotice.");
         }
 
         _key = TfNotice::Register(
@@ -40,11 +41,11 @@ public:
 
     PythonNoticeCache(const TfType type, const TfAnyWeakPtr &sender)
     {
-        if (type == TfType::Find<UsdBrokerNotice::StageNotice>()
-            || !type.IsA<UsdBrokerNotice::StageNotice>())
+        if (type == TfType::Find<BrokerNotice::StageNotice>()
+            || !type.IsA<BrokerNotice::StageNotice>())
         {
             TfPyThrowRuntimeError(
-                "Expecting a notice derived from UsdBrokerNotice::StageNotice.");
+                "Expecting a notice derived from BrokerNotice::StageNotice.");
         }
 
         _key = TfNotice::Register(
@@ -94,7 +95,7 @@ public:
 
         // Replace list of notices with merged notice.
         _notices =
-            std::vector<TfRefPtr<const UsdBrokerNotice::StageNotice> > {notice};
+            std::vector<TfRefPtr<const BrokerNotice::StageNotice> > {notice};
     }
 
     virtual void Clear() override { _notices.clear(); }
@@ -108,12 +109,12 @@ private:
         const std::type_info& senderType)
     {
         _notices.push_back(
-            TfRefPtr<const UsdBrokerNotice::StageNotice>(
-                &dynamic_cast<const UsdBrokerNotice::StageNotice&>(notice))
+            TfRefPtr<const BrokerNotice::StageNotice>(
+                &dynamic_cast<const BrokerNotice::StageNotice&>(notice))
         );
     }
 
-   std::vector<TfRefPtr<const UsdBrokerNotice::StageNotice> > _notices;
+   std::vector<TfRefPtr<const BrokerNotice::StageNotice> > _notices;
    TfNotice::Key _key;
 };
 

@@ -1,14 +1,16 @@
-#include "merger.h"
-#include "dispatcher.h"
-#include "notice.h"
+#include "unf/merger.h"
+#include "unf/dispatcher.h"
+#include "unf/notice.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/common.h>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
+namespace unf {
+
 void NoticeMerger::Add(
-    const UsdBrokerNotice::StageNoticeRefPtr& notice)
+    const BrokerNotice::StageNoticeRefPtr& notice)
 {
     // Indicate whether the notice needs to be captured.
     if (_predicate && !_predicate(*notice))
@@ -70,5 +72,7 @@ void NoticeMerger::Send(const UsdStageWeakPtr& stage)
         }
     }
 }
+
+} // namespace unf
 
 PXR_NAMESPACE_CLOSE_SCOPE

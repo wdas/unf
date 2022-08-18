@@ -1,8 +1,8 @@
 #ifndef NOTICE_BROKER_BROKER_H
 #define NOTICE_BROKER_BROKER_H
 
-#include "notice.h"
-#include "merger.h"
+#include "unf/notice.h"
+#include "unf/merger.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/refBase.h>
@@ -23,26 +23,28 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-class NoticeBroker;
+namespace unf {
+
+class Broker;
 class Dispatcher;
 class Broadcaster;
 
-using NoticeBrokerPtr = TfRefPtr<NoticeBroker>;
-using NoticeBrokerWeakPtr = TfWeakPtr<NoticeBroker>;
+using BrokerPtr = TfRefPtr<Broker>;
+using BrokerWeakPtr = TfWeakPtr<Broker>;
 
 using DispatcherPtr = TfRefPtr<Dispatcher>;
 using BroadcasterPtr = TfRefPtr<Broadcaster>;
 using BroadcasterPtrList = std::vector<BroadcasterPtr>;
 
-class NoticeBroker : public TfRefBase, public TfWeakBase {
+class Broker : public TfRefBase, public TfWeakBase {
 public:
-    static NoticeBrokerPtr Create(const UsdStageWeakPtr& stage);
+    static BrokerPtr Create(const UsdStageWeakPtr& stage);
 
-    virtual ~NoticeBroker() {}
+    virtual ~Broker() {}
 
     // Don't allow copies
-    NoticeBroker(const NoticeBroker &) = delete;
-    NoticeBroker &operator=(const NoticeBroker &) = delete;
+    Broker(const Broker &) = delete;
+    Broker &operator=(const Broker &) = delete;
 
     const UsdStageWeakPtr& GetStage() const { return _stage; }
 
@@ -54,7 +56,7 @@ public:
     template<class BrokerNotice, class... Args>
     void Send(Args&&... args);
 
-    void Send(const UsdBrokerNotice::StageNoticeRefPtr&);
+    void Send(const BrokerNotice::StageNoticeRefPtr&);
 
     DispatcherPtr& GetDispatcher(std::string identifier);
     BroadcasterPtr& GetBroadcaster(std::string identifier);
@@ -66,7 +68,7 @@ public:
     void AddBroadcaster();
 
 private:
-    NoticeBroker(const UsdStageWeakPtr&);
+    Broker(const UsdStageWeakPtr&);
 
     static void _CleanCache();
 
@@ -89,7 +91,7 @@ private:
     void _ExecuteBroadcasters(NoticeMergerPtr&);
 
     // A registry of hashed stage ptr to the corresponding stage's broker ptr.
-    static std::unordered_map<size_t, NoticeBrokerPtr> Registry;
+    static std::unordered_map<size_t, BrokerPtr> Registry;
 
     UsdStageWeakPtr _stage;
 
@@ -102,7 +104,7 @@ private:
 };
 
 template<class BrokerNotice, class... Args>
-void NoticeBroker::Send(Args&&... args)
+void Broker::Send(Args&&... args)
 {
     TfRefPtr<BrokerNotice> _notice = BrokerNotice::Create(
         std::forward<Args>(args)...);
@@ -111,7 +113,7 @@ void NoticeBroker::Send(Args&&... args)
 }
 
 template<class T>
-DispatcherPtr NoticeBroker::_AddDispatcher()
+DispatcherPtr Broker::_AddDispatcher()
 {
     static_assert(std::is_base_of<Dispatcher, T>::value);
     auto self = TfCreateWeakPtr(this);
@@ -121,14 +123,14 @@ DispatcherPtr NoticeBroker::_AddDispatcher()
 }
 
 template<class T>
-void NoticeBroker::AddDispatcher()
+void Broker::AddDispatcher()
 {
     const auto& dispatcher = _AddDispatcher<T>();
     dispatcher->Register();
 }
 
 template<class T>
-BroadcasterPtr NoticeBroker::_AddBroadcaster()
+BroadcasterPtr Broker::_AddBroadcaster()
 {
     static_assert(std::is_base_of<Broadcaster, T>::value);
     auto self = TfCreateWeakPtr(this);
@@ -138,7 +140,7 @@ BroadcasterPtr NoticeBroker::_AddBroadcaster()
 }
 
 template<class T>
-void NoticeBroker::AddBroadcaster()
+void Broker::AddBroadcaster()
 {
     const auto& broadcaster = _AddBroadcaster<T>();
     _RegisterBroadcaster(broadcaster);
@@ -147,7 +149,7 @@ void NoticeBroker::AddBroadcaster()
 }
 
 template<class OutputPtr, class OutputFactory>
-void NoticeBroker::_LoadFromPlugins(const TfType& type)
+void Broker::_LoadFromPlugins(const TfType& type)
 {
     const PlugPluginPtr plugin =
         PlugRegistry::GetInstance().GetPluginForType(type);
@@ -180,6 +182,8 @@ void NoticeBroker::_LoadFromPlugins(const TfType& type)
 
     _Add(output);
 }
+
+} // namespace unf
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

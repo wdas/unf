@@ -1,7 +1,7 @@
 #ifndef NOTICE_BROKER_NOTICE_WRAPPER_H
 #define NOTICE_BROKER_NOTICE_WRAPPER_H
 
-#include "notice.h"
+#include "unf/notice.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/pyNoticeWrapper.h>
@@ -22,13 +22,15 @@ using namespace boost::python;
 
 PXR_NAMESPACE_OPEN_SCOPE
 
+namespace unf {
+
 // Interface object to process custom notice in Python.
 // TODO: Should we forbid handling of custom notices via Python?
 class PyBrokerNoticeWrapperBase : public TfRefBase, public TfWeakBase {
 public:
     PyBrokerNoticeWrapperBase() {};
 
-    virtual TfRefPtr<UsdBrokerNotice::StageNotice> Get() { return nullptr; }
+    virtual TfRefPtr<BrokerNotice::StageNotice> Get() { return nullptr; }
 
     virtual object GetWrap() { return object(); }
 
@@ -59,7 +61,7 @@ public:
         return Tf_PyNoticeObjectGenerator::Invoke(*_notice);
     }
 
-    virtual TfRefPtr<UsdBrokerNotice::StageNotice> Get()
+    virtual TfRefPtr<BrokerNotice::StageNotice> Get()
     {
         return _notice;
     };
@@ -86,6 +88,8 @@ public:
 private:
     TfRefPtr<Self> _notice;
 };
+
+} // namespace unf
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

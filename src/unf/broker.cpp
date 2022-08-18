@@ -1,8 +1,8 @@
-#include "broker.h"
-#include "notice.h"
-#include "dispatcher.h"
-#include "broadcaster.h"
-#include "merger.h"
+#include "unf/broker.h"
+#include "unf/notice.h"
+#include "unf/dispatcher.h"
+#include "unf/broadcaster.h"
+#include "unf/merger.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/weakPtr.h>
@@ -11,10 +11,12 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-// Initiate static registry.
-std::unordered_map<size_t, NoticeBrokerPtr> NoticeBroker::Registry;
+namespace unf {
 
-NoticeBroker::NoticeBroker(const UsdStageWeakPtr& stage)
+// Initiate static registry.
+std::unordered_map<size_t, BrokerPtr> Broker::Registry;
+
+Broker::Broker(const UsdStageWeakPtr& stage)
     : _stage(stage)
 {
     // Add default dispatcher.
@@ -33,32 +35,32 @@ NoticeBroker::NoticeBroker(const UsdStageWeakPtr& stage)
     _DiscoverBroadcasters();
 }
 
-NoticeBrokerPtr NoticeBroker::Create(const UsdStageWeakPtr& stage)
+BrokerPtr Broker::Create(const UsdStageWeakPtr& stage)
 {
     size_t stageHash = hash_value(stage);
 
-    NoticeBroker::_CleanCache();
+    Broker::_CleanCache();
 
     // If there doesn't exist a broker for the given stage, create a new broker.
     if(Registry.find(stageHash) == Registry.end()) {
-        Registry[stageHash] = TfCreateRefPtr(new NoticeBroker(stage));
+        Registry[stageHash] = TfCreateRefPtr(new Broker(stage));
     }
 
     return Registry[stageHash];
 }
 
-bool NoticeBroker::IsInTransaction()
+bool Broker::IsInTransaction()
 {
     return _mergers.size() > 0;
 }
 
-void NoticeBroker::BeginTransaction(
+void Broker::BeginTransaction(
     const NoticeCaturePredicateFunc& predicate)
 {
     _mergers.push_back(NoticeMerger::Create(predicate));
 }
 
-void NoticeBroker::EndTransaction()
+void Broker::EndTransaction()
 {
     if (!IsInTransaction()) {
         return;
@@ -95,8 +97,8 @@ void NoticeBroker::EndTransaction()
     _mergers.pop_back();
 }
 
-void NoticeBroker::Send(
-    const UsdBrokerNotice::StageNoticeRefPtr& notice)
+void Broker::Send(
+    const BrokerNotice::StageNoticeRefPtr& notice)
 {
     if (_mergers.size() > 0) {
         _mergers.back()->Add(notice);
@@ -109,17 +111,17 @@ void NoticeBroker::Send(
     }
 }
 
-DispatcherPtr& NoticeBroker::GetDispatcher(std::string identifier)
+DispatcherPtr& Broker::GetDispatcher(std::string identifier)
 {
     return _dispatcherMap.at(identifier);
 }
 
-BroadcasterPtr& NoticeBroker::GetBroadcaster(std::string identifier)
+BroadcasterPtr& Broker::GetBroadcaster(std::string identifier)
 {
     return _broadcasterMap.at(identifier);
 }
 
-void NoticeBroker::_CleanCache() {
+void Broker::_CleanCache() {
     for (auto it = Registry.begin();
         it != Registry.end();)
     {
@@ -134,7 +136,7 @@ void NoticeBroker::_CleanCache() {
     }
 }
 
-void NoticeBroker::_DiscoverDispatchers()
+void Broker::_DiscoverDispatchers()
 {
     TfType root = TfType::Find<Dispatcher>();
     std::set<TfType> types;
@@ -145,7 +147,7 @@ void NoticeBroker::_DiscoverDispatchers()
     }
 }
 
-void NoticeBroker::_DiscoverBroadcasters()
+void Broker::_DiscoverBroadcasters()
 {
     TfType root = TfType::Find<Broadcaster>();
     std::set<TfType> types;
@@ -164,17 +166,17 @@ void NoticeBroker::_DiscoverBroadcasters()
     // TODO: Detect cycles
 }
 
-void NoticeBroker::_Add(const DispatcherPtr& dispatcher)
+void Broker::_Add(const DispatcherPtr& dispatcher)
 {
     _dispatcherMap[dispatcher->GetIdentifier()] = dispatcher;
 }
 
-void NoticeBroker::_Add(const BroadcasterPtr& broadcaster)
+void Broker::_Add(const BroadcasterPtr& broadcaster)
 {
     _broadcasterMap[broadcaster->GetIdentifier()] = broadcaster;
 }
 
-void NoticeBroker::_RegisterBroadcaster(
+void Broker::_RegisterBroadcaster(
     const BroadcasterPtr& broadcaster)
 {
     const auto& identifier = broadcaster->GetIdentifier();
@@ -189,7 +191,7 @@ void NoticeBroker::_RegisterBroadcaster(
     }
 }
 
-void NoticeBroker::_ExecuteBroadcasters(NoticeMergerPtr& merger)
+void Broker::_ExecuteBroadcasters(NoticeMergerPtr& merger)
 {
     _StageNoticePtrMap rootNotices = merger->GetNotices();
 
@@ -197,5 +199,7 @@ void NoticeBroker::_ExecuteBroadcasters(NoticeMergerPtr& merger)
         GetBroadcaster(broadcaster)->Execute(&rootNotices);
     }
 }
+
+} // namespace unf
 
 PXR_NAMESPACE_CLOSE_SCOPE

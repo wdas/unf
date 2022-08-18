@@ -1,7 +1,7 @@
 add_executable(testUnitBroker testBroker.cpp)
 target_link_libraries(testUnitBroker
     PRIVATE
-        UsdNoticeBroker
+        unf
         GTest::gtest
         GTest::gtest_main
 )
@@ -10,8 +10,8 @@ gtest_discover_tests(testUnitBroker)
 add_executable(testUnitBrokerFlow testBrokerFlow.cpp)
 target_link_libraries(testUnitBrokerFlow
     PRIVATE
-        UsdNoticeBroker
-        TestUsdNoticeBroker
+        unf
+        unfTest
         GTest::gtest
         GTest::gtest_main
 )
@@ -20,8 +20,8 @@ gtest_discover_tests(testUnitBrokerFlow)
 add_executable(testUnitDispatcher testDispatcher.cpp)
 target_link_libraries(testUnitDispatcher
     PRIVATE
-        UsdNoticeBroker
-        TestUsdNoticeBroker
+        unf
+        unfTest
         GTest::gtest
         GTest::gtest_main
 )
@@ -30,8 +30,8 @@ gtest_discover_tests(testUnitDispatcher)
 add_executable(testUnitDispatcherPlugin testDispatcherPlugin.cpp)
 target_link_libraries(testUnitDispatcherPlugin
     PRIVATE
-        UsdNoticeBroker
-        TestUsdNoticeBroker
+        unf
+        unfTest
         UnitPluginNewStageDispatcher
         UnitPluginTestDispatcher
         GTest::gtest
@@ -47,8 +47,8 @@ gtest_discover_tests(
 add_executable(testUnitCache testCache.cpp)
 target_link_libraries(testUnitCache
     PRIVATE
-        UsdNoticeBroker
-        TestUsdNoticeBroker
+        unf
+        unfTest
         GTest::gtest
         GTest::gtest_main
 )
@@ -57,8 +57,8 @@ gtest_discover_tests(testUnitCache)
 add_executable(testUnitTransaction testTransaction.cpp)
 target_link_libraries(testUnitTransaction
     PRIVATE
-        UsdNoticeBroker
-        TestUsdNoticeBroker
+        unf
+        unfTest
         GTest::gtest
         GTest::gtest_main
 )
