@@ -4,9 +4,9 @@
 
 #include <pxr/pxr.h>
 
-namespace unf {
-
 PXR_NAMESPACE_OPEN_SCOPE
+
+namespace unf {
 
 TF_REGISTRY_FUNCTION(TfType)
 {
