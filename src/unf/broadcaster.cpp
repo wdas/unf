@@ -1,10 +1,10 @@
-#include "UsdNoticeBroker/broadcaster.h"
-#include "UsdNoticeBroker/broker.h"
-#include "UsdNoticeBroker/notice.h"
+#include "unf/broadcaster.h"
+#include "unf/broker.h"
+#include "unf/notice.h"
 
 #include <pxr/pxr.h>
 
-namespace UNB {
+namespace unf {
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -24,6 +24,6 @@ void Broadcaster::_AddChild(const BroadcasterPtr& child)
     _children.push_back(child);
 }
 
-} // namespace UNB
+} // namespace unf
 
 PXR_NAMESPACE_CLOSE_SCOPE

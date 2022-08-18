@@ -1,6 +1,6 @@
-#include "UsdNoticeBroker/dispatcher.h"
-#include "UsdNoticeBroker/broker.h"
-#include "UsdNoticeBroker/notice.h"
+#include "unf/dispatcher.h"
+#include "unf/broker.h"
+#include "unf/notice.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/weakPtr.h>
@@ -9,7 +9,7 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-namespace UNB {
+namespace unf {
 
 TF_REGISTRY_FUNCTION(TfType)
 {
@@ -53,6 +53,6 @@ void StageDispatcher::Register()
         BrokerNotice::LayerMutingChanged>();
 }
 
-} // namespace UNB
+} // namespace unf
 
 PXR_NAMESPACE_CLOSE_SCOPE

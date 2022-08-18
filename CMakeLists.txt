@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(UsdNoticeBroker LANGUAGES CXX)
+project(unf LANGUAGES CXX)
 
 include(GNUInstallDirs)
 

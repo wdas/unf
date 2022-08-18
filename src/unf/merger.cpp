@@ -1,13 +1,13 @@
-#include "UsdNoticeBroker/merger.h"
-#include "UsdNoticeBroker/dispatcher.h"
-#include "UsdNoticeBroker/notice.h"
+#include "unf/merger.h"
+#include "unf/dispatcher.h"
+#include "unf/notice.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/common.h>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-namespace UNB {
+namespace unf {
 
 void NoticeMerger::Add(
     const BrokerNotice::StageNoticeRefPtr& notice)
@@ -73,6 +73,6 @@ void NoticeMerger::Send(const UsdStageWeakPtr& stage)
     }
 }
 
-} // namespace UNB
+} // namespace unf
 
 PXR_NAMESPACE_CLOSE_SCOPE

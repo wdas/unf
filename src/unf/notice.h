@@ -14,7 +14,7 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-namespace UNB {
+namespace unf {
 
 namespace BrokerNotice {
 
@@ -143,7 +143,7 @@ private:
 
 } // namespace BrokerNotice
 
-} // namespace UNB
+} // namespace unf
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

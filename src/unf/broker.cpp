@@ -1,8 +1,8 @@
-#include "UsdNoticeBroker/broker.h"
-#include "UsdNoticeBroker/notice.h"
-#include "UsdNoticeBroker/dispatcher.h"
-#include "UsdNoticeBroker/broadcaster.h"
-#include "UsdNoticeBroker/merger.h"
+#include "unf/broker.h"
+#include "unf/notice.h"
+#include "unf/dispatcher.h"
+#include "unf/broadcaster.h"
+#include "unf/merger.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/weakPtr.h>
@@ -11,7 +11,7 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-namespace UNB {
+namespace unf {
 
 // Initiate static registry.
 std::unordered_map<size_t, BrokerPtr> Broker::Registry;
@@ -200,6 +200,6 @@ void Broker::_ExecuteBroadcasters(NoticeMergerPtr& merger)
     }
 }
 
-} // namespace UNB
+} // namespace unf
 
 PXR_NAMESPACE_CLOSE_SCOPE

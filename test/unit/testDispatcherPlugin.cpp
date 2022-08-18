@@ -1,7 +1,7 @@
-#include <UsdNoticeBroker/broker.h>
-#include <UsdNoticeBroker/dispatcher.h>
+#include <unf/broker.h>
+#include <unf/dispatcher.h>
 
-#include <TestUsdNoticeBroker/listener.h>
+#include <unfTest/listener.h>
 
 #include <TestPlugin/TestDispatcher.h>
 #include <TestPlugin/NewStageDispatcher.h>
@@ -13,7 +13,7 @@
 
 class DispatcherTest : public ::testing::Test {
 protected:
-    using StageDispatcherPtr = PXR_NS::TfRefPtr<PXR_NS::UNB::StageDispatcher>;
+    using StageDispatcherPtr = PXR_NS::TfRefPtr<PXR_NS::unf::StageDispatcher>;
     using NewStageDispatcherPtr = PXR_NS::TfRefPtr<::Test::NewStageDispatcher>;
     using TestDispatcherPtr = PXR_NS::TfRefPtr<::Test::TestDispatcher>;
 
@@ -34,7 +34,7 @@ protected:
 
 TEST_F(DispatcherTest, Discover)
 {
-    auto broker = PXR_NS::UNB::Broker::Create(_stage);
+    auto broker = PXR_NS::unf::Broker::Create(_stage);
 
     // Ensure that stage dispacther has been replaced as expected.
     auto dispatcher = broker->GetDispatcher("StageDispatcher");

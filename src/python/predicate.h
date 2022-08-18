@@ -1,7 +1,7 @@
 #ifndef NOTICE_BROKER_PYTHON_PREDICATE_H
 #define NOTICE_BROKER_PYTHON_PREDICATE_H
 
-#include "UsdNoticeBroker/broker.h"
+#include "unf/broker.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/pyNoticeWrapper.h>
@@ -12,7 +12,7 @@
 #include <functional>
 
 using namespace boost::python;
-using namespace UNB;
+using namespace unf;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 

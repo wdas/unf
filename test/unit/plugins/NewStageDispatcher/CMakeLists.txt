@@ -4,8 +4,8 @@ add_library(UnitPluginNewStageDispatcher
 
 target_link_libraries(UnitPluginNewStageDispatcher
     PUBLIC
-        UsdNoticeBroker
-        TestUsdNoticeBroker
+        unf
+        unfTest
 )
 
 target_include_directories(UnitPluginNewStageDispatcher

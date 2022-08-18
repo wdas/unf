@@ -1,7 +1,7 @@
 #ifndef NOTICE_BROKER_MERGER_H
 #define NOTICE_BROKER_MERGER_H
 
-#include "UsdNoticeBroker/notice.h"
+#include "unf/notice.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/common.h>
@@ -16,7 +16,7 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-namespace UNB {
+namespace unf {
 
 class NoticeMerger;
 
@@ -52,7 +52,7 @@ private:
     NoticeCaturePredicateFunc _predicate = nullptr;
 };
 
-} // namespace UNB
+} // namespace unf
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

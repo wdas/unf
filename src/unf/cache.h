@@ -1,7 +1,7 @@
 #ifndef NOTICE_BROKER_NOTICE_CACHE_H
 #define NOTICE_BROKER_NOTICE_CACHE_H
 
-#include "UsdNoticeBroker/notice.h"
+#include "unf/notice.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/notice.h>
@@ -15,7 +15,7 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-namespace UNB {
+namespace unf {
 
 class BaseNoticeCache : public TfWeakBase
 {
@@ -106,7 +106,7 @@ private:
     TfNotice::Key _key;
 };
 
-} // namespace UNB
+} // namespace unf
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

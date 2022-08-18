@@ -1,4 +1,4 @@
-add_library(PyUsdNoticeBroker SHARED
+add_library(pyUnf SHARED
     module.cpp
     wrapBroker.cpp
     wrapCache.cpp
@@ -10,25 +10,25 @@ add_library(PyUsdNoticeBroker SHARED
 # Supress warnings from Boost Python regarding deprecated Bind placeholders.
 # https://github.com/boostorg/python/issues/359
 target_compile_definitions(
-    PyUsdNoticeBroker PRIVATE BOOST_BIND_GLOBAL_PLACEHOLDERS)
+    pyUnf PRIVATE BOOST_BIND_GLOBAL_PLACEHOLDERS)
 
 target_compile_definitions(
-    PyUsdNoticeBroker PRIVATE BOOST_PYTHON_NO_PY_SIGNATURES)
+    pyUnf PRIVATE BOOST_PYTHON_NO_PY_SIGNATURES)
 
 
-target_include_directories(PyUsdNoticeBroker
+target_include_directories(pyUnf
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-target_link_libraries(PyUsdNoticeBroker
+target_link_libraries(pyUnf
     PUBLIC
-        UsdNoticeBroker
+        unf
         Boost::python
 )
 
-set_target_properties(PyUsdNoticeBroker
+set_target_properties(pyUnf
     PROPERTIES
         PREFIX ""
         OUTPUT_NAME _usd_notice_broker
@@ -36,7 +36,7 @@ set_target_properties(PyUsdNoticeBroker
 )
 
 target_compile_definitions(
-    PyUsdNoticeBroker
+    pyUnf
     PRIVATE
         BOOST_PYTHON_NO_PY_SIGNATURES
         PXR_PYTHON_ENABLED=1
@@ -51,7 +51,7 @@ configure_file(
     "${CMAKE_CURRENT_BINARY_DIR}/usd_notice_broker/__init__.py")
 
 install(
-    TARGETS PyUsdNoticeBroker
+    TARGETS pyUnf
     DESTINATION ${PYTHON_DESTINATION}/usd_notice_broker
 )
 install(

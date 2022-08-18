@@ -1,6 +1,6 @@
 #include "testNotice.h"
 
-#include <UsdNoticeBroker/notice.h>
+#include <unf/notice.h>
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/notice.h>
@@ -11,11 +11,11 @@ TF_REGISTRY_FUNCTION(TfType)
 {
     TfType::Define<
         ::Test::MergeableNotice,
-        TfType::Bases<UNB::BrokerNotice::StageNotice> >();
+        TfType::Bases<unf::BrokerNotice::StageNotice> >();
 
     TfType::Define<
         ::Test::UnMergeableNotice,
-        TfType::Bases<UNB::BrokerNotice::StageNotice> >();
+        TfType::Bases<unf::BrokerNotice::StageNotice> >();
 
     TfType::Define<
         ::Test::InputNotice,
@@ -23,11 +23,11 @@ TF_REGISTRY_FUNCTION(TfType)
 
     TfType::Define<
         ::Test::OutputNotice1,
-        TfType::Bases<UNB::BrokerNotice::StageNotice> >();
+        TfType::Bases<unf::BrokerNotice::StageNotice> >();
 
     TfType::Define<
         ::Test::OutputNotice2,
-        TfType::Bases<UNB::BrokerNotice::StageNotice> >();
+        TfType::Bases<unf::BrokerNotice::StageNotice> >();
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

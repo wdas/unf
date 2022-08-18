@@ -1,8 +1,8 @@
 #ifndef NOTICE_BROKER_DISPATCHER_H
 #define NOTICE_BROKER_DISPATCHER_H
 
-#include "UsdNoticeBroker/notice.h"
-#include "UsdNoticeBroker/broker.h"
+#include "unf/notice.h"
+#include "unf/broker.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/refBase.h>
@@ -13,7 +13,7 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-namespace UNB {
+namespace unf {
 
 class Dispatcher : public TfRefBase, public TfWeakBase {
 public:
@@ -83,7 +83,7 @@ void DispatcherDefine()
         .template SetFactory<DispatcherFactoryImpl<T> >();
 }
 
-} // namespace UNB
+} // namespace unf
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

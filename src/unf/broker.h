@@ -1,8 +1,8 @@
 #ifndef NOTICE_BROKER_BROKER_H
 #define NOTICE_BROKER_BROKER_H
 
-#include "UsdNoticeBroker/notice.h"
-#include "UsdNoticeBroker/merger.h"
+#include "unf/notice.h"
+#include "unf/merger.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/refBase.h>
@@ -23,7 +23,7 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-namespace UNB {
+namespace unf {
 
 class Broker;
 class Dispatcher;
@@ -183,7 +183,7 @@ void Broker::_LoadFromPlugins(const TfType& type)
     _Add(output);
 }
 
-} // namespace UNB
+} // namespace unf
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

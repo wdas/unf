@@ -1,7 +1,7 @@
 #ifndef NOTICE_BROKER_NOTICE_WRAPPER_H
 #define NOTICE_BROKER_NOTICE_WRAPPER_H
 
-#include "UsdNoticeBroker/notice.h"
+#include "unf/notice.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/pyNoticeWrapper.h>
@@ -22,7 +22,7 @@ using namespace boost::python;
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-namespace UNB {
+namespace unf {
 
 // Interface object to process custom notice in Python.
 // TODO: Should we forbid handling of custom notices via Python?
@@ -89,7 +89,7 @@ private:
     TfRefPtr<Self> _notice;
 };
 
-} // namespace UNB
+} // namespace unf
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

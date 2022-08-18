@@ -1,14 +1,14 @@
 #ifndef NOTICE_BROKER_TRANSACTION_H
 #define NOTICE_BROKER_TRANSACTION_H
 
-#include "UsdNoticeBroker/broker.h"
+#include "unf/broker.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/common.h>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-namespace UNB {
+namespace unf {
 
 class NoticeTransaction {
 public:
@@ -31,7 +31,7 @@ private:
     BrokerPtr _broker;
 };
 
-} // namespace UNB
+} // namespace unf
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

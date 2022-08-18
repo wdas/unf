@@ -1,6 +1,6 @@
 #include "./predicate.h"
 
-#include "UsdNoticeBroker/transaction.h"
+#include "unf/transaction.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/stage.h>
@@ -11,7 +11,7 @@
 #include <boost/python/return_internal_reference.hpp>
 
 using namespace boost::python;
-using namespace UNB;
+using namespace unf;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 

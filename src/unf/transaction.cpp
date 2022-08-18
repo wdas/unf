@@ -1,12 +1,12 @@
-#include "UsdNoticeBroker/transaction.h"
-#include "UsdNoticeBroker/broker.h"
+#include "unf/transaction.h"
+#include "unf/broker.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/common.h>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-namespace UNB {
+namespace unf {
 
 NoticeTransaction::NoticeTransaction(
     const BrokerPtr& broker,
@@ -30,6 +30,6 @@ NoticeTransaction::~NoticeTransaction()
     _broker->EndTransaction();
 }
 
-} // namespace UNB
+} // namespace unf
 
 PXR_NAMESPACE_CLOSE_SCOPE
