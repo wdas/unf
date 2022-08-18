@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd, Tf
-from usd_notice_broker import Broker, BrokerNotice, NoticeCache
+from usd_notice_framework import Broker, BrokerNotice, NoticeCache
 
 import pytest
 

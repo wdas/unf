@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd
-from usd_notice_broker import Broker, NoticeTransaction
+from usd_notice_framework import Broker, NoticeTransaction
 
 
 def test_create_from_stage():

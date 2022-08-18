@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd
-from usd_notice_broker import Broker
+from usd_notice_framework import Broker
 
 
 def test_create():
