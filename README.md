@@ -1,4 +1,4 @@
-# USD Notice Broker
+# USD Notice Framework
 
 [![Tests](https://github.com/wdas/usd-notice-broker/actions/workflows/test.yml/badge.svg?branch=prototype)](https://github.com/wdas/usd-notice-broker/actions/workflows/test.yml)
 
@@ -20,6 +20,7 @@ Here a few CMake options that can be used to influence the building process:
 | Option                 | Description                                                         |
 | ---------------------- | ------------------------------------------------------------------- |
 | BUILD_TESTS            | Indicate whether tests should be built. Default is true.            |
+| BUILD_DOCS             | Indicate whether documentation should be built. Default is true.    |
 | BUILD_PYTHON_BINDINGS  | Indicate whether Python bindings should be built. Default is true.  |
 | BUILD_SHARED_LIBS      | Indicate whether library should be built shared. Default is true.   |
 

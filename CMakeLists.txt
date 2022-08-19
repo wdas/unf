@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(BUILD_TESTS "Build tests" ON)
+option(BUILD_DOCS "Build documentation" ON)
 option(BUILD_PYTHON_BINDINGS "Build Python Bindings" ON)
 option(BUILD_SHARED_LIBS "Build Shared Library" ON)
 
@@ -57,7 +58,7 @@ find_package(TBB 2018.0 COMPONENTS tbb REQUIRED)
 add_subdirectory(src)
 
 if (BUILD_TESTS)
-    find_package(GTest REQUIRED)
+    find_package(GTest 1.8.0 REQUIRED)
 
     # For compatibility with module fetched from CMake < 3.20
     if (NOT TARGET GTest::gtest)
@@ -74,4 +75,40 @@ if (BUILD_TESTS)
     enable_testing()
 
     add_subdirectory(test)
+endif()
+
+if (BUILD_DOCS)
+    find_package(Sphinx 1.8.6 REQUIRED)
+    find_package(Doxygen 1.8.5 REQUIRED)
+
+    sphinx_add_docs(unfDoc
+        SOURCE "${PROJECT_SOURCE_DIR}/doc/sphinx"
+        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/doc"
+    )
+
+    set(DOXYGEN_PROJECT_NAME "Usd Notice Framework")
+    set(DOXYGEN_HTML_OUTPUT "doc/doxygen")
+    set(DOXYGEN_EXTENSION_MAPPING "h=C++")
+    set(DOXYGEN_GENERATE_HTML YES)
+    set(DOXYGEN_GENERATE_LATEX NO)
+    set(DOXYGEN_GENERATE_TREEVIEW YES)
+    set(DOXYGEN_QUIET YES)
+
+    doxygen_add_docs(unfApiRefDoc
+        "${PROJECT_SOURCE_DIR}/doc/doxygen/index.dox"
+        "${PROJECT_SOURCE_DIR}/src/unf"
+    )
+
+    add_custom_target(documentation ALL)
+    add_dependencies(documentation
+        unfDoc
+        unfApiRefDoc
+    )
+
+    install(
+        DIRECTORY
+            ${CMAKE_CURRENT_BINARY_DIR}/doc
+        DESTINATION
+            ${CMAKE_INSTALL_PREFIX}
+    )
 endif()
