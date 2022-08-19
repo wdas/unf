@@ -12,7 +12,7 @@
 #include <functional>
 
 using namespace boost::python;
-using namespace unf;
+using namespace PXR_NS::unf;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
