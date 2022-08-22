@@ -44,17 +44,25 @@ class Cache : public TfRefBase, TfWeakBase {
             //Turn into set
             resyncedSet = UnorderedSdfPathSet{resynced.begin(), resynced.end()};
 
-            UnorderedSdfPathSet syncRoots;
+            UnorderedSdfPathSet nonRecursiveSyncRoots;
+            UnorderedSdfPathSet recursiveSyncRoots;
             
             for(auto& p : resynced) {
                 TfRefPtr<Node> ancestor_node = FindNodeOrAncestor(p);
-                syncRoots.insert(ancestor_node->prim_path);
+                if(ancestor_node->prim_path == p){
+                    recursiveSyncRoots.insert(ancestor_node->prim_path);
+                }
+                else {
+                    nonRecursiveSyncRoots.insert(ancestor_node->prim_path);
+                }
+            }
+
+            for(auto& p : nonRecursiveSyncRoots) {
+                Sync(FindNodeOrAncestor(p), _stage->GetPrimAtPath(p), false);
             }
             
-            SdfPathVector syncRootsFiltered(syncRoots.begin(), syncRoots.end()); 
-            SdfPath::RemoveDescendentPaths(&syncRootsFiltered);
-            for(auto& p : syncRootsFiltered) {
-                Sync(FindNodeOrAncestor(p), _stage->GetPrimAtPath(p));
+            for(auto& p : recursiveSyncRoots) {
+                Sync(FindNodeOrAncestor(p), _stage->GetPrimAtPath(p), true);
             }
         }
 
@@ -140,11 +148,8 @@ class Cache : public TfRefBase, TfWeakBase {
             return curr_node;
         }
 
-        void Sync(TfRefPtr<Node> node, const UsdPrim& prim, bool mark_modified = false) {
-            if (resyncedSet.find(node->prim_path)!= resyncedSet.end()) {
-                mark_modified = true;
-            }
-            if (mark_modified) {
+        void Sync(TfRefPtr<Node> node, const UsdPrim& prim, bool isRecursive = false) {
+            if (isRecursive) {
                 modified.insert(node->prim_path);
             }
             //Used to track nodes that exist in tree but not in stage
@@ -159,7 +164,9 @@ class Cache : public TfRefBase, TfWeakBase {
                 if(node->children.count(child_name)) {
                     //Exists in cache
                     //Sync on child and on stage
-                    Sync(node->children[child_name], child_prim, mark_modified);
+                    if(isRecursive){
+                        Sync(node->children[child_name], child_prim, isRecursive);
+                    }
                     //Remove child from temporary list
                     node_children_copy.erase(child_prim.GetPath());
                 } else {
