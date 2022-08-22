@@ -40,29 +40,12 @@ class Cache : public TfRefBase, TfWeakBase {
         void Update(SdfPathVector resynced) {
             //Remove Descendants
             SdfPath::RemoveDescendentPaths(&resynced);
-
-            //Turn into set
-            resyncedSet = UnorderedSdfPathSet{resynced.begin(), resynced.end()};
-
-            UnorderedSdfPathSet nonRecursiveSyncRoots;
-            UnorderedSdfPathSet recursiveSyncRoots;
             
             for(auto& p : resynced) {
-                TfRefPtr<Node> ancestor_node = FindNodeOrAncestor(p);
-                if(ancestor_node->prim_path == p){
-                    recursiveSyncRoots.insert(ancestor_node->prim_path);
+                TfRefPtr<Node> ancestor_node = FindNodeOrUpdate(p);
+                if(ancestor_node){
+                    Sync(ancestor_node, _stage->GetPrimAtPath(p));
                 }
-                else {
-                    nonRecursiveSyncRoots.insert(ancestor_node->prim_path);
-                }
-            }
-
-            for(auto& p : nonRecursiveSyncRoots) {
-                Sync(FindNodeOrAncestor(p), _stage->GetPrimAtPath(p), false);
-            }
-            
-            for(auto& p : recursiveSyncRoots) {
-                Sync(FindNodeOrAncestor(p), _stage->GetPrimAtPath(p), true);
             }
         }
 
@@ -131,7 +114,7 @@ class Cache : public TfRefBase, TfWeakBase {
             }
         }
 
-        TfRefPtr<Node> FindNodeOrAncestor(const SdfPath& path) {
+        TfRefPtr<Node> FindNodeOrUpdate(const SdfPath& path) {
             std::vector<std::string> split_paths = _split(path.GetString(), "/");
             TfRefPtr<Node> curr_node = _root;
             //TODO: make this sdfpath
@@ -140,18 +123,29 @@ class Cache : public TfRefBase, TfWeakBase {
                 partial_path += "/" + split_paths[i];
                 TfToken p_token = TfToken(split_paths[i]);
                 UsdPrim child = _stage->GetPrimAtPath(SdfPath(partial_path));
-                if (!child || !curr_node->children.count(p_token)) {
-                    return curr_node;
+                //Doesn't exit in stage nor cache -- don't do anything. 
+                if (!child && !curr_node->children.count(p_token)) {
+                    return nullptr;
+                }
+                //Doesn't exist in the stage -- then the prim was removed.
+                else if (!child) {
+                    _addToRemoved(curr_node->children[p_token]);
+                    curr_node->children.erase(p_token);
+                    return nullptr;
+                }
+                //Doesn't exist in the cache but in stage -- need to add prim
+                else if (!curr_node->children.count(p_token)){
+                    curr_node->children[p_token] = TfCreateRefPtr(new Node(child));
+                    _addToAdded(curr_node->children[p_token]);
+                    return nullptr;
                 }
                 curr_node = curr_node->children[p_token];
             }
             return curr_node;
         }
 
-        void Sync(TfRefPtr<Node> node, const UsdPrim& prim, bool isRecursive = false) {
-            if (isRecursive) {
-                modified.insert(node->prim_path);
-            }
+        void Sync(TfRefPtr<Node> node, const UsdPrim& prim) {
+            modified.insert(node->prim_path);
             //Used to track nodes that exist in tree but not in stage
             std::unordered_set<SdfPath, SdfPath::Hash> node_children_copy;
             for(auto& child : node->children) {
@@ -164,9 +158,7 @@ class Cache : public TfRefBase, TfWeakBase {
                 if(node->children.count(child_name)) {
                     //Exists in cache
                     //Sync on child and on stage
-                    if(isRecursive){
-                        Sync(node->children[child_name], child_prim, isRecursive);
-                    }
+                    Sync(node->children[child_name], child_prim);
                     //Remove child from temporary list
                     node_children_copy.erase(child_prim.GetPath());
                 } else {

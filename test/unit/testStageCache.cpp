@@ -62,7 +62,6 @@ TEST(ModifyPrim, StageCache)
     ASSERT_EQ(true, cache.FindNode(SdfPath("/scene/A")));
 }
 
-
 TEST(RemovePrimBase, StageCache)
 {
     auto stage = PXR_NS::UsdStage::Open("/disney/users/chong/projects/usd-notice-broker/test/testenv/scene.usda");
@@ -140,7 +139,7 @@ TEST(RemovePrimComplex, StageCache)
 
     cache.Clear();
     
-    
+
 }
 
 TEST(AddPrimComplex, StageCache)
@@ -188,7 +187,6 @@ TEST(AddPrimComplex, StageCache)
     ASSERT_EQ(true, cache.FindNode(SdfPath("/scene/D/b")));
     ASSERT_EQ(true, cache.FindNode(SdfPath("/scene/D/b/x")));
 }
-
 
 int main(int argc, char** argv)
 {
