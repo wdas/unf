@@ -1,6 +1,8 @@
 #ifndef TEST_NOTICE_BROKER_LISTENER_H
 #define TEST_NOTICE_BROKER_LISTENER_H
 
+#include "unf/stagecache.h"
+
 #include <pxr/pxr.h>
 #include <pxr/base/tf/notice.h>
 #include <pxr/base/tf/weakBase.h>
@@ -102,6 +104,28 @@ private:
     std::unordered_map<std::string, size_t> _received;
 };
 
+// UsdBroker obj changed listener
+class ObjChangedListener : public TfWeakBase {
+    public:
+        ObjChangedListener(unf::Cache* c) : _cache(c) {
+            _key = TfNotice::Register(TfCreateWeakPtr(this), &ObjChangedListener::_CallBack);
+        }
+        ~ObjChangedListener() {
+            PXR_NS::TfNotice::Revoke(_key);
+        }
+    
+    private:
+        void _CallBack(const UsdNotice::ObjectsChanged& notice) {
+            SdfPathVector resyncedChanges;
+            for (const auto& path: notice.GetResyncedPaths()) {
+                resyncedChanges.push_back(path);
+            }
+            _cache->Update(resyncedChanges);
+        }
+
+        TfNotice::Key _key;
+        unf::Cache* _cache;
+ };
 } // namespace Test
 
 #endif // TEST_NOTICE_BROKER_LISTENER_H

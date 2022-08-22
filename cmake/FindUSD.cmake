@@ -6,6 +6,7 @@
 #     pxr::tf
 #     pxr::plug
 #     pxr::arch
+#     pxr::vt
 #
 # Usage:
 #     find_package(USD)
@@ -37,7 +38,7 @@ find_path(
         include
 )
 
-set(USD_LIBRARIES usd sdf tf plug arch)
+set(USD_LIBRARIES usd sdf tf plug arch vt)
 
 set(USD_DEPENDENCIES "Boost::boost;TBB::tbb")
 
@@ -91,6 +92,7 @@ find_package_handle_standard_args(
         tf_LIBRARY
         plug_LIBRARY
         arch_LIBRARY
+        vt_LIBRARY
     VERSION_VAR
         USD_VERSION
 )

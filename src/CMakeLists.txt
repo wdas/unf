@@ -30,6 +30,7 @@ target_link_libraries(unf
         pxr::sdf
         pxr::tf
         pxr::usd
+        pxr::vt
 )
 
 install(TARGETS unf EXPORT ${PROJECT_NAME})

@@ -64,6 +64,16 @@ target_link_libraries(testUnitTransaction
 )
 gtest_discover_tests(testUnitTransaction)
 
+add_executable(testStageCache testStageCache.cpp)
+target_link_libraries(testStageCache
+    PRIVATE
+        unf
+        unfTest
+        GTest::gtest
+        GTest::gtest_main
+)
+gtest_discover_tests(testStageCache)
+
 add_subdirectory(plugins)
 
 if (BUILD_PYTHON_BINDINGS)
