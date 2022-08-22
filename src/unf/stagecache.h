@@ -42,9 +42,9 @@ class Cache : public TfRefBase, TfWeakBase {
             SdfPath::RemoveDescendentPaths(&resynced);
             
             for(auto& p : resynced) {
-                TfRefPtr<Node> ancestor_node = FindNodeOrUpdate(p);
-                if(ancestor_node){
-                    Sync(ancestor_node, _stage->GetPrimAtPath(p));
+                TfRefPtr<Node> node = FindNodeOrUpdate(p);
+                if(node){
+                    Sync(node, _stage->GetPrimAtPath(p));
                 }
             }
         }
