@@ -40,17 +40,21 @@ class Cache : public TfRefBase, TfWeakBase {
         void Update(SdfPathVector resynced) {
             //Remove Descendants
             SdfPath::RemoveDescendentPaths(&resynced);
+
+            //Turn into set
+            resyncedSet = UnorderedSdfPathSet{resynced.begin(), resynced.end()};
+
+            UnorderedSdfPathSet syncRoots;
             
             for(auto& p : resynced) {
-                UsdPrim prim = _stage->GetPrimAtPath(p);
-                if(prim){
-                    _addToModified(prim);
-                }
-                bool was_created;
-                TfRefPtr<Node> resynced_node = CreateOrFindClosestNode(p, &was_created);
-                if(!was_created) {
-                    Sync(resynced_node, _stage->GetPrimAtPath(resynced_node->prim_path));
-                }
+                TfRefPtr<Node> ancestor_node = FindNodeOrAncestor(p);
+                syncRoots.insert(ancestor_node->prim_path);
+            }
+            
+            SdfPathVector syncRootsFiltered(syncRoots.begin(), syncRoots.end()); 
+            SdfPath::RemoveDescendentPaths(&syncRootsFiltered);
+            for(auto& p : syncRootsFiltered) {
+                Sync(FindNodeOrAncestor(p), _stage->GetPrimAtPath(p));
             }
         }
 
@@ -103,10 +107,8 @@ class Cache : public TfRefBase, TfWeakBase {
             return res;
         }
 
-        
         void _addToRemoved(TfRefPtr<Node> node) {
             removed.insert(node->prim_path);
-            modified.erase(node->prim_path);
 
             for(auto c : node->children) {
                 _addToRemoved(c.second);
@@ -115,22 +117,13 @@ class Cache : public TfRefBase, TfWeakBase {
 
         void _addToAdded(TfRefPtr<Node> node) {
             added.insert(node->prim_path);
-            modified.erase(node->prim_path);
 
             for(auto c : node->children) {
                 _addToAdded(c.second);
             }
         }
 
-        void _addToModified(const UsdPrim& prim) {
-            modified.insert(prim.GetPath());
-
-            for(auto c : prim.GetChildren()) {
-                _addToModified(c);
-            }
-        }
-
-        TfRefPtr<Node> CreateOrFindClosestNode(const SdfPath& path, bool* was_created) {
+        TfRefPtr<Node> FindNodeOrAncestor(const SdfPath& path) {
             std::vector<std::string> split_paths = _split(path.GetString(), "/");
             TfRefPtr<Node> curr_node = _root;
             //TODO: make this sdfpath
@@ -139,57 +132,59 @@ class Cache : public TfRefBase, TfWeakBase {
                 partial_path += "/" + split_paths[i];
                 TfToken p_token = TfToken(split_paths[i]);
                 UsdPrim child = _stage->GetPrimAtPath(SdfPath(partial_path));
-                if (!child) {
-                    *was_created = false;
+                if (!child || !curr_node->children.count(p_token)) {
                     return curr_node;
-                }
-                if(!curr_node->children.count(p_token)) {
-                    curr_node->children[p_token] = TfCreateRefPtr(new Node(child));
-                    _addToAdded(curr_node->children[p_token]);
-                    *was_created = true;
-                    return curr_node->children[p_token];
                 }
                 curr_node = curr_node->children[p_token];
             }
-            *was_created = false;
             return curr_node;
         }
 
-        void Sync(TfRefPtr<Node> node, const UsdPrim& prim) {
+        void Sync(TfRefPtr<Node> node, const UsdPrim& prim, bool mark_modified = false) {
+            if (resyncedSet.find(node->prim_path)!= resyncedSet.end()) {
+                mark_modified = true;
+            }
+            if (mark_modified) {
+                modified.insert(node->prim_path);
+            }
             //Used to track nodes that exist in tree but not in stage
             std::unordered_set<SdfPath, SdfPath::Hash> node_children_copy;
-                for(auto& child : node->children) {
-                    node_children_copy.insert(child.second->prim_path);
-                }
+            for(auto& child : node->children) {
+                node_children_copy.insert(child.second->prim_path);
+            }
 
-                //Loop over real prim's children
-                for(const auto& child_prim : prim.GetChildren()) {
-                    TfToken child_name = child_prim.GetName();
-                    if(node->children.count(child_name)) {
-                        //Sync on child
-                        Sync(node->children[child_name], child_prim);
-                        //Remove child from temporary list
-                        node_children_copy.erase(child_prim.GetPath());
-                    } else {
-                        //Doesn't exist in tree
-                        node->children[child_prim.GetName()] = TfCreateRefPtr(new Node(child_prim));
-                        _addToAdded(node->children[child_prim.GetName()]);
+            //Loop over real prim's children
+            for(const auto& child_prim : prim.GetChildren()) {
+                TfToken child_name = child_prim.GetName();
+                if(node->children.count(child_name)) {
+                    //Exists in cache
+                    //Sync on child and on stage
+                    Sync(node->children[child_name], child_prim, mark_modified);
+                    //Remove child from temporary list
+                    node_children_copy.erase(child_prim.GetPath());
+                } else {
+                    //Doesn't exist in cache but in stage
+                    //Doesn't exist in tree
+                    node->children[child_prim.GetName()] = TfCreateRefPtr(new Node(child_prim));
+                    _addToAdded(node->children[child_prim.GetName()]);
 
-                    }
-                }
-
-                //Add the non-existant children to the removed set
-                for (auto& child_prim_path : node_children_copy) {
-                    TfToken childName = TfToken(child_prim_path.GetName());
-                    _addToRemoved(node->children[childName]);
-                    node->children.erase(childName);
                 }
             }
+            
+            //Exists only on cache, not on stage
+            //Add the non-existant children to the removed set
+            for (auto& child_prim_path : node_children_copy) {
+                TfToken childName = TfToken(child_prim_path.GetName());
+                _addToRemoved(node->children[childName]);
+                node->children.erase(childName);
+            }
+        }
 
         TfRefPtr<Node> _root;
         UnorderedSdfPathSet added;
         UnorderedSdfPathSet removed;
         UnorderedSdfPathSet modified;
+        UnorderedSdfPathSet resyncedSet;
         UsdStageWeakPtr _stage;
 
 };
