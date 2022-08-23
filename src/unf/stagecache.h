@@ -115,6 +115,9 @@ class Cache : public TfRefBase, TfWeakBase {
         }
 
         TfRefPtr<Node> FindNodeOrUpdate(const SdfPath& path) {
+            if(path == _stage->GetPseudoRoot().GetPath()) {
+                return _root;
+            }
             std::vector<std::string> split_paths = _split(path.GetString(), "/");
             TfRefPtr<Node> curr_node = _root;
             //TODO: make this sdfpath
@@ -145,7 +148,9 @@ class Cache : public TfRefBase, TfWeakBase {
         }
 
         void Sync(TfRefPtr<Node> node, const UsdPrim& prim) {
-            modified.insert(node->prim_path);
+            if(node->prim_path != _stage->GetPseudoRoot().GetPath()){
+                modified.insert(node->prim_path);
+            }
             //Used to track nodes that exist in tree but not in stage
             std::unordered_set<SdfPath, SdfPath::Hash> node_children_copy;
             for(auto& child : node->children) {
