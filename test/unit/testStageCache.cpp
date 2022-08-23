@@ -1,5 +1,7 @@
 #include "unf/stagecache.h"
 #include "unf/notice.h"
+#include "unf/broker.h"
+#include "unf/transaction.h"
 
 #include "unfTest/listener.h"
 
@@ -10,6 +12,7 @@
 #include <pxr/usd/usd/primRange.h>
 #include <pxr/usd/usd/stage.h>
 #include <pxr/usd/usd/prim.h>
+#include <pxr/usd/usd/variantSets.h>
 
 #include <string>
 
@@ -50,7 +53,7 @@ TEST(ModifyPrim, StageCache)
     p.SetInstanceable(true);
 
     
-    ASSERT_EQ(cache.GetModified().size(), 30);
+    ASSERT_EQ(cache.GetModified().size(), 32);
     cache.Clear();
     
     cache.Update(SdfPathVector{SdfPath("/scene/D")});
@@ -60,6 +63,8 @@ TEST(ModifyPrim, StageCache)
     ASSERT_EQ(cache.GetRemoved().size(), 0);
     ASSERT_EQ(true, cache.FindNode(SdfPath("/scene")));
     ASSERT_EQ(true, cache.FindNode(SdfPath("/scene/A")));
+
+    cache.Clear();
 }
 
 TEST(RemovePrimBase, StageCache)
@@ -138,8 +143,6 @@ TEST(RemovePrimComplex, StageCache)
     ASSERT_EQ(false, cache.FindNode(SdfPath("/scene/D/b/x")));
 
     cache.Clear();
-    
-
 }
 
 TEST(AddPrimComplex, StageCache)
@@ -186,6 +189,144 @@ TEST(AddPrimComplex, StageCache)
     ASSERT_EQ(true, cache.FindNode(SdfPath("/scene/D/a")));
     ASSERT_EQ(true, cache.FindNode(SdfPath("/scene/D/b")));
     ASSERT_EQ(true, cache.FindNode(SdfPath("/scene/D/b/x")));
+    
+    cache.Clear();
+}
+
+TEST(VariantSwitch, StageCache) {
+    auto stage = PXR_NS::UsdStage::Open("/disney/users/chong/projects/usd-notice-broker/test/testenv/scene.usda");
+    Cache cache = Cache(stage);
+
+    ::Test::ObjChangedListener l = ::Test::ObjChangedListener(&cache);
+
+    UsdPrim p = stage->GetPrimAtPath(SdfPath("/scene/testvariant1/V"));
+    p.GetVariantSet("myVariant").SetVariantSelection("v");
+
+    ASSERT_EQ(cache.GetAdded().size(), 1);
+    ASSERT_EQ(cache.GetRemoved().size(), 2);
+    ASSERT_EQ(cache.GetModified().size(), 4);
+    ASSERT_EQ(false, cache.FindNode(SdfPath("/scene/testvariant1/V/SphereGroup2")));
+    ASSERT_EQ(false, cache.FindNode(SdfPath("/scene/testvariant1/V/SphereGroup1/emptyPrim/something1")));
+    ASSERT_EQ(true, cache.FindNode(SdfPath("/scene/testvariant1/V/SphereGroup1/emptyPrim/something2")));
+    
+    cache.Clear();
+}
+
+TEST(MuteAndUnmuteLayers, StageCache) {
+    auto stage = PXR_NS::UsdStage::Open("/disney/users/chong/projects/usd-notice-broker/test/testenv/scene.usda");
+    Cache cache = Cache(stage);
+
+    ::Test::ObjChangedListener l = ::Test::ObjChangedListener(&cache);
+
+    stage->MuteLayer("/disney/users/chong/projects/usd-notice-broker/test/testenv/sublayer.usda");
+
+    ASSERT_EQ(cache.GetRemoved().size(), 3);
+    ASSERT_EQ(cache.GetAdded().size(), 0);
+    ASSERT_EQ(cache.GetModified().size(), 29);
+
+    cache.Clear();
+
+    stage->UnmuteLayer("/disney/users/chong/projects/usd-notice-broker/test/testenv/sublayer.usda");
+    ASSERT_EQ(cache.GetAdded().size(), 3);
+    ASSERT_EQ(cache.GetRemoved().size(), 0);
+    ASSERT_EQ(cache.GetModified().size(), 29);
+
+}
+
+TEST(TransactionChanges, StageCache) {
+    auto stage = PXR_NS::UsdStage::Open("/disney/users/chong/projects/usd-notice-broker/test/testenv/scene.usda");
+    Cache cache = Cache(stage);
+    ::Test::unfObjChangedListener l = ::Test::unfObjChangedListener(&cache);
+
+    auto broker = PXR_NS::unf::Broker::Create(stage);
+    {
+        PXR_NS::unf::NoticeTransaction transaction(broker);
+
+        stage->DefinePrim(SdfPath("/scene/K/J"));
+        stage->DefinePrim(SdfPath("/scene/K/M"));
+        stage->DefinePrim(SdfPath("/scene/K/M/L"));
+    }
+    ASSERT_EQ(cache.GetModified().size(), 0);
+    ASSERT_EQ(cache.GetAdded().size(), 4);
+    ASSERT_EQ(cache.GetRemoved().size(), 0);
+
+    cache.Clear();
+
+    {
+        PXR_NS::unf::NoticeTransaction transaction(broker);
+
+        stage->DefinePrim(SdfPath("/scene/M/J"));
+        stage->DefinePrim(SdfPath("/scene/M/N"));
+        stage->RemovePrim(SdfPath("/scene/M/N"));
+    }
+    ASSERT_EQ(cache.GetModified().size(), 0);
+    ASSERT_EQ(cache.GetAdded().size(), 2);
+    ASSERT_EQ(cache.GetRemoved().size(), 0);
+
+    cache.Clear();
+
+    {
+        PXR_NS::unf::NoticeTransaction transaction(broker);
+
+        stage->DefinePrim(SdfPath("/scene/RemovePrim"));
+        stage->RemovePrim(SdfPath("/scene/RemovePrim"));
+    }
+    ASSERT_EQ(cache.GetModified().size(), 0);
+    ASSERT_EQ(cache.GetAdded().size(), 0);
+    ASSERT_EQ(cache.GetRemoved().size(), 0);
+
+    cache.Clear();
+
+    {
+        PXR_NS::unf::NoticeTransaction transaction(broker);
+
+        stage->RemovePrim(SdfPath("/scene/K/M"));
+        stage->DefinePrim(SdfPath("/scene/K/M/L"));
+    }
+    ASSERT_EQ(cache.GetModified().size(), 2);
+    ASSERT_EQ(cache.GetAdded().size(), 0);
+    ASSERT_EQ(cache.GetRemoved().size(), 0);
+
+    cache.Clear();
+
+    {
+        PXR_NS::unf::NoticeTransaction transaction(broker);
+
+        UsdPrim p2 = stage->GetPrimAtPath(SdfPath("/scene/sublayerShared"));
+        p2.SetInstanceable(true);
+        stage->DefinePrim(SdfPath("/scene/sublayerShared/K/k2"));
+        stage->RemovePrim(SdfPath("/scene/sublayerShared/K/k2"));
+    }
+    ASSERT_EQ(cache.GetModified().size(), 3);
+    ASSERT_EQ(cache.GetAdded().size(), 1);
+    ASSERT_EQ(cache.GetRemoved().size(), 0);
+
+    cache.Clear();
+    {
+        PXR_NS::unf::NoticeTransaction transaction(broker);
+
+        stage->MuteLayer("/disney/users/chong/projects/usd-notice-broker/test/testenv/sublayer2.usda");
+        stage->UnmuteLayer("/disney/users/chong/projects/usd-notice-broker/test/testenv/sublayer2.usda");
+    }
+
+    ASSERT_EQ(cache.GetModified().size(), 39);
+    ASSERT_EQ(cache.GetAdded().size(), 0);
+    ASSERT_EQ(cache.GetRemoved().size(), 0);
+
+    stage->MuteLayer("/disney/users/chong/projects/usd-notice-broker/test/testenv/sublayer.usda");
+    cache.Clear();
+    {
+        PXR_NS::unf::NoticeTransaction transaction(broker);
+
+        stage->MuteLayer("/disney/users/chong/projects/usd-notice-broker/test/testenv/sublayer2.usda");
+        stage->UnmuteLayer("/disney/users/chong/projects/usd-notice-broker/test/testenv/sublayer.usda");
+    }
+    
+    ASSERT_EQ(cache.GetModified().size(), 31);
+    ASSERT_EQ(cache.GetAdded().size(), 3);
+    ASSERT_EQ(cache.GetRemoved().size(), 5);
+
+    cache.Clear();
 }
 
 int main(int argc, char** argv)

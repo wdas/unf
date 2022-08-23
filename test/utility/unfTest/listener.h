@@ -104,7 +104,7 @@ private:
     std::unordered_map<std::string, size_t> _received;
 };
 
-// UsdBroker obj changed listener
+// Usd ObjectsChanged notice listener
 class ObjChangedListener : public TfWeakBase {
     public:
         ObjChangedListener(unf::Cache* c) : _cache(c) {
@@ -121,6 +121,25 @@ class ObjChangedListener : public TfWeakBase {
                 resyncedChanges.push_back(path);
             }
             _cache->Update(resyncedChanges);
+        }
+
+        TfNotice::Key _key;
+        unf::Cache* _cache;
+ };
+
+// unf ObjectsChanged notice listener
+class unfObjChangedListener : public TfWeakBase {
+    public:
+        unfObjChangedListener(unf::Cache* c) : _cache(c) {
+            _key = TfNotice::Register(TfCreateWeakPtr(this), &unfObjChangedListener::_CallBack);
+        }
+        ~unfObjChangedListener() {
+            PXR_NS::TfNotice::Revoke(_key);
+        }
+    
+    private:
+        void _CallBack(const unf::BrokerNotice::ObjectsChanged& notice) {
+            _cache->Update(notice.GetResyncedPaths());
         }
 
         TfNotice::Key _key;
