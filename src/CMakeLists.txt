@@ -5,6 +5,7 @@ add_library(unf
     unf/merger.cpp
     unf/notice.cpp
     unf/transaction.cpp
+    unf/stagecache.cpp
 )
 
 # Suppress warning sfrom USD regarding deprecated TBB features.
