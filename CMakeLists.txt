@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(BUILD_TESTS "Build tests" ON)
+option(BUILD_DOCS "Build documentation" ON)
 option(BUILD_PYTHON_BINDINGS "Build Python Bindings" ON)
 option(BUILD_SHARED_LIBS "Build Shared Library" ON)
 
@@ -57,7 +58,7 @@ find_package(TBB 2018.0 COMPONENTS tbb REQUIRED)
 add_subdirectory(src)
 
 if (BUILD_TESTS)
-    find_package(GTest REQUIRED)
+    find_package(GTest 1.8.0 REQUIRED)
 
     # For compatibility with module fetched from CMake < 3.20
     if (NOT TARGET GTest::gtest)
@@ -74,4 +75,11 @@ if (BUILD_TESTS)
     enable_testing()
 
     add_subdirectory(test)
+endif()
+
+if (BUILD_DOCS)
+    find_package(Sphinx 1.8.6 REQUIRED)
+    find_package(Doxygen 1.8.5 REQUIRED)
+
+    add_subdirectory(doc)
 endif()
