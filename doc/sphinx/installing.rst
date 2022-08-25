@@ -4,4 +4,4 @@
 Installing
 **********
 
-detailled installation instuctions.
+Detailled installation instuctions.
