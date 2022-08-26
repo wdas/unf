@@ -21,24 +21,22 @@
 #include <unordered_map>
 #include <vector>
 
-PXR_NAMESPACE_OPEN_SCOPE
-
 namespace unf {
 
 class Broker;
 class Dispatcher;
 class Broadcaster;
 
-using BrokerPtr = TfRefPtr<Broker>;
-using BrokerWeakPtr = TfWeakPtr<Broker>;
+using BrokerPtr = PXR_NS::TfRefPtr<Broker>;
+using BrokerWeakPtr = PXR_NS::TfWeakPtr<Broker>;
 
-using DispatcherPtr = TfRefPtr<Dispatcher>;
-using BroadcasterPtr = TfRefPtr<Broadcaster>;
+using DispatcherPtr = PXR_NS::TfRefPtr<Dispatcher>;
+using BroadcasterPtr = PXR_NS::TfRefPtr<Broadcaster>;
 using BroadcasterPtrList = std::vector<BroadcasterPtr>;
 
-class Broker : public TfRefBase, public TfWeakBase {
+class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
 public:
-    static BrokerPtr Create(const UsdStageWeakPtr& stage);
+    static BrokerPtr Create(const PXR_NS::UsdStageWeakPtr& stage);
 
     virtual ~Broker() {}
 
@@ -46,7 +44,7 @@ public:
     Broker(const Broker &) = delete;
     Broker &operator=(const Broker &) = delete;
 
-    const UsdStageWeakPtr& GetStage() const { return _stage; }
+    const PXR_NS::UsdStageWeakPtr& GetStage() const { return _stage; }
 
     bool IsInTransaction();
 
@@ -68,7 +66,7 @@ public:
     void AddBroadcaster();
 
 private:
-    Broker(const UsdStageWeakPtr&);
+    Broker(const PXR_NS::UsdStageWeakPtr&);
 
     static void _CleanCache();
 
@@ -85,7 +83,7 @@ private:
     BroadcasterPtr _AddBroadcaster();
 
     template<class OutputPtr, class OutputFactory>
-    void _LoadFromPlugins(const TfType& type);
+    void _LoadFromPlugins(const PXR_NS::TfType& type);
 
     void _RegisterBroadcaster(const BroadcasterPtr&);
     void _ExecuteBroadcasters(NoticeMergerPtr&);
@@ -93,7 +91,7 @@ private:
     // A registry of hashed stage ptr to the corresponding stage's broker ptr.
     static std::unordered_map<size_t, BrokerPtr> Registry;
 
-    UsdStageWeakPtr _stage;
+    PXR_NS::UsdStageWeakPtr _stage;
 
     std::vector<NoticeMergerPtr> _mergers;
     NoticeMergerPtr _latestMerger = nullptr;
@@ -106,7 +104,7 @@ private:
 template<class BrokerNotice, class... Args>
 void Broker::Send(Args&&... args)
 {
-    TfRefPtr<BrokerNotice> _notice = BrokerNotice::Create(
+    PXR_NS::TfRefPtr<BrokerNotice> _notice = BrokerNotice::Create(
         std::forward<Args>(args)...);
 
     Send(_notice);
@@ -116,8 +114,8 @@ template<class T>
 DispatcherPtr Broker::_AddDispatcher()
 {
     static_assert(std::is_base_of<Dispatcher, T>::value);
-    auto self = TfCreateWeakPtr(this);
-    DispatcherPtr dispatcher = TfCreateRefPtr(new T(self));
+    auto self = PXR_NS::TfCreateWeakPtr(this);
+    DispatcherPtr dispatcher = PXR_NS::TfCreateRefPtr(new T(self));
     _Add(dispatcher);
     return dispatcher;
 }
@@ -133,8 +131,8 @@ template<class T>
 BroadcasterPtr Broker::_AddBroadcaster()
 {
     static_assert(std::is_base_of<Broadcaster, T>::value);
-    auto self = TfCreateWeakPtr(this);
-    BroadcasterPtr broadcaster = TfCreateRefPtr(new T(self));
+    auto self = PXR_NS::TfCreateWeakPtr(this);
+    BroadcasterPtr broadcaster = PXR_NS::TfCreateRefPtr(new T(self));
     _Add(broadcaster);
     return broadcaster;
 }
@@ -149,10 +147,12 @@ void Broker::AddBroadcaster()
 }
 
 template<class OutputPtr, class OutputFactory>
-void Broker::_LoadFromPlugins(const TfType& type)
+void Broker::_LoadFromPlugins(const PXR_NS::TfType& type)
 {
-    const PlugPluginPtr plugin =
-        PlugRegistry::GetInstance().GetPluginForType(type);
+    PXR_NAMESPACE_USING_DIRECTIVE
+
+    const PXR_NS::PlugPluginPtr plugin =
+        PXR_NS::PlugRegistry::GetInstance().GetPluginForType(type);
 
     if (!plugin) {
         return;
@@ -184,7 +184,5 @@ void Broker::_LoadFromPlugins(const TfType& type)
 }
 
 } // namespace unf
-
-PXR_NAMESPACE_CLOSE_SCOPE
 
 #endif // NOTICE_BROKER_BROKER_H

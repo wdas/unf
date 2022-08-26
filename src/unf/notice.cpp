@@ -7,7 +7,7 @@
 #include <iostream>
 #include <utility>
 
-PXR_NAMESPACE_OPEN_SCOPE
+PXR_NAMESPACE_USING_DIRECTIVE
 
 namespace unf {
 
@@ -138,5 +138,3 @@ void LayerMutingChanged::Merge(LayerMutingChanged&& notice)
 } // namespace BrokerNotice
 
 } // namespace unf
-
-PXR_NAMESPACE_CLOSE_SCOPE

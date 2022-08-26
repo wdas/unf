@@ -11,7 +11,7 @@
 #include <boost/python/return_internal_reference.hpp>
 
 using namespace boost::python;
-using namespace PXR_NS::unf;
+using namespace unf;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 

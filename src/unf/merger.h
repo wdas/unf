@@ -14,13 +14,11 @@
 #include <unordered_map>
 #include <vector>
 
-PXR_NAMESPACE_OPEN_SCOPE
-
 namespace unf {
 
 class NoticeMerger;
 
-using NoticeMergerPtr = TfRefPtr<NoticeMerger>;
+using NoticeMergerPtr = PXR_NS::TfRefPtr<NoticeMerger>;
 
 using NoticeCaturePredicateFunc =
     std::function<bool (const BrokerNotice::StageNotice &)>;
@@ -29,18 +27,18 @@ using _StageNoticePtrList = std::vector<BrokerNotice::StageNoticeRefPtr>;
 
 using _StageNoticePtrMap = std::unordered_map<std::string, _StageNoticePtrList>;
 
-class NoticeMerger : public TfRefBase {
+class NoticeMerger : public PXR_NS::TfRefBase {
 public:
     static NoticeMergerPtr Create(
         const NoticeCaturePredicateFunc& predicate=nullptr)
     {
-        return TfCreateRefPtr(new NoticeMerger(predicate));
+        return PXR_NS::TfCreateRefPtr(new NoticeMerger(predicate));
     }
 
     void Add(const BrokerNotice::StageNoticeRefPtr&);
     void Join(NoticeMerger&);
     void Merge();
-    void Send(const UsdStageWeakPtr&);
+    void Send(const PXR_NS::UsdStageWeakPtr&);
 
     _StageNoticePtrMap& GetNotices() { return _noticeMap; }
 
@@ -53,7 +51,5 @@ private:
 };
 
 } // namespace unf
-
-PXR_NAMESPACE_CLOSE_SCOPE
 
 #endif // NOTICE_BROKER_MERGER_H

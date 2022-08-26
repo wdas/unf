@@ -6,8 +6,6 @@
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/common.h>
 
-PXR_NAMESPACE_OPEN_SCOPE
-
 namespace unf {
 
 class NoticeTransaction {
@@ -16,7 +14,7 @@ public:
         const BrokerPtr&,
         const NoticeCaturePredicateFunc& predicate=nullptr);
     NoticeTransaction(
-        const UsdStageRefPtr&,
+        const PXR_NS::UsdStageRefPtr&,
         const NoticeCaturePredicateFunc& predicate=nullptr);
 
     ~NoticeTransaction();
@@ -32,7 +30,5 @@ private:
 };
 
 } // namespace unf
-
-PXR_NAMESPACE_CLOSE_SCOPE
 
 #endif // NOTICE_BROKER_TRANSACTION_H

@@ -4,11 +4,10 @@
 
 #include <pxr/pxr.h>
 
-PXR_NAMESPACE_OPEN_SCOPE
+PXR_NAMESPACE_USING_DIRECTIVE
 
 TF_REGISTRY_FUNCTION(TfType)
 {
     unf::DispatcherDefine<::Test::TestDispatcher, unf::Dispatcher>();
 }
 
-PXR_NAMESPACE_CLOSE_SCOPE

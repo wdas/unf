@@ -12,13 +12,11 @@
 #include <string>
 #include <vector>
 
-PXR_NAMESPACE_OPEN_SCOPE
-
 namespace unf {
 
 namespace BrokerNotice {
 
-class StageNotice : public TfNotice, public TfRefBase {
+class StageNotice : public PXR_NS::TfNotice, public PXR_NS::TfRefBase {
 public:
     virtual ~StageNotice() = default;
 
@@ -31,32 +29,36 @@ public:
     virtual std::string GetTypeId() const {return "";}
 
     // Exposes the Copy function to the interface
-    virtual TfRefPtr<StageNotice> CopyAsStageNotice() const { return nullptr; }
+    virtual PXR_NS::TfRefPtr<StageNotice> CopyAsStageNotice() const
+    {
+        return nullptr;
+    }
 
 protected:
     StageNotice() = default;
 };
 
-using StageNoticeRefPtr = TfRefPtr<StageNotice>;
-using StageNoticeWeakPtr = TfWeakPtr<StageNotice>;
+using StageNoticeRefPtr = PXR_NS::TfRefPtr<StageNotice>;
+using StageNoticeWeakPtr = PXR_NS::TfWeakPtr<StageNotice>;
 
 template<class Self>
 class StageNoticeImpl : public StageNotice {
 public:
     template <class... Args>
-    static TfRefPtr<Self> Create(Args&&... args)
+    static PXR_NS::TfRefPtr<Self> Create(Args&&... args)
     {
-        return TfCreateRefPtr(new Self(std::forward<Args>(args)...));
+        return PXR_NS::TfCreateRefPtr(new Self(std::forward<Args>(args)...));
     }
 
-    virtual TfRefPtr<StageNotice> CopyAsStageNotice() const override
+    virtual PXR_NS::TfRefPtr<StageNotice> CopyAsStageNotice() const override
     {
         return Copy();
     }
 
-    TfRefPtr<Self> Copy() const
+    PXR_NS::TfRefPtr<Self> Copy() const
     {
-        return TfCreateRefPtr(new Self(static_cast<const Self&>(*this)));
+        return PXR_NS::TfCreateRefPtr(
+            new Self(static_cast<const Self&>(*this)));
     }
 
     virtual void Merge(StageNotice&& notice) override
@@ -74,7 +76,7 @@ public:
 class StageContentsChanged : public StageNoticeImpl<StageContentsChanged> {
 protected:
     explicit StageContentsChanged(
-        const UsdNotice::StageContentsChanged&) {}
+        const PXR_NS::UsdNotice::StageContentsChanged&) {}
 
     friend StageNoticeImpl<StageContentsChanged>;
 };
@@ -86,22 +88,22 @@ public:
 
     virtual void Merge(ObjectsChanged&&) override;
 
-    const std::vector<SdfPath>& GetResyncedPaths() const
+    const std::vector<PXR_NS::SdfPath>& GetResyncedPaths() const
     {
         return _resyncChanges;
     }
 
-    const std::vector<SdfPath>& GetChangedInfoOnlyPaths() const
+    const std::vector<PXR_NS::SdfPath>& GetChangedInfoOnlyPaths() const
     {
         return _infoChanges;
     }
 
 protected:
-    explicit ObjectsChanged(const UsdNotice::ObjectsChanged&);
+    explicit ObjectsChanged(const PXR_NS::UsdNotice::ObjectsChanged&);
 
 private:
-    std::vector<SdfPath> _resyncChanges;
-    std::vector<SdfPath> _infoChanges;
+    std::vector<PXR_NS::SdfPath> _resyncChanges;
+    std::vector<PXR_NS::SdfPath> _infoChanges;
 
     friend StageNoticeImpl<ObjectsChanged>;
 };
@@ -109,7 +111,7 @@ private:
 class StageEditTargetChanged : public StageNoticeImpl<StageEditTargetChanged> {
 protected:
     explicit StageEditTargetChanged(
-        const UsdNotice::StageEditTargetChanged&) {}
+        const PXR_NS::UsdNotice::StageEditTargetChanged&) {}
 
     friend StageNoticeImpl<StageEditTargetChanged>;
 };
@@ -132,7 +134,7 @@ public:
     }
 
 protected:
-    explicit LayerMutingChanged(const UsdNotice::LayerMutingChanged&);
+    explicit LayerMutingChanged(const PXR_NS::UsdNotice::LayerMutingChanged&);
 
 private:
     std::vector<std::string> _mutedLayers;
@@ -144,7 +146,5 @@ private:
 } // namespace BrokerNotice
 
 } // namespace unf
-
-PXR_NAMESPACE_CLOSE_SCOPE
 
 #endif // NOTICE_BROKER_NOTICE_H

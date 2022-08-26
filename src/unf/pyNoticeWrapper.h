@@ -20,17 +20,18 @@
 
 using namespace boost::python;
 
-PXR_NAMESPACE_OPEN_SCOPE
-
 namespace unf {
 
 // Interface object to process custom notice in Python.
 // TODO: Should we forbid handling of custom notices via Python?
-class PyBrokerNoticeWrapperBase : public TfRefBase, public TfWeakBase {
+class PyBrokerNoticeWrapperBase
+: public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
 public:
     PyBrokerNoticeWrapperBase() {};
 
-    virtual TfRefPtr<BrokerNotice::StageNotice> Get() { return nullptr; }
+    virtual PXR_NS::TfRefPtr<BrokerNotice::StageNotice> Get() {
+        return nullptr;
+    }
 
     virtual object GetWrap() { return object(); }
 
@@ -46,22 +47,22 @@ public:
     // Creates a PyBrokerNoticeWrapperBase and forwards the arguments to the
     // underlying notice.
     template <class... Args>
-    static TfRefPtr<PyBrokerNoticeWrapper<Self> > Init(Args... args)
+    static PXR_NS::TfRefPtr<PyBrokerNoticeWrapper<Self> > Init(Args... args)
     {
-        TfRefPtr<PyBrokerNoticeWrapper<Self> > instance =
-            TfCreateRefPtr(new PyBrokerNoticeWrapper<Self>());
-        instance->_notice = TfCreateRefPtr(new Self(args...));
+        PXR_NS::TfRefPtr<PyBrokerNoticeWrapper<Self> > instance =
+            PXR_NS::TfCreateRefPtr(new PyBrokerNoticeWrapper<Self>());
+        instance->_notice = PXR_NS::TfCreateRefPtr(new Self(args...));
         return instance;
     }
 
     virtual object GetWrap() override
     {
-        TfPyLock lock;
+        PXR_NS::TfPyLock lock;
 
-        return Tf_PyNoticeObjectGenerator::Invoke(*_notice);
+        return PXR_NS::Tf_PyNoticeObjectGenerator::Invoke(*_notice);
     }
 
-    virtual TfRefPtr<BrokerNotice::StageNotice> Get()
+    virtual PXR_NS::TfRefPtr<BrokerNotice::StageNotice> Get()
     {
         return _notice;
     };
@@ -75,22 +76,20 @@ public:
     template <class... Args>
     static void Wrap(const char* name) {
         class_<PyBrokerNoticeWrapper<Self>,
-            TfWeakPtr<PyBrokerNoticeWrapper<Self> >,
+            PXR_NS::TfWeakPtr<PyBrokerNoticeWrapper<Self> >,
             bases<PyBrokerNoticeWrapperBase> >(name)
 
-            .def(TfPyRefAndWeakPtr())
+            .def(PXR_NS::TfPyRefAndWeakPtr())
 
             .def("Init", &PyBrokerNoticeWrapper<Self>::Init<Args...>,
-                return_value_policy<TfPyRefPtrFactory<> >())
+                return_value_policy<PXR_NS::TfPyRefPtrFactory<> >())
             .staticmethod("Init");
     }
 
 private:
-    TfRefPtr<Self> _notice;
+    PXR_NS::TfRefPtr<Self> _notice;
 };
 
 } // namespace unf
-
-PXR_NAMESPACE_CLOSE_SCOPE
 
 #endif // NOTICE_BROKER_NOTICE_WRAPPER

@@ -11,11 +11,11 @@
 namespace Test {
 
 // Declare test dispatchers.
-class NewStageDispatcher : public PXR_NS::unf::Dispatcher
+class NewStageDispatcher : public unf::Dispatcher
 {
 public:
-    NewStageDispatcher(const PXR_NS::unf::BrokerWeakPtr& broker)
-    : PXR_NS::unf::Dispatcher(broker) {}
+    NewStageDispatcher(const unf::BrokerWeakPtr& broker)
+    : unf::Dispatcher(broker) {}
 
     virtual std::string GetIdentifier() const { return "StageDispatcher"; };
 
@@ -24,11 +24,11 @@ public:
     }
 };
 
-class TestDispatcher : public PXR_NS::unf::Dispatcher
+class TestDispatcher : public unf::Dispatcher
 {
 public:
-    TestDispatcher(const PXR_NS::unf::BrokerWeakPtr& broker)
-    : PXR_NS::unf::Dispatcher(broker) {}
+    TestDispatcher(const unf::BrokerWeakPtr& broker)
+    : unf::Dispatcher(broker) {}
 
     virtual std::string GetIdentifier() const { return "TestDispatcher"; };
 

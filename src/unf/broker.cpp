@@ -9,7 +9,7 @@
 #include <pxr/usd/usd/common.h>
 #include <pxr/usd/usd/notice.h>
 
-PXR_NAMESPACE_OPEN_SCOPE
+PXR_NAMESPACE_USING_DIRECTIVE
 
 namespace unf {
 
@@ -201,5 +201,3 @@ void Broker::_ExecuteBroadcasters(NoticeMergerPtr& merger)
 }
 
 } // namespace unf
-
-PXR_NAMESPACE_CLOSE_SCOPE
