@@ -92,7 +92,7 @@ jobs:
                         -DUSD_ROOT="$(pwd)/../USD" \
                         -DCMAKE_MODULE_PATH:FILEPATH="$(pwd)" \
                         -DCMAKE_INSTALL_PREFIX="$(pwd)/inst" \
-                        -BUILD_DOCS=False \
+                        -DBUILD_DOCS=False \
                         ..
                     cmake --build . --target install
             -   name: Run tests
