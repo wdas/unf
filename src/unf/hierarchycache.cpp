@@ -1,27 +1,28 @@
-#include "stagecache.h"
+#include "hierarchycache.h"
+#include <iostream>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
 namespace unf {
-    void Cache::Update(SdfPathVector resynced) {
+    void HierarchyCache::Update(SdfPathVector resynced) {
         //Remove Descendants
         SdfPath::RemoveDescendentPaths(&resynced);
         
         for(auto& p : resynced) {
-            TfRefPtr<Node> node = _findNodeOrUpdate(p);
+            NodeRefPtr node = _findNodeOrUpdate(p);
             if(node){
                 _sync(node, _stage->GetPrimAtPath(p));
             }
         }
     }
 
-    bool Cache::FindNode(const SdfPath& path) {
+    bool HierarchyCache::FindNode(const SdfPath& path) {
             std::vector<std::string> split_paths = _split(path.GetString(), "/");
-            TfRefPtr<Node> curr_node = _root;
+            NodeRefPtr curr_node = _root;
             //TODO: make this sdfpath
             for(size_t i = 1; i < split_paths.size(); i++) {
                 TfToken p_token = TfToken(split_paths[i]);
-                if(!curr_node->children.count(p_token)) {
+                if(curr_node->children.find(p_token) == curr_node->children.end()) {
                     return false;
                 }
                 curr_node = curr_node->children[p_token];
@@ -29,7 +30,7 @@ namespace unf {
            return true;
         }
 
-    std::vector<std::string> Cache::_split (const std::string& s, const std::string& delimiter) {
+    std::vector<std::string> HierarchyCache::_split (const std::string& s, const std::string& delimiter) {
             size_t pos_start = 0, pos_end, delim_len = delimiter.length();
             std::string token;
             std::vector<std::string> res;
@@ -45,7 +46,7 @@ namespace unf {
         }
 
     
-    void Cache::_addToRemoved(TfRefPtr<Node> node) {
+    void HierarchyCache::_addToRemoved(NodeRefPtr node) {
             _removed.insert(node->prim_path);
 
             for(auto c : node->children) {
@@ -53,7 +54,7 @@ namespace unf {
             }
         }
 
-    void Cache::_addToAdded(TfRefPtr<Node> node) {
+    void HierarchyCache::_addToAdded(NodeRefPtr node) {
         _added.insert(node->prim_path);
 
         for(auto c : node->children) {
@@ -61,40 +62,48 @@ namespace unf {
         }
     }
 
-    TfRefPtr<Node> Cache::_findNodeOrUpdate(const SdfPath& path) {
+    NodeRefPtr HierarchyCache::_findNodeOrUpdate(const SdfPath& path) {
             if(path == _stage->GetPseudoRoot().GetPath()) {
                 return _root;
             }
             std::vector<std::string> split_paths = _split(path.GetString(), "/");
-            TfRefPtr<Node> curr_node = _root;
+            NodeRefPtr curr_node = _root;
             //TODO: make this sdfpath
             std::string partial_path = "";
             for(size_t i = 1; i < split_paths.size(); i++) {
                 partial_path += "/" + split_paths[i];
                 TfToken p_token = TfToken(split_paths[i]);
-                UsdPrim child = _stage->GetPrimAtPath(SdfPath(partial_path));
-                //Doesn't exit in stage nor cache -- don't do anything. 
-                if (!child && !curr_node->children.count(p_token)) {
+                auto child_token = curr_node->children.find(p_token);
+                //If we are at the final node of the path, then this is the resyncedpath.
+                if(i == split_paths.size() - 1){
+                    UsdPrim child = _stage->GetPrimAtPath(SdfPath(partial_path));
+                    //Doesn't exit in stage nor cache -- don't do anything. 
+                    if (!child && child_token == curr_node->children.end()) {
+                        return nullptr;
+                    }
+                    //Doesn't exist in the stage -- then the prim was removed.
+                    else if (!child) {
+                        _addToRemoved(curr_node->children[p_token]);
+                        curr_node->children.erase(p_token);
+                        return nullptr;
+                    }
+                    //Doesn't exist in the cache but in stage -- need to add prim
+                    else if (child_token == curr_node->children.end()){
+                        curr_node->children[p_token] = TfCreateRefPtr(new Node(child));
+                        _addToAdded(curr_node->children[p_token]);
+                        return nullptr;
+                    }
+                }
+                if(child_token == curr_node->children.end()) {
+                    std::cerr << "Invalid path passed: Attempting to look up path whose parent doesn't exit." << std::endl;
                     return nullptr;
                 }
-                //Doesn't exist in the stage -- then the prim was removed.
-                else if (!child) {
-                    _addToRemoved(curr_node->children[p_token]);
-                    curr_node->children.erase(p_token);
-                    return nullptr;
-                }
-                //Doesn't exist in the cache but in stage -- need to add prim
-                else if (!curr_node->children.count(p_token)){
-                    curr_node->children[p_token] = TfCreateRefPtr(new Node(child));
-                    _addToAdded(curr_node->children[p_token]);
-                    return nullptr;
-                }
-                curr_node = curr_node->children[p_token];
+                curr_node = child_token->second;
             }
             return curr_node;
         }
     
-    void Cache::_sync(TfRefPtr<Node> node, const UsdPrim& prim) {
+    void HierarchyCache::_sync(NodeRefPtr node, const UsdPrim& prim) {
             if(node->prim_path != _stage->GetPseudoRoot().GetPath()){
                 _modified.insert(node->prim_path);
             }
@@ -107,7 +116,7 @@ namespace unf {
             //Loop over real prim's children
             for(const auto& child_prim : prim.GetChildren()) {
                 TfToken child_name = child_prim.GetName();
-                if(node->children.count(child_name)) {
+                if(node->children.find(child_name) != node->children.end()) {
                     //Exists in cache
                     //Sync on child and on stage
                     _sync(node->children[child_name], child_prim);

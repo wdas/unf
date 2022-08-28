@@ -64,15 +64,19 @@ target_link_libraries(testUnitTransaction
 )
 gtest_discover_tests(testUnitTransaction)
 
-add_executable(testStageCache testStageCache.cpp)
-target_link_libraries(testStageCache
+add_executable(testHierarchyCache testHierarchyCache.cpp)
+target_link_libraries(testHierarchyCache
     PRIVATE
         unf
         unfTest
         GTest::gtest
         GTest::gtest_main
 )
-gtest_discover_tests(testStageCache)
+gtest_discover_tests(
+    testHierarchyCache
+    PROPERTIES ENVIRONMENT
+        "USD_TEST_PATH=${CMAKE_CURRENT_SOURCE_DIR}/../testenv/testHierarchyCache"
+)
 
 add_subdirectory(plugins)
 

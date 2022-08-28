@@ -1,4 +1,4 @@
-#include "unf/stagecache.h"
+#include "unf/hierarchycache.h"
 #include "unf/notice.h"
 #include "unf/broker.h"
 #include "unf/transaction.h"
@@ -14,15 +14,44 @@
 #include <pxr/usd/usd/prim.h>
 #include <pxr/usd/usd/variantSets.h>
 
+#include <cstdlib>
 #include <string>
 
-using unf::Cache;
+using unf::HierarchyCache;
+namespace {
+    //https://stackoverflow.com/questions/874134/find-out-if-string-ends-with-another-string-in-c
+    bool hasEnding (std::string const &fullString, std::string const &ending) {
+        if (fullString.length() >= ending.length()) {
+            return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
+        } else {
+            return false;
+        }
+    }
 
-TEST(AddPrim, StageCache)
+    std::string GetTestFilePath(const std::string& filePath) {
+        std::string root = std::getenv("USD_TEST_PATH");
+        return root + filePath;
+    }
+
+    UsdStageRefPtr GetStage(const std::string& filePath) {
+        return PXR_NS::UsdStage::Open(GetTestFilePath(filePath));
+    }
+
+    std::string GetLayer(const UsdStageRefPtr& stage, const std::string& layer) {
+        for(auto l : stage->GetLayerStack()) {
+            if(hasEnding(l->GetIdentifier(), layer)) {
+                return l->GetIdentifier();
+            }
+        }
+        return "";
+    }
+}
+
+TEST(AddPrim, HierarchyCache)
 {
-    auto stage = PXR_NS::UsdStage::Open("/disney/users/chong/projects/usd-notice-broker/test/testenv/scene.usda");
-    //auto stage = PXR_NS::UsdStage::Open("../testenv/scene.usda");
-    Cache cache = Cache(stage);
+    auto stage = GetStage("/scene.usda");
+
+    HierarchyCache cache = HierarchyCache(stage);
 
     ::Test::ObjChangedListener l = ::Test::ObjChangedListener(&cache);
     
@@ -38,14 +67,12 @@ TEST(AddPrim, StageCache)
 
     cache.Clear();
     ASSERT_EQ(cache.GetAdded().size(), 0);
-    
 }
 
-TEST(ModifyPrim, StageCache)
+TEST(ModifyPrim, HierarchyCache)
 {
-    auto stage = PXR_NS::UsdStage::Open("/disney/users/chong/projects/usd-notice-broker/test/testenv/scene.usda");
-    //auto stage = PXR_NS::UsdStage::Open("../testenv/scene.usda");
-    Cache cache = Cache(stage);
+    auto stage = GetStage("/scene.usda");
+    HierarchyCache cache = HierarchyCache(stage);
 
     ::Test::ObjChangedListener l = ::Test::ObjChangedListener(&cache);
 
@@ -67,11 +94,10 @@ TEST(ModifyPrim, StageCache)
     cache.Clear();
 }
 
-TEST(RemovePrimBase, StageCache)
+TEST(RemovePrimBase, HierarchyCache)
 {
-    auto stage = PXR_NS::UsdStage::Open("/disney/users/chong/projects/usd-notice-broker/test/testenv/scene.usda");
-    //auto stage = PXR_NS::UsdStage::Open("../testenv/scene.usda");
-    Cache cache = Cache(stage);
+    auto stage = GetStage("/scene.usda");
+    HierarchyCache cache = HierarchyCache(stage);
 
     ::Test::ObjChangedListener l = ::Test::ObjChangedListener(&cache);
 
@@ -102,12 +128,11 @@ TEST(RemovePrimBase, StageCache)
     cache.Clear();
 }
 
-TEST(RemovePrimComplex, StageCache)
+TEST(RemovePrimComplex, HierarchyCache)
 {
     
-    auto stage = PXR_NS::UsdStage::Open("/disney/users/chong/projects/usd-notice-broker/test/testenv/scene.usda");
-    //auto stage = PXR_NS::UsdStage::Open("../testenv/scene.usda");
-    Cache cache = Cache(stage);
+    auto stage = GetStage("/scene.usda");
+    HierarchyCache cache = HierarchyCache(stage);
 
     ::Test::ObjChangedListener l = ::Test::ObjChangedListener(&cache);
 
@@ -145,11 +170,10 @@ TEST(RemovePrimComplex, StageCache)
     cache.Clear();
 }
 
-TEST(AddPrimComplex, StageCache)
+TEST(AddPrimComplex, HierarchyCache)
 {
-    auto stage = PXR_NS::UsdStage::Open("/disney/users/chong/projects/usd-notice-broker/test/testenv/scene.usda");
-    //auto stage = PXR_NS::UsdStage::Open("../testenv/scene.usda");
-    Cache cache = Cache(stage);
+    auto stage = GetStage("/scene.usda");
+    HierarchyCache cache = HierarchyCache(stage);
 
     ::Test::ObjChangedListener l = ::Test::ObjChangedListener(&cache);
 
@@ -193,9 +217,9 @@ TEST(AddPrimComplex, StageCache)
     cache.Clear();
 }
 
-TEST(VariantSwitch, StageCache) {
-    auto stage = PXR_NS::UsdStage::Open("/disney/users/chong/projects/usd-notice-broker/test/testenv/scene.usda");
-    Cache cache = Cache(stage);
+TEST(VariantSwitch, HierarchyCache) {
+    auto stage = GetStage("/scene.usda");
+    HierarchyCache cache = HierarchyCache(stage);
 
     ::Test::ObjChangedListener l = ::Test::ObjChangedListener(&cache);
 
@@ -212,30 +236,32 @@ TEST(VariantSwitch, StageCache) {
     cache.Clear();
 }
 
-TEST(MuteAndUnmuteLayers, StageCache) {
-    auto stage = PXR_NS::UsdStage::Open("/disney/users/chong/projects/usd-notice-broker/test/testenv/scene.usda");
-    Cache cache = Cache(stage);
+TEST(MuteAndUnmuteLayers, HierarchyCache) {
+    auto stage = GetStage("/scene.usda");
+    HierarchyCache cache = HierarchyCache(stage);
 
     ::Test::ObjChangedListener l = ::Test::ObjChangedListener(&cache);
 
-    stage->MuteLayer("/disney/users/chong/projects/usd-notice-broker/test/testenv/sublayer.usda");
+    std::string layerIdentifier = GetLayer(stage, "/sublayer.usda");
 
+    stage->MuteLayer(layerIdentifier);
+    
     ASSERT_EQ(cache.GetRemoved().size(), 3);
     ASSERT_EQ(cache.GetAdded().size(), 0);
     ASSERT_EQ(cache.GetModified().size(), 29);
 
     cache.Clear();
 
-    stage->UnmuteLayer("/disney/users/chong/projects/usd-notice-broker/test/testenv/sublayer.usda");
+    stage->UnmuteLayer(layerIdentifier);
     ASSERT_EQ(cache.GetAdded().size(), 3);
     ASSERT_EQ(cache.GetRemoved().size(), 0);
     ASSERT_EQ(cache.GetModified().size(), 29);
 
 }
 
-TEST(TransactionChanges, StageCache) {
-    auto stage = PXR_NS::UsdStage::Open("/disney/users/chong/projects/usd-notice-broker/test/testenv/scene.usda");
-    Cache cache = Cache(stage);
+TEST(TransactionChanges, HierarchyCache) {
+    auto stage = GetStage("/scene.usda");
+    HierarchyCache cache = HierarchyCache(stage);
     ::Test::unfObjChangedListener l = ::Test::unfObjChangedListener(&cache);
 
     auto broker = PXR_NS::unf::Broker::Create(stage);
@@ -305,21 +331,24 @@ TEST(TransactionChanges, StageCache) {
     {
         PXR_NS::unf::NoticeTransaction transaction(broker);
 
-        stage->MuteLayer("/disney/users/chong/projects/usd-notice-broker/test/testenv/sublayer2.usda");
-        stage->UnmuteLayer("/disney/users/chong/projects/usd-notice-broker/test/testenv/sublayer2.usda");
+        std::string layerIdentifier = GetLayer(stage, "/sublayer2.usda");
+        stage->MuteLayer(layerIdentifier);
+        stage->UnmuteLayer(layerIdentifier);
     }
 
     ASSERT_EQ(cache.GetModified().size(), 39);
     ASSERT_EQ(cache.GetAdded().size(), 0);
     ASSERT_EQ(cache.GetRemoved().size(), 0);
-
-    stage->MuteLayer("/disney/users/chong/projects/usd-notice-broker/test/testenv/sublayer.usda");
+    std::string layer1Identifier = GetLayer(stage, "/sublayer.usda");
+    std::string layer2Identifier = GetLayer(stage, "/sublayer2.usda");
+    
+    stage->MuteLayer(layer1Identifier);
     cache.Clear();
     {
         PXR_NS::unf::NoticeTransaction transaction(broker);
 
-        stage->MuteLayer("/disney/users/chong/projects/usd-notice-broker/test/testenv/sublayer2.usda");
-        stage->UnmuteLayer("/disney/users/chong/projects/usd-notice-broker/test/testenv/sublayer.usda");
+        stage->MuteLayer(layer2Identifier);
+        stage->UnmuteLayer(layer1Identifier);
     }
     
     ASSERT_EQ(cache.GetModified().size(), 31);

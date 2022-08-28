@@ -1,7 +1,7 @@
 #ifndef TEST_NOTICE_BROKER_LISTENER_H
 #define TEST_NOTICE_BROKER_LISTENER_H
 
-#include "unf/stagecache.h"
+#include "unf/hierarchycache.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/notice.h>
@@ -107,7 +107,7 @@ private:
 // Usd ObjectsChanged notice listener
 class ObjChangedListener : public TfWeakBase {
     public:
-        ObjChangedListener(unf::Cache* c) : _cache(c) {
+        ObjChangedListener(unf::HierarchyCache* c) : _cache(c) {
             _key = TfNotice::Register(TfCreateWeakPtr(this), &ObjChangedListener::_CallBack);
         }
         ~ObjChangedListener() {
@@ -124,13 +124,13 @@ class ObjChangedListener : public TfWeakBase {
         }
 
         TfNotice::Key _key;
-        unf::Cache* _cache;
+        unf::HierarchyCache* _cache;
  };
 
 // unf ObjectsChanged notice listener
 class unfObjChangedListener : public TfWeakBase {
     public:
-        unfObjChangedListener(unf::Cache* c) : _cache(c) {
+        unfObjChangedListener(unf::HierarchyCache* c) : _cache(c) {
             _key = TfNotice::Register(TfCreateWeakPtr(this), &unfObjChangedListener::_CallBack);
         }
         ~unfObjChangedListener() {
@@ -143,7 +143,7 @@ class unfObjChangedListener : public TfWeakBase {
         }
 
         TfNotice::Key _key;
-        unf::Cache* _cache;
+        unf::HierarchyCache* _cache;
  };
 } // namespace Test
 

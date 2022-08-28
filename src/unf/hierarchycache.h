@@ -1,5 +1,5 @@
-#ifndef NOTICE_BROKER_STAGE_CACHE_H
-#define NOTICE_BROKER_STAGE_CACHE_H
+#ifndef NOTICE_BROKER_HIERARCHY_CACHE_H
+#define NOTICE_BROKER_HIERARCHY_CACHE_H
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/stage.h>
@@ -18,6 +18,9 @@
 PXR_NAMESPACE_OPEN_SCOPE
 
 namespace unf {
+
+struct Node;
+using NodeRefPtr = TfRefPtr<Node>;
 using UnorderedSdfPathSet = std::unordered_set<SdfPath, SdfPath::Hash>;
 
 struct Node : public TfRefBase {
@@ -28,12 +31,12 @@ struct Node : public TfRefBase {
         }
     }
     SdfPath prim_path;
-    std::unordered_map<TfToken, TfRefPtr<Node>, TfToken::HashFunctor> children;
+    std::unordered_map<TfToken, NodeRefPtr, TfToken::HashFunctor> children;
 };
 
-class Cache : public TfRefBase, TfWeakBase {
+class HierarchyCache : public TfRefBase, TfWeakBase {
     public:
-        Cache(const UsdStageWeakPtr stage) : _stage(stage) {
+        HierarchyCache(const UsdStageWeakPtr stage) : _stage(stage) {
             _root = TfCreateRefPtr(new Node(stage->GetPseudoRoot()));
         }
 
@@ -63,16 +66,16 @@ class Cache : public TfRefBase, TfWeakBase {
         // for string delimiter
         std::vector<std::string> _split (const std::string& s, const std::string& delimiter);
 
-        void _addToRemoved(TfRefPtr<Node> node);
+        void _addToRemoved(NodeRefPtr node);
 
-        void _addToAdded(TfRefPtr<Node> node);
+        void _addToAdded(NodeRefPtr node);
 
-        TfRefPtr<Node> _findNodeOrUpdate(const SdfPath& path);
+        NodeRefPtr _findNodeOrUpdate(const SdfPath& path);
 
-        void _sync(TfRefPtr<Node> node, const UsdPrim& prim);
+        void _sync(NodeRefPtr node, const UsdPrim& prim);
 
 
-        TfRefPtr<Node> _root;
+        NodeRefPtr _root;
         UnorderedSdfPathSet _added;
         UnorderedSdfPathSet _removed;
         UnorderedSdfPathSet _modified;
@@ -84,4 +87,4 @@ class Cache : public TfRefBase, TfWeakBase {
 
 PXR_NAMESPACE_CLOSE_SCOPE
 
-#endif // NOTICE_BROKER_STAGE_CACHE_H
+#endif // NOTICE_BROKER_HIERARCHY_CACHE_H
