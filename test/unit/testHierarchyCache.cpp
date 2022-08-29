@@ -2,6 +2,7 @@
 #include "unf/notice.h"
 #include "unf/broker.h"
 #include "unf/transaction.h"
+#include "unf/hierarchyBroadcaster.h"
 
 #include "unfTest/listener.h"
 

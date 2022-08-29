@@ -56,6 +56,18 @@ class HierarchyCache : public TfRefBase, TfWeakBase {
             return _modified;
         }
 
+        UnorderedSdfPathSet&& TakeAdded() {
+            return std::move(_added);
+        }
+
+        UnorderedSdfPathSet&& TakeRemoved() {
+            return std::move(_removed);
+        }
+        
+        UnorderedSdfPathSet&& TakeModified() {
+            return std::move(_modified);
+        }
+
         void Clear() {
             _added.clear();
             _removed.clear();

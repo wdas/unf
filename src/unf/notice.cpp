@@ -32,14 +32,16 @@ ObjectsChanged::ObjectsChanged(const UsdNotice::ObjectsChanged& notice)
     }
     for (const auto& path: notice.GetChangedInfoOnlyPaths()) {
         _infoChanges.push_back(path);
+        _changedFields[path] = TfTokenSet(notice.GetChangedFields(path).begin(), notice.GetChangedFields(path).end());
     }
+
 }
 
 ObjectsChanged::ObjectsChanged(const ObjectsChanged& other)
     : _resyncChanges(other._resyncChanges)
     , _infoChanges(other._infoChanges)
+    , _changedFields(other._changedFields)
 {
-
 }
 
 ObjectsChanged& ObjectsChanged::operator=(const ObjectsChanged& other)
@@ -47,6 +49,7 @@ ObjectsChanged& ObjectsChanged::operator=(const ObjectsChanged& other)
     ObjectsChanged copy(other);
     std::swap(_resyncChanges, copy._resyncChanges);
     std::swap(_infoChanges, copy._infoChanges);
+    std::swap(_changedFields, copy._changedFields);
     return *this;
 }
 
@@ -70,9 +73,22 @@ void ObjectsChanged::Merge(ObjectsChanged&& notice)
         auto end = begin + infoChangesSize;
         auto it = std::find(begin, end, path);
         if (it == end) {
+            _changedFields[path] = std::move(notice._changedFields[path]);
             _infoChanges.push_back(std::move(path));
         }
+        else {
+            _changedFields[path].insert(notice._changedFields[path].begin(), notice._changedFields[path].end());
+        }
     }
+}
+
+bool ObjectsChanged::HasChangedFields(const SdfPath& path) const
+{
+    if(_changedFields.find(path) != _changedFields.end()) {
+        return true;
+    }
+
+    return false;
 }
 
 LayerMutingChanged::LayerMutingChanged(

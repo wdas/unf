@@ -8,11 +8,15 @@
 #include <pxr/usd/sdf/path.h>
 #include <pxr/usd/usd/notice.h>
 
-#include <map>
+#include <unordered_map>
+#include <unordered_set>
 #include <string>
 #include <vector>
 
 namespace unf {
+
+using TfTokenSet = std::unordered_set<TfToken, TfToken::HashFunctor>;
+using ChangedFieldMap = std::unordered_map<SdfPath, TfTokenSet, SdfPath::Hash>;
 
 namespace BrokerNotice {
 
@@ -69,6 +73,10 @@ public:
     virtual void Merge(Self&&) {}
 
     virtual std::string GetTypeId() const {
+        return GetStaticTypeId();
+    }
+
+    static std::string GetStaticTypeId() {
         return typeid(Self).name();
     }
 };
@@ -98,12 +106,24 @@ public:
         return _infoChanges;
     }
 
+    const TfTokenSet& GetChangedFields(const SdfPath& path) const
+    {
+        return _changedFields.at(path);
+    }
+
+    bool HasChangedFields(const SdfPath&) const;
+
+    const ChangedFieldMap& GetChangedFieldMap() const {
+        return _changedFields;
+    }
+
 protected:
     explicit ObjectsChanged(const PXR_NS::UsdNotice::ObjectsChanged&);
 
 private:
     PXR_NS::SdfPathVector _resyncChanges;
     PXR_NS::SdfPathVector _infoChanges;
+    ChangedFieldMap _changedFields;
 
     friend StageNoticeImpl<ObjectsChanged>;
 };
