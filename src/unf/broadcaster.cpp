@@ -4,7 +4,7 @@
 
 #include <pxr/pxr.h>
 
-PXR_NAMESPACE_OPEN_SCOPE
+PXR_NAMESPACE_USING_DIRECTIVE
 
 namespace unf {
 
@@ -25,5 +25,3 @@ void Broadcaster::_AddChild(const BroadcasterPtr& child)
 }
 
 } // namespace unf
-
-PXR_NAMESPACE_CLOSE_SCOPE

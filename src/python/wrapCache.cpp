@@ -14,7 +14,7 @@
 #include <boost/python.hpp>
 
 using namespace boost::python;
-using namespace PXR_NS::unf;
+using namespace unf;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 

@@ -7,7 +7,7 @@
 #include <boost/python.hpp>
 
 using namespace boost::python;
-using namespace PXR_NS::unf::BrokerNotice;
+using namespace unf::BrokerNotice;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 

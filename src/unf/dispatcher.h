@@ -11,11 +11,9 @@
 #include <pxr/base/tf/weakBase.h>
 #include <pxr/usd/usd/common.h>
 
-PXR_NAMESPACE_OPEN_SCOPE
-
 namespace unf {
 
-class Dispatcher : public TfRefBase, public TfWeakBase {
+class Dispatcher : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
 public:
     virtual ~Dispatcher() { Revoke(); };
 
@@ -30,20 +28,21 @@ protected:
     template<class InputNotice, class OutputNotice>
     void _Register()
     {
-        auto self = TfCreateWeakPtr(this);
+        auto self = PXR_NS::TfCreateWeakPtr(this);
         auto cb = &Dispatcher::_OnReceiving<InputNotice, OutputNotice>;
-        _keys.push_back(TfNotice::Register(self, cb, _broker->GetStage()));
+        _keys.push_back(
+            PXR_NS::TfNotice::Register(self, cb, _broker->GetStage()));
     }
 
     template<class InputNotice, class OutputNotice>
     void _OnReceiving(const InputNotice& notice)
     {
-        TfRefPtr<OutputNotice> _notice = OutputNotice::Create(notice);
+        PXR_NS::TfRefPtr<OutputNotice> _notice = OutputNotice::Create(notice);
         _broker->Send(_notice);
     }
 
     BrokerWeakPtr _broker;
-    std::vector<TfNotice::Key> _keys;
+    std::vector<PXR_NS::TfNotice::Key> _keys;
 };
 
 class StageDispatcher : public Dispatcher {
@@ -58,10 +57,10 @@ private:
     friend class Broker;
 };
 
-class DispatcherFactory : public TfType::FactoryBase
+class DispatcherFactory : public PXR_NS::TfType::FactoryBase
 {
 public:
-    virtual TfRefPtr<Dispatcher> New(
+    virtual PXR_NS::TfRefPtr<Dispatcher> New(
         const BrokerWeakPtr& broker) const = 0;
 };
 
@@ -69,22 +68,20 @@ template <class T>
 class DispatcherFactoryImpl : public DispatcherFactory
 {
 public:
-    virtual TfRefPtr<Dispatcher> New(
+    virtual PXR_NS::TfRefPtr<Dispatcher> New(
         const BrokerWeakPtr& broker) const override
     {
-        return TfCreateRefPtr(new T(broker));
+        return PXR_NS::TfCreateRefPtr(new T(broker));
     }
 };
 
 template <class T, class ...Bases>
 void DispatcherDefine()
 {
-    TfType::Define<T, TfType::Bases<Bases...> >()
+    PXR_NS::TfType::Define<T, PXR_NS::TfType::Bases<Bases...> >()
         .template SetFactory<DispatcherFactoryImpl<T> >();
 }
 
 } // namespace unf
-
-PXR_NAMESPACE_CLOSE_SCOPE
 
 #endif // NOTICE_BROKER_DISPATCHER_H

@@ -5,7 +5,7 @@
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/common.h>
 
-PXR_NAMESPACE_OPEN_SCOPE
+PXR_NAMESPACE_USING_DIRECTIVE
 
 namespace unf {
 
@@ -74,5 +74,3 @@ void NoticeMerger::Send(const UsdStageWeakPtr& stage)
 }
 
 } // namespace unf
-
-PXR_NAMESPACE_CLOSE_SCOPE

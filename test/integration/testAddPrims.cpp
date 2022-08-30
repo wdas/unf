@@ -13,7 +13,7 @@
 
 // namespace aliases for convenience.
 using _USD = PXR_NS::UsdNotice;
-namespace _Broker = PXR_NS::unf::BrokerNotice;
+namespace _Broker = unf::BrokerNotice;
 
 class AddPrimsTest : public ::testing::Test {
 protected:
@@ -47,7 +47,7 @@ protected:
 
 TEST_F(AddPrimsTest, Simple)
 {
-    auto broker = PXR_NS::unf::Broker::Create(_stage);
+    auto broker = unf::Broker::Create(_stage);
 
     _stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
     _stage->DefinePrim(PXR_NS::SdfPath {"/Bar"});
@@ -69,7 +69,7 @@ TEST_F(AddPrimsTest, Simple)
 
 TEST_F(AddPrimsTest, Batching)
 {
-    auto broker = PXR_NS::unf::Broker::Create(_stage);
+    auto broker = unf::Broker::Create(_stage);
 
     broker->BeginTransaction();
 
@@ -103,7 +103,7 @@ TEST_F(AddPrimsTest, Batching)
 
 TEST_F(AddPrimsTest, Blocking)
 {
-    auto broker = PXR_NS::unf::Broker::Create(_stage);
+    auto broker = unf::Broker::Create(_stage);
 
     // Pass a predicate to block all broker notices.
     broker->BeginTransaction(
@@ -139,7 +139,7 @@ TEST_F(AddPrimsTest, Blocking)
 
 TEST_F(AddPrimsTest, PartialBlocking)
 {
-    auto broker = PXR_NS::unf::Broker::Create(_stage);
+    auto broker = unf::Broker::Create(_stage);
 
     std::string target = typeid(_Broker::ObjectsChanged).name();
 
@@ -177,7 +177,7 @@ TEST_F(AddPrimsTest, PartialBlocking)
 
 TEST_F(AddPrimsTest, Transaction_ObjectsChanged)
 {
-    auto broker = PXR_NS::unf::Broker::Create(_stage);
+    auto broker = unf::Broker::Create(_stage);
 
     using Notice = _Broker::ObjectsChanged;
 
@@ -212,9 +212,9 @@ TEST_F(AddPrimsTest, Transaction_ObjectsChanged)
 
 TEST_F(AddPrimsTest, Caching_ObjectsChanged)
 {
-    auto broker = PXR_NS::unf::Broker::Create(_stage);
+    auto broker = unf::Broker::Create(_stage);
 
-    PXR_NS::unf::NoticeCache<_Broker::ObjectsChanged> cache;
+    unf::NoticeCache<_Broker::ObjectsChanged> cache;
 
     _stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
     _stage->DefinePrim(PXR_NS::SdfPath {"/Bar"});
@@ -259,9 +259,9 @@ TEST_F(AddPrimsTest, Caching_ObjectsChanged)
 
 TEST_F(AddPrimsTest, Caching_StageContentsChanged)
 {
-    auto broker = PXR_NS::unf::Broker::Create(_stage);
+    auto broker = unf::Broker::Create(_stage);
 
-    PXR_NS::unf::NoticeCache<_Broker::StageContentsChanged> cache;
+    unf::NoticeCache<_Broker::StageContentsChanged> cache;
 
     _stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
     _stage->DefinePrim(PXR_NS::SdfPath {"/Bar"});

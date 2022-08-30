@@ -5,7 +5,7 @@
 #include <pxr/pxr.h>
 #include <pxr/base/tf/notice.h>
 
-PXR_NAMESPACE_OPEN_SCOPE
+PXR_NAMESPACE_USING_DIRECTIVE
 
 TF_REGISTRY_FUNCTION(TfType)
 {
@@ -29,5 +29,3 @@ TF_REGISTRY_FUNCTION(TfType)
         ::Test::OutputNotice2,
         TfType::Bases<unf::BrokerNotice::StageNotice> >();
 }
-
-PXR_NAMESPACE_CLOSE_SCOPE
