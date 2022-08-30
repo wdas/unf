@@ -54,7 +54,7 @@ if (Pytest_FOUND AND NOT TARGET Pytest::Pytest)
     function(pytest_discover_tests NAME)
         cmake_parse_arguments(
             PARSE_ARGV 1 "" ""
-            "WORKING_DIRECTORY;TRIM_NAME_PREFIX"
+            "WORKING_DIRECTORY;TRIM_FROM_NAME"
             "LIBRARY_PATH_PREPEND;PYTHON_PATH_PREPEND"
         )
 
@@ -72,7 +72,7 @@ if (Pytest_FOUND AND NOT TARGET Pytest::Pytest)
                 -DPREFIX_NAME=${NAME}
                 -DLIBRARY_PATH_PREPEND=${_LIBRARY_PATH_PREPEND}
                 -DPYTHON_PATH_PREPEND=${_PYTHON_PATH_PREPEND}
-                -DTRIM_NAME_PREFIX=${_TRIM_NAME_PREFIX}
+                -DTRIM_FROM_NAME=${_TRIM_FROM_NAME}
                 -DWORKING_DIRECTORY=${_WORKING_DIRECTORY}
                 -DPROJECT_SOURCE_DIR=${PROJECT_SOURCE_DIR}
                 -DCTEST_FILE=${_tests_file}

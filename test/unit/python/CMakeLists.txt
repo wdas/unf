@@ -5,5 +5,5 @@ pytest_discover_tests(
         $<TARGET_FILE_DIR:pyUnf>
     PYTHON_PATH_PREPEND
         "$<TARGET_FILE_DIR:pyUnf>/.."
-    TRIM_NAME_PREFIX "^test_"
+    TRIM_FROM_NAME "^test_"
 )

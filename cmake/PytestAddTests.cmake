@@ -57,9 +57,9 @@ if(CMAKE_SCRIPT_MODE_FILE)
             set(test_name "${_func}")
         endif()
 
-        if (TRIM_NAME_PREFIX)
+        if (TRIM_FROM_NAME)
             string(REGEX REPLACE
-                "${TRIM_NAME_PREFIX}" "" test_name "${test_name}")
+                "${TRIM_FROM_NAME}" "" test_name "${test_name}")
         endif()
 
         set(test_name "${PREFIX_NAME}.${test_name}")
