@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(BUILD_TESTS "Build tests" ON)
-option(BUILD_DOCS "Build documentation" ON)
+# option(BUILD_DOCS "Build documentation" ON)
 option(BUILD_PYTHON_BINDINGS "Build Python Bindings" ON)
 option(BUILD_SHARED_LIBS "Build Shared Library" ON)
 
@@ -50,6 +50,8 @@ if(BUILD_PYTHON_BINDINGS)
     set(PYTHON_DESTINATION
         "${CMAKE_INSTALL_LIBDIR}/python${PYTHON_VERSION}/site-packages"
         CACHE INTERNAL "Python library path.")
+else()
+    find_package(Boost 1.70.0 REQUIRED)
 endif()
 
 find_package(USD 0.20.11 REQUIRED)
@@ -71,6 +73,10 @@ if (BUILD_TESTS)
     endif()
 
     include(GoogleTest)
+
+    if(BUILD_PYTHON_BINDINGS)
+        find_package(Pytest 4.6.11 REQUIRED)
+    endif()
 
     enable_testing()
 

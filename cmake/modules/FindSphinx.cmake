@@ -12,7 +12,7 @@
 #     find_package(Sphinx 1.8.6 REQUIRED)
 #
 # Note:
-#     The SPHINX_ROOT environment variable or CMake variable can be used to
+#     The Sphinx_ROOT environment variable or CMake variable can be used to
 #     prepend a custom search path.
 #     (https://cmake.org/cmake/help/latest/policy/CMP0074.html)
 
@@ -54,8 +54,7 @@ if (Sphinx_FOUND AND NOT TARGET Sphinx::Build)
     function(sphinx_add_docs targetName)
         set(_comment "Generate documentation for ${targetName}")
 
-        set(_single_values SOURCE OUTPUT)
-        cmake_parse_arguments(PARSE_ARGV 1 _args "" "${_single_values}" "")
+        cmake_parse_arguments(PARSE_ARGV 1 _args "" "SOURCE;OUTPUT" "")
 
         add_custom_target(${targetName} VERBATIM
             COMMAND ${CMAKE_COMMAND} -E make_directory ${_args_OUTPUT}
