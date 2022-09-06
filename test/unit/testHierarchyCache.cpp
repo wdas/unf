@@ -2,7 +2,6 @@
 #include "unf/notice.h"
 #include "unf/broker.h"
 #include "unf/transaction.h"
-#include "unf/hierarchyBroadcaster.h"
 
 #include "unfTest/listener.h"
 
@@ -20,15 +19,6 @@
 
 using unf::HierarchyCache;
 namespace {
-    //https://stackoverflow.com/questions/874134/find-out-if-string-ends-with-another-string-in-c
-    bool hasEnding (std::string const &fullString, std::string const &ending) {
-        if (fullString.length() >= ending.length()) {
-            return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
-        } else {
-            return false;
-        }
-    }
-
     std::string GetTestFilePath(const std::string& filePath) {
         std::string root = std::getenv("USD_TEST_PATH");
         return root + filePath;
@@ -37,18 +27,9 @@ namespace {
     UsdStageRefPtr GetStage(const std::string& filePath) {
         return PXR_NS::UsdStage::Open(GetTestFilePath(filePath));
     }
-
-    std::string GetLayer(const UsdStageRefPtr& stage, const std::string& layer) {
-        for(auto l : stage->GetLayerStack()) {
-            if(hasEnding(l->GetIdentifier(), layer)) {
-                return l->GetIdentifier();
-            }
-        }
-        return "";
-    }
 }
 
-TEST(AddPrim, HierarchyCache)
+TEST(HierarchyCache, AddPrim)
 {
     auto stage = GetStage("/scene.usda");
 
@@ -70,7 +51,7 @@ TEST(AddPrim, HierarchyCache)
     ASSERT_EQ(cache.GetAdded().size(), 0);
 }
 
-TEST(ModifyPrim, HierarchyCache)
+TEST(HierarchyCache, ModifyPrim)
 {
     auto stage = GetStage("/scene.usda");
     HierarchyCache cache = HierarchyCache(stage);
@@ -95,7 +76,7 @@ TEST(ModifyPrim, HierarchyCache)
     cache.Clear();
 }
 
-TEST(RemovePrimBase, HierarchyCache)
+TEST(HierarchyCache, RemovePrimBase)
 {
     auto stage = GetStage("/scene.usda");
     HierarchyCache cache = HierarchyCache(stage);
@@ -129,7 +110,7 @@ TEST(RemovePrimBase, HierarchyCache)
     cache.Clear();
 }
 
-TEST(RemovePrimComplex, HierarchyCache)
+TEST(HierarchyCache, RemovePrimComplex)
 {
     
     auto stage = GetStage("/scene.usda");
@@ -171,7 +152,7 @@ TEST(RemovePrimComplex, HierarchyCache)
     cache.Clear();
 }
 
-TEST(AddPrimComplex, HierarchyCache)
+TEST(HierarchyCache, AddPrimComplex)
 {
     auto stage = GetStage("/scene.usda");
     HierarchyCache cache = HierarchyCache(stage);
@@ -218,7 +199,7 @@ TEST(AddPrimComplex, HierarchyCache)
     cache.Clear();
 }
 
-TEST(VariantSwitch, HierarchyCache) {
+TEST(HierarchyCache, VariantSwitch) {
     auto stage = GetStage("/scene.usda");
     HierarchyCache cache = HierarchyCache(stage);
 
@@ -237,13 +218,13 @@ TEST(VariantSwitch, HierarchyCache) {
     cache.Clear();
 }
 
-TEST(MuteAndUnmuteLayers, HierarchyCache) {
+TEST(HierarchyCache, MuteAndUnmuteLayers) {
     auto stage = GetStage("/scene.usda");
     HierarchyCache cache = HierarchyCache(stage);
 
     ::Test::ObjChangedListener l = ::Test::ObjChangedListener(&cache);
 
-    std::string layerIdentifier = GetLayer(stage, "/sublayer.usda");
+    std::string layerIdentifier = GetTestFilePath("/sublayer.usda");
 
     stage->MuteLayer(layerIdentifier);
     
@@ -260,7 +241,7 @@ TEST(MuteAndUnmuteLayers, HierarchyCache) {
 
 }
 
-TEST(TransactionChanges, HierarchyCache) {
+TEST(HierarchyCache, TransactionChanges) {
     auto stage = GetStage("/scene.usda");
     HierarchyCache cache = HierarchyCache(stage);
     ::Test::unfObjChangedListener l = ::Test::unfObjChangedListener(&cache);
@@ -332,7 +313,7 @@ TEST(TransactionChanges, HierarchyCache) {
     {
         PXR_NS::unf::NoticeTransaction transaction(broker);
 
-        std::string layerIdentifier = GetLayer(stage, "/sublayer2.usda");
+        std::string layerIdentifier = GetTestFilePath("/sublayer2.usda");
         stage->MuteLayer(layerIdentifier);
         stage->UnmuteLayer(layerIdentifier);
     }
@@ -340,8 +321,8 @@ TEST(TransactionChanges, HierarchyCache) {
     ASSERT_EQ(cache.GetModified().size(), 39);
     ASSERT_EQ(cache.GetAdded().size(), 0);
     ASSERT_EQ(cache.GetRemoved().size(), 0);
-    std::string layer1Identifier = GetLayer(stage, "/sublayer.usda");
-    std::string layer2Identifier = GetLayer(stage, "/sublayer2.usda");
+    std::string layer1Identifier = GetTestFilePath("/sublayer.usda");
+    std::string layer2Identifier = GetTestFilePath("/sublayer2.usda");
     
     stage->MuteLayer(layer1Identifier);
     cache.Clear();
@@ -355,8 +336,6 @@ TEST(TransactionChanges, HierarchyCache) {
     ASSERT_EQ(cache.GetModified().size(), 31);
     ASSERT_EQ(cache.GetAdded().size(), 3);
     ASSERT_EQ(cache.GetRemoved().size(), 5);
-
-    cache.Clear();
 }
 
 int main(int argc, char** argv)

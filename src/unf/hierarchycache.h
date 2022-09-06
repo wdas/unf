@@ -9,6 +9,7 @@
 #include <pxr/base/tf/weakPtr.h>
 #include <pxr/base/tf/anyWeakPtr.h>
 #include <pxr/base/tf/refPtr.h>
+#include "pxr/usd/sdf/path.h"
 
 #include <vector>
 #include <unordered_map>
@@ -44,6 +45,10 @@ class HierarchyCache : public TfRefBase, TfWeakBase {
 
         bool FindNode(const SdfPath& path);
 
+        bool DidCacheChange() const {
+            return _added.size() != 0 || _removed.size() != 0 || _modified.size() != 0;
+        }
+
         const UnorderedSdfPathSet& GetAdded() const {
             return _added;
         }
@@ -57,21 +62,24 @@ class HierarchyCache : public TfRefBase, TfWeakBase {
         }
 
         UnorderedSdfPathSet&& TakeAdded() {
-            return std::move(_added);
+            return std::move(_noDescAdded);
         }
 
         UnorderedSdfPathSet&& TakeRemoved() {
-            return std::move(_removed);
+            return std::move(_noDescRemoved);
         }
         
         UnorderedSdfPathSet&& TakeModified() {
-            return std::move(_modified);
+            return std::move(_noDescModified);
         }
 
         void Clear() {
             _added.clear();
             _removed.clear();
             _modified.clear();
+            _noDescAdded.clear();
+            _noDescRemoved.clear();
+            _noDescModified.clear();
         }
 
     private:
@@ -91,6 +99,9 @@ class HierarchyCache : public TfRefBase, TfWeakBase {
         UnorderedSdfPathSet _added;
         UnorderedSdfPathSet _removed;
         UnorderedSdfPathSet _modified;
+        UnorderedSdfPathSet _noDescAdded;
+        UnorderedSdfPathSet _noDescRemoved;
+        UnorderedSdfPathSet _noDescModified;
         UsdStageWeakPtr _stage;
 
 };

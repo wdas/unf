@@ -11,11 +11,11 @@ namespace BroadcasterNotice {
 TF_REGISTRY_FUNCTION(TfType)
 {
     TfType::Define<
-        ChangeSummaryNotice,
+        ChangeSummary,
         TfType::Bases<unf::BrokerNotice::StageNotice>>();
 }
 
-virtual void ChangeSummaryNotice::Merge(ChangeSummaryNotice&& notice) override {
+void ChangeSummary::Merge(ChangeSummary&& notice) {
     for(const auto& a: notice._added) {
         _added.insert(a);
     }
@@ -24,6 +24,9 @@ virtual void ChangeSummaryNotice::Merge(ChangeSummaryNotice&& notice) override {
     }
     for(const auto& m: notice._modified) {
         _modified.insert(m);
+    }
+    for(const auto& changedField : notice._changedFields) {
+        _changedFields[changedField.first].insert(changedField.second.begin(), changedField.second.end());
     }
 }
 } // namespace BroadcasterNotice

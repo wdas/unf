@@ -11,6 +11,7 @@ namespace unf {
         for(auto& p : resynced) {
             NodeRefPtr node = _findNodeOrUpdate(p);
             if(node){
+                _noDescModified.insert(p);
                 _sync(node, _stage->GetPrimAtPath(p));
             }
         }
@@ -76,7 +77,8 @@ namespace unf {
                 auto child_token = curr_node->children.find(p_token);
                 //If we are at the final node of the path, then this is the resyncedpath.
                 if(i == split_paths.size() - 1){
-                    UsdPrim child = _stage->GetPrimAtPath(SdfPath(partial_path));
+                    SdfPath prim_path = SdfPath(partial_path);
+                    UsdPrim child = _stage->GetPrimAtPath(prim_path);
                     //Doesn't exit in stage nor cache -- don't do anything. 
                     if (!child && child_token == curr_node->children.end()) {
                         return nullptr;
@@ -84,18 +86,31 @@ namespace unf {
                     //Doesn't exist in the stage -- then the prim was removed.
                     else if (!child) {
                         _addToRemoved(curr_node->children[p_token]);
+                        _noDescRemoved.insert(prim_path);
                         curr_node->children.erase(p_token);
                         return nullptr;
                     }
+                    /*
                     //Doesn't exist in the cache but in stage -- need to add prim
                     else if (child_token == curr_node->children.end()){
                         curr_node->children[p_token] = TfCreateRefPtr(new Node(child));
                         _addToAdded(curr_node->children[p_token]);
+                        _noDescAdded.insert(prim_path);
                         return nullptr;
                     }
+                    */
                 }
                 if(child_token == curr_node->children.end()) {
-                    std::cerr << "Invalid path passed: Attempting to look up path whose parent doesn't exit." << std::endl;
+                    SdfPath prim_path = SdfPath(partial_path);
+                    UsdPrim child = _stage->GetPrimAtPath(prim_path);
+                    //Doesn't exist in the cache but in stage -- need to add prim
+                    if(child){
+                        curr_node->children[p_token] = TfCreateRefPtr(new Node(child));
+                        _addToAdded(curr_node->children[p_token]);
+                        _noDescAdded.insert(prim_path);
+                    }
+                    //std::cerr << "Invalid path passed: Attempting to look up path whose parent doesn't exit." << std::endl;
+
                     return nullptr;
                 }
                 curr_node = child_token->second;
@@ -116,26 +131,28 @@ namespace unf {
             //Loop over real prim's children
             for(const auto& child_prim : prim.GetChildren()) {
                 TfToken child_name = child_prim.GetName();
+                SdfPath child_prim_path = child_prim.GetPath();
                 if(node->children.find(child_name) != node->children.end()) {
                     //Exists in cache
                     //Sync on child and on stage
                     _sync(node->children[child_name], child_prim);
                     //Remove child from temporary list
-                    node_children_copy.erase(child_prim.GetPath());
+                    node_children_copy.erase(child_prim_path);
                 } else {
                     //Doesn't exist in cache but in stage
                     //Doesn't exist in tree
                     node->children[child_prim.GetName()] = TfCreateRefPtr(new Node(child_prim));
                     _addToAdded(node->children[child_prim.GetName()]);
-
+                    _noDescAdded.insert(child_prim_path);
                 }
             }
             
             //Exists only on cache, not on stage
             //Add the non-existant children to the removed set
             for (auto& child_prim_path : node_children_copy) {
-                TfToken childName = TfToken(child_prim_path.GetName());
+                TfToken childName = child_prim_path.GetNameToken();
                 _addToRemoved(node->children[childName]);
+                _noDescRemoved.insert(child_prim_path);
                 node->children.erase(childName);
             }
         }

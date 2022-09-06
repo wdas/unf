@@ -75,9 +75,22 @@ target_link_libraries(testHierarchyCache
 gtest_discover_tests(
     testHierarchyCache
     PROPERTIES ENVIRONMENT
-        "USD_TEST_PATH=${CMAKE_CURRENT_SOURCE_DIR}/../testenv/testHierarchyCache"
+        "USD_TEST_PATH=${CMAKE_CURRENT_SOURCE_DIR}/testHierarchyCache"
 )
 
+add_executable(testBroadcaster testBroadcaster.cpp)
+target_link_libraries(testBroadcaster
+    PRIVATE
+        unf
+        unfTest
+        GTest::gtest
+        GTest::gtest_main
+)
+gtest_discover_tests(
+    testBroadcaster
+    PROPERTIES ENVIRONMENT
+        "USD_TEST_PATH=${CMAKE_CURRENT_SOURCE_DIR}/testBroadcaster"
+)
 add_subdirectory(plugins)
 
 if (BUILD_PYTHON_BINDINGS)

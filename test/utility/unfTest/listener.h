@@ -1,7 +1,10 @@
 #ifndef TEST_NOTICE_BROKER_LISTENER_H
 #define TEST_NOTICE_BROKER_LISTENER_H
 
+#include "testBroadcaster.h"
+
 #include "unf/hierarchycache.h"
+#include "unf/broadcasterNotice.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/notice.h>
@@ -11,8 +14,11 @@
 #include <string>
 #include <unordered_map>
 #include <typeinfo>
+#include <iostream>
 
 namespace Test {
+using UnorderedSdfPathSet = std::unordered_set<SdfPath, SdfPath::Hash>;
+using ChangedFieldMap = unf::ChangedFieldMap;
 
 // Interface to examine content of notice received.
 template <class T>
@@ -144,6 +150,105 @@ class unfObjChangedListener : public TfWeakBase {
 
         TfNotice::Key _key;
         unf::HierarchyCache* _cache;
+ };
+
+// unf ChangeSummary notice listener
+class ChangeSummaryListener : public TfWeakBase {
+    public:
+        ChangeSummaryListener(){
+            _key = TfNotice::Register(TfCreateWeakPtr(this), &ChangeSummaryListener::_CallBack);
+            _count = 0;
+        }
+        ~ChangeSummaryListener() {
+            PXR_NS::TfNotice::Revoke(_key);
+        }
+
+        const UnorderedSdfPathSet& GetAdded() const{
+            return _added;
+        }
+        const UnorderedSdfPathSet& GetRemoved() const{
+            return _removed;
+        }
+        const UnorderedSdfPathSet& GetModified() const{
+            return _modified;
+        }
+        const ChangedFieldMap& GetChangedFields() const {
+            return _changedFields;
+        }
+
+        int GetCount() const {
+            return _count;
+        }
+
+        void ResetCount() {
+            _count = 0;
+        }
+    
+    
+    private:
+        void _CallBack(const unf::BroadcasterNotice::ChangeSummary& notice) {
+            _added = notice.GetAdded();
+            _removed = notice.GetRemoved();
+            _modified = notice.GetModified();
+            _changedFields = notice.GetChangedFields();
+            _count ++;
+        }
+
+        TfNotice::Key _key;
+        UnorderedSdfPathSet _added;
+        UnorderedSdfPathSet _removed;
+        UnorderedSdfPathSet _modified;
+        ChangedFieldMap _changedFields;
+        int _count;
+ };
+
+ // ::Test:: ChildBroadcasterNotice notice listener
+class ChildBroadcasterNoticeListener : public TfWeakBase {
+    public:
+        ChildBroadcasterNoticeListener(){
+            _key = TfNotice::Register(TfCreateWeakPtr(this), &ChildBroadcasterNoticeListener::_CallBack);
+            _count = 0;
+        }
+        ~ChildBroadcasterNoticeListener() {
+            PXR_NS::TfNotice::Revoke(_key);
+        }
+
+        const UnorderedSdfPathSet& GetAdded() const{
+            return _added;
+        }
+        const UnorderedSdfPathSet& GetRemoved() const{
+            return _removed;
+        }
+        const UnorderedSdfPathSet& GetModified() const{
+            return _modified;
+        }
+        const ChangedFieldMap& GetChangedFields() const {
+            return _changedFields;
+        }
+
+        int GetCount() const {
+            return _count;
+        }
+
+        void ResetCount() {
+            _count = 0;
+        }
+    
+    private:
+        void _CallBack(const ChildBroadcasterNotice& notice) {
+            _added = notice.GetAdded();
+            _removed = notice.GetRemoved();
+            _modified = notice.GetModified();
+            _changedFields = notice.GetChangedFields();
+            _count ++;
+        }
+
+        TfNotice::Key _key;
+        UnorderedSdfPathSet _added;
+        UnorderedSdfPathSet _removed;
+        UnorderedSdfPathSet _modified;
+        ChangedFieldMap _changedFields;
+        int _count;
  };
 } // namespace Test
 

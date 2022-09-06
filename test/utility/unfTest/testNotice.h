@@ -10,8 +10,9 @@
 #include <utility>
 
 namespace Test {
-
+using ChangedFieldMap = unf::ChangedFieldMap;
 using DataMap = std::unordered_map<std::string, std::string>;
+using UnorderedSdfPathSet = std::unordered_set<SdfPath, SdfPath::Hash>;
 
 // Notice with can be consolidated within broker transactions.
 class MergeableNotice
@@ -73,6 +74,36 @@ class OutputNotice2
 : public unf::BrokerNotice::StageNoticeImpl<OutputNotice2> {
 public:
     OutputNotice2(const InputNotice&) {}
+};
+
+
+// Declare notices used by the test broadcasters.
+class ChildBroadcasterNotice : public PXR_NS::TfNotice {
+    public:
+        ChildBroadcasterNotice(UnorderedSdfPathSet added, UnorderedSdfPathSet removed, UnorderedSdfPathSet modified,
+                                ChangedFieldMap changedInfo) : _added(std::move(added)), _removed(std::move(removed)),
+                                            _modified(std::move(modified)), _changedInfo(std::move(changedInfo)) {}
+        
+        ~ChildBroadcasterNotice() = default;
+
+        const UnorderedSdfPathSet& GetAdded() const{
+            return _added;
+        }
+        const UnorderedSdfPathSet& GetRemoved() const{
+            return _removed;
+        }
+        const UnorderedSdfPathSet& GetModified() const{
+            return _modified;
+        }
+        const ChangedFieldMap& GetChangedFields() const {
+            return _changedInfo;
+        }
+    
+    private:
+        UnorderedSdfPathSet _added;
+        UnorderedSdfPathSet _removed;
+        UnorderedSdfPathSet _modified;
+        ChangedFieldMap _changedInfo;
 };
 
 } // namespace Test

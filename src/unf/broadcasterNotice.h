@@ -12,30 +12,33 @@
 PXR_NAMESPACE_OPEN_SCOPE
 
 namespace unf {
+
+using UnorderedSdfPathSet = std::unordered_set<SdfPath, SdfPath::Hash>;
+
 namespace BroadcasterNotice {
 
-class ChangeSummaryNotice : public BrokerNotice::StageNoticeImpl<ChangeSummaryNotice> {
+class ChangeSummary : public BrokerNotice::StageNoticeImpl<ChangeSummary> {
     public:
-        ChangeSummaryNotice(UnorderedSdfPathSet added, UnorderedSdfPathSet removed, UnorderedSdfPathSet modified,
+        ChangeSummary(UnorderedSdfPathSet added, UnorderedSdfPathSet removed, UnorderedSdfPathSet modified,
                                 ChangedFieldMap changedFields) : _added(std::move(added)), _removed(std::move(removed)), 
-                                                    _modified(std::move(modified)), _changedFields(std::move(_changedFields)){}
+                                                    _modified(std::move(modified)), _changedFields(std::move(changedFields)){}
         
-        virtual ~ChangeSummaryNotice() = default;
+        virtual ~ChangeSummary() = default;
 
-        const UnorderedSdfPathSet& GetAdded() {
+        const UnorderedSdfPathSet& GetAdded() const{
             return _added;
         }
-        const UnorderedSdfPathSet& GetRemoved() {
+        const UnorderedSdfPathSet& GetRemoved() const{
             return _removed;
         }
-        const UnorderedSdfPathSet& GetModified() {
+        const UnorderedSdfPathSet& GetModified() const{
             return _modified;
         }
         const ChangedFieldMap& GetChangedFields() const {
             return _changedFields;
         }
 
-        virtual void Merge(ChangeSummaryNotice&&) override;
+        virtual void Merge(ChangeSummary&&) override;
     
     private:
         UnorderedSdfPathSet _added;

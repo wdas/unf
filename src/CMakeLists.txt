@@ -1,5 +1,6 @@
 add_library(unf
     unf/broadcaster.cpp
+    unf/broadcasterNotice.cpp
     unf/broker.cpp
     unf/dispatcher.cpp
     unf/merger.cpp

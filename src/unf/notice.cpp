@@ -59,7 +59,7 @@ void ObjectsChanged::Merge(ObjectsChanged&& notice)
 
     for (const auto& path: notice._resyncChanges) {
         auto begin = _resyncChanges.begin();
-        auto end = begin + resyncChangesSize;
+        auto end = _resyncChanges.end();
         auto it = std::find(begin, end, path);
         if (it == end) {
             _resyncChanges.push_back(std::move(path));
@@ -67,10 +67,9 @@ void ObjectsChanged::Merge(ObjectsChanged&& notice)
     }
 
     size_t infoChangesSize = _infoChanges.size();
-
     for (const auto& path: notice._infoChanges) {
         auto begin = _infoChanges.begin();
-        auto end = begin + infoChangesSize;
+        auto end = _infoChanges.end();
         auto it = std::find(begin, end, path);
         if (it == end) {
             _changedFields[path] = std::move(notice._changedFields[path]);
