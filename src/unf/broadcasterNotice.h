@@ -9,11 +9,9 @@
 #include <pxr/base/tf/notice.h>
 #include <pxr/usd/sdf/path.h>
 
-PXR_NAMESPACE_OPEN_SCOPE
-
 namespace unf {
 
-using UnorderedSdfPathSet = std::unordered_set<SdfPath, SdfPath::Hash>;
+using UnorderedSdfPathSet = std::unordered_set<PXR_NS::SdfPath, PXR_NS::SdfPath::Hash>;
 
 namespace BroadcasterNotice {
 
@@ -50,7 +48,5 @@ class ChangeSummary : public BrokerNotice::StageNoticeImpl<ChangeSummary> {
 
 } // namespace BroadcasterNotice
 } // namespace unf
-
-PXR_NAMESPACE_CLOSE_SCOPE
 
 #endif // NOTICE_BROADCASTER_NOTICE_H

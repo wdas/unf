@@ -4,7 +4,7 @@
 #include <pxr/pxr.h>
 #include <pxr/base/tf/notice.h>
 
-PXR_NAMESPACE_OPEN_SCOPE
+PXR_NAMESPACE_USING_DIRECTIVE
 namespace unf {
 namespace BroadcasterNotice {
 

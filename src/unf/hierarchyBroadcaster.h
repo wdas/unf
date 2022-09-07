@@ -14,9 +14,6 @@
 
 #include <string>
 #include <vector>
-#include <iostream>
-
-PXR_NAMESPACE_OPEN_SCOPE
 
 namespace unf {
 using _StageNoticePtrList = std::vector<BrokerNotice::StageNoticeRefPtr>;   
@@ -72,7 +69,5 @@ class HierarchyBroadcaster : public Broadcaster {
         const ChangedFieldMap* _changedFields;
 };
 }// namespace unf
-
-PXR_NAMESPACE_CLOSE_SCOPE
 
 #endif // NOTICE_BROKER_HIERARCHY_BROADCASTER_H

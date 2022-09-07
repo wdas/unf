@@ -15,8 +15,8 @@
 
 namespace unf {
 
-using TfTokenSet = std::unordered_set<TfToken, TfToken::HashFunctor>;
-using ChangedFieldMap = std::unordered_map<SdfPath, TfTokenSet, SdfPath::Hash>;
+using TfTokenSet = std::unordered_set<PXR_NS::TfToken, PXR_NS::TfToken::HashFunctor>;
+using ChangedFieldMap = std::unordered_map<PXR_NS::SdfPath, TfTokenSet, PXR_NS::SdfPath::Hash>;
 
 namespace BrokerNotice {
 

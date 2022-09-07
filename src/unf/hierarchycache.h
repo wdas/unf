@@ -16,34 +16,32 @@
 #include <unordered_set>
 #include <string>
 
-PXR_NAMESPACE_OPEN_SCOPE
-
 namespace unf {
 
 struct Node;
-using NodeRefPtr = TfRefPtr<Node>;
-using UnorderedSdfPathSet = std::unordered_set<SdfPath, SdfPath::Hash>;
+using NodeRefPtr = PXR_NS::TfRefPtr<Node>;
+using UnorderedSdfPathSet = std::unordered_set<PXR_NS::SdfPath, PXR_NS::SdfPath::Hash>;
 
-struct Node : public TfRefBase {
+struct Node : public PXR_NS::TfRefBase {
     Node(const UsdPrim& prim){
         prim_path = prim.GetPath();
         for (const auto& child : prim.GetChildren()) {
-            children[child.GetName()] = TfCreateRefPtr(new Node(child));
+            children[child.GetName()] = PXR_NS::TfCreateRefPtr(new Node(child));
         }
     }
-    SdfPath prim_path;
-    std::unordered_map<TfToken, NodeRefPtr, TfToken::HashFunctor> children;
+    PXR_NS::SdfPath prim_path;
+    std::unordered_map<PXR_NS::TfToken, NodeRefPtr, PXR_NS::TfToken::HashFunctor> children;
 };
 
-class HierarchyCache : public TfRefBase, TfWeakBase {
+class HierarchyCache : public PXR_NS::TfRefBase, PXR_NS::TfWeakBase {
     public:
-        HierarchyCache(const UsdStageWeakPtr stage) : _stage(stage) {
-            _root = TfCreateRefPtr(new Node(stage->GetPseudoRoot()));
+        HierarchyCache(const PXR_NS::UsdStageWeakPtr stage) : _stage(stage) {
+            _root = PXR_NS::TfCreateRefPtr(new Node(stage->GetPseudoRoot()));
         }
 
         void Update(SdfPathVector resynced);
 
-        bool FindNode(const SdfPath& path);
+        bool FindNode(const PXR_NS::SdfPath& path);
 
         bool DidCacheChange() const {
             return _added.size() != 0 || _removed.size() != 0 || _modified.size() != 0;
@@ -90,9 +88,9 @@ class HierarchyCache : public TfRefBase, TfWeakBase {
 
         void _addToAdded(NodeRefPtr node);
 
-        NodeRefPtr _findNodeOrUpdate(const SdfPath& path);
+        NodeRefPtr _findNodeOrUpdate(const PXR_NS::SdfPath& path);
 
-        void _sync(NodeRefPtr node, const UsdPrim& prim);
+        void _sync(NodeRefPtr node, const PXR_NS::UsdPrim& prim);
 
 
         NodeRefPtr _root;
@@ -102,12 +100,10 @@ class HierarchyCache : public TfRefBase, TfWeakBase {
         UnorderedSdfPathSet _noDescAdded;
         UnorderedSdfPathSet _noDescRemoved;
         UnorderedSdfPathSet _noDescModified;
-        UsdStageWeakPtr _stage;
+        PXR_NS::UsdStageWeakPtr _stage;
 
 };
 
 } // namespace unf
-
-PXR_NAMESPACE_CLOSE_SCOPE
 
 #endif // NOTICE_BROKER_HIERARCHY_CACHE_H

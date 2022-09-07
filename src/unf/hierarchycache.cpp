@@ -1,7 +1,6 @@
 #include "hierarchycache.h"
-#include <iostream>
 
-PXR_NAMESPACE_OPEN_SCOPE
+PXR_NAMESPACE_USING_DIRECTIVE
 
 namespace unf {
     void HierarchyCache::Update(SdfPathVector resynced) {
