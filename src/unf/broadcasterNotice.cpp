@@ -5,6 +5,7 @@
 #include <pxr/base/tf/notice.h>
 
 PXR_NAMESPACE_USING_DIRECTIVE
+
 namespace unf {
 namespace BroadcasterNotice {
 
@@ -16,16 +17,16 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 void ChangeSummary::Merge(ChangeSummary&& notice) {
-    for(const auto& a: notice._added) {
+    for (const auto& a: notice._added) {
         _added.insert(a);
     }
-    for(const auto& r: notice._removed) {
+    for (const auto& r: notice._removed) {
         _removed.insert(r);
     }
-    for(const auto& m: notice._modified) {
+    for (const auto& m: notice._modified) {
         _modified.insert(m);
     }
-    for(const auto& changedField : notice._changedFields) {
+    for (const auto& changedField : notice._changedFields) {
         _changedFields[changedField.first].insert(changedField.second.begin(), changedField.second.end());
     }
 }

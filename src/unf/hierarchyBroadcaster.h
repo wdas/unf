@@ -22,7 +22,7 @@ using ObjectsChangedRefPtr = TfRefPtr<BrokerNotice::ObjectsChanged>;
 
 class HierarchyBroadcaster : public Broadcaster {
     public:
-        HierarchyBroadcaster(const BrokerWeakPtr& broker) : Broadcaster(broker), _cache(broker->GetStage()){
+        HierarchyBroadcaster(const BrokerWeakPtr& broker) : Broadcaster(broker), _cache(broker->GetStage()) {
         }
 
         std::string GetIdentifier() const override {return "HierarchyBroadcaster";}
@@ -45,23 +45,23 @@ class HierarchyBroadcaster : public Broadcaster {
             _cache.Clear();
         }
 
-        void Execute(void* parent) override{
+        void Execute(void* parent) override {
             _StageNoticePtrMap& noticeMap = *static_cast<_StageNoticePtrMap*>(parent);
             _StageNoticePtrList objChangedNotices = noticeMap[BrokerNotice::ObjectsChanged::GetStaticTypeId()];
             assert(objChangedNotices.size() <= 1);
-            if(objChangedNotices.size() == 1){
+            if (objChangedNotices.size() == 1) {
                 ObjectsChangedRefPtr notice = TfStatic_cast<ObjectsChangedRefPtr>(objChangedNotices[0]);
                 _cache.Update(notice->GetResyncedPaths());
-                if(notice->GetChangedInfoOnlyPaths().size() > 0 || _cache.DidCacheChange()){
+                if (notice->GetChangedInfoOnlyPaths().size() > 0 || _cache.DidCacheChange()) {
                     _changedFields = &notice->GetChangedFieldMap();
-                    for(auto& c : _children) {
+                    for (auto& c : _children) {
                         c->Execute(this);
                     }
                     _broker->Send<BroadcasterNotice::ChangeSummary>(_cache.TakeAdded(), _cache.TakeRemoved(),
                                     _cache.TakeModified(), *_changedFields);
                     Clear();
             }
-            }
+        }
     }
     
     private:

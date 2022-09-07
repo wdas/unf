@@ -23,13 +23,13 @@ class ChangeSummary : public BrokerNotice::StageNoticeImpl<ChangeSummary> {
         
         virtual ~ChangeSummary() = default;
 
-        const UnorderedSdfPathSet& GetAdded() const{
+        const UnorderedSdfPathSet& GetAdded() const {
             return _added;
         }
-        const UnorderedSdfPathSet& GetRemoved() const{
+        const UnorderedSdfPathSet& GetRemoved() const {
             return _removed;
         }
-        const UnorderedSdfPathSet& GetModified() const{
+        const UnorderedSdfPathSet& GetModified() const {
             return _modified;
         }
         const ChangedFieldMap& GetChangedFields() const {

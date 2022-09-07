@@ -81,9 +81,6 @@ class HierarchyCache : public PXR_NS::TfRefBase, PXR_NS::TfWeakBase {
         }
 
     private:
-        // for string delimiter
-        std::vector<std::string> _split (const std::string& s, const std::string& delimiter);
-
         void _addToRemoved(NodeRefPtr node);
 
         void _addToAdded(NodeRefPtr node);
