@@ -15,13 +15,13 @@ using UnorderedSdfPathSet = std::unordered_set<PXR_NS::SdfPath, PXR_NS::SdfPath:
 
 namespace BroadcasterNotice {
 
-class ChangeSummary : public BrokerNotice::StageNoticeImpl<ChangeSummary> {
+class HierarchyChanged : public BrokerNotice::StageNoticeImpl<HierarchyChanged> {
     public:
-        ChangeSummary(UnorderedSdfPathSet added, UnorderedSdfPathSet removed, UnorderedSdfPathSet modified,
+        HierarchyChanged(UnorderedSdfPathSet added, UnorderedSdfPathSet removed, UnorderedSdfPathSet modified,
                                 ChangedFieldMap changedFields) : _added(std::move(added)), _removed(std::move(removed)), 
                                                     _modified(std::move(modified)), _changedFields(std::move(changedFields)){}
         
-        virtual ~ChangeSummary() = default;
+        virtual ~HierarchyChanged() = default;
 
         const UnorderedSdfPathSet& GetAdded() const {
             return _added;
@@ -36,7 +36,7 @@ class ChangeSummary : public BrokerNotice::StageNoticeImpl<ChangeSummary> {
             return _changedFields;
         }
 
-        virtual void Merge(ChangeSummary&&) override;
+        virtual void Merge(HierarchyChanged&&) override;
     
     private:
         UnorderedSdfPathSet _added;

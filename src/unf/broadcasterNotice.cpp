@@ -12,11 +12,11 @@ namespace BroadcasterNotice {
 TF_REGISTRY_FUNCTION(TfType)
 {
     TfType::Define<
-        ChangeSummary,
+        HierarchyChanged,
         TfType::Bases<unf::BrokerNotice::StageNotice>>();
 }
 
-void ChangeSummary::Merge(ChangeSummary&& notice) {
+void HierarchyChanged::Merge(HierarchyChanged&& notice) {
     for (const auto& a: notice._added) {
         _added.insert(a);
     }

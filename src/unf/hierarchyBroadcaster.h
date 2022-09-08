@@ -57,7 +57,7 @@ class HierarchyBroadcaster : public Broadcaster {
                     for (auto& c : _children) {
                         c->Execute(this);
                     }
-                    _broker->Send<BroadcasterNotice::ChangeSummary>(_cache.TakeAdded(), _cache.TakeRemoved(),
+                    _broker->Send<BroadcasterNotice::HierarchyChanged>(_cache.TakeAdded(), _cache.TakeRemoved(),
                                     _cache.TakeModified(), *_changedFields);
                     Clear();
             }

@@ -50,7 +50,7 @@ TEST(Broadcaster, HierarchyBroadcasterNoticeSimple)
     auto broker = PXR_NS::unf::Broker::Create(stage);
     broker->AddBroadcaster<PXR_NS::unf::HierarchyBroadcaster>();
 
-    ::Test::ChangeSummaryListener l = ::Test::ChangeSummaryListener();
+    ::Test::HierarchyChangedListener l = ::Test::HierarchyChangedListener();
     
     stage->DefinePrim(SdfPath("/scene/AA"));
     
@@ -64,7 +64,7 @@ TEST(Broadcaster, HierarchyBroadcasterNoticeSimple)
     UsdPrim p = stage->GetPrimAtPath(SdfPath("/scene/testvariant1/V"));
     p.GetVariantSet("myVariant").SetVariantSelection("v");
 
-    //The ChangeSummaryNotice should contain lists of added/removed/modified prims that are collapsed (i.e. no descendants)
+    //The HierarchyChangedNotice should contain lists of added/removed/modified prims that are collapsed (i.e. no descendants)
     ASSERT_EQ(l.GetAdded().size(), 1);
     ASSERT_EQ(l.GetRemoved().size(), 2);
     ASSERT_EQ(l.GetModified().size(), 1);
@@ -77,7 +77,7 @@ TEST(Broadcaster, HierarchyBroadcasterTransaction)
     auto broker = PXR_NS::unf::Broker::Create(stage);
     broker->AddBroadcaster<PXR_NS::unf::HierarchyBroadcaster>();
     
-    ::Test::ChangeSummaryListener l = ::Test::ChangeSummaryListener();
+    ::Test::HierarchyChangedListener l = ::Test::HierarchyChangedListener();
     
     {
         PXR_NS::unf::NoticeTransaction transaction(broker);
@@ -170,7 +170,7 @@ TEST(Broadcaster, HierarchyBroadcasterTransactionNested) {
     auto broker = PXR_NS::unf::Broker::Create(stage);
     broker->AddBroadcaster<PXR_NS::unf::HierarchyBroadcaster>();
     
-    ::Test::ChangeSummaryListener l = ::Test::ChangeSummaryListener();
+    ::Test::HierarchyChangedListener l = ::Test::HierarchyChangedListener();
     /*
     {
         PXR_NS::unf::NoticeTransaction transaction(broker);

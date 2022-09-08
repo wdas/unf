@@ -152,14 +152,14 @@ class unfObjChangedListener : public TfWeakBase {
         unf::HierarchyCache* _cache;
  };
 
-// unf ChangeSummary notice listener
-class ChangeSummaryListener : public TfWeakBase {
+// unf HierarchyChanged notice listener
+class HierarchyChangedListener : public TfWeakBase {
     public:
-        ChangeSummaryListener(){
-            _key = TfNotice::Register(TfCreateWeakPtr(this), &ChangeSummaryListener::_CallBack);
+        HierarchyChangedListener(){
+            _key = TfNotice::Register(TfCreateWeakPtr(this), &HierarchyChangedListener::_CallBack);
             _count = 0;
         }
-        ~ChangeSummaryListener() {
+        ~HierarchyChangedListener() {
             PXR_NS::TfNotice::Revoke(_key);
         }
 
@@ -186,7 +186,7 @@ class ChangeSummaryListener : public TfWeakBase {
     
     
     private:
-        void _CallBack(const unf::BroadcasterNotice::ChangeSummary& notice) {
+        void _CallBack(const unf::BroadcasterNotice::HierarchyChanged& notice) {
             _added = notice.GetAdded();
             _removed = notice.GetRemoved();
             _modified = notice.GetModified();
