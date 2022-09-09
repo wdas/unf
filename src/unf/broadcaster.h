@@ -30,14 +30,12 @@ public:
 
 protected:
     Broadcaster(const BrokerWeakPtr&);
-
-private:
     void _AddChild(const BroadcasterPtr&);
 
     std::vector<BroadcasterPtr> _children;
-
     BrokerWeakPtr _broker;
 
+private:
     friend class Broker;
 };
 

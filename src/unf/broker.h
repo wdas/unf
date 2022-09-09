@@ -44,7 +44,7 @@ public:
     Broker(const Broker &) = delete;
     Broker &operator=(const Broker &) = delete;
 
-    const PXR_NS::UsdStageWeakPtr& GetStage() const { return _stage; }
+    const PXR_NS::UsdStageWeakPtr GetStage() const { return _stage; }
 
     bool IsInTransaction();
 

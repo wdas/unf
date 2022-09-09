@@ -28,4 +28,8 @@ TF_REGISTRY_FUNCTION(TfType)
     TfType::Define<
         ::Test::OutputNotice2,
         TfType::Bases<unf::BrokerNotice::StageNotice> >();
+    
+    TfType::Define<
+        ::Test::ChildBroadcasterNotice,
+        TfType::Bases<TfNotice> >();
 }

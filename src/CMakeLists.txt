@@ -1,10 +1,12 @@
 add_library(unf
     unf/broadcaster.cpp
+    unf/broadcasterNotice.cpp
     unf/broker.cpp
     unf/dispatcher.cpp
     unf/merger.cpp
     unf/notice.cpp
     unf/transaction.cpp
+    unf/hierarchycache.cpp
 )
 
 # Suppress warning sfrom USD regarding deprecated TBB features.
@@ -30,6 +32,7 @@ target_link_libraries(unf
         pxr::sdf
         pxr::tf
         pxr::usd
+        pxr::vt
 )
 
 install(TARGETS unf EXPORT ${PROJECT_NAME})

@@ -64,6 +64,33 @@ target_link_libraries(testUnitTransaction
 )
 gtest_discover_tests(testUnitTransaction)
 
+add_executable(testHierarchyCache testHierarchyCache.cpp)
+target_link_libraries(testHierarchyCache
+    PRIVATE
+        unf
+        unfTest
+        GTest::gtest
+        GTest::gtest_main
+)
+gtest_discover_tests(
+    testHierarchyCache
+    PROPERTIES ENVIRONMENT
+        "USD_TEST_PATH=${CMAKE_CURRENT_SOURCE_DIR}/testHierarchyCache"
+)
+
+add_executable(testBroadcaster testBroadcaster.cpp)
+target_link_libraries(testBroadcaster
+    PRIVATE
+        unf
+        unfTest
+        GTest::gtest
+        GTest::gtest_main
+)
+gtest_discover_tests(
+    testBroadcaster
+    PROPERTIES ENVIRONMENT
+        "USD_TEST_PATH=${CMAKE_CURRENT_SOURCE_DIR}/testBroadcaster"
+)
 add_subdirectory(plugins)
 
 if (BUILD_PYTHON_BINDINGS)
