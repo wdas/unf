@@ -28,7 +28,7 @@ namespace {
         return PXR_NS::UsdStage::Open(GetTestFilePath(filePath));
     }
 }
-/*
+
 TEST(HierarchyCache, AddPrim)
 {
     auto stage = GetStage("/scene.usda");
@@ -78,7 +78,7 @@ TEST(HierarchyCache, ModifyPrim)
     ASSERT_EQ(cache.GetRemoved().size(), 0);
     ASSERT_EQ(true, cache.FindNode(SdfPath("/scene")));
     ASSERT_EQ(true, cache.FindNode(SdfPath("/scene/D")));
-    ASSERT_EQ(true, cache.FindNode(SdfPath("/scene/r2")));
+    ASSERT_EQ(true, cache.FindNode(SdfPath("/scene/D/r2")));
 
     cache.Clear();
 }
@@ -287,7 +287,6 @@ TEST(HierarchyCache, MuteAndUnmuteLayers) {
     ASSERT_EQ(true, cache.FindNode(SdfPath("/scene/B/bb")));
 
 }
-*/
 
 TEST(HierarchyCache, TransactionChanges) {
     auto stage = GetStage("/scene.usda");
