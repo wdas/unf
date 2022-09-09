@@ -17,18 +17,21 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 void HierarchyChanged::Merge(HierarchyChanged&& notice) {
-    for (const auto& a: notice._added) {
-        _added.insert(a);
+    for (auto& a: notice._added) {
+        _added.push_back(std::move(a));
     }
-    for (const auto& r: notice._removed) {
-        _removed.insert(r);
+    for (auto& r: notice._removed) {
+        _removed.push_back(std::move(r));
     }
-    for (const auto& m: notice._modified) {
-        _modified.insert(m);
+    for (auto& m: notice._modified) {
+        _modified.push_back(std::move(m));
     }
     for (const auto& changedField : notice._changedFields) {
         _changedFields[changedField.first].insert(changedField.second.begin(), changedField.second.end());
     }
+    SdfPath::RemoveDescendentPaths(&_added);
+    SdfPath::RemoveDescendentPaths(&_removed);
+    SdfPath::RemoveDescendentPaths(&_modified);
 }
 } // namespace BroadcasterNotice
 } // namespace unf

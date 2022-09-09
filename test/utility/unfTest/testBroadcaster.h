@@ -6,7 +6,6 @@
 #include <unf/broker.h>
 #include <unf/broadcaster.h>
 #include <unf/hierarchyBroadcaster.h>
-#include <iostream>
 
 #include <pxr/pxr.h>
 

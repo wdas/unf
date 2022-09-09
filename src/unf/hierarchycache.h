@@ -59,15 +59,15 @@ class HierarchyCache : public PXR_NS::TfRefBase, PXR_NS::TfWeakBase {
             return _modified;
         }
 
-        UnorderedSdfPathSet&& TakeAdded() {
+        PXR_NS::SdfPathVector&& TakeAdded() {
             return std::move(_noDescAdded);
         }
 
-        UnorderedSdfPathSet&& TakeRemoved() {
+        PXR_NS::SdfPathVector&& TakeRemoved() {
             return std::move(_noDescRemoved);
         }
         
-        UnorderedSdfPathSet&& TakeModified() {
+        PXR_NS::SdfPathVector&& TakeModified() {
             return std::move(_noDescModified);
         }
 
@@ -94,9 +94,9 @@ class HierarchyCache : public PXR_NS::TfRefBase, PXR_NS::TfWeakBase {
         UnorderedSdfPathSet _added;
         UnorderedSdfPathSet _removed;
         UnorderedSdfPathSet _modified;
-        UnorderedSdfPathSet _noDescAdded;
-        UnorderedSdfPathSet _noDescRemoved;
-        UnorderedSdfPathSet _noDescModified;
+        PXR_NS::SdfPathVector _noDescAdded;
+        PXR_NS::SdfPathVector _noDescRemoved;
+        PXR_NS::SdfPathVector _noDescModified;
         PXR_NS::UsdStageWeakPtr _stage;
 
 };

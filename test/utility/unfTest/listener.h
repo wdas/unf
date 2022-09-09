@@ -14,7 +14,6 @@
 #include <string>
 #include <unordered_map>
 #include <typeinfo>
-#include <iostream>
 
 namespace Test {
 using UnorderedSdfPathSet = std::unordered_set<SdfPath, SdfPath::Hash>;
@@ -163,13 +162,13 @@ class HierarchyChangedListener : public TfWeakBase {
             PXR_NS::TfNotice::Revoke(_key);
         }
 
-        const UnorderedSdfPathSet& GetAdded() const{
+        const PXR_NS::SdfPathVector& GetAdded() const{
             return _added;
         }
-        const UnorderedSdfPathSet& GetRemoved() const{
+        const PXR_NS::SdfPathVector& GetRemoved() const{
             return _removed;
         }
-        const UnorderedSdfPathSet& GetModified() const{
+        const PXR_NS::SdfPathVector& GetModified() const{
             return _modified;
         }
         const ChangedFieldMap& GetChangedFields() const {
@@ -195,9 +194,9 @@ class HierarchyChangedListener : public TfWeakBase {
         }
 
         TfNotice::Key _key;
-        UnorderedSdfPathSet _added;
-        UnorderedSdfPathSet _removed;
-        UnorderedSdfPathSet _modified;
+        PXR_NS::SdfPathVector _added;
+        PXR_NS::SdfPathVector _removed;
+        PXR_NS::SdfPathVector _modified;
         ChangedFieldMap _changedFields;
         int _count;
  };

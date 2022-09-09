@@ -11,25 +11,23 @@
 
 namespace unf {
 
-using UnorderedSdfPathSet = std::unordered_set<PXR_NS::SdfPath, PXR_NS::SdfPath::Hash>;
-
 namespace BroadcasterNotice {
 
 class HierarchyChanged : public BrokerNotice::StageNoticeImpl<HierarchyChanged> {
     public:
-        HierarchyChanged(UnorderedSdfPathSet added, UnorderedSdfPathSet removed, UnorderedSdfPathSet modified,
+        HierarchyChanged(PXR_NS::SdfPathVector added, PXR_NS::SdfPathVector removed, PXR_NS::SdfPathVector modified,
                                 ChangedFieldMap changedFields) : _added(std::move(added)), _removed(std::move(removed)), 
                                                     _modified(std::move(modified)), _changedFields(std::move(changedFields)){}
         
         virtual ~HierarchyChanged() = default;
 
-        const UnorderedSdfPathSet& GetAdded() const {
+        const PXR_NS::SdfPathVector& GetAdded() const {
             return _added;
         }
-        const UnorderedSdfPathSet& GetRemoved() const {
+        const PXR_NS::SdfPathVector& GetRemoved() const {
             return _removed;
         }
-        const UnorderedSdfPathSet& GetModified() const {
+        const PXR_NS::SdfPathVector& GetModified() const {
             return _modified;
         }
         const ChangedFieldMap& GetChangedFields() const {
@@ -39,9 +37,9 @@ class HierarchyChanged : public BrokerNotice::StageNoticeImpl<HierarchyChanged> 
         virtual void Merge(HierarchyChanged&&) override;
     
     private:
-        UnorderedSdfPathSet _added;
-        UnorderedSdfPathSet _removed;
-        UnorderedSdfPathSet _modified;
+        PXR_NS::SdfPathVector _added;
+        PXR_NS::SdfPathVector _removed;
+        PXR_NS::SdfPathVector _modified;
         ChangedFieldMap _changedFields;
 };
 

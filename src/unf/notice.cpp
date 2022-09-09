@@ -4,7 +4,6 @@
 #include <pxr/base/tf/notice.h>
 #include <pxr/usd/usd/notice.h>
 
-#include <iostream>
 #include <utility>
 
 PXR_NAMESPACE_USING_DIRECTIVE

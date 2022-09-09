@@ -11,10 +11,10 @@ namespace {
         while ((pos_end = s.find (delimiter, pos_start)) != std::string::npos) {
             token = s.substr (pos_start, pos_end - pos_start);
             pos_start = pos_end + delim_len;
-            res.push_back (token);
+            res.push_back(token);
         }
 
-        res.push_back (s.substr (pos_start));
+        res.push_back(s.substr (pos_start));
         return res;
     }
 }
@@ -27,7 +27,7 @@ namespace unf {
         for (auto& p : resynced) {
             NodeRefPtr node = _findNodeOrUpdate(p);
             if (node){
-                _noDescModified.insert(p);
+                _noDescModified.push_back(p);
                 _sync(node, _stage->GetPrimAtPath(p));
             }
         }
@@ -85,7 +85,7 @@ namespace unf {
                 //Doesn't exist in the stage -- then the prim was removed.
                 else if (!child) {
                     _addToRemoved(curr_node->children[p_token]);
-                    _noDescRemoved.insert(prim_path);
+                    _noDescRemoved.push_back(prim_path);
                     curr_node->children.erase(p_token);
                     return nullptr;
                 }
@@ -97,7 +97,7 @@ namespace unf {
                 if (child){
                     curr_node->children[p_token] = TfCreateRefPtr(new Node(child));
                     _addToAdded(curr_node->children[p_token]);
-                    _noDescAdded.insert(prim_path);
+                    _noDescAdded.push_back(prim_path);
                 }
                 return nullptr;
             }
@@ -131,7 +131,7 @@ namespace unf {
                 //Doesn't exist in tree
                 node->children[child_prim.GetName()] = TfCreateRefPtr(new Node(child_prim));
                 _addToAdded(node->children[child_prim.GetName()]);
-                _noDescAdded.insert(child_prim_path);
+                _noDescAdded.push_back(child_prim_path);
             }
         }
         
@@ -140,7 +140,7 @@ namespace unf {
         for (auto& child_prim_path : node_children_copy) {
             TfToken childName = child_prim_path.GetNameToken();
             _addToRemoved(node->children[childName]);
-            _noDescRemoved.insert(child_prim_path);
+            _noDescRemoved.push_back(child_prim_path);
             node->children.erase(childName);
         }
     }
