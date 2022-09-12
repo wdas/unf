@@ -27,12 +27,12 @@ target_include_directories(unf
 
 target_link_libraries(unf
     PUBLIC
-        pxr::arch
-        pxr::plug
-        pxr::sdf
-        pxr::tf
-        pxr::usd
-        pxr::vt
+        usd::arch
+        usd::plug
+        usd::sdf
+        usd::tf
+        usd::usd
+        usd::vt
 )
 
 install(TARGETS unf EXPORT ${PROJECT_NAME})
@@ -47,3 +47,8 @@ install(
 if (BUILD_PYTHON_BINDINGS)
     add_subdirectory(python)
 endif()
+
+install(EXPORT ${PROJECT_NAME}
+    FILE unfTargets.cmake
+    DESTINATION share/cmake/unf
+)

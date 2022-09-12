@@ -14,7 +14,7 @@ option(BUILD_PYTHON_BINDINGS "Build Python Bindings" ON)
 option(BUILD_SHARED_LIBS "Build Shared Library" ON)
 
 # Make module finder scripts available for TBB and USD.
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 # Discover Python per best matching location instead of highest version.
 # https://cmake.org/cmake/help/latest/policy/CMP0094.html
@@ -83,3 +83,11 @@ if (BUILD_DOCS)
 
     add_subdirectory(doc)
 endif()
+
+include(CMakePackageConfigHelpers)
+
+install(
+    FILES
+        "cmake/unfConfig.cmake"
+    DESTINATION share/cmake/unf
+)

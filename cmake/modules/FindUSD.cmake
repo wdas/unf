@@ -1,12 +1,12 @@
 # Discover required Pixar USD targets.
 #
 # This module defines the following imported targets:
-#     pxr::usd
-#     pxr::sdf
-#     pxr::tf
-#     pxr::plug
-#     pxr::arch
-#     pxr::vt
+#     usd::usd
+#     usd::sdf
+#     usd::tf
+#     usd::plug
+#     usd::arch
+#     usd::vt
 #
 # Usage:
 #     find_package(USD)
@@ -99,9 +99,9 @@ find_package_handle_standard_args(
 
 if (USD_FOUND)
     foreach(NAME IN LISTS USD_LIBRARIES)
-        if (NOT TARGET pxr::${NAME})
-            add_library(pxr::${NAME} UNKNOWN IMPORTED)
-            set_target_properties(pxr::${NAME} PROPERTIES
+        if (NOT TARGET usd::${NAME})
+            add_library(usd::${NAME} UNKNOWN IMPORTED)
+            set_target_properties(usd::${NAME} PROPERTIES
                 IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
                 INTERFACE_LINK_LIBRARIES "${USD_DEPENDENCIES}"
                 IMPORTED_LOCATION "${${NAME}_LIBRARY}"
