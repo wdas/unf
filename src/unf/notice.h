@@ -106,12 +106,12 @@ public:
         return _infoChanges;
     }
 
-    const TfTokenSet& GetChangedFields(const SdfPath& path) const
+    const TfTokenSet& GetChangedFields(const PXR_NS::SdfPath& path) const
     {
         return _changedFields.at(path);
     }
 
-    bool HasChangedFields(const SdfPath&) const;
+    bool HasChangedFields(const PXR_NS::SdfPath&) const;
 
     const ChangedFieldMap& GetChangedFieldMap() const {
         return _changedFields;
