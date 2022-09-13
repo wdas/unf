@@ -36,4 +36,3 @@ void HierarchyChanged::Merge(HierarchyChanged&& notice) {
 } // namespace BroadcasterNotice
 } // namespace unf
 
-PXR_NAMESPACE_CLOSE_SCOPE
