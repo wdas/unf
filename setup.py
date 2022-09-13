@@ -38,7 +38,7 @@ setup(
     version="0.1.0",
     description="Notice management library built over USD Notices",
     long_description=LONG_DESCRIPTION,
-    url="https://github.com/wdas/usd-notice-broker",
+    url="https://github.com/wdas/usd-notice-framework",
     keywords=["usd", "notice"],
     author="Walt Disney Animation Studios",
     python_requires=">=3.6, <3.10",

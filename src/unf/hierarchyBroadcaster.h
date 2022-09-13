@@ -16,9 +16,9 @@
 #include <vector>
 
 namespace unf {
-using _StageNoticePtrList = std::vector<BrokerNotice::StageNoticeRefPtr>;   
+using _StageNoticePtrList = std::vector<BrokerNotice::StageNoticeRefPtr>;
 using _StageNoticePtrMap = std::unordered_map<std::string, _StageNoticePtrList>;
-using ObjectsChangedRefPtr = TfRefPtr<BrokerNotice::ObjectsChanged>;
+using ObjectsChangedRefPtr = PXR_NS::TfRefPtr<BrokerNotice::ObjectsChanged>;
 
 class HierarchyBroadcaster : public Broadcaster {
     public:
@@ -50,7 +50,7 @@ class HierarchyBroadcaster : public Broadcaster {
             _StageNoticePtrList objChangedNotices = noticeMap[BrokerNotice::ObjectsChanged::GetStaticTypeId()];
             assert(objChangedNotices.size() <= 1);
             if (objChangedNotices.size() == 1) {
-                ObjectsChangedRefPtr notice = TfStatic_cast<ObjectsChangedRefPtr>(objChangedNotices[0]);
+                ObjectsChangedRefPtr notice = PXR_NS::TfStatic_cast<ObjectsChangedRefPtr>(objChangedNotices[0]);
                 _cache.Update(notice->GetResyncedPaths());
                 if (notice->GetChangedInfoOnlyPaths().size() > 0 || _cache.DidCacheChange()) {
                     _changedFields = &notice->GetChangedFieldMap();
@@ -63,7 +63,7 @@ class HierarchyBroadcaster : public Broadcaster {
             }
         }
     }
-    
+
     private:
         HierarchyCache _cache;
         const ChangedFieldMap* _changedFields;

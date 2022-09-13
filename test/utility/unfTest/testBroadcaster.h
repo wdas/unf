@@ -10,14 +10,14 @@
 #include <pxr/pxr.h>
 
 namespace Test {
-using HierarchyBroadcaster = PXR_NS::unf::HierarchyBroadcaster;
+using HierarchyBroadcaster = unf::HierarchyBroadcaster;
 
 // Declare test broadcasters.
-class ChildBroadcaster : public PXR_NS::unf::Broadcaster
+class ChildBroadcaster : public unf::Broadcaster
 {
 public:
-    ChildBroadcaster(const PXR_NS::unf::BrokerWeakPtr& broker)
-    : PXR_NS::unf::Broadcaster(broker) {}
+    ChildBroadcaster(const unf::BrokerWeakPtr& broker)
+    : unf::Broadcaster(broker) {}
 
     virtual std::string GetIdentifier() const override{ return "ChildBroadcaster"; };
     virtual std::string GetParentIdentifier() const override{ return "HierarchyBroadcaster"; }

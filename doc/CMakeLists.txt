@@ -1,3 +1,5 @@
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc")
+
 sphinx_add_docs(unfDoc
     SOURCE "${PROJECT_SOURCE_DIR}/doc/sphinx"
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/doc"

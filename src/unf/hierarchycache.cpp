@@ -20,7 +20,7 @@ namespace {
 }
 
 namespace unf {
-    void HierarchyCache::Update(SdfPathVector resynced) {
+    void HierarchyCache::Update(PXR_NS::SdfPathVector resynced) {
         //Remove Descendants
         SdfPath::RemoveDescendentPaths(&resynced);
 
@@ -77,7 +77,7 @@ namespace unf {
             //If we are at the final node of the path, then this is the resyncedpath.
             if (i == split_paths.size() - 1) {
                 SdfPath prim_path = SdfPath(partial_path);
-                UsdPrim child = _stage->GetPrimAtPath(prim_path);
+                PXR_NS::UsdPrim child = _stage->GetPrimAtPath(prim_path);
                 //Doesn't exit in stage nor cache -- don't do anything.
                 if (!child && child_token == curr_node->children.end()) {
                     return nullptr;
@@ -92,7 +92,7 @@ namespace unf {
             }
             if (child_token == curr_node->children.end()) {
                 SdfPath prim_path = SdfPath(partial_path);
-                UsdPrim child = _stage->GetPrimAtPath(prim_path);
+                PXR_NS::UsdPrim child = _stage->GetPrimAtPath(prim_path);
                 //Doesn't exist in the cache but in stage -- need to add prim
                 if (child){
                     curr_node->children[p_token] = TfCreateRefPtr(new Node(child));
@@ -106,12 +106,12 @@ namespace unf {
         return curr_node;
     }
 
-    void HierarchyCache::_sync(NodeRefPtr node, const UsdPrim& prim) {
+    void HierarchyCache::_sync(NodeRefPtr node, const PXR_NS::UsdPrim& prim) {
         if (node->prim_path != _stage->GetPseudoRoot().GetPath()) {
             _modified.insert(node->prim_path);
         }
         //Used to track nodes that exist in tree but not in stage
-        std::unordered_set<SdfPath, SdfPath::Hash> node_children_copy;
+        std::unordered_set<PXR_NS::SdfPath, PXR_NS::SdfPath::Hash> node_children_copy;
         for (auto& child : node->children) {
             node_children_copy.insert(child.second->prim_path);
         }

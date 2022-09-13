@@ -16,7 +16,7 @@
 #include <typeinfo>
 
 namespace Test {
-using UnorderedSdfPathSet = std::unordered_set<SdfPath, SdfPath::Hash>;
+using UnorderedSdfPathSet = std::unordered_set<PXR_NS::SdfPath, PXR_NS::SdfPath::Hash>;
 using ChangedFieldMap = unf::ChangedFieldMap;
 
 // Interface to examine content of notice received.
@@ -110,52 +110,52 @@ private:
 };
 
 // Usd ObjectsChanged notice listener
-class ObjChangedListener : public TfWeakBase {
+class ObjChangedListener : public PXR_NS::TfWeakBase {
     public:
         ObjChangedListener(unf::HierarchyCache* c) : _cache(c) {
-            _key = TfNotice::Register(TfCreateWeakPtr(this), &ObjChangedListener::_CallBack);
+            _key = PXR_NS::TfNotice::Register(TfCreateWeakPtr(this), &ObjChangedListener::_CallBack);
         }
         ~ObjChangedListener() {
             PXR_NS::TfNotice::Revoke(_key);
         }
-    
+
     private:
-        void _CallBack(const UsdNotice::ObjectsChanged& notice) {
-            SdfPathVector resyncedChanges;
+        void _CallBack(const PXR_NS::UsdNotice::ObjectsChanged& notice) {
+            PXR_NS::SdfPathVector resyncedChanges;
             for (const auto& path: notice.GetResyncedPaths()) {
                 resyncedChanges.push_back(path);
             }
             _cache->Update(resyncedChanges);
         }
 
-        TfNotice::Key _key;
+        PXR_NS::TfNotice::Key _key;
         unf::HierarchyCache* _cache;
  };
 
 // unf ObjectsChanged notice listener
-class unfObjChangedListener : public TfWeakBase {
+class unfObjChangedListener : public PXR_NS::TfWeakBase {
     public:
         unfObjChangedListener(unf::HierarchyCache* c) : _cache(c) {
-            _key = TfNotice::Register(TfCreateWeakPtr(this), &unfObjChangedListener::_CallBack);
+            _key = PXR_NS::TfNotice::Register(TfCreateWeakPtr(this), &unfObjChangedListener::_CallBack);
         }
         ~unfObjChangedListener() {
             PXR_NS::TfNotice::Revoke(_key);
         }
-    
+
     private:
         void _CallBack(const unf::BrokerNotice::ObjectsChanged& notice) {
             _cache->Update(notice.GetResyncedPaths());
         }
 
-        TfNotice::Key _key;
+        PXR_NS::TfNotice::Key _key;
         unf::HierarchyCache* _cache;
  };
 
 // unf HierarchyChanged notice listener
-class HierarchyChangedListener : public TfWeakBase {
+class HierarchyChangedListener : public PXR_NS::TfWeakBase {
     public:
         HierarchyChangedListener(){
-            _key = TfNotice::Register(TfCreateWeakPtr(this), &HierarchyChangedListener::_CallBack);
+            _key = PXR_NS::TfNotice::Register(TfCreateWeakPtr(this), &HierarchyChangedListener::_CallBack);
             _count = 0;
         }
         ~HierarchyChangedListener() {
@@ -182,8 +182,8 @@ class HierarchyChangedListener : public TfWeakBase {
         void ResetCount() {
             _count = 0;
         }
-    
-    
+
+
     private:
         void _CallBack(const unf::BroadcasterNotice::HierarchyChanged& notice) {
             _added = notice.GetAdded();
@@ -193,7 +193,7 @@ class HierarchyChangedListener : public TfWeakBase {
             _count ++;
         }
 
-        TfNotice::Key _key;
+        PXR_NS::TfNotice::Key _key;
         PXR_NS::SdfPathVector _added;
         PXR_NS::SdfPathVector _removed;
         PXR_NS::SdfPathVector _modified;
@@ -202,10 +202,10 @@ class HierarchyChangedListener : public TfWeakBase {
  };
 
  // ::Test:: ChildBroadcasterNotice notice listener
-class ChildBroadcasterNoticeListener : public TfWeakBase {
+class ChildBroadcasterNoticeListener : public PXR_NS::TfWeakBase {
     public:
         ChildBroadcasterNoticeListener(){
-            _key = TfNotice::Register(TfCreateWeakPtr(this), &ChildBroadcasterNoticeListener::_CallBack);
+            _key = PXR_NS::TfNotice::Register(TfCreateWeakPtr(this), &ChildBroadcasterNoticeListener::_CallBack);
             _count = 0;
         }
         ~ChildBroadcasterNoticeListener() {
@@ -232,7 +232,7 @@ class ChildBroadcasterNoticeListener : public TfWeakBase {
         void ResetCount() {
             _count = 0;
         }
-    
+
     private:
         void _CallBack(const ChildBroadcasterNotice& notice) {
             _added = notice.GetAdded();
@@ -242,7 +242,7 @@ class ChildBroadcasterNoticeListener : public TfWeakBase {
             _count ++;
         }
 
-        TfNotice::Key _key;
+        PXR_NS::TfNotice::Key _key;
         UnorderedSdfPathSet _added;
         UnorderedSdfPathSet _removed;
         UnorderedSdfPathSet _modified;

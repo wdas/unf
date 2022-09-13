@@ -1,6 +1,6 @@
 # USD Notice Framework
 
-[![Tests](https://github.com/wdas/usd-notice-broker/actions/workflows/test.yml/badge.svg?branch=prototype)](https://github.com/wdas/usd-notice-broker/actions/workflows/test.yml)
+[![Tests](https://github.com/wdas/usd-notice-framework/actions/workflows/test.yml/badge.svg?branch=prototype)](https://github.com/wdas/usd-notice-framework/actions/workflows/test.yml)
 
 Notice management library built over USD Notices.
 
@@ -9,7 +9,7 @@ Notice management library built over USD Notices.
 Build the library as follows:
 
 ```bash
-cd usd-notice-broker
+cd usd-notice-framework
 mkdir build && cd build
 cmake -DCMAKE_INSTALL_PREFIX=/tmp ..
 cmake --build . --target install
