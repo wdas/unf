@@ -23,7 +23,7 @@ using NodeRefPtr = PXR_NS::TfRefPtr<Node>;
 using UnorderedSdfPathSet = std::unordered_set<PXR_NS::SdfPath, PXR_NS::SdfPath::Hash>;
 
 struct Node : public PXR_NS::TfRefBase {
-    Node(const UsdPrim& prim){
+    Node(const PXR_NS::UsdPrim& prim){
         prim_path = prim.GetPath();
         for (const auto& child : prim.GetChildren()) {
             children[child.GetName()] = PXR_NS::TfCreateRefPtr(new Node(child));
@@ -39,7 +39,7 @@ class HierarchyCache : public PXR_NS::TfRefBase, PXR_NS::TfWeakBase {
             _root = PXR_NS::TfCreateRefPtr(new Node(stage->GetPseudoRoot()));
         }
 
-        void Update(SdfPathVector resynced);
+        void Update(PXR_NS::SdfPathVector resynced);
 
         bool FindNode(const PXR_NS::SdfPath& path);
 
@@ -66,7 +66,7 @@ class HierarchyCache : public PXR_NS::TfRefBase, PXR_NS::TfWeakBase {
         PXR_NS::SdfPathVector&& TakeRemoved() {
             return std::move(_noDescRemoved);
         }
-        
+
         PXR_NS::SdfPathVector&& TakeModified() {
             return std::move(_noDescModified);
         }

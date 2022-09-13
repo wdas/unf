@@ -23,7 +23,7 @@ namespace unf {
     void HierarchyCache::Update(SdfPathVector resynced) {
         //Remove Descendants
         SdfPath::RemoveDescendentPaths(&resynced);
-        
+
         for (auto& p : resynced) {
             NodeRefPtr node = _findNodeOrUpdate(p);
             if (node){
@@ -78,7 +78,7 @@ namespace unf {
             if (i == split_paths.size() - 1) {
                 SdfPath prim_path = SdfPath(partial_path);
                 UsdPrim child = _stage->GetPrimAtPath(prim_path);
-                //Doesn't exit in stage nor cache -- don't do anything. 
+                //Doesn't exit in stage nor cache -- don't do anything.
                 if (!child && child_token == curr_node->children.end()) {
                     return nullptr;
                 }
@@ -134,7 +134,7 @@ namespace unf {
                 _noDescAdded.push_back(child_prim_path);
             }
         }
-        
+
         //Exists only on cache, not on stage
         //Add the non-existant children to the removed set
         for (auto& child_prim_path : node_children_copy) {
@@ -147,4 +147,3 @@ namespace unf {
 
 } // namespace unf
 
-PXR_NAMESPACE_CLOSE_SCOPE
