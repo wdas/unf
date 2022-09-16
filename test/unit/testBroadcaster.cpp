@@ -211,8 +211,7 @@ TEST(Broadcaster, HierarchyBroadcasterTransactionNested) {
 
     ::Test::HierarchyChangedListener l = ::Test::HierarchyChangedListener();
 
-    /*
-    TODO: Fix test
+    
     {
         unf::NoticeTransaction transaction(broker);
 
@@ -228,7 +227,26 @@ TEST(Broadcaster, HierarchyBroadcasterTransactionNested) {
     ASSERT_EQ(l.GetAdded().size(), 1);
     ASSERT_EQ(l.GetRemoved().size(), 0);
     l.ResetCount();
-    */
+
+    {
+        unf::NoticeTransaction transaction(broker);
+
+        stage->RemovePrim(PXR_NS::SdfPath("/scene/P"));
+        {
+            unf::NoticeTransaction transaction(broker);
+            stage->DefinePrim(PXR_NS::SdfPath("/scene/P/K/L"));
+        }
+    }
+    ASSERT_EQ(l.GetCount(), 1);
+    ASSERT_EQ(l.GetModified().size(), 1);
+    ASSERT_NE((std::find(l.GetModified().begin(), l.GetModified().end(), PXR_NS::SdfPath("/scene/P"))), l.GetModified().end());
+    ASSERT_EQ(l.GetAdded().size(), 1);
+    ASSERT_NE((std::find(l.GetAdded().begin(), l.GetAdded().end(), PXR_NS::SdfPath("/scene/P/K"))), l.GetAdded().end());
+    ASSERT_EQ(l.GetRemoved().size(), 2);
+    ASSERT_NE((std::find(l.GetRemoved().begin(), l.GetRemoved().end(), PXR_NS::SdfPath("/scene/P/M"))), l.GetRemoved().end());
+    ASSERT_NE((std::find(l.GetRemoved().begin(), l.GetRemoved().end(), PXR_NS::SdfPath("/scene/P/J"))), l.GetRemoved().end());
+
+    l.ResetCount();
 
     {
         unf::NoticeTransaction transaction(broker);
@@ -553,8 +571,8 @@ TEST(Broadcaster, ChildBroadcasterTransactionNested)
             stage->DefinePrim(PXR_NS::SdfPath("/scene/K/M/L"));
         }
     }
-    //Child Broadcaster should have been executed twice -- at the end of each nested transaction.
-    ASSERT_EQ(l.GetCount(), 2);
+    //Child Broadcaster should have been executed once.
+    ASSERT_EQ(l.GetCount(), 1);
     l.ResetCount();
 }
 

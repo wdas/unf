@@ -9,20 +9,18 @@ PXR_NAMESPACE_USING_DIRECTIVE
 namespace unf {
 
 NoticeTransaction::NoticeTransaction(
-    const BrokerPtr& broker,
-    const NoticeCaturePredicateFunc& predicate)
+    const BrokerPtr& broker)
     : _broker(broker)
 {
-    _broker->BeginTransaction(predicate);
+    _broker->BeginTransaction();
 }
 
 // TODO: Add a register to ensure a unique Broker per Stage
 NoticeTransaction::NoticeTransaction(
-    const UsdStageRefPtr& stage,
-    const NoticeCaturePredicateFunc& predicate)
+    const UsdStageRefPtr& stage)
     : _broker(Broker::Create(stage))
 {
-    _broker->BeginTransaction(predicate);
+    _broker->BeginTransaction();
 }
 
 NoticeTransaction::~NoticeTransaction()

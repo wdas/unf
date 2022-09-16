@@ -19,22 +19,18 @@ PXR_NAMESPACE_USING_DIRECTIVE
 struct PythonNoticeTransaction
 {
     PythonNoticeTransaction(
-        const BrokerWeakPtr& broker,
-        const _CaturePredicateFunc &predicate)
-        : _predicate(predicate)
+        const BrokerWeakPtr& broker)
     {
         _makeContext = [&]() {
-            return new NoticeTransaction(broker, WrapPredicate(_predicate));
+            return new NoticeTransaction(broker);
         };
     }
 
     PythonNoticeTransaction(
-        const UsdStageWeakPtr& stage,
-        const _CaturePredicateFunc &predicate)
-        : _predicate(predicate)
+        const UsdStageWeakPtr& stage)
     {
         _makeContext = [&]() {
-            return new NoticeTransaction(stage, WrapPredicate(_predicate));
+            return new NoticeTransaction(stage);
         };
     }
 
@@ -59,22 +55,18 @@ struct PythonNoticeTransaction
 private:
     std::shared_ptr<NoticeTransaction> _context;
     std::function<NoticeTransaction *()> _makeContext;
-
-    _CaturePredicateFunc _predicate;
 };
 
 void
 wrapTransaction()
 {
-    // Ensure that predicate function can be passed from Python.
-    TfPyFunctionFromPython<_CaturePredicateFuncRaw>();
 
     class_<PythonNoticeTransaction>("NoticeTransaction", no_init)
 
-        .def(init<const BrokerWeakPtr&, const _CaturePredicateFunc&>
+        .def(init<const BrokerWeakPtr&>
              ((arg("broker"), arg("predicate")=object())))
 
-        .def(init<const UsdStageWeakPtr&, const _CaturePredicateFunc&>
+        .def(init<const UsdStageWeakPtr&>
              ((arg("stage"), arg("predicate")=object())))
 
         .def("__enter__", &PythonNoticeTransaction::__enter__,

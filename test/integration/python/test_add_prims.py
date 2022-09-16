@@ -124,8 +124,9 @@ def test_add_prims_blocking(notice_type, expected_usd):
         getattr(Usd.Notice, notice_type),
         lambda n, _: received_usd.append(n), stage)
 
+    broker.BeginTransaction()
     # Predicate blocking all broker notices.
-    broker.BeginTransaction(predicate=lambda _: False)
+    broker.BeginFilter(predicate=lambda _: False)
 
     stage.DefinePrim("/Foo")
     stage.DefinePrim("/Bar")
@@ -137,6 +138,7 @@ def test_add_prims_blocking(notice_type, expected_usd):
     # While USD Notices are being sent as expected.
     assert len(received_usd) == expected_usd
 
+    broker.EndFilter()
     broker.EndTransaction()
 
     # Ensure that no broker notices have been received.

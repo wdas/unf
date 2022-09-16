@@ -18,14 +18,14 @@ using namespace unf;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
-void Broker_BeginTransaction(Broker& self, object predicate)
+void Broker_BeginFilter(Broker& self, object predicate)
 {
     NoticeCaturePredicateFunc _predicate = nullptr;
     if (predicate) {
         _predicate = WrapPredicate(predicate);
     }
 
-    self.BeginTransaction(_predicate);
+    self.BeginFilter(_predicate);
 }
 
 void Broker_Send(Broker& self, TfRefPtr<PyBrokerNoticeWrapperBase> notice)
@@ -54,8 +54,12 @@ void wrapBroker()
 
         .def("Send", &Broker_Send)
 
-        .def("BeginTransaction", &Broker_BeginTransaction,
+        .def("BeginFilter", &Broker_BeginFilter,
             ((arg("self"), arg("predicate")=object())))
+        
+        .def("EndFilter", &Broker::EndFilter)
+
+        .def("BeginTransaction", &Broker::BeginTransaction)
 
         .def("EndTransaction", &Broker::EndTransaction);
 }
