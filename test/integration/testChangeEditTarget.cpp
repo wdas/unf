@@ -123,8 +123,9 @@ TEST_F(ChangeEditTargetTest, Blocking)
 {
     auto broker = unf::Broker::Create(_stage);
 
+    broker->BeginTransaction();
     // Pass a predicate to block all broker notices.
-    broker->BeginTransaction(
+    broker->AddFilter(
         [](const _Broker::StageNotice &){ return false; });
 
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[0]));
@@ -144,6 +145,7 @@ TEST_F(ChangeEditTargetTest, Blocking)
     ASSERT_EQ(_brokerListener.Received<_Broker::StageEditTargetChanged>(), 0);
     ASSERT_EQ(_brokerListener.Received<_Broker::LayerMutingChanged>(), 0);
 
+    broker->PopFilter();
     broker->EndTransaction();
 
     // Ensure that no broker notices are sent after a transaction either.

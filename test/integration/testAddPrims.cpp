@@ -105,9 +105,9 @@ TEST_F(AddPrimsTest, Blocking)
 {
     auto broker = unf::Broker::Create(_stage);
 
+    broker->BeginTransaction();
     // Pass a predicate to block all broker notices.
-    broker->BeginTransaction(
-        [](const _Broker::StageNotice &){ return false; });
+    broker->AddFilter([](const _Broker::StageNotice &){ return false; });
 
     _stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
     _stage->DefinePrim(PXR_NS::SdfPath {"/Bar"});
@@ -127,6 +127,7 @@ TEST_F(AddPrimsTest, Blocking)
     ASSERT_EQ(_brokerListener.Received<_Broker::StageEditTargetChanged>(), 0);
     ASSERT_EQ(_brokerListener.Received<_Broker::LayerMutingChanged>(), 0);
 
+    broker->PopFilter();
     broker->EndTransaction();
 
     // Ensure that no broker notices are sent after a transaction either.
@@ -143,8 +144,9 @@ TEST_F(AddPrimsTest, PartialBlocking)
 
     std::string target = typeid(_Broker::ObjectsChanged).name();
 
+    broker->BeginTransaction();
     // Pass a predicate to block all broker notices.
-    broker->BeginTransaction(
+    broker->AddFilter(
         [&](const _Broker::StageNotice &n){return (n.GetTypeId() == target); });
 
     _stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
@@ -165,6 +167,7 @@ TEST_F(AddPrimsTest, PartialBlocking)
     ASSERT_EQ(_brokerListener.Received<_Broker::StageEditTargetChanged>(), 0);
     ASSERT_EQ(_brokerListener.Received<_Broker::LayerMutingChanged>(), 0);
 
+    broker->PopFilter();
     broker->EndTransaction();
 
     // Ensure that only consolidated ObjectsChanged broker notice are sent.

@@ -2,7 +2,6 @@
 #define NOTICE_BROKER_BROKER_H
 
 #include "unf/notice.h"
-#include "unf/merger.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/refBase.h>
@@ -33,6 +32,10 @@ using BrokerWeakPtr = PXR_NS::TfWeakPtr<Broker>;
 using DispatcherPtr = PXR_NS::TfRefPtr<Dispatcher>;
 using BroadcasterPtr = PXR_NS::TfRefPtr<Broadcaster>;
 using BroadcasterPtrList = std::vector<BroadcasterPtr>;
+using _StageNoticePtrList = std::vector<BrokerNotice::StageNoticeRefPtr>;
+using _StageNoticePtrMap = std::unordered_map<std::string, _StageNoticePtrList>;
+using NoticeCaturePredicateFunc =
+    std::function<bool (const BrokerNotice::StageNotice &)>;
 
 class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
 public:
@@ -48,8 +51,11 @@ public:
 
     bool IsInTransaction();
 
-    void BeginTransaction(const NoticeCaturePredicateFunc& predicate=nullptr);
+    void BeginTransaction();
     void EndTransaction();
+
+    void AddFilter(const NoticeCaturePredicateFunc& predicate);
+    void PopFilter();
 
     template<class BrokerNotice, class... Args>
     void Send(Args&&... args);
@@ -67,6 +73,8 @@ public:
 
 private:
     Broker(const PXR_NS::UsdStageWeakPtr&);
+
+    void _MergeNotices();
 
     static void _CleanCache();
 
@@ -86,19 +94,19 @@ private:
     void _LoadFromPlugins(const PXR_NS::TfType& type);
 
     void _RegisterBroadcaster(const BroadcasterPtr&);
-    void _ExecuteBroadcasters(NoticeMergerPtr&);
+    void _ExecuteBroadcasters(_StageNoticePtrMap&);
 
     // A registry of hashed stage ptr to the corresponding stage's broker ptr.
     static std::unordered_map<size_t, BrokerPtr> Registry;
 
     PXR_NS::UsdStageWeakPtr _stage;
 
-    std::vector<NoticeMergerPtr> _mergers;
-    NoticeMergerPtr _latestMerger = nullptr;
-
+    _StageNoticePtrMap _noticeMap;
+    std::vector<NoticeCaturePredicateFunc> _predicates;
     std::unordered_map<std::string, DispatcherPtr> _dispatcherMap;
     std::unordered_map<std::string, BroadcasterPtr> _broadcasterMap;
     std::vector<std::string> _rootBroadcasters;
+    size_t _transactionDepth;
 };
 
 template<class BrokerNotice, class... Args>

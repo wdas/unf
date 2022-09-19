@@ -142,8 +142,9 @@ def test_mute_layers_blocking(
         getattr(Usd.Notice, notice_type),
         lambda n, _: received_usd.append(n), stage)
 
+    broker.BeginTransaction()
     # Predicate blocking all broker notices.
-    broker.BeginTransaction(predicate=lambda _: False)
+    broker.AddFilter(predicate=lambda _: False)
 
     layers = stage.GetRootLayer().subLayerPaths
 
@@ -162,6 +163,7 @@ def test_mute_layers_blocking(
     # While USD Notices are being sent as expected.
     assert len(received_usd) == expected_usd
 
+    broker.PopFilter()
     broker.EndTransaction()
 
     # Ensure that no broker notices have been received.
