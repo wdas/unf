@@ -16,24 +16,18 @@ using _USD = PXR_NS::UsdNotice;
 namespace _Broker = unf::BrokerNotice;
 
 class AddPrimsTest : public ::testing::Test {
-protected:
+  protected:
     using UsdListener = ::Test::Listener<
-        _USD::StageNotice,
-        _USD::StageContentsChanged,
-        _USD::ObjectsChanged,
-        _USD::StageEditTargetChanged,
-        _USD::LayerMutingChanged
-    >;
+        _USD::StageNotice, _USD::StageContentsChanged, _USD::ObjectsChanged,
+        _USD::StageEditTargetChanged, _USD::LayerMutingChanged>;
 
     using BrokerListener = ::Test::Listener<
-        _Broker::StageNotice,
-        _Broker::StageContentsChanged,
-        _Broker::ObjectsChanged,
-        _Broker::StageEditTargetChanged,
-        _Broker::LayerMutingChanged
-    >;
+        _Broker::StageNotice, _Broker::StageContentsChanged,
+        _Broker::ObjectsChanged, _Broker::StageEditTargetChanged,
+        _Broker::LayerMutingChanged>;
 
-    void SetUp() override {
+    void SetUp() override
+    {
         _stage = PXR_NS::UsdStage::CreateInMemory();
         _usdListener.SetStage(_stage);
         _brokerListener.SetStage(_stage);
@@ -49,9 +43,9 @@ TEST_F(AddPrimsTest, Simple)
 {
     auto broker = unf::Broker::Create(_stage);
 
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Bar"});
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Baz"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Bar"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Baz"});
 
     // Ensure that similar notices are received via the stage and the broker.
     ASSERT_EQ(_usdListener.Received<_USD::StageNotice>(), 6);
@@ -73,9 +67,9 @@ TEST_F(AddPrimsTest, Batching)
 
     broker->BeginTransaction();
 
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Bar"});
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Baz"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Bar"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Baz"});
 
     // Ensure that USD Notices are being sent as expected.
     ASSERT_EQ(_usdListener.Received<_USD::StageNotice>(), 6);
@@ -107,11 +101,11 @@ TEST_F(AddPrimsTest, Blocking)
 
     broker->BeginTransaction();
     // Pass a predicate to block all broker notices.
-    broker->AddFilter([](const _Broker::StageNotice &){ return false; });
+    broker->AddFilter([](const _Broker::StageNotice&) { return false; });
 
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Bar"});
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Baz"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Bar"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Baz"});
 
     // Ensure that USD Notices are being sent as expected.
     ASSERT_EQ(_usdListener.Received<_USD::StageNotice>(), 6);
@@ -146,12 +140,13 @@ TEST_F(AddPrimsTest, PartialBlocking)
 
     broker->BeginTransaction();
     // Pass a predicate to block all broker notices.
-    broker->AddFilter(
-        [&](const _Broker::StageNotice &n){return (n.GetTypeId() == target); });
+    broker->AddFilter([&](const _Broker::StageNotice& n) {
+        return (n.GetTypeId() == target);
+    });
 
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Bar"});
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Baz"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Bar"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Baz"});
 
     // Ensure that USD Notices are being sent as expected.
     ASSERT_EQ(_usdListener.Received<_USD::StageNotice>(), 6);
@@ -184,20 +179,18 @@ TEST_F(AddPrimsTest, Transaction_ObjectsChanged)
 
     using Notice = _Broker::ObjectsChanged;
 
-    class DataListener : public ::Test::ListenerBase<Notice>
-    {
-    public:
+    class DataListener : public ::Test::ListenerBase<Notice> {
+      public:
         using ::Test::ListenerBase<Notice>::ListenerBase;
 
-    private:
+      private:
         void OnReceiving(
-            const Notice& n,
-            const PXR_NS::UsdStageWeakPtr&) override
+            const Notice& n, const PXR_NS::UsdStageWeakPtr&) override
         {
             ASSERT_EQ(n.GetResyncedPaths().size(), 3);
-            ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath {"/Foo"});
-            ASSERT_EQ(n.GetResyncedPaths().at(1), PXR_NS::SdfPath {"/Bar"});
-            ASSERT_EQ(n.GetResyncedPaths().at(2), PXR_NS::SdfPath {"/Baz"});
+            ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath{"/Foo"});
+            ASSERT_EQ(n.GetResyncedPaths().at(1), PXR_NS::SdfPath{"/Bar"});
+            ASSERT_EQ(n.GetResyncedPaths().at(2), PXR_NS::SdfPath{"/Baz"});
             ASSERT_EQ(n.GetChangedInfoOnlyPaths().size(), 0);
         }
     };
@@ -206,9 +199,9 @@ TEST_F(AddPrimsTest, Transaction_ObjectsChanged)
 
     broker->BeginTransaction();
 
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Bar"});
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Baz"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Bar"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Baz"});
 
     broker->EndTransaction();
 }
@@ -219,9 +212,9 @@ TEST_F(AddPrimsTest, Caching_ObjectsChanged)
 
     unf::NoticeCache<_Broker::ObjectsChanged> cache;
 
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Bar"});
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Baz"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Bar"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Baz"});
 
     // Ensure that three notices have been cached.
     ASSERT_EQ(cache.Size(), 3);
@@ -230,17 +223,17 @@ TEST_F(AddPrimsTest, Caching_ObjectsChanged)
     {
         auto& n1 = cache.GetAll().at(0);
         ASSERT_EQ(n1->GetResyncedPaths().size(), 1);
-        ASSERT_EQ(n1->GetResyncedPaths().at(0), PXR_NS::SdfPath {"/Foo"});
+        ASSERT_EQ(n1->GetResyncedPaths().at(0), PXR_NS::SdfPath{"/Foo"});
         ASSERT_EQ(n1->GetChangedInfoOnlyPaths().size(), 0);
 
         auto& n2 = cache.GetAll().at(1);
         ASSERT_EQ(n2->GetResyncedPaths().size(), 1);
-        ASSERT_EQ(n2->GetResyncedPaths().at(0), PXR_NS::SdfPath {"/Bar"});
+        ASSERT_EQ(n2->GetResyncedPaths().at(0), PXR_NS::SdfPath{"/Bar"});
         ASSERT_EQ(n2->GetChangedInfoOnlyPaths().size(), 0);
 
         auto& n3 = cache.GetAll().at(2);
         ASSERT_EQ(n3->GetResyncedPaths().size(), 1);
-        ASSERT_EQ(n3->GetResyncedPaths().at(0), PXR_NS::SdfPath {"/Baz"});
+        ASSERT_EQ(n3->GetResyncedPaths().at(0), PXR_NS::SdfPath{"/Baz"});
         ASSERT_EQ(n3->GetChangedInfoOnlyPaths().size(), 0);
     }
 
@@ -253,9 +246,9 @@ TEST_F(AddPrimsTest, Caching_ObjectsChanged)
     {
         auto& n = cache.GetAll().at(0);
         ASSERT_EQ(n->GetResyncedPaths().size(), 3);
-        ASSERT_EQ(n->GetResyncedPaths().at(0), PXR_NS::SdfPath {"/Foo"});
-        ASSERT_EQ(n->GetResyncedPaths().at(1), PXR_NS::SdfPath {"/Bar"});
-        ASSERT_EQ(n->GetResyncedPaths().at(2), PXR_NS::SdfPath {"/Baz"});
+        ASSERT_EQ(n->GetResyncedPaths().at(0), PXR_NS::SdfPath{"/Foo"});
+        ASSERT_EQ(n->GetResyncedPaths().at(1), PXR_NS::SdfPath{"/Bar"});
+        ASSERT_EQ(n->GetResyncedPaths().at(2), PXR_NS::SdfPath{"/Baz"});
         ASSERT_EQ(n->GetChangedInfoOnlyPaths().size(), 0);
     }
 }
@@ -266,9 +259,9 @@ TEST_F(AddPrimsTest, Caching_StageContentsChanged)
 
     unf::NoticeCache<_Broker::StageContentsChanged> cache;
 
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Bar"});
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Baz"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Bar"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Baz"});
 
     // Ensure that three notices have been cached.
     ASSERT_EQ(cache.Size(), 3);

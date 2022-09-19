@@ -1,7 +1,7 @@
 #include "unf/notice.h"
 
-#include <pxr/pxr.h>
 #include <pxr/base/tf/notice.h>
+#include <pxr/pxr.h>
 #include <pxr/usd/usd/notice.h>
 
 #include <utility>
@@ -26,20 +26,21 @@ ObjectsChanged::ObjectsChanged(const UsdNotice::ObjectsChanged& notice)
 {
     // TODO: Update Usd Notice to give easier access to fields.
 
-    for (const auto& path: notice.GetResyncedPaths()) {
+    for (const auto& path : notice.GetResyncedPaths()) {
         _resyncChanges.push_back(path);
     }
-    for (const auto& path: notice.GetChangedInfoOnlyPaths()) {
+    for (const auto& path : notice.GetChangedInfoOnlyPaths()) {
         _infoChanges.push_back(path);
-        _changedFields[path] = TfTokenSet(notice.GetChangedFields(path).begin(), notice.GetChangedFields(path).end());
+        _changedFields[path] = TfTokenSet(
+            notice.GetChangedFields(path).begin(),
+            notice.GetChangedFields(path).end());
     }
-
 }
 
 ObjectsChanged::ObjectsChanged(const ObjectsChanged& other)
-    : _resyncChanges(other._resyncChanges)
-    , _infoChanges(other._infoChanges)
-    , _changedFields(other._changedFields)
+    : _resyncChanges(other._resyncChanges),
+      _infoChanges(other._infoChanges),
+      _changedFields(other._changedFields)
 {
 }
 
@@ -56,7 +57,7 @@ void ObjectsChanged::Merge(ObjectsChanged&& notice)
 {
     size_t resyncChangesSize = _resyncChanges.size();
 
-    for (const auto& path: notice._resyncChanges) {
+    for (const auto& path : notice._resyncChanges) {
         auto begin = _resyncChanges.begin();
         auto end = _resyncChanges.end();
         auto it = std::find(begin, end, path);
@@ -66,7 +67,7 @@ void ObjectsChanged::Merge(ObjectsChanged&& notice)
     }
 
     size_t infoChangesSize = _infoChanges.size();
-    for (const auto& path: notice._infoChanges) {
+    for (const auto& path : notice._infoChanges) {
         auto begin = _infoChanges.begin();
         auto end = _infoChanges.end();
         auto it = std::find(begin, end, path);
@@ -75,14 +76,16 @@ void ObjectsChanged::Merge(ObjectsChanged&& notice)
             _infoChanges.push_back(std::move(path));
         }
         else {
-            _changedFields[path].insert(notice._changedFields[path].begin(), notice._changedFields[path].end());
+            _changedFields[path].insert(
+                notice._changedFields[path].begin(),
+                notice._changedFields[path].end());
         }
     }
 }
 
 bool ObjectsChanged::HasChangedFields(const SdfPath& path) const
 {
-    if(_changedFields.find(path) != _changedFields.end()) {
+    if (_changedFields.find(path) != _changedFields.end()) {
         return true;
     }
 
@@ -92,20 +95,18 @@ bool ObjectsChanged::HasChangedFields(const SdfPath& path) const
 LayerMutingChanged::LayerMutingChanged(
     const UsdNotice::LayerMutingChanged& notice)
 {
-    for (const auto& layer: notice.GetMutedLayers()) {
+    for (const auto& layer : notice.GetMutedLayers()) {
         _mutedLayers.push_back(layer);
     }
 
-    for (const auto& layer: notice.GetUnmutedLayers()) {
+    for (const auto& layer : notice.GetUnmutedLayers()) {
         _unmutedLayers.push_back(layer);
     }
 }
 
 LayerMutingChanged::LayerMutingChanged(const LayerMutingChanged& other)
-    : _mutedLayers(other._mutedLayers)
-    , _unmutedLayers(other._unmutedLayers)
+    : _mutedLayers(other._mutedLayers), _unmutedLayers(other._unmutedLayers)
 {
-
 }
 
 LayerMutingChanged& LayerMutingChanged::operator=(
@@ -122,7 +123,7 @@ void LayerMutingChanged::Merge(LayerMutingChanged&& notice)
     size_t mutedLayersSize = _mutedLayers.size();
     size_t unmutedLayersSize = _unmutedLayers.size();
 
-    for (const auto& layer: notice._mutedLayers) {
+    for (const auto& layer : notice._mutedLayers) {
         auto begin = _unmutedLayers.begin();
         auto end = begin + unmutedLayersSize;
         auto it = std::find(begin, end, layer);
@@ -135,7 +136,7 @@ void LayerMutingChanged::Merge(LayerMutingChanged&& notice)
         }
     }
 
-    for (const auto& layer: notice._unmutedLayers) {
+    for (const auto& layer : notice._unmutedLayers) {
         auto begin = _mutedLayers.begin();
         auto end = begin + mutedLayersSize;
         auto it = std::find(begin, end, layer);
@@ -149,6 +150,6 @@ void LayerMutingChanged::Merge(LayerMutingChanged&& notice)
     }
 }
 
-} // namespace BrokerNotice
+}  // namespace BrokerNotice
 
-} // namespace unf
+}  // namespace unf

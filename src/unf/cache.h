@@ -3,21 +3,20 @@
 
 #include "unf/notice.h"
 
-#include <pxr/pxr.h>
+#include <pxr/base/tf/anyWeakPtr.h>
 #include <pxr/base/tf/notice.h>
+#include <pxr/base/tf/refPtr.h>
 #include <pxr/base/tf/weakBase.h>
 #include <pxr/base/tf/weakPtr.h>
-#include <pxr/base/tf/anyWeakPtr.h>
-#include <pxr/base/tf/refPtr.h>
+#include <pxr/pxr.h>
 
-#include <vector>
 #include <type_traits>
+#include <vector>
 
 namespace unf {
 
-class BaseNoticeCache : public PXR_NS::TfWeakBase
-{
-public:
+class BaseNoticeCache : public PXR_NS::TfWeakBase {
+  public:
     BaseNoticeCache() {}
     BaseNoticeCache(BaseNoticeCache&&) = default;
 
@@ -27,45 +26,33 @@ public:
 };
 
 template <class T>
-class NoticeCache : public BaseNoticeCache
-{
-public:
+class NoticeCache : public BaseNoticeCache {
+  public:
     NoticeCache()
     {
         static_assert(
             std::is_base_of<BrokerNotice::StageNotice, T>::value
-            && !std::is_same<BrokerNotice::StageNotice, T>::value,
-            "Expecting a notice derived from BrokerNotice::StageNotice."
-        );
+                && !std::is_same<BrokerNotice::StageNotice, T>::value,
+            "Expecting a notice derived from BrokerNotice::StageNotice.");
 
         _key = PXR_NS::TfNotice::Register(
-            PXR_NS::TfCreateWeakPtr(this),
-            &NoticeCache::_OnReceiving);
+            PXR_NS::TfCreateWeakPtr(this), &NoticeCache::_OnReceiving);
     }
 
-    NoticeCache(const PXR_NS::TfAnyWeakPtr &sender)
+    NoticeCache(const PXR_NS::TfAnyWeakPtr& sender)
     {
         static_assert(
             std::is_base_of<BrokerNotice::StageNotice, T>::value
-            && !std::is_same<BrokerNotice::StageNotice, T>::value,
-            "Expecting a notice derived from BrokerNotice::StageNotice."
-        );
+                && !std::is_same<BrokerNotice::StageNotice, T>::value,
+            "Expecting a notice derived from BrokerNotice::StageNotice.");
 
-       _key = PXR_NS::TfNotice::Register(
-            PXR_NS::TfCreateWeakPtr(this),
-            &NoticeCache::_OnReceiving,
-            sender);
+        _key = PXR_NS::TfNotice::Register(
+            PXR_NS::TfCreateWeakPtr(this), &NoticeCache::_OnReceiving, sender);
     }
 
-    ~NoticeCache()
-    {
-        PXR_NS::TfNotice::Revoke(_key);
-    }
+    ~NoticeCache() { PXR_NS::TfNotice::Revoke(_key); }
 
-    virtual size_t Size() const override
-    {
-        return _notices.size();
-    }
+    virtual size_t Size() const override { return _notices.size(); }
 
     virtual const std::vector<PXR_NS::TfRefPtr<const T> >& GetAll() const
     {
@@ -82,19 +69,19 @@ public:
         PXR_NS::TfRefPtr<T> notice = _notices.at(0)->Copy();
         auto it = std::next(_notices.begin());
 
-        while(it != _notices.end()) {
+        while (it != _notices.end()) {
             PXR_NS::TfRefPtr<T> notice2 = (*it)->Copy();
             notice->Merge(std::move(*notice2));
             it++;
         }
 
         // Replace list of notices with merged notice.
-        _notices = std::vector<PXR_NS::TfRefPtr<const T> > {notice};
+        _notices = std::vector<PXR_NS::TfRefPtr<const T> >{notice};
     }
 
     virtual void Clear() override { _notices.clear(); }
 
-private:
+  private:
     void _OnReceiving(const T& notice)
     {
         _notices.push_back(PXR_NS::TfRefPtr<const T>(&notice));
@@ -104,6 +91,6 @@ private:
     PXR_NS::TfNotice::Key _key;
 };
 
-} // namespace unf
+}  // namespace unf
 
-#endif // NOTICE_BROKER_NOTICE_CACHE_H
+#endif  // NOTICE_BROKER_NOTICE_CACHE_H

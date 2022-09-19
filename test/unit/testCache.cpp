@@ -1,5 +1,5 @@
-#include <unf/cache.h>
 #include <unf/broker.h>
+#include <unf/cache.h>
 
 #include <unfTest/testNotice.h>
 
@@ -40,7 +40,8 @@ TEST(NoticeCacheTest, MergeableNotice)
     // Ensure that the content of the notice is correct.
     {
         auto& n = cache.GetAll().at(0);
-        ASSERT_EQ(n->GetData(),
+        ASSERT_EQ(
+            n->GetData(),
             ::Test::DataMap({{"Foo", "Test2"}, {"Bar", "Test3"}}));
     }
 }

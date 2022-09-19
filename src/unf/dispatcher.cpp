@@ -2,8 +2,8 @@
 #include "unf/broker.h"
 #include "unf/notice.h"
 
-#include <pxr/pxr.h>
 #include <pxr/base/tf/weakPtr.h>
+#include <pxr/pxr.h>
 #include <pxr/usd/usd/common.h>
 #include <pxr/usd/usd/notice.h>
 
@@ -11,20 +11,13 @@ PXR_NAMESPACE_USING_DIRECTIVE
 
 namespace unf {
 
-TF_REGISTRY_FUNCTION(TfType)
-{
-    TfType::Define<Dispatcher>();
-}
+TF_REGISTRY_FUNCTION(TfType) { TfType::Define<Dispatcher>(); }
 
-Dispatcher::Dispatcher(const BrokerWeakPtr& broker)
-    : _broker(broker)
-{
-
-}
+Dispatcher::Dispatcher(const BrokerWeakPtr& broker) : _broker(broker) {}
 
 void Dispatcher::Revoke()
 {
-    for (auto& key: _keys) {
+    for (auto& key : _keys) {
         TfNotice::Revoke(key);
     }
 }
@@ -32,7 +25,6 @@ void Dispatcher::Revoke()
 StageDispatcher::StageDispatcher(const BrokerWeakPtr& broker)
     : Dispatcher(broker)
 {
-
 }
 
 void StageDispatcher::Register()
@@ -42,9 +34,7 @@ void StageDispatcher::Register()
     _Register<
         UsdNotice::StageContentsChanged,
         BrokerNotice::StageContentsChanged>();
-    _Register<
-        UsdNotice::ObjectsChanged,
-        BrokerNotice::ObjectsChanged>();
+    _Register<UsdNotice::ObjectsChanged, BrokerNotice::ObjectsChanged>();
     _Register<
         UsdNotice::StageEditTargetChanged,
         BrokerNotice::StageEditTargetChanged>();
@@ -53,4 +43,4 @@ void StageDispatcher::Register()
         BrokerNotice::LayerMutingChanged>();
 }
 
-} // namespace unf
+}  // namespace unf

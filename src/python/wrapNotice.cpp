@@ -1,8 +1,8 @@
 #include "unf/notice.h"
 
-#include <pxr/pxr.h>
 #include <pxr/base/tf/notice.h>
 #include <pxr/base/tf/pyNoticeWrapper.h>
+#include <pxr/pxr.h>
 
 #include <boost/python.hpp>
 
@@ -18,7 +18,8 @@ TF_INSTANTIATE_NOTICE_WRAPPER(StageEditTargetChanged, StageNotice);
 TF_INSTANTIATE_NOTICE_WRAPPER(LayerMutingChanged, StageNotice);
 
 // Dummy class to reproduce namespace in Python.
-class PythonBrokerNotice {};
+class PythonBrokerNotice {
+};
 
 void wrapNotice()
 {
@@ -29,16 +30,24 @@ void wrapNotice()
     TfPyNoticeWrapper<StageContentsChanged, StageNotice>::Wrap();
 
     TfPyNoticeWrapper<ObjectsChanged, StageNotice>::Wrap()
-        .def("GetResyncedPaths", &ObjectsChanged::GetResyncedPaths,
+        .def(
+            "GetResyncedPaths",
+            &ObjectsChanged::GetResyncedPaths,
             return_value_policy<return_by_value>())
-        .def("GetChangedInfoOnlyPaths", &ObjectsChanged::GetChangedInfoOnlyPaths,
+        .def(
+            "GetChangedInfoOnlyPaths",
+            &ObjectsChanged::GetChangedInfoOnlyPaths,
             return_value_policy<return_by_value>());
 
     TfPyNoticeWrapper<StageEditTargetChanged, StageNotice>::Wrap();
 
     TfPyNoticeWrapper<LayerMutingChanged, StageNotice>::Wrap()
-        .def("GetMutedLayers", &LayerMutingChanged::GetMutedLayers,
+        .def(
+            "GetMutedLayers",
+            &LayerMutingChanged::GetMutedLayers,
             return_value_policy<return_by_value>())
-        .def("GetUnmutedLayers", &LayerMutingChanged::GetUnmutedLayers,
+        .def(
+            "GetUnmutedLayers",
+            &LayerMutingChanged::GetUnmutedLayers,
             return_value_policy<return_by_value>());
 }

@@ -3,20 +3,19 @@
 
 #include "unf/notice.h"
 
-#include <pxr/pxr.h>
+#include <pxr/base/tf/makePyConstructor.h>
+#include <pxr/base/tf/notice.h>
+#include <pxr/base/tf/pyContainerConversions.h>
+#include <pxr/base/tf/pyLock.h>
 #include <pxr/base/tf/pyNoticeWrapper.h>
 #include <pxr/base/tf/pyPtrHelpers.h>
-#include <pxr/base/tf/makePyConstructor.h>
 #include <pxr/base/tf/pyResultConversions.h>
-#include <pxr/base/tf/pyContainerConversions.h>
-#include <pxr/base/tf/pyNoticeWrapper.h>
-#include <pxr/base/tf/pyLock.h>
-#include <pxr/base/tf/refPtr.h>
 #include <pxr/base/tf/refBase.h>
+#include <pxr/base/tf/refPtr.h>
 #include <pxr/base/tf/type.h>
-#include <pxr/base/tf/notice.h>
-#include <pxr/usd/usd/pyConversions.h>
+#include <pxr/pxr.h>
 #include <pxr/usd/usd/notice.h>
+#include <pxr/usd/usd/pyConversions.h>
 
 using namespace boost::python;
 
@@ -24,12 +23,13 @@ namespace unf {
 
 // Interface object to process custom notice in Python.
 // TODO: Should we forbid handling of custom notices via Python?
-class PyBrokerNoticeWrapperBase
-: public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
-public:
-    PyBrokerNoticeWrapperBase() {};
+class PyBrokerNoticeWrapperBase : public PXR_NS::TfRefBase,
+                                  public PXR_NS::TfWeakBase {
+  public:
+    PyBrokerNoticeWrapperBase(){};
 
-    virtual PXR_NS::TfRefPtr<BrokerNotice::StageNotice> Get() {
+    virtual PXR_NS::TfRefPtr<BrokerNotice::StageNotice> Get()
+    {
         return nullptr;
     }
 
@@ -39,9 +39,8 @@ public:
 };
 
 template <class Self>
-class PyBrokerNoticeWrapper : public PyBrokerNoticeWrapperBase
-{
-public:
+class PyBrokerNoticeWrapper : public PyBrokerNoticeWrapperBase {
+  public:
     PyBrokerNoticeWrapper() {}
 
     // Creates a PyBrokerNoticeWrapperBase and forwards the arguments to the
@@ -67,29 +66,30 @@ public:
         return _notice;
     };
 
-    virtual void Send() override
-    {
-        _notice->Send();
-    }
+    virtual void Send() override { _notice->Send(); }
 
-    //Allows smoother Python wrapping for users.
+    // Allows smoother Python wrapping for users.
     template <class... Args>
-    static void Wrap(const char* name) {
-        class_<PyBrokerNoticeWrapper<Self>,
+    static void Wrap(const char* name)
+    {
+        class_<
+            PyBrokerNoticeWrapper<Self>,
             PXR_NS::TfWeakPtr<PyBrokerNoticeWrapper<Self> >,
             bases<PyBrokerNoticeWrapperBase> >(name)
 
             .def(PXR_NS::TfPyRefAndWeakPtr())
 
-            .def("Init", &PyBrokerNoticeWrapper<Self>::Init<Args...>,
+            .def(
+                "Init",
+                &PyBrokerNoticeWrapper<Self>::Init<Args...>,
                 return_value_policy<PXR_NS::TfPyRefPtrFactory<> >())
             .staticmethod("Init");
     }
 
-private:
+  private:
     PXR_NS::TfRefPtr<Self> _notice;
 };
 
-} // namespace unf
+}  // namespace unf
 
-#endif // NOTICE_BROKER_NOTICE_WRAPPER
+#endif  // NOTICE_BROKER_NOTICE_WRAPPER

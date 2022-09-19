@@ -5,11 +5,12 @@ using namespace unf;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
-void wrapNoticeWrapper(){
-    class_<PyBrokerNoticeWrapperBase,
+void wrapNoticeWrapper()
+{
+    class_<
+        PyBrokerNoticeWrapperBase,
         TfWeakPtr<PyBrokerNoticeWrapperBase>,
-        boost::noncopyable>
-        ("PyBrokerNoticeWrapperBase", init<>())
+        boost::noncopyable>("PyBrokerNoticeWrapperBase", init<>())
 
         .def(TfPyRefAndWeakPtr())
 

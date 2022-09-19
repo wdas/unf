@@ -8,20 +8,13 @@ PXR_NAMESPACE_USING_DIRECTIVE
 
 namespace unf {
 
-TF_REGISTRY_FUNCTION(TfType)
-{
-    TfType::Define<Broadcaster>();
-}
+TF_REGISTRY_FUNCTION(TfType) { TfType::Define<Broadcaster>(); }
 
-Broadcaster::Broadcaster(const BrokerWeakPtr& broker)
-    : _broker(broker)
-{
-
-}
+Broadcaster::Broadcaster(const BrokerWeakPtr& broker) : _broker(broker) {}
 
 void Broadcaster::_AddChild(const BroadcasterPtr& child)
 {
     _children.push_back(child);
 }
 
-} // namespace unf
+}  // namespace unf

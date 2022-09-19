@@ -18,24 +18,18 @@ using _USD = PXR_NS::UsdNotice;
 namespace _Broker = unf::BrokerNotice;
 
 class ChangeEditTargetTest : public ::testing::Test {
-protected:
+  protected:
     using UsdListener = ::Test::Listener<
-        _USD::StageNotice,
-        _USD::StageContentsChanged,
-        _USD::ObjectsChanged,
-        _USD::StageEditTargetChanged,
-        _USD::LayerMutingChanged
-    >;
+        _USD::StageNotice, _USD::StageContentsChanged, _USD::ObjectsChanged,
+        _USD::StageEditTargetChanged, _USD::LayerMutingChanged>;
 
     using BrokerListener = ::Test::Listener<
-        _Broker::StageNotice,
-        _Broker::StageContentsChanged,
-        _Broker::ObjectsChanged,
-        _Broker::StageEditTargetChanged,
-        _Broker::LayerMutingChanged
-    >;
+        _Broker::StageNotice, _Broker::StageContentsChanged,
+        _Broker::ObjectsChanged, _Broker::StageEditTargetChanged,
+        _Broker::LayerMutingChanged>;
 
-    void SetUp() override {
+    void SetUp() override
+    {
         _stage = PXR_NS::UsdStage::CreateInMemory();
         _AddLayers(2);
 
@@ -43,7 +37,8 @@ protected:
         _brokerListener.SetStage(_stage);
     }
 
-    void _AddLayers(int number) {
+    void _AddLayers(int number)
+    {
         _layers.reserve(number);
         _layerIds.reserve(number);
 
@@ -54,7 +49,6 @@ protected:
         }
 
         _stage->GetRootLayer()->SetSubLayerPaths(_layerIds);
-
     }
 
     PXR_NS::UsdStageRefPtr _stage;
@@ -125,8 +119,7 @@ TEST_F(ChangeEditTargetTest, Blocking)
 
     broker->BeginTransaction();
     // Pass a predicate to block all broker notices.
-    broker->AddFilter(
-        [](const _Broker::StageNotice &){ return false; });
+    broker->AddFilter([](const _Broker::StageNotice &) { return false; });
 
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[0]));
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[1]));

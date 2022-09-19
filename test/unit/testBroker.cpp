@@ -50,4 +50,3 @@ TEST(BrokerTest, CleanRegistry)
     unf::Broker::Create(stage2);
     ASSERT_EQ(broker1->GetCurrentCount(), 1);
 }
-

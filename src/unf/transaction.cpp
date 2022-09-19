@@ -8,23 +8,17 @@ PXR_NAMESPACE_USING_DIRECTIVE
 
 namespace unf {
 
-NoticeTransaction::NoticeTransaction(
-    const BrokerPtr& broker)
-    : _broker(broker)
+NoticeTransaction::NoticeTransaction(const BrokerPtr& broker) : _broker(broker)
 {
     _broker->BeginTransaction();
 }
 
-NoticeTransaction::NoticeTransaction(
-    const UsdStageRefPtr& stage)
+NoticeTransaction::NoticeTransaction(const UsdStageRefPtr& stage)
     : _broker(Broker::Create(stage))
 {
     _broker->BeginTransaction();
 }
 
-NoticeTransaction::~NoticeTransaction()
-{
-    _broker->EndTransaction();
-}
+NoticeTransaction::~NoticeTransaction() { _broker->EndTransaction(); }
 
-} // namespace unf
+}  // namespace unf

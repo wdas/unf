@@ -1,15 +1,15 @@
 #include "unf/cache.h"
 
-#include <pxr/pxr.h>
-#include <pxr/usd/usd/stage.h>
-#include <pxr/usd/usd/common.h>
-#include <pxr/base/tf/weakPtr.h>
-#include <pxr/base/tf/pyPtrHelpers.h>
 #include <pxr/base/tf/makePyConstructor.h>
 #include <pxr/base/tf/pyFunction.h>
-#include <pxr/base/tf/pyNoticeWrapper.h>
 #include <pxr/base/tf/pyLock.h>
+#include <pxr/base/tf/pyNoticeWrapper.h>
+#include <pxr/base/tf/pyPtrHelpers.h>
 #include <pxr/base/tf/pyUtils.h>
+#include <pxr/base/tf/weakPtr.h>
+#include <pxr/pxr.h>
+#include <pxr/usd/usd/common.h>
+#include <pxr/usd/usd/stage.h>
 
 #include <boost/python.hpp>
 
@@ -19,16 +19,14 @@ using namespace unf;
 PXR_NAMESPACE_USING_DIRECTIVE
 
 // Expose NoticeCache without template for Python.
-class PythonNoticeCache : public BaseNoticeCache
-{
-public:
+class PythonNoticeCache : public BaseNoticeCache {
+  public:
     PythonNoticeCache() {}
 
     PythonNoticeCache(const TfType type)
     {
         if (type == TfType::Find<BrokerNotice::StageNotice>()
-            || !type.IsA<BrokerNotice::StageNotice>())
-        {
+            || !type.IsA<BrokerNotice::StageNotice>()) {
             TfPyThrowRuntimeError(
                 "Expecting a notice derived from BrokerNotice::StageNotice.");
         }
@@ -36,14 +34,14 @@ public:
         _key = TfNotice::Register(
             TfCreateWeakPtr(this),
             &PythonNoticeCache::_OnReceiving,
-            type, nullptr);
+            type,
+            nullptr);
     }
 
-    PythonNoticeCache(const TfType type, const TfAnyWeakPtr &sender)
+    PythonNoticeCache(const TfType type, const TfAnyWeakPtr& sender)
     {
         if (type == TfType::Find<BrokerNotice::StageNotice>()
-            || !type.IsA<BrokerNotice::StageNotice>())
-        {
+            || !type.IsA<BrokerNotice::StageNotice>()) {
             TfPyThrowRuntimeError(
                 "Expecting a notice derived from BrokerNotice::StageNotice.");
         }
@@ -51,25 +49,20 @@ public:
         _key = TfNotice::Register(
             TfCreateWeakPtr(this),
             &PythonNoticeCache::_OnReceiving,
-            type, sender);
+            type,
+            sender);
     }
 
-    ~PythonNoticeCache()
-    {
-        TfNotice::Revoke(_key);
-    }
+    ~PythonNoticeCache() { TfNotice::Revoke(_key); }
 
-    virtual size_t Size() const override
-    {
-        return _notices.size();
-    }
+    virtual size_t Size() const override { return _notices.size(); }
 
     virtual const std::vector<object> GetAll() const
     {
         TfPyLock lock;
 
         std::vector<object> noticeObjects;
-        for (auto& notice: _notices){
+        for (auto& notice : _notices) {
             noticeObjects.push_back(
                 Tf_PyNoticeObjectGenerator::Invoke(*notice));
         }
@@ -87,7 +80,7 @@ public:
         auto notice = _notices.at(0)->CopyAsStageNotice();
         auto it = std::next(_notices.begin());
 
-        while(it != _notices.end()) {
+        while (it != _notices.end()) {
             auto notice2 = (*it)->CopyAsStageNotice();
             notice->Merge(std::move(*notice2));
             it++;
@@ -95,27 +88,22 @@ public:
 
         // Replace list of notices with merged notice.
         _notices =
-            std::vector<TfRefPtr<const BrokerNotice::StageNotice> > {notice};
+            std::vector<TfRefPtr<const BrokerNotice::StageNotice> >{notice};
     }
 
     virtual void Clear() override { _notices.clear(); }
 
-private:
+  private:
     void _OnReceiving(
-        const TfNotice& notice,
-        const TfType& noticeType,
-        TfWeakBase *sender,
-        const void *senderUniqueId,
-        const std::type_info& senderType)
+        const TfNotice& notice, const TfType& noticeType, TfWeakBase* sender,
+        const void* senderUniqueId, const std::type_info& senderType)
     {
-        _notices.push_back(
-            TfRefPtr<const BrokerNotice::StageNotice>(
-                &dynamic_cast<const BrokerNotice::StageNotice&>(notice))
-        );
+        _notices.push_back(TfRefPtr<const BrokerNotice::StageNotice>(
+            &dynamic_cast<const BrokerNotice::StageNotice&>(notice)));
     }
 
-   std::vector<TfRefPtr<const BrokerNotice::StageNotice> > _notices;
-   TfNotice::Key _key;
+    std::vector<TfRefPtr<const BrokerNotice::StageNotice> > _notices;
+    TfNotice::Key _key;
 };
 
 void wrapCache()
@@ -124,10 +112,14 @@ void wrapCache()
 
         .def(init<TfType>())
 
-        .def("Size", &PythonNoticeCache::Size,
+        .def(
+            "Size",
+            &PythonNoticeCache::Size,
             return_value_policy<return_by_value>())
 
-        .def("GetAll", &PythonNoticeCache::GetAll,
+        .def(
+            "GetAll",
+            &PythonNoticeCache::GetAll,
             return_value_policy<return_by_value>())
 
         .def("MergeAll", &PythonNoticeCache::MergeAll)

@@ -10,4 +10,3 @@ TF_REGISTRY_FUNCTION(TfType)
 {
     unf::DispatcherDefine<::Test::TestDispatcher, unf::Dispatcher>();
 }
-
