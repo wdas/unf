@@ -84,6 +84,9 @@ if (BUILD_DOCS)
     add_subdirectory(doc)
 endif()
 
+# Add format target if clang-format is found.
+find_package(ClangFormat 7)
+
 include(CMakePackageConfigHelpers)
 
 install(
