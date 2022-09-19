@@ -136,7 +136,7 @@ def test_change_edit_target_blocking(
 
     broker.BeginTransaction()
     # Predicate blocking all broker notices.
-    broker.BeginFilter(predicate=lambda _: False)
+    broker.AddFilter(predicate=lambda _: False)
 
     layers = stage.GetRootLayer().subLayerPaths
     layer1 = Sdf.Layer.Find(layers[0])
@@ -151,7 +151,7 @@ def test_change_edit_target_blocking(
     # While USD Notices are being sent as expected.
     assert len(received_usd) == expected_usd
 
-    broker.EndFilter()
+    broker.PopFilter()
     broker.EndTransaction()
 
     # Ensure that no broker notices have been received.

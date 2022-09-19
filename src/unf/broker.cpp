@@ -2,7 +2,6 @@
 #include "unf/notice.h"
 #include "unf/dispatcher.h"
 #include "unf/broadcaster.h"
-#include "unf/merger.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/weakPtr.h>
@@ -17,7 +16,7 @@ namespace unf {
 std::unordered_map<size_t, BrokerPtr> Broker::Registry;
 
 Broker::Broker(const UsdStageWeakPtr& stage)
-    : _stage(stage), _transactionSize(0)
+    : _stage(stage), _transactionDepth(0)
 {
     // Add default dispatcher.
     _AddDispatcher<StageDispatcher>();
@@ -72,12 +71,12 @@ void Broker::_MergeNotices() {
 
 bool Broker::IsInTransaction()
 {
-    return _transactionSize != 0;
+    return _transactionDepth != 0;
 }
 
 void Broker::BeginTransaction()
 {
-    _transactionSize++;
+    _transactionDepth++;
 }
 
 void Broker::EndTransaction()
@@ -88,7 +87,7 @@ void Broker::EndTransaction()
 
     //If it's the last transaction merge the notices, execute the broadcasters
     //and send out the queued notices.
-    if(_transactionSize == 1) {
+    if(_transactionDepth == 1) {
         _MergeNotices();
         _ExecuteBroadcasters(_noticeMap);
         
@@ -102,20 +101,20 @@ void Broker::EndTransaction()
         _noticeMap.clear();
     }
 
-    _transactionSize --;
+    _transactionDepth --;
 }
 
-void Broker::BeginFilter(const NoticeCaturePredicateFunc& predicate){
+void Broker::AddFilter(const NoticeCaturePredicateFunc& predicate){
     _predicates.push_back(predicate);
 }
-void Broker::EndFilter() {
+void Broker::PopFilter() {
     _predicates.pop_back();
 }
 
 void Broker::Send(
     const BrokerNotice::StageNoticeRefPtr& notice)
 {
-    if (_transactionSize > 0) {
+    if (_transactionDepth > 0) {
         for (auto& p : _predicates) {
             if (!p(*notice)) {
                 return;

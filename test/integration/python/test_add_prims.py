@@ -126,7 +126,7 @@ def test_add_prims_blocking(notice_type, expected_usd):
 
     broker.BeginTransaction()
     # Predicate blocking all broker notices.
-    broker.BeginFilter(predicate=lambda _: False)
+    broker.AddFilter(predicate=lambda _: False)
 
     stage.DefinePrim("/Foo")
     stage.DefinePrim("/Bar")
@@ -138,7 +138,7 @@ def test_add_prims_blocking(notice_type, expected_usd):
     # While USD Notices are being sent as expected.
     assert len(received_usd) == expected_usd
 
-    broker.EndFilter()
+    broker.PopFilter()
     broker.EndTransaction()
 
     # Ensure that no broker notices have been received.

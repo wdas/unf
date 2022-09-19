@@ -3,7 +3,6 @@ add_library(unf
     unf/broadcasterNotice.cpp
     unf/broker.cpp
     unf/dispatcher.cpp
-    unf/merger.cpp
     unf/notice.cpp
     unf/transaction.cpp
     unf/hierarchycache.cpp

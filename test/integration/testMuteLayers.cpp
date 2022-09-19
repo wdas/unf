@@ -133,7 +133,7 @@ TEST_F(MuteLayersTest, Blocking)
 
     // Pass a predicate to block all broker notices.
     broker->BeginTransaction();
-    broker->BeginFilter(
+    broker->AddFilter(
         [](const _Broker::StageNotice &){ return false; });
 
     _stage->MuteLayer(_layerIds[0]);
@@ -157,7 +157,7 @@ TEST_F(MuteLayersTest, Blocking)
     ASSERT_EQ(_brokerListener.Received<_Broker::StageEditTargetChanged>(), 0);
     ASSERT_EQ(_brokerListener.Received<_Broker::LayerMutingChanged>(), 0);
 
-    broker->EndFilter();
+    broker->PopFilter();
     broker->EndTransaction();
 
     // Ensure that no broker notices are sent after a transaction either.
@@ -176,7 +176,7 @@ TEST_F(MuteLayersTest, PartialBlocking)
 
     broker->BeginTransaction();
     // Pass a predicate to block all broker notices.
-    broker->BeginFilter(
+    broker->AddFilter(
         [&](const _Broker::StageNotice &n){return (n.GetTypeId() == target); });
 
     _stage->MuteLayer(_layerIds[0]);
@@ -200,7 +200,7 @@ TEST_F(MuteLayersTest, PartialBlocking)
     ASSERT_EQ(_brokerListener.Received<_Broker::StageEditTargetChanged>(), 0);
     ASSERT_EQ(_brokerListener.Received<_Broker::LayerMutingChanged>(), 0);
 
-    broker->EndFilter();
+    broker->PopFilter();
     broker->EndTransaction();
 
     // Ensure that only consolidated LayerMutingChanged broker notice are sent.

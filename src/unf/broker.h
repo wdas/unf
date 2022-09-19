@@ -2,7 +2,6 @@
 #define NOTICE_BROKER_BROKER_H
 
 #include "unf/notice.h"
-#include "unf/merger.h"
 
 #include <pxr/pxr.h>
 #include <pxr/base/tf/refBase.h>
@@ -55,8 +54,8 @@ public:
     void BeginTransaction();
     void EndTransaction();
 
-    void BeginFilter(const NoticeCaturePredicateFunc& predicate);
-    void EndFilter();
+    void AddFilter(const NoticeCaturePredicateFunc& predicate);
+    void PopFilter();
 
     template<class BrokerNotice, class... Args>
     void Send(Args&&... args);
@@ -107,7 +106,7 @@ private:
     std::unordered_map<std::string, DispatcherPtr> _dispatcherMap;
     std::unordered_map<std::string, BroadcasterPtr> _broadcasterMap;
     std::vector<std::string> _rootBroadcasters;
-    size_t _transactionSize;
+    size_t _transactionDepth;
 };
 
 template<class BrokerNotice, class... Args>

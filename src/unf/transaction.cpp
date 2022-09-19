@@ -15,7 +15,6 @@ NoticeTransaction::NoticeTransaction(
     _broker->BeginTransaction();
 }
 
-// TODO: Add a register to ensure a unique Broker per Stage
 NoticeTransaction::NoticeTransaction(
     const UsdStageRefPtr& stage)
     : _broker(Broker::Create(stage))
