@@ -3,40 +3,37 @@
 
 #include "testNotice.h"
 
-#include <unf/dispatcher.h>
 #include <unf/broker.h>
+#include <unf/dispatcher.h>
 
 #include <pxr/pxr.h>
 
 namespace Test {
 
 // Declare test dispatchers.
-class NewStageDispatcher : public unf::Dispatcher
-{
-public:
+class NewStageDispatcher : public unf::Dispatcher {
+  public:
     NewStageDispatcher(const unf::BrokerWeakPtr& broker)
-    : unf::Dispatcher(broker) {}
+        : unf::Dispatcher(broker)
+    {
+    }
 
     virtual std::string GetIdentifier() const { return "StageDispatcher"; };
 
-    void Register() {
-        _Register<InputNotice, OutputNotice1>();
-    }
+    void Register() { _Register<InputNotice, OutputNotice1>(); }
 };
 
-class TestDispatcher : public unf::Dispatcher
-{
-public:
-    TestDispatcher(const unf::BrokerWeakPtr& broker)
-    : unf::Dispatcher(broker) {}
+class TestDispatcher : public unf::Dispatcher {
+  public:
+    TestDispatcher(const unf::BrokerWeakPtr& broker) : unf::Dispatcher(broker)
+    {
+    }
 
     virtual std::string GetIdentifier() const { return "TestDispatcher"; };
 
-    void Register() {
-        _Register<InputNotice, OutputNotice2>();
-    }
+    void Register() { _Register<InputNotice, OutputNotice2>(); }
 };
 
-} // namespace Test
+}  // namespace Test
 
-#endif // TEST_NOTICE_BROKER_DISPATCHER_H
+#endif  // TEST_NOTICE_BROKER_DISPATCHER_H

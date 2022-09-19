@@ -18,24 +18,18 @@ using _USD = PXR_NS::UsdNotice;
 namespace _Broker = unf::BrokerNotice;
 
 class MuteLayersTest : public ::testing::Test {
-protected:
+  protected:
     using UsdListener = ::Test::Listener<
-        _USD::StageNotice,
-        _USD::StageContentsChanged,
-        _USD::ObjectsChanged,
-        _USD::StageEditTargetChanged,
-        _USD::LayerMutingChanged
-    >;
+        _USD::StageNotice, _USD::StageContentsChanged, _USD::ObjectsChanged,
+        _USD::StageEditTargetChanged, _USD::LayerMutingChanged>;
 
     using BrokerListener = ::Test::Listener<
-        _Broker::StageNotice,
-        _Broker::StageContentsChanged,
-        _Broker::ObjectsChanged,
-        _Broker::StageEditTargetChanged,
-        _Broker::LayerMutingChanged
-    >;
+        _Broker::StageNotice, _Broker::StageContentsChanged,
+        _Broker::ObjectsChanged, _Broker::StageEditTargetChanged,
+        _Broker::LayerMutingChanged>;
 
-    void SetUp() override {
+    void SetUp() override
+    {
         _stage = PXR_NS::UsdStage::CreateInMemory();
         _AddLayers(3);
 
@@ -43,7 +37,8 @@ protected:
         _brokerListener.SetStage(_stage);
     }
 
-    void _AddLayers(int number) {
+    void _AddLayers(int number)
+    {
         _layers.reserve(number);
         _layerIds.reserve(number);
 
@@ -54,7 +49,6 @@ protected:
         }
 
         _stage->GetRootLayer()->SetSubLayerPaths(_layerIds);
-
     }
 
     PXR_NS::UsdStageRefPtr _stage;
@@ -133,8 +127,7 @@ TEST_F(MuteLayersTest, Blocking)
 
     // Pass a predicate to block all broker notices.
     broker->BeginTransaction();
-    broker->AddFilter(
-        [](const _Broker::StageNotice &){ return false; });
+    broker->AddFilter([](const _Broker::StageNotice&) { return false; });
 
     _stage->MuteLayer(_layerIds[0]);
     _stage->MuteLayer(_layerIds[1]);
@@ -176,8 +169,9 @@ TEST_F(MuteLayersTest, PartialBlocking)
 
     broker->BeginTransaction();
     // Pass a predicate to block all broker notices.
-    broker->AddFilter(
-        [&](const _Broker::StageNotice &n){return (n.GetTypeId() == target); });
+    broker->AddFilter([&](const _Broker::StageNotice& n) {
+        return (n.GetTypeId() == target);
+    });
 
     _stage->MuteLayer(_layerIds[0]);
     _stage->MuteLayer(_layerIds[1]);
@@ -217,22 +211,20 @@ TEST_F(MuteLayersTest, Transaction_ObjectsChanged)
 
     // Create prim before caching to trigger resync path when muting.
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[0]));
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
 
     using Notice = _Broker::ObjectsChanged;
 
-    class DataListener : public ::Test::ListenerBase<Notice>
-    {
-    public:
+    class DataListener : public ::Test::ListenerBase<Notice> {
+      public:
         using ::Test::ListenerBase<Notice>::ListenerBase;
 
-    private:
+      private:
         void OnReceiving(
-            const Notice& n,
-            const PXR_NS::UsdStageWeakPtr&) override
+            const Notice& n, const PXR_NS::UsdStageWeakPtr&) override
         {
             ASSERT_EQ(n.GetResyncedPaths().size(), 1);
-            ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath {"/"});
+            ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath{"/"});
             ASSERT_EQ(n.GetChangedInfoOnlyPaths().size(), 0);
         }
     };
@@ -257,15 +249,13 @@ TEST_F(MuteLayersTest, Transaction_LayerMutingChanged)
 
     using Notice = _Broker::LayerMutingChanged;
 
-    class DataListener : public ::Test::ListenerBase<Notice>
-    {
-    public:
+    class DataListener : public ::Test::ListenerBase<Notice> {
+      public:
         using ::Test::ListenerBase<Notice>::ListenerBase;
 
-    private:
+      private:
         void OnReceiving(
-            const Notice& n,
-            const PXR_NS::UsdStageWeakPtr& stage) override
+            const Notice& n, const PXR_NS::UsdStageWeakPtr& stage) override
         {
             auto layerIds = stage->GetRootLayer()->GetSubLayerPaths();
             ASSERT_EQ(n.GetMutedLayers().size(), 3);
@@ -296,9 +286,9 @@ TEST_F(MuteLayersTest, Caching_ObjectsChanged)
 
     // Create prims before caching to trigger resync path when muting.
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[0]));
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Foo"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[1]));
-    _stage->DefinePrim(PXR_NS::SdfPath {"/Bar"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Bar"});
 
 
     unf::NoticeCache<_Broker::ObjectsChanged> cache;
@@ -317,22 +307,22 @@ TEST_F(MuteLayersTest, Caching_ObjectsChanged)
     {
         auto& n1 = cache.GetAll().at(0);
         ASSERT_EQ(n1->GetResyncedPaths().size(), 1);
-        ASSERT_EQ(n1->GetResyncedPaths().at(0), PXR_NS::SdfPath {"/"});
+        ASSERT_EQ(n1->GetResyncedPaths().at(0), PXR_NS::SdfPath{"/"});
         ASSERT_EQ(n1->GetChangedInfoOnlyPaths().size(), 0);
 
         auto& n2 = cache.GetAll().at(1);
         ASSERT_EQ(n2->GetResyncedPaths().size(), 1);
-        ASSERT_EQ(n2->GetResyncedPaths().at(0), PXR_NS::SdfPath {"/"});
+        ASSERT_EQ(n2->GetResyncedPaths().at(0), PXR_NS::SdfPath{"/"});
         ASSERT_EQ(n2->GetChangedInfoOnlyPaths().size(), 0);
 
         auto& n3 = cache.GetAll().at(2);
         ASSERT_EQ(n3->GetResyncedPaths().size(), 1);
-        ASSERT_EQ(n3->GetResyncedPaths().at(0), PXR_NS::SdfPath {"/"});
+        ASSERT_EQ(n3->GetResyncedPaths().at(0), PXR_NS::SdfPath{"/"});
         ASSERT_EQ(n3->GetChangedInfoOnlyPaths().size(), 0);
 
         auto& n4 = cache.GetAll().at(2);
         ASSERT_EQ(n4->GetResyncedPaths().size(), 1);
-        ASSERT_EQ(n4->GetResyncedPaths().at(0), PXR_NS::SdfPath {"/"});
+        ASSERT_EQ(n4->GetResyncedPaths().at(0), PXR_NS::SdfPath{"/"});
         ASSERT_EQ(n4->GetChangedInfoOnlyPaths().size(), 0);
     }
 
@@ -345,7 +335,7 @@ TEST_F(MuteLayersTest, Caching_ObjectsChanged)
     {
         auto& n = cache.GetAll().at(0);
         ASSERT_EQ(n->GetResyncedPaths().size(), 1);
-        ASSERT_EQ(n->GetResyncedPaths().at(0), PXR_NS::SdfPath {"/"});
+        ASSERT_EQ(n->GetResyncedPaths().at(0), PXR_NS::SdfPath{"/"});
         ASSERT_EQ(n->GetChangedInfoOnlyPaths().size(), 0);
     }
 }

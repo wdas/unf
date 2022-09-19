@@ -1,10 +1,10 @@
 #include "unf/broker.h"
-#include "unf/notice.h"
-#include "unf/dispatcher.h"
 #include "unf/broadcaster.h"
+#include "unf/dispatcher.h"
+#include "unf/notice.h"
 
-#include <pxr/pxr.h>
 #include <pxr/base/tf/weakPtr.h>
+#include <pxr/pxr.h>
 #include <pxr/usd/usd/common.h>
 #include <pxr/usd/usd/notice.h>
 
@@ -26,7 +26,7 @@ Broker::Broker(const UsdStageWeakPtr& stage)
     _DiscoverDispatchers();
 
     // Register all dispatchers
-    for (auto& element: _dispatcherMap) {
+    for (auto& element : _dispatcherMap) {
         element.second->Register();
     }
 
@@ -41,14 +41,15 @@ BrokerPtr Broker::Create(const UsdStageWeakPtr& stage)
     Broker::_CleanCache();
 
     // If there doesn't exist a broker for the given stage, create a new broker.
-    if(Registry.find(stageHash) == Registry.end()) {
+    if (Registry.find(stageHash) == Registry.end()) {
         Registry[stageHash] = TfCreateRefPtr(new Broker(stage));
     }
 
     return Registry[stageHash];
 }
 
-void Broker::_MergeNotices() {
+void Broker::_MergeNotices()
+{
     for (auto& element : _noticeMap) {
         auto& notices = element.second;
 
@@ -59,7 +60,7 @@ void Broker::_MergeNotices() {
             auto& notice = notices.at(0);
             auto it = std::next(notices.begin());
 
-            while(it != notices.end()) {
+            while (it != notices.end()) {
                 // Attempt to merge content of notice with first notice
                 // if this is possible.
                 notice->Merge(std::move(**it));
@@ -69,15 +70,9 @@ void Broker::_MergeNotices() {
     }
 }
 
-bool Broker::IsInTransaction()
-{
-    return _transactionDepth != 0;
-}
+bool Broker::IsInTransaction() { return _transactionDepth != 0; }
 
-void Broker::BeginTransaction()
-{
-    _transactionDepth++;
-}
+void Broker::BeginTransaction() { _transactionDepth++; }
 
 void Broker::EndTransaction()
 {
@@ -85,34 +80,32 @@ void Broker::EndTransaction()
         return;
     }
 
-    //If it's the last transaction merge the notices, execute the broadcasters
-    //and send out the queued notices.
-    if(_transactionDepth == 1) {
+    // If it's the last transaction merge the notices, execute the broadcasters
+    // and send out the queued notices.
+    if (_transactionDepth == 1) {
         _MergeNotices();
         _ExecuteBroadcasters(_noticeMap);
-        
+
         for (auto& element : _noticeMap) {
-        auto& notices = element.second;
+            auto& notices = element.second;
             // Send all remaining notices.
-            for (const auto& notice: element.second) {
+            for (const auto& notice : element.second) {
                 notice->Send(_stage);
             }
         }
         _noticeMap.clear();
     }
 
-    _transactionDepth --;
+    _transactionDepth--;
 }
 
-void Broker::AddFilter(const NoticeCaturePredicateFunc& predicate){
+void Broker::AddFilter(const NoticeCaturePredicateFunc& predicate)
+{
     _predicates.push_back(predicate);
 }
-void Broker::PopFilter() {
-    _predicates.pop_back();
-}
+void Broker::PopFilter() { _predicates.pop_back(); }
 
-void Broker::Send(
-    const BrokerNotice::StageNoticeRefPtr& notice)
+void Broker::Send(const BrokerNotice::StageNoticeRefPtr& notice)
 {
     if (_transactionDepth > 0) {
         for (auto& p : _predicates) {
@@ -140,10 +133,9 @@ BroadcasterPtr& Broker::GetBroadcaster(std::string identifier)
     return _broadcasterMap.at(identifier);
 }
 
-void Broker::_CleanCache() {
-    for (auto it = Registry.begin();
-        it != Registry.end();)
-    {
+void Broker::_CleanCache()
+{
+    for (auto it = Registry.begin(); it != Registry.end();) {
         // If the stage doesn't exist anymore, delete the corresponding
         // broker from the registry.
         if (it->second->GetStage().IsExpired()) {
@@ -177,7 +169,7 @@ void Broker::_DiscoverBroadcasters()
     }
 
     // Register all broadcasters to build up dependency graph.
-    for (auto& element: _broadcasterMap) {
+    for (auto& element : _broadcasterMap) {
         _RegisterBroadcaster(element.second);
     }
 
@@ -195,8 +187,7 @@ void Broker::_Add(const BroadcasterPtr& broadcaster)
     _broadcasterMap[broadcaster->GetIdentifier()] = broadcaster;
 }
 
-void Broker::_RegisterBroadcaster(
-    const BroadcasterPtr& broadcaster)
+void Broker::_RegisterBroadcaster(const BroadcasterPtr& broadcaster)
 {
     const auto& identifier = broadcaster->GetIdentifier();
     const auto& parentId = broadcaster->GetParentIdentifier();
@@ -217,4 +208,4 @@ void Broker::_ExecuteBroadcasters(_StageNoticePtrMap& noticeMap)
     }
 }
 
-} // namespace unf
+}  // namespace unf

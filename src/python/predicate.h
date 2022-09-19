@@ -3,9 +3,9 @@
 
 #include "unf/broker.h"
 
-#include <pxr/pxr.h>
-#include <pxr/base/tf/pyNoticeWrapper.h>
 #include <pxr/base/tf/pyLock.h>
+#include <pxr/base/tf/pyNoticeWrapper.h>
+#include <pxr/pxr.h>
 
 #include <boost/python.hpp>
 
@@ -16,7 +16,7 @@ using namespace unf;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
-using _CaturePredicateFuncRaw = bool (object const &);
+using _CaturePredicateFuncRaw = bool(object const&);
 using _CaturePredicateFunc = std::function<_CaturePredicateFuncRaw>;
 
 static NoticeCaturePredicateFunc WrapPredicate(_CaturePredicateFunc fn)
@@ -25,8 +25,7 @@ static NoticeCaturePredicateFunc WrapPredicate(_CaturePredicateFunc fn)
     return [=](const BrokerNotice::StageNotice& notice) {
         TfPyLock lock;
 
-        if (!fn)
-            return true;
+        if (!fn) return true;
 
         // Creates a Python version of the notice by inspecting its type and
         // converting the generic StageNotice to the real notice inside.
@@ -35,4 +34,4 @@ static NoticeCaturePredicateFunc WrapPredicate(_CaturePredicateFunc fn)
     };
 }
 
-#endif // NOTICE_BROKER_PYTHON_PREDICATE_H
+#endif  // NOTICE_BROKER_PYTHON_PREDICATE_H

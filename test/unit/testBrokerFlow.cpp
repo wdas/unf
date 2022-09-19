@@ -7,13 +7,12 @@
 #include <pxr/usd/usd/stage.h>
 
 class BrokerFlowTest : public ::testing::Test {
-protected:
-    using Listener = ::Test::Listener<
-        ::Test::MergeableNotice,
-        ::Test::UnMergeableNotice
-    >;
+  protected:
+    using Listener =
+        ::Test::Listener<::Test::MergeableNotice, ::Test::UnMergeableNotice>;
 
-    void SetUp() override {
+    void SetUp() override
+    {
         _stage = PXR_NS::UsdStage::CreateInMemory();
         _listener.SetStage(_stage);
     }
@@ -115,18 +114,18 @@ TEST_F(BrokerFlowTest, MergeableNotice)
 {
     auto broker = unf::Broker::Create(_stage);
 
-    class DataListener : public ::Test::ListenerBase<::Test::MergeableNotice>
-    {
-    public:
+    class DataListener : public ::Test::ListenerBase<::Test::MergeableNotice> {
+      public:
         using ::Test::ListenerBase<::Test::MergeableNotice>::ListenerBase;
 
-    private:
+      private:
         void OnReceiving(
             const ::Test::MergeableNotice& n,
             const PXR_NS::UsdStageWeakPtr&) override
         {
             // Ensure that data is merged as expected.
-            ASSERT_EQ(n.GetData(),
+            ASSERT_EQ(
+                n.GetData(),
                 ::Test::DataMap({{"Foo", "Test2"}, {"Bar", "Test3"}}));
         }
     };

@@ -9,11 +9,9 @@
 namespace unf {
 
 class NoticeTransaction {
-public:
-    NoticeTransaction(
-        const BrokerPtr&);
-    NoticeTransaction(
-        const PXR_NS::UsdStageRefPtr&);
+  public:
+    NoticeTransaction(const BrokerPtr &);
+    NoticeTransaction(const PXR_NS::UsdStageRefPtr &);
 
     ~NoticeTransaction();
 
@@ -23,10 +21,10 @@ public:
 
     BrokerPtr GetBroker() { return _broker; }
 
-private:
+  private:
     BrokerPtr _broker;
 };
 
-} // namespace unf
+}  // namespace unf
 
-#endif // NOTICE_BROKER_TRANSACTION_H
+#endif  // NOTICE_BROKER_TRANSACTION_H

@@ -3,27 +3,25 @@
 
 #include <unfTest/listener.h>
 
-#include <TestPlugin/TestDispatcher.h>
 #include <TestPlugin/NewStageDispatcher.h>
+#include <TestPlugin/TestDispatcher.h>
 
 #include <gtest/gtest.h>
-#include <pxr/usd/usd/stage.h>
 #include <pxr/base/tf/refPtr.h>
 #include <pxr/base/tf/weakBase.h>
+#include <pxr/usd/usd/stage.h>
 
 class DispatcherTest : public ::testing::Test {
-protected:
+  protected:
     using StageDispatcherPtr = PXR_NS::TfRefPtr<unf::StageDispatcher>;
     using NewStageDispatcherPtr = PXR_NS::TfRefPtr<::Test::NewStageDispatcher>;
     using TestDispatcherPtr = PXR_NS::TfRefPtr<::Test::TestDispatcher>;
 
     using Listener = ::Test::Listener<
-        ::Test::InputNotice,
-        ::Test::OutputNotice1,
-        ::Test::OutputNotice2
-    >;
+        ::Test::InputNotice, ::Test::OutputNotice1, ::Test::OutputNotice2>;
 
-    void SetUp() override {
+    void SetUp() override
+    {
         _stage = PXR_NS::UsdStage::CreateInMemory();
         _listener.SetStage(_stage);
     }

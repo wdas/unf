@@ -8,13 +8,12 @@
 #include <pxr/usd/usd/stage.h>
 
 class TransactionTest : public ::testing::Test {
-protected:
-    using Listener = ::Test::Listener<
-        ::Test::MergeableNotice,
-        ::Test::UnMergeableNotice
-    >;
+  protected:
+    using Listener =
+        ::Test::Listener<::Test::MergeableNotice, ::Test::UnMergeableNotice>;
 
-    void SetUp() override {
+    void SetUp() override
+    {
         _stage = PXR_NS::UsdStage::CreateInMemory();
         _listener.SetStage(_stage);
     }
