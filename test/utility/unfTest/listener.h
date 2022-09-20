@@ -1,10 +1,10 @@
 #ifndef TEST_NOTICE_BROKER_LISTENER_H
 #define TEST_NOTICE_BROKER_LISTENER_H
 
-#include "testBroadcaster.h"
+#include "testNotice.h"
 
-#include "unf/broadcasterNotice.h"
-#include "unf/hierarchycache.h"
+#include <unf/hierarchyBroadcaster/broadcaster.h>
+#include <unf/hierarchyBroadcaster/cache.h>
 
 #include <pxr/base/tf/notice.h>
 #include <pxr/base/tf/weakBase.h>
@@ -102,8 +102,6 @@ class Listener : public PXR_NS::TfWeakBase {
     std::unordered_map<std::string, PXR_NS::TfNotice::Key> _keys;
     std::unordered_map<std::string, size_t> _received;
 };
-
-// Usd ObjectsChanged notice listener
 class ObjChangedListener : public PXR_NS::TfWeakBase {
   public:
     ObjChangedListener(unf::HierarchyCache* c) : _cache(c)
@@ -126,16 +124,14 @@ class ObjChangedListener : public PXR_NS::TfWeakBase {
     PXR_NS::TfNotice::Key _key;
     unf::HierarchyCache* _cache;
 };
-
-// unf ObjectsChanged notice listener
-class unfObjChangedListener : public PXR_NS::TfWeakBase {
+class UnfObjChangedListener : public PXR_NS::TfWeakBase {
   public:
-    unfObjChangedListener(unf::HierarchyCache* c) : _cache(c)
+    UnfObjChangedListener(unf::HierarchyCache* c) : _cache(c)
     {
         _key = PXR_NS::TfNotice::Register(
-            TfCreateWeakPtr(this), &unfObjChangedListener::_CallBack);
+            TfCreateWeakPtr(this), &UnfObjChangedListener::_CallBack);
     }
-    ~unfObjChangedListener() { PXR_NS::TfNotice::Revoke(_key); }
+    ~UnfObjChangedListener() { PXR_NS::TfNotice::Revoke(_key); }
 
   private:
     void _CallBack(const unf::BrokerNotice::ObjectsChanged& notice)
@@ -146,8 +142,6 @@ class unfObjChangedListener : public PXR_NS::TfWeakBase {
     PXR_NS::TfNotice::Key _key;
     unf::HierarchyCache* _cache;
 };
-
-// unf HierarchyChanged notice listener
 class HierarchyChangedListener : public PXR_NS::TfWeakBase {
   public:
     HierarchyChangedListener()
@@ -185,8 +179,6 @@ class HierarchyChangedListener : public PXR_NS::TfWeakBase {
     ChangedFieldMap _changedFields;
     int _count;
 };
-
-// ::Test:: ChildBroadcasterNotice notice listener
 class ChildBroadcasterNoticeListener : public PXR_NS::TfWeakBase {
   public:
     ChildBroadcasterNoticeListener()

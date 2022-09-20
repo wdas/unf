@@ -1,9 +1,10 @@
-#include "unf/broker.h"
-#include "unf/hierarchycache.h"
-#include "unf/notice.h"
-#include "unf/transaction.h"
+#include <unf/hierarchyBroadcaster/cache.h>
 
-#include "unfTest/listener.h"
+#include <unf/broker.h>
+#include <unf/notice.h>
+#include <unf/transaction.h>
+
+#include <unfTest/listener.h>
 
 #include <gtest/gtest.h>
 #include <pxr/base/vt/dictionary.h>
@@ -19,6 +20,7 @@
 
 using unf::HierarchyCache;
 namespace {
+
 std::string GetTestFilePath(const std::string& filePath)
 {
     std::string root = std::getenv("USD_TEST_PATH");
@@ -29,6 +31,7 @@ PXR_NS::UsdStageRefPtr GetStage(const std::string& filePath)
 {
     return PXR_NS::UsdStage::Open(GetTestFilePath(filePath));
 }
+
 }  // namespace
 
 TEST(HierarchyCache, AddPrim)
@@ -425,7 +428,7 @@ TEST(HierarchyCache, TransactionChanges)
 {
     auto stage = GetStage("/scene.usda");
     HierarchyCache cache = HierarchyCache(stage);
-    ::Test::unfObjChangedListener l = ::Test::unfObjChangedListener(&cache);
+    ::Test::UnfObjChangedListener l = ::Test::UnfObjChangedListener(&cache);
 
     auto broker = unf::Broker::Create(stage);
 

@@ -1,5 +1,6 @@
-#include "broadcasterNotice.h"
 #include "notice.h"
+
+#include <unf/notice.h>
 
 #include <pxr/base/tf/notice.h>
 #include <pxr/pxr.h>
@@ -7,6 +8,7 @@
 PXR_NAMESPACE_USING_DIRECTIVE
 
 namespace unf {
+
 namespace BroadcasterNotice {
 
 TF_REGISTRY_FUNCTION(TfType)
@@ -35,5 +37,7 @@ void HierarchyChanged::Merge(HierarchyChanged&& notice)
     SdfPath::RemoveDescendentPaths(&_removed);
     SdfPath::RemoveDescendentPaths(&_modified);
 }
+
 }  // namespace BroadcasterNotice
+
 }  // namespace unf

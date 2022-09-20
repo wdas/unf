@@ -19,6 +19,7 @@
 namespace unf {
 
 struct Node;
+
 using NodeRefPtr = PXR_NS::TfRefPtr<Node>;
 using UnorderedSdfPathSet =
     std::unordered_set<PXR_NS::SdfPath, PXR_NS::SdfPath::Hash>;
@@ -87,7 +88,6 @@ class HierarchyCache : public PXR_NS::TfRefBase, PXR_NS::TfWeakBase {
     NodeRefPtr _findNodeOrUpdate(const PXR_NS::SdfPath& path);
 
     void _sync(NodeRefPtr node, const PXR_NS::UsdPrim& prim);
-
 
     NodeRefPtr _root;
     UnorderedSdfPathSet _added;
