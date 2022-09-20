@@ -2,8 +2,8 @@
 #include <unf/dispatcher.h>
 
 #include <unfTest/listener.h>
-#include <unfTest/newStageDispatcher.h>
-#include <unfTest/testDispatcher.h>
+#include <unfTest/newStageDispatcher/dispatcher.h>
+#include <unfTest/newDispatcher/dispatcher.h>
 
 #include <gtest/gtest.h>
 #include <pxr/base/tf/refPtr.h>
@@ -14,7 +14,7 @@ class DispatcherTest : public ::testing::Test {
   protected:
     using StageDispatcherPtr = PXR_NS::TfRefPtr<unf::StageDispatcher>;
     using NewStageDispatcherPtr = PXR_NS::TfRefPtr<::Test::NewStageDispatcher>;
-    using TestDispatcherPtr = PXR_NS::TfRefPtr<::Test::TestDispatcher>;
+    using TestDispatcherPtr = PXR_NS::TfRefPtr<::Test::NewDispatcher>;
 
     using Listener = ::Test::Listener<
         ::Test::InputNotice, ::Test::OutputNotice1, ::Test::OutputNotice2>;
@@ -64,7 +64,7 @@ TEST_F(DispatcherTest, ReplaceOriginal)
 TEST_F(DispatcherTest, AddNew)
 {
     auto broker = unf::Broker::Create(_stage);
-    broker->AddDispatcher<::Test::TestDispatcher>();
+    broker->AddDispatcher<::Test::NewDispatcher>();
 
     // Ensure that stage dispacther has not been replaced.
     auto dispatcher1 = broker->GetDispatcher("StageDispatcher");
@@ -72,7 +72,7 @@ TEST_F(DispatcherTest, AddNew)
     ASSERT_FALSE(PXR_NS::TfDynamic_cast<TestDispatcherPtr>(dispatcher1));
 
     // Ensure that the new dispatcher is accessible from its identifier.
-    auto dispatcher2 = broker->GetDispatcher("TestDispatcher");
+    auto dispatcher2 = broker->GetDispatcher("NewDispatcher");
     ASSERT_TRUE(PXR_NS::TfDynamic_cast<TestDispatcherPtr>(dispatcher2));
 
     // Sending the special InputNotice now triggers OutputNotice2.

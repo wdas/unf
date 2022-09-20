@@ -22,8 +22,8 @@ target_link_libraries(testUnitDispatcher
     PRIVATE
         unf
         unfTest
-        unfNewStageDispatcher
-        unfTestDispatcher
+        unfTestNewStageDispatcher
+        unfTestNewDispatcher
         GTest::gtest
         GTest::gtest_main
 )
@@ -34,12 +34,12 @@ target_link_libraries(testUnitDispatcherPlugin
     PRIVATE
         unf
         unfTest
-        unfNewStageDispatcher
-        unfTestDispatcher
+        unfTestNewStageDispatcher
+        unfTestNewDispatcher
         GTest::gtest
         GTest::gtest_main
 )
-set(_path "${CMAKE_CURRENT_BINARY_DIR}/testPlugins/*Dispatcher/plugInfo.json")
+set(_path "$<TARGET_FILE_DIR:unfTest>/plugins/*Dispatcher/plugInfo.json")
 gtest_discover_tests(
     testUnitDispatcherPlugin
     PROPERTIES ENVIRONMENT
@@ -71,7 +71,7 @@ target_link_libraries(testUnitBroadcaster
     PRIVATE
         unf
         unfTest
-        unfChildBroadcaster
+        unfTestChildBroadcaster
         GTest::gtest
         GTest::gtest_main
 )
@@ -94,8 +94,6 @@ gtest_discover_tests(
     PROPERTIES ENVIRONMENT
         "USD_TEST_PATH=${CMAKE_CURRENT_SOURCE_DIR}/testHierarchyCache"
 )
-
-add_subdirectory(testPlugins)
 
 if (BUILD_PYTHON_BINDINGS)
     add_subdirectory(python)

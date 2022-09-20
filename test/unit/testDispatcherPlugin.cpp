@@ -3,8 +3,8 @@
 
 #include <unfTest/listener.h>
 
-#include <unfTest/newStageDispatcher.h>
-#include <unfTest/testDispatcher.h>
+#include <unfTest/newStageDispatcher/dispatcher.h>
+#include <unfTest/newDispatcher/dispatcher.h>
 
 #include <gtest/gtest.h>
 #include <pxr/base/tf/refPtr.h>
@@ -15,7 +15,7 @@ class DispatcherTest : public ::testing::Test {
   protected:
     using StageDispatcherPtr = PXR_NS::TfRefPtr<unf::StageDispatcher>;
     using NewStageDispatcherPtr = PXR_NS::TfRefPtr<::Test::NewStageDispatcher>;
-    using TestDispatcherPtr = PXR_NS::TfRefPtr<::Test::TestDispatcher>;
+    using TestDispatcherPtr = PXR_NS::TfRefPtr<::Test::NewDispatcher>;
 
     using Listener = ::Test::Listener<
         ::Test::InputNotice, ::Test::OutputNotice1, ::Test::OutputNotice2>;

@@ -8,7 +8,7 @@
                     }
                 }
             },
-            "LibraryPath": "libunfNewStageDispatcher.so",
+            "LibraryPath": "libunfTestNewStageDispatcher.so",
             "Name": "NewStageDispatcher",
             "Type": "library"
         }

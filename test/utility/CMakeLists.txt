@@ -13,6 +13,8 @@ target_link_libraries(unfTest
         unfHierarchyBroadcaster
 )
 
+add_subdirectory(plugins)
+
 if (BUILD_PYTHON_BINDINGS)
     add_subdirectory(python)
 endif()
