@@ -1,8 +1,9 @@
-#include "hierarchycache.h"
+#include "cache.h"
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
 namespace {
+
 std::vector<std::string> _split(
     const std::string& s, const std::string& delimiter)
 {
@@ -19,9 +20,11 @@ std::vector<std::string> _split(
     res.push_back(s.substr(pos_start));
     return res;
 }
+
 }  // namespace
 
 namespace unf {
+
 void HierarchyCache::Update(PXR_NS::SdfPathVector resynced)
 {
     // Remove Descendants

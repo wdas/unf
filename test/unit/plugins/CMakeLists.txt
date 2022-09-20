@@ -1,2 +1,0 @@
-add_subdirectory(NewStageDispatcher)
-add_subdirectory(TestDispatcher)

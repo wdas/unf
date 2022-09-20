@@ -3,8 +3,8 @@
 
 #include <unfTest/listener.h>
 
-#include <TestPlugin/NewStageDispatcher.h>
-#include <TestPlugin/TestDispatcher.h>
+#include <unfTest/newStageDispatcher.h>
+#include <unfTest/testDispatcher.h>
 
 #include <gtest/gtest.h>
 #include <pxr/base/tf/refPtr.h>

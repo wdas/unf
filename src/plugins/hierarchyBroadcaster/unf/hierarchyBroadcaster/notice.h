@@ -1,7 +1,7 @@
 #ifndef NOTICE_BROADCASTER_NOTICE_H
 #define NOTICE_BROADCASTER_NOTICE_H
 
-#include "notice.h"
+#include <unf/notice.h>
 
 #include <pxr/base/tf/notice.h>
 #include <pxr/base/tf/refBase.h>
@@ -42,8 +42,8 @@ class HierarchyChanged
     ChangedFieldMap _changedFields;
 };
 
-
 }  // namespace BroadcasterNotice
+
 }  // namespace unf
 
 #endif  // NOTICE_BROADCASTER_NOTICE_H

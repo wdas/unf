@@ -3,13 +3,13 @@
         {
             "Info": {
                 "Types" : {
-                    "Test::NewStageDispatcher" : {
+                    "Test::TestDispatcher" : {
                         "bases": [ "Dispatcher" ]
                     }
                 }
             },
-            "LibraryPath": "libUnitPluginNewStageDispatcher.so",
-            "Name": "NewStageDispatcher",
+            "LibraryPath": "libunfTestDispatcher.so",
+            "Name": "TestDispatcher",
             "Type": "library"
         }
     ]

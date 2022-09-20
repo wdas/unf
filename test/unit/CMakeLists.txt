@@ -22,6 +22,8 @@ target_link_libraries(testUnitDispatcher
     PRIVATE
         unf
         unfTest
+        unfNewStageDispatcher
+        unfTestDispatcher
         GTest::gtest
         GTest::gtest_main
 )
@@ -32,12 +34,12 @@ target_link_libraries(testUnitDispatcherPlugin
     PRIVATE
         unf
         unfTest
-        UnitPluginNewStageDispatcher
-        UnitPluginTestDispatcher
+        unfNewStageDispatcher
+        unfTestDispatcher
         GTest::gtest
         GTest::gtest_main
 )
-set(_path "${CMAKE_CURRENT_BINARY_DIR}/plugins/*Dispatcher/plugInfo.json")
+set(_path "${CMAKE_CURRENT_BINARY_DIR}/testPlugins/*Dispatcher/plugInfo.json")
 gtest_discover_tests(
     testUnitDispatcherPlugin
     PROPERTIES ENVIRONMENT
@@ -64,8 +66,23 @@ target_link_libraries(testUnitTransaction
 )
 gtest_discover_tests(testUnitTransaction)
 
-add_executable(testHierarchyCache testHierarchyCache.cpp)
-target_link_libraries(testHierarchyCache
+add_executable(testUnitBroadcaster testBroadcaster.cpp)
+target_link_libraries(testUnitBroadcaster
+    PRIVATE
+        unf
+        unfTest
+        unfChildBroadcaster
+        GTest::gtest
+        GTest::gtest_main
+)
+gtest_discover_tests(
+    testUnitBroadcaster
+    PROPERTIES ENVIRONMENT
+        "USD_TEST_PATH=${CMAKE_CURRENT_SOURCE_DIR}/testBroadcaster"
+)
+
+add_executable(testUnitHierarchyCache testHierarchyCache.cpp)
+target_link_libraries(testUnitHierarchyCache
     PRIVATE
         unf
         unfTest
@@ -73,25 +90,12 @@ target_link_libraries(testHierarchyCache
         GTest::gtest_main
 )
 gtest_discover_tests(
-    testHierarchyCache
+    testUnitHierarchyCache
     PROPERTIES ENVIRONMENT
         "USD_TEST_PATH=${CMAKE_CURRENT_SOURCE_DIR}/testHierarchyCache"
 )
 
-add_executable(testBroadcaster testBroadcaster.cpp)
-target_link_libraries(testBroadcaster
-    PRIVATE
-        unf
-        unfTest
-        GTest::gtest
-        GTest::gtest_main
-)
-gtest_discover_tests(
-    testBroadcaster
-    PROPERTIES ENVIRONMENT
-        "USD_TEST_PATH=${CMAKE_CURRENT_SOURCE_DIR}/testBroadcaster"
-)
-add_subdirectory(plugins)
+add_subdirectory(testPlugins)
 
 if (BUILD_PYTHON_BINDINGS)
     add_subdirectory(python)

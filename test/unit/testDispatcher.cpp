@@ -2,6 +2,7 @@
 #include <unf/dispatcher.h>
 
 #include <unfTest/listener.h>
+#include <unfTest/newStageDispatcher.h>
 #include <unfTest/testDispatcher.h>
 
 #include <gtest/gtest.h>

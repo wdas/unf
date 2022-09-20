@@ -1,4 +1,4 @@
-#include "TestDispatcher.h"
+#include "newStageDispatcher.h"
 
 #include <unf/dispatcher.h>
 
@@ -8,5 +8,5 @@ PXR_NAMESPACE_USING_DIRECTIVE
 
 TF_REGISTRY_FUNCTION(TfType)
 {
-    unf::DispatcherDefine<::Test::TestDispatcher, unf::Dispatcher>();
+    unf::DispatcherDefine<Test::NewStageDispatcher, unf::Dispatcher>();
 }

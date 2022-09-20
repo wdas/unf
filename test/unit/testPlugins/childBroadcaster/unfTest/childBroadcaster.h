@@ -1,17 +1,16 @@
-#ifndef TEST_NOTICE_BROKER_BROADCASTER_H
-#define TEST_NOTICE_BROKER_BROADCASTER_H
+#ifndef TEST_NOTICE_BROKER_PLUGIN_CHILD_BROADCASTER_H
+#define TEST_NOTICE_BROKER_PLUGIN_CHILD_BROADCASTER_H
 
-#include "testNotice.h"
+#include <unfTest/testNotice.h>
+
+#include <unf/hierarchyBroadcaster/broadcaster.h>
 
 #include <unf/broadcaster.h>
 #include <unf/broker.h>
-#include <unf/hierarchyBroadcaster.h>
 
 #include <pxr/pxr.h>
 
 namespace Test {
-
-using HierarchyBroadcaster = unf::HierarchyBroadcaster;
 
 // Declare test broadcasters.
 class ChildBroadcaster : public unf::Broadcaster {
@@ -25,6 +24,7 @@ class ChildBroadcaster : public unf::Broadcaster {
     {
         return "ChildBroadcaster";
     };
+
     virtual std::string GetParentIdentifier() const override
     {
         return "HierarchyBroadcaster";
@@ -32,17 +32,19 @@ class ChildBroadcaster : public unf::Broadcaster {
 
     void Execute(void* parent) override
     {
-        HierarchyBroadcaster* hierarchyBroadcaster =
-            static_cast<HierarchyBroadcaster*>(parent);
+        unf::HierarchyBroadcaster* hierarchyBroadcaster =
+            static_cast<unf::HierarchyBroadcaster*>(parent);
+
         ChildBroadcasterNotice n = ChildBroadcasterNotice(
             hierarchyBroadcaster->GetAdded(),
             hierarchyBroadcaster->GetRemoved(),
             hierarchyBroadcaster->GetModified(),
             hierarchyBroadcaster->GetChangedFields());
+
         n.Send();
     }
 };
 
 }  // namespace Test
 
-#endif  // TEST_NOTICE_BROKER_DISPATCHER_H
+#endif  // TEST_NOTICE_BROKER_PLUGIN_CHILD_BROADCASTER_H

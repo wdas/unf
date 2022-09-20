@@ -1,11 +1,9 @@
 add_library(unf
     unf/broadcaster.cpp
-    unf/broadcasterNotice.cpp
     unf/broker.cpp
     unf/dispatcher.cpp
     unf/notice.cpp
     unf/transaction.cpp
-    unf/hierarchycache.cpp
 )
 
 # Suppress warning sfrom USD regarding deprecated TBB features.
@@ -43,11 +41,13 @@ install(
     FILES_MATCHING PATTERN "*.h"
 )
 
-if (BUILD_PYTHON_BINDINGS)
-    add_subdirectory(python)
-endif()
-
 install(EXPORT ${PROJECT_NAME}
     FILE unfTargets.cmake
     DESTINATION share/cmake/unf
 )
+
+add_subdirectory(plugins)
+
+if (BUILD_PYTHON_BINDINGS)
+    add_subdirectory(python)
+endif()
