@@ -4,7 +4,8 @@
 #     Pytest::Pytest
 #
 # It also exposes the 'pytest_discover_tests' function which adds ctest
-# for each pytest tests.
+# for each pytest tests. The "BUNDLE_PYTHON_TESTS" environment variable
+# can be used to run all discovered tests all together.
 #
 # Usage:
 #     find_package(Pytest)
@@ -54,12 +55,17 @@ if (Pytest_FOUND AND NOT TARGET Pytest::Pytest)
     function(pytest_discover_tests NAME)
         cmake_parse_arguments(
             PARSE_ARGV 1 "" ""
-            "WORKING_DIRECTORY;TRIM_FROM_NAME"
+            "WORKING_DIRECTORY;TRIM_FROM_NAME;BUNDLE_TESTS"
             "LIBRARY_PATH_PREPEND;PYTHON_PATH_PREPEND"
         )
 
         if (NOT _WORKING_DIRECTORY)
             set(_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+        endif()
+
+        # Override option by environment variable if available.
+        if (DEFINED ENV{BUNDLE_PYTHON_TESTS})
+            set(_BUNDLE_TESTS $ENV{BUNDLE_PYTHON_TESTS})
         endif()
 
         set(_tests_file "${CMAKE_CURRENT_BINARY_DIR}/${NAME}_tests.cmake")
@@ -69,7 +75,8 @@ if (Pytest_FOUND AND NOT TARGET Pytest::Pytest)
             BYPRODUCTS "${_tests_file}"
             COMMAND ${CMAKE_COMMAND}
                 -DPYTEST_EXECUTABLE=${PYTEST_EXECUTABLE}
-                -DPREFIX_NAME=${NAME}
+                -DTEST_GROUP_NAME=${NAME}
+                -DBUNDLE_TESTS=${_BUNDLE_TESTS}
                 -DLIBRARY_PATH_PREPEND=${_LIBRARY_PATH_PREPEND}
                 -DPYTHON_PATH_PREPEND=${_PYTHON_PATH_PREPEND}
                 -DTRIM_FROM_NAME=${_TRIM_FROM_NAME}

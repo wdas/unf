@@ -23,15 +23,19 @@ Here a few CMake options that can be used to influence the building process:
 | BUILD_DOCS             | Indicate whether documentation should be built. Default is true.    |
 | BUILD_PYTHON_BINDINGS  | Indicate whether Python bindings should be built. Default is true.  |
 | BUILD_SHARED_LIBS      | Indicate whether library should be built shared. Default is true.   |
+| BUNDLE_PYTHON_TESTS    | Bundle Python tests per group (faster). Default is false.           |
 
 Custom search paths to dependent packages can be provided with the following
 Cmake options (or environment variable):
 
-| Option / Environment Variable  | Description                         |
-| ------------------------------ | ----------------------------------- |
-| USD_ROOT                       | Add search path to USD location.    |
-| TBB_ROOT                       | Add search path to TBB location.    |
-| BOOST_ROOT                     | Add search path to Boost location.  |
+| Option / Environment Variable  | Description                              |
+| ------------------------------ | ---------------------------------------- |
+| USD_ROOT                       | Add search path to USD package.          |
+| TBB_ROOT                       | Add search path to TBB package.          |
+| Boost_ROOT                     | Add search path to Boost package.        |
+| Pytest_ROOT                    | Add search path to pytest program.       |
+| Sphinx_ROOT                    | Add search path to sphinx-build program. |
+| ClangFormat_ROOT               | Add search path to clang-format program. |
 
 For instance:
 
