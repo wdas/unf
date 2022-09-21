@@ -3,7 +3,7 @@
 
 #include "notice.h"
 
-#include <unfTest/testNotice.h>
+#include <unfTest/notice.h>
 
 #include <unf/hierarchyBroadcaster/broadcaster.h>
 

@@ -2,7 +2,7 @@
 #include <unf/noticeCache.h>
 
 #include <unfTest/listener.h>
-#include <unfTest/testNotice.h>
+#include <unfTest/notice.h>
 
 #include <gtest/gtest.h>
 #include <pxr/usd/sdf/layer.h>

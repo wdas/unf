@@ -2,7 +2,7 @@
 #include <unf/transaction.h>
 
 #include <unfTest/listener.h>
-#include <unfTest/testNotice.h>
+#include <unfTest/notice.h>
 
 #include <gtest/gtest.h>
 #include <pxr/usd/usd/stage.h>

@@ -1,5 +1,5 @@
 add_library(unfTest
-    unfTest/testNotice.cpp
+    unfTest/notice.cpp
 )
 
 target_include_directories(unfTest

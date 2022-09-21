@@ -74,16 +74,16 @@ if (Pytest_FOUND AND NOT TARGET Pytest::Pytest)
             ${NAME} ALL VERBATIM
             BYPRODUCTS "${_tests_file}"
             COMMAND ${CMAKE_COMMAND}
-                -DPYTEST_EXECUTABLE=${PYTEST_EXECUTABLE}
-                -DTEST_GROUP_NAME=${NAME}
-                -DBUNDLE_TESTS=${_BUNDLE_TESTS}
-                -DLIBRARY_PATH_PREPEND=${_LIBRARY_PATH_PREPEND}
-                -DPYTHON_PATH_PREPEND=${_PYTHON_PATH_PREPEND}
-                -DTRIM_FROM_NAME=${_TRIM_FROM_NAME}
-                -DWORKING_DIRECTORY=${_WORKING_DIRECTORY}
-                -DPROJECT_SOURCE_DIR=${PROJECT_SOURCE_DIR}
-                -DCTEST_FILE=${_tests_file}
-                -P ${_PYTEST_DISCOVER_TESTS_SCRIPT}
+                -D "PYTEST_EXECUTABLE=${PYTEST_EXECUTABLE}"
+                -D "TEST_GROUP_NAME=${NAME}"
+                -D "BUNDLE_TESTS=${_BUNDLE_TESTS}"
+                -D "LIBRARY_PATH_PREPEND=${_LIBRARY_PATH_PREPEND}"
+                -D "PYTHON_PATH_PREPEND=${_PYTHON_PATH_PREPEND}"
+                -D "TRIM_FROM_NAME=${_TRIM_FROM_NAME}"
+                -D "WORKING_DIRECTORY=${_WORKING_DIRECTORY}"
+                -D "PROJECT_SOURCE_DIR=${PROJECT_SOURCE_DIR}"
+                -D "CTEST_FILE=${_tests_file}"
+                -P "${_PYTEST_DISCOVER_TESTS_SCRIPT}"
         )
 
         # Add discovered tests to directory TEST_INCLUDE_FILES

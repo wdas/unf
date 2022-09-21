@@ -1,7 +1,7 @@
 #include <unf/broker.h>
 #include <unf/noticeCache.h>
 
-#include <unfTest/testNotice.h>
+#include <unfTest/notice.h>
 
 #include <gtest/gtest.h>
 #include <pxr/usd/usd/stage.h>

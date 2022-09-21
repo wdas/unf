@@ -1,6 +1,6 @@
 #include <unf/pyNoticeWrapper.h>
 
-#include <unfTest/testNotice.h>
+#include <unfTest/notice.h>
 
 #include <pxr/base/tf/notice.h>
 #include <pxr/base/tf/pyNoticeWrapper.h>

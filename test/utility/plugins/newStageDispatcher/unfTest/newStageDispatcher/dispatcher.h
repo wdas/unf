@@ -3,7 +3,7 @@
 
 #include <unf/dispatcher.h>
 
-#include <unfTest/testNotice.h>
+#include <unfTest/notice.h>
 
 #include <pxr/pxr.h>
 

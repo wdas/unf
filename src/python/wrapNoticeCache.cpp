@@ -106,7 +106,7 @@ class PythonNoticeCache : public BaseNoticeCache {
     TfNotice::Key _key;
 };
 
-void wrapCache()
+void wrapNoticeCache()
 {
     class_<PythonNoticeCache, boost::noncopyable>("NoticeCache")
 
