@@ -5,8 +5,8 @@
 #include <unf/notice.h>
 #include <unf/transaction.h>
 
-#include <unfTest/observer.h>
 #include <unfTest/childBroadcaster/broadcaster.h>
+#include <unfTest/observer.h>
 
 #include <gtest/gtest.h>
 #include <pxr/base/vt/dictionary.h>
@@ -432,7 +432,8 @@ TEST_F(HierarchyBroadcasterTest, TransactionNested)
     {
         unf::NoticeTransaction transaction(_broker);
 
-        PXR_NS::UsdPrim p = _stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/D/a"));
+        PXR_NS::UsdPrim p =
+            _stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/D/a"));
         p.SetInstanceable(true);
         _stage->DefinePrim(PXR_NS::SdfPath("/scene/sublayerShared/K/k2"));
         _stage->RemovePrim(PXR_NS::SdfPath("/scene/sublayerShared/K/k2"));
@@ -636,7 +637,8 @@ TEST_F(HierarchyBroadcasterTest, TransactionNested)
 
     {
         unf::NoticeTransaction transaction(_broker);
-        PXR_NS::UsdPrim p = _stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/A/a"));
+        PXR_NS::UsdPrim p =
+            _stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/A/a"));
         p.SetInstanceable(true);
 
         {

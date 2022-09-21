@@ -16,7 +16,8 @@ template <class T>
 class Observer : public PXR_NS::TfWeakBase {
   public:
     Observer() = default;
-    Observer(const PXR_NS::UsdStageWeakPtr& stage) : _count(0) {
+    Observer(const PXR_NS::UsdStageWeakPtr& stage) : _count(0)
+    {
         SetStage(stage);
     }
 
@@ -29,12 +30,13 @@ class Observer : public PXR_NS::TfWeakBase {
             PXR_NS::TfCreateWeakPtr(this), &Observer::OnReceiving, stage);
     }
 
-    void SetCallback(std::function<void (const T&)> callback)
+    void SetCallback(std::function<void(const T&)> callback)
     {
         _callback = callback;
     }
 
-    const T& GetLatestNotice() const {
+    const T& GetLatestNotice() const
+    {
         if (!_notice) {
             TF_FATAL_ERROR("Impossible to access latest notice.");
         }
@@ -43,7 +45,8 @@ class Observer : public PXR_NS::TfWeakBase {
 
     size_t Received() const { return _count; }
 
-    void Reset() {
+    void Reset()
+    {
         _count = 0;
         _notice.reset();
     }
@@ -62,7 +65,7 @@ class Observer : public PXR_NS::TfWeakBase {
     boost::optional<T> _notice;
     size_t _count;
     PXR_NS::TfNotice::Key _key;
-    std::function<void (const T&)> _callback;
+    std::function<void(const T&)> _callback;
 };
 
 }  // namespace Test

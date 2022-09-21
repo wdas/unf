@@ -2,8 +2,8 @@
 #include <unf/dispatcher.h>
 
 #include <unfTest/listener.h>
-#include <unfTest/newStageDispatcher/dispatcher.h>
 #include <unfTest/newDispatcher/dispatcher.h>
+#include <unfTest/newStageDispatcher/dispatcher.h>
 
 #include <gtest/gtest.h>
 #include <pxr/base/tf/refPtr.h>

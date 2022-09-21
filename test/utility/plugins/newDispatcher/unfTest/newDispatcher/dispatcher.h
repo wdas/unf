@@ -11,9 +11,7 @@ namespace Test {
 
 class NewDispatcher : public unf::Dispatcher {
   public:
-    NewDispatcher(const unf::BrokerWeakPtr& broker) : unf::Dispatcher(broker)
-    {
-    }
+    NewDispatcher(const unf::BrokerWeakPtr& broker) : unf::Dispatcher(broker) {}
 
     virtual std::string GetIdentifier() const { return "NewDispatcher"; };
 

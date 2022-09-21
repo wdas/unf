@@ -134,6 +134,5 @@ TEST_F(BrokerFlowTest, MergeableNotice)
 
     const auto& n = observer.GetLatestNotice();
     ASSERT_EQ(
-        n.GetData(),
-        ::Test::DataMap({{"Foo", "Test2"}, {"Bar", "Test3"}}));
+        n.GetData(), ::Test::DataMap({{"Foo", "Test2"}, {"Bar", "Test3"}}));
 }

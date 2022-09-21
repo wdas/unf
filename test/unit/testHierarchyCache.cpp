@@ -17,7 +17,6 @@
 
 #include <cstdlib>
 #include <string>
-#include <iostream>
 
 // namespace aliases for convenience.
 using _USD = PXR_NS::UsdNotice;
@@ -44,7 +43,7 @@ class HierarchyCacheTest : public ::testing::Test {
     {
         ::Test::Observer<T> observer(_stage);
 
-        observer.SetCallback([&] (const T& notice) {
+        observer.SetCallback([&](const T& notice) {
             PXR_NS::SdfPathVector resyncedChanges;
             for (const auto& path : notice.GetResyncedPaths()) {
                 resyncedChanges.push_back(path);
