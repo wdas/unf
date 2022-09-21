@@ -10,7 +10,6 @@ target_include_directories(unfTest
 target_link_libraries(unfTest
     PUBLIC
         unf
-        unfHierarchyBroadcaster
 )
 
 add_subdirectory(plugins)

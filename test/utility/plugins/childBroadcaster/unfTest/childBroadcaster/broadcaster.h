@@ -1,6 +1,8 @@
 #ifndef TEST_NOTICE_BROKER_PLUGIN_CHILD_BROADCASTER_H
 #define TEST_NOTICE_BROKER_PLUGIN_CHILD_BROADCASTER_H
 
+#include "notice.h"
+
 #include <unfTest/testNotice.h>
 
 #include <unf/hierarchyBroadcaster/broadcaster.h>
@@ -41,7 +43,7 @@ class ChildBroadcaster : public unf::Broadcaster {
             hierarchyBroadcaster->GetModified(),
             hierarchyBroadcaster->GetChangedFields());
 
-        n.Send();
+        n.Send(_broker->GetStage());
     }
 };
 

@@ -66,25 +66,27 @@ target_link_libraries(testUnitTransaction
 )
 gtest_discover_tests(testUnitTransaction)
 
-add_executable(testUnitBroadcaster testBroadcaster.cpp)
-target_link_libraries(testUnitBroadcaster
+add_executable(testUnitHierarchyBroadcaster testHierarchyBroadcaster.cpp)
+target_link_libraries(testUnitHierarchyBroadcaster
     PRIVATE
         unf
+        unfHierarchyBroadcaster
         unfTest
         unfTestChildBroadcaster
         GTest::gtest
         GTest::gtest_main
 )
 gtest_discover_tests(
-    testUnitBroadcaster
+    testUnitHierarchyBroadcaster
     PROPERTIES ENVIRONMENT
-        "USD_TEST_PATH=${CMAKE_CURRENT_SOURCE_DIR}/testBroadcaster"
+        "USD_TEST_PATH=${CMAKE_CURRENT_SOURCE_DIR}/testHierarchyBroadcaster"
 )
 
 add_executable(testUnitHierarchyCache testHierarchyCache.cpp)
 target_link_libraries(testUnitHierarchyCache
     PRIVATE
         unf
+        unfHierarchyBroadcaster
         unfTest
         GTest::gtest
         GTest::gtest_main

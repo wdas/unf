@@ -4,7 +4,7 @@
 #include <unf/notice.h>
 #include <unf/transaction.h>
 
-#include <unfTest/listener.h>
+#include <unfTest/observer.h>
 
 #include <gtest/gtest.h>
 #include <pxr/base/vt/dictionary.h>
@@ -17,34 +17,55 @@
 
 #include <cstdlib>
 #include <string>
+#include <iostream>
 
-using unf::HierarchyCache;
-namespace {
+// namespace aliases for convenience.
+using _USD = PXR_NS::UsdNotice;
+namespace _Broker = unf::BrokerNotice;
 
-std::string GetTestFilePath(const std::string& filePath)
+class HierarchyCacheTest : public ::testing::Test {
+  protected:
+    using UsdObserver = ::Test::Observer<_USD::ObjectsChanged>;
+    using BrokerObserver = ::Test::Observer<_Broker::ObjectsChanged>;
+
+    void SetUp() override
+    {
+        _stage = PXR_NS::UsdStage::Open(GetTestFilePath("/scene.usda"));
+    }
+
+    std::string GetTestFilePath(const std::string& filePath)
+    {
+        std::string root = std::getenv("USD_TEST_PATH");
+        return root + filePath;
+    }
+
+    template <class T>
+    ::Test::Observer<T> CreateObserver(unf::HierarchyCache& cache)
+    {
+        ::Test::Observer<T> observer(_stage);
+
+        observer.SetCallback([&] (const T& notice) {
+            PXR_NS::SdfPathVector resyncedChanges;
+            for (const auto& path : notice.GetResyncedPaths()) {
+                resyncedChanges.push_back(path);
+            }
+            cache.Update(resyncedChanges);
+        });
+
+        return observer;
+    }
+
+    PXR_NS::UsdStageRefPtr _stage;
+};
+
+TEST_F(HierarchyCacheTest, AddPrim)
 {
-    std::string root = std::getenv("USD_TEST_PATH");
-    return root + filePath;
-}
-
-PXR_NS::UsdStageRefPtr GetStage(const std::string& filePath)
-{
-    return PXR_NS::UsdStage::Open(GetTestFilePath(filePath));
-}
-
-}  // namespace
-
-TEST(HierarchyCache, AddPrim)
-{
-    auto stage = GetStage("/scene.usda");
-
-    HierarchyCache cache = HierarchyCache(stage);
-
-    ::Test::ObjChangedListener l = ::Test::ObjChangedListener(&cache);
+    unf::HierarchyCache cache(_stage);
+    auto observer = CreateObserver<_USD::ObjectsChanged>(cache);
 
     ASSERT_EQ(false, cache.FindNode(PXR_NS::SdfPath("/scene/AA")));
 
-    stage->DefinePrim(PXR_NS::SdfPath("/scene/AA"));
+    _stage->DefinePrim(PXR_NS::SdfPath("/scene/AA"));
 
     ASSERT_EQ(cache.GetAdded().size(), 1);
     ASSERT_NE(
@@ -58,16 +79,13 @@ TEST(HierarchyCache, AddPrim)
     ASSERT_EQ(cache.GetAdded().size(), 0);
 }
 
-TEST(HierarchyCache, ModifyPrim)
+TEST_F(HierarchyCacheTest, ModifyPrim)
 {
-    auto stage = GetStage("/scene.usda");
-    HierarchyCache cache = HierarchyCache(stage);
+    unf::HierarchyCache cache(_stage);
+    auto observer = CreateObserver<_USD::ObjectsChanged>(cache);
 
-    ::Test::ObjChangedListener l = ::Test::ObjChangedListener(&cache);
-
-    PXR_NS::UsdPrim p = stage->GetPrimAtPath(PXR_NS::SdfPath("/scene"));
-    p.SetInstanceable(true);
-
+    PXR_NS::UsdPrim prim = _stage->GetPrimAtPath(PXR_NS::SdfPath("/scene"));
+    prim.SetInstanceable(true);
 
     ASSERT_EQ(cache.GetModified().size(), 32);
     cache.Clear();
@@ -98,24 +116,20 @@ TEST(HierarchyCache, ModifyPrim)
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene")));
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/D")));
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/D/r2")));
-
-    cache.Clear();
 }
 
-TEST(HierarchyCache, RemovePrimBase)
+TEST_F(HierarchyCacheTest, RemovePrimBase)
 {
-    auto stage = GetStage("/scene.usda");
-    HierarchyCache cache = HierarchyCache(stage);
+    unf::HierarchyCache cache(_stage);
+    auto observer = CreateObserver<_USD::ObjectsChanged>(cache);
 
-    ::Test::ObjChangedListener l = ::Test::ObjChangedListener(&cache);
-
-    stage->RemovePrim(PXR_NS::SdfPath("/scene/AA"));
+    _stage->RemovePrim(PXR_NS::SdfPath("/scene/AA"));
     ASSERT_EQ(cache.GetRemoved().size(), 0);
     ASSERT_EQ(cache.GetModified().size(), 0);
     ASSERT_EQ(cache.GetAdded().size(), 0);
     cache.Clear();
 
-    stage->RemovePrim(PXR_NS::SdfPath("/scene/A/a"));
+    _stage->RemovePrim(PXR_NS::SdfPath("/scene/A/a"));
     ASSERT_EQ(cache.GetRemoved().size(), 1);
     ASSERT_NE(
         cache.GetRemoved().find(PXR_NS::SdfPath("/scene/A/a")),
@@ -125,7 +139,7 @@ TEST(HierarchyCache, RemovePrimBase)
     ASSERT_EQ(false, cache.FindNode(PXR_NS::SdfPath("/scene/A/a")));
     cache.Clear();
 
-    stage->RemovePrim(PXR_NS::SdfPath("/scene/A"));
+    _stage->RemovePrim(PXR_NS::SdfPath("/scene/A"));
     ASSERT_EQ(cache.GetRemoved().size(), 3);
     ASSERT_NE(
         cache.GetRemoved().find(PXR_NS::SdfPath("/scene/A")),
@@ -141,19 +155,17 @@ TEST(HierarchyCache, RemovePrimBase)
     ASSERT_EQ(false, cache.FindNode(PXR_NS::SdfPath("/scene/A")));
     ASSERT_EQ(false, cache.FindNode(PXR_NS::SdfPath("/scene/A/b")));
     ASSERT_EQ(false, cache.FindNode(PXR_NS::SdfPath("/scene/A/b/bb")));
-    cache.Clear();
 }
 
-TEST(HierarchyCache, RemovePrimComplex)
+TEST_F(HierarchyCacheTest, RemovePrimComplex)
 {
-    auto stage = GetStage("/scene.usda");
-    HierarchyCache cache = HierarchyCache(stage);
+    unf::HierarchyCache cache(_stage);
+    auto observer = CreateObserver<_USD::ObjectsChanged>(cache);
 
-    ::Test::ObjChangedListener l = ::Test::ObjChangedListener(&cache);
+    PXR_NS::UsdPrim prim1 =
+        _stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/sublayer2"));
+    prim1.SetActive(false);
 
-    PXR_NS::UsdPrim p =
-        stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/sublayer2"));
-    p.SetActive(false);
     ASSERT_EQ(cache.GetRemoved().size(), 1);
     ASSERT_NE(
         cache.GetRemoved().find(
@@ -171,9 +183,10 @@ TEST(HierarchyCache, RemovePrimComplex)
 
     cache.Clear();
 
-    PXR_NS::UsdPrim p2 =
-        stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/sublayerShared"));
-    p2.SetActive(false);
+    PXR_NS::UsdPrim prim2 =
+        _stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/sublayerShared"));
+    prim2.SetActive(false);
+
     ASSERT_EQ(cache.GetModified().size(), 1);
     ASSERT_NE(
         cache.GetModified().find(PXR_NS::SdfPath("/scene/sublayerShared")),
@@ -198,8 +211,9 @@ TEST(HierarchyCache, RemovePrimComplex)
 
     cache.Clear();
 
-    PXR_NS::UsdPrim p3 = stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/D"));
-    p3.SetActive(false);
+    PXR_NS::UsdPrim prim3 = _stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/D"));
+    prim3.SetActive(false);
+
     ASSERT_EQ(cache.GetModified().size(), 1);
     ASSERT_NE(
         cache.GetModified().find(PXR_NS::SdfPath("/scene/D")),
@@ -226,22 +240,19 @@ TEST(HierarchyCache, RemovePrimComplex)
     ASSERT_EQ(false, cache.FindNode(PXR_NS::SdfPath("/scene/D/a")));
     ASSERT_EQ(false, cache.FindNode(PXR_NS::SdfPath("/scene/D/b")));
     ASSERT_EQ(false, cache.FindNode(PXR_NS::SdfPath("/scene/D/b/x")));
-
-    cache.Clear();
 }
 
-TEST(HierarchyCache, AddPrimComplex)
+TEST_F(HierarchyCacheTest, AddPrimComplex)
 {
-    auto stage = GetStage("/scene.usda");
-    HierarchyCache cache = HierarchyCache(stage);
+    unf::HierarchyCache cache(_stage);
+    auto observer = CreateObserver<_USD::ObjectsChanged>(cache);
 
-    ::Test::ObjChangedListener l = ::Test::ObjChangedListener(&cache);
-
-    PXR_NS::UsdPrim p =
-        stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/sublayer2"));
-    p.SetActive(false);
+    PXR_NS::UsdPrim prim1 =
+        _stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/sublayer2"));
+    prim1.SetActive(false);
     cache.Clear();
-    p.SetActive(true);
+    prim1.SetActive(true);
+
     ASSERT_EQ(cache.GetRemoved().size(), 0);
     ASSERT_EQ(cache.GetAdded().size(), 1);
     ASSERT_NE(
@@ -259,11 +270,12 @@ TEST(HierarchyCache, AddPrimComplex)
 
     cache.Clear();
 
-    PXR_NS::UsdPrim p2 =
-        stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/sublayerShared"));
-    p2.SetActive(false);
+    PXR_NS::UsdPrim prim2 =
+        _stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/sublayerShared"));
+    prim2.SetActive(false);
     cache.Clear();
-    p2.SetActive(true);
+    prim2.SetActive(true);
+
     ASSERT_EQ(cache.GetModified().size(), 1);
     ASSERT_NE(
         cache.GetModified().find(PXR_NS::SdfPath("/scene/sublayerShared")),
@@ -289,10 +301,11 @@ TEST(HierarchyCache, AddPrimComplex)
 
     cache.Clear();
 
-    PXR_NS::UsdPrim p3 = stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/D"));
-    p3.SetActive(false);
+    PXR_NS::UsdPrim prim3 = _stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/D"));
+    prim3.SetActive(false);
     cache.Clear();
-    p3.SetActive(true);
+    prim3.SetActive(true);
+
     ASSERT_EQ(cache.GetModified().size(), 1);
     ASSERT_NE(
         cache.GetModified().find(PXR_NS::SdfPath("/scene/D")),
@@ -311,20 +324,16 @@ TEST(HierarchyCache, AddPrimComplex)
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/D/a")));
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/D/b")));
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/D/b/x")));
-
-    cache.Clear();
 }
 
-TEST(HierarchyCache, VariantSwitch)
+TEST_F(HierarchyCacheTest, VariantSwitch)
 {
-    auto stage = GetStage("/scene.usda");
-    HierarchyCache cache = HierarchyCache(stage);
+    unf::HierarchyCache cache(_stage);
+    auto observer = CreateObserver<_USD::ObjectsChanged>(cache);
 
-    ::Test::ObjChangedListener l = ::Test::ObjChangedListener(&cache);
-
-    PXR_NS::UsdPrim p =
-        stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/testvariant1/V"));
-    p.GetVariantSet("myVariant").SetVariantSelection("v");
+    PXR_NS::UsdPrim prim =
+        _stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/testvariant1/V"));
+    prim.GetVariantSet("myVariant").SetVariantSelection("v");
 
     ASSERT_EQ(cache.GetAdded().size(), 1);
     ASSERT_NE(
@@ -367,20 +376,16 @@ TEST(HierarchyCache, VariantSwitch)
         true,
         cache.FindNode(PXR_NS::SdfPath(
             "/scene/testvariant1/V/SphereGroup1/emptyPrim/something2")));
-
-    cache.Clear();
 }
 
-TEST(HierarchyCache, MuteAndUnmuteLayers)
+TEST_F(HierarchyCacheTest, MuteAndUnmuteLayers)
 {
-    auto stage = GetStage("/scene.usda");
-    HierarchyCache cache = HierarchyCache(stage);
-
-    ::Test::ObjChangedListener l = ::Test::ObjChangedListener(&cache);
+    unf::HierarchyCache cache(_stage);
+    auto observer = CreateObserver<_USD::ObjectsChanged>(cache);
 
     std::string layerIdentifier = GetTestFilePath("/sublayer.usda");
 
-    stage->MuteLayer(layerIdentifier);
+    _stage->MuteLayer(layerIdentifier);
 
     ASSERT_EQ(cache.GetRemoved().size(), 3);
     ASSERT_NE(
@@ -403,7 +408,7 @@ TEST(HierarchyCache, MuteAndUnmuteLayers)
 
     cache.Clear();
 
-    stage->UnmuteLayer(layerIdentifier);
+    _stage->UnmuteLayer(layerIdentifier);
     ASSERT_EQ(cache.GetAdded().size(), 3);
     ASSERT_NE(
         cache.GetAdded().find(PXR_NS::SdfPath("/scene/sublayer")),
@@ -424,20 +429,17 @@ TEST(HierarchyCache, MuteAndUnmuteLayers)
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/B/bb")));
 }
 
-TEST(HierarchyCache, TransactionChanges)
+TEST_F(HierarchyCacheTest, TransactionChanges)
 {
-    auto stage = GetStage("/scene.usda");
-    HierarchyCache cache = HierarchyCache(stage);
-    ::Test::UnfObjChangedListener l = ::Test::UnfObjChangedListener(&cache);
-
-    auto broker = unf::Broker::Create(stage);
+    unf::HierarchyCache cache(_stage);
+    auto observer = CreateObserver<_Broker::ObjectsChanged>(cache);
 
     {
-        unf::NoticeTransaction transaction(broker);
+        unf::NoticeTransaction transaction(_stage);
 
-        stage->DefinePrim(PXR_NS::SdfPath("/scene/K/J"));
-        stage->DefinePrim(PXR_NS::SdfPath("/scene/K/M"));
-        stage->DefinePrim(PXR_NS::SdfPath("/scene/K/M/L"));
+        _stage->DefinePrim(PXR_NS::SdfPath("/scene/K/J"));
+        _stage->DefinePrim(PXR_NS::SdfPath("/scene/K/M"));
+        _stage->DefinePrim(PXR_NS::SdfPath("/scene/K/M/L"));
     }
     ASSERT_EQ(cache.GetModified().size(), 0);
     ASSERT_EQ(cache.GetAdded().size(), 4);
@@ -459,12 +461,13 @@ TEST(HierarchyCache, TransactionChanges)
     cache.Clear();
 
     {
-        unf::NoticeTransaction transaction(broker);
+        unf::NoticeTransaction transaction(_stage);
 
-        stage->DefinePrim(PXR_NS::SdfPath("/scene/M/J"));
-        stage->DefinePrim(PXR_NS::SdfPath("/scene/M/N"));
-        stage->RemovePrim(PXR_NS::SdfPath("/scene/M/N"));
+        _stage->DefinePrim(PXR_NS::SdfPath("/scene/M/J"));
+        _stage->DefinePrim(PXR_NS::SdfPath("/scene/M/N"));
+        _stage->RemovePrim(PXR_NS::SdfPath("/scene/M/N"));
     }
+
     ASSERT_EQ(cache.GetModified().size(), 0);
     ASSERT_EQ(cache.GetAdded().size(), 2);
     ASSERT_NE(
@@ -479,10 +482,10 @@ TEST(HierarchyCache, TransactionChanges)
     cache.Clear();
 
     {
-        unf::NoticeTransaction transaction(broker);
+        unf::NoticeTransaction transaction(_stage);
 
-        stage->DefinePrim(PXR_NS::SdfPath("/scene/RemovePrim"));
-        stage->RemovePrim(PXR_NS::SdfPath("/scene/RemovePrim"));
+        _stage->DefinePrim(PXR_NS::SdfPath("/scene/RemovePrim"));
+        _stage->RemovePrim(PXR_NS::SdfPath("/scene/RemovePrim"));
     }
     ASSERT_EQ(cache.GetModified().size(), 0);
     ASSERT_EQ(cache.GetAdded().size(), 0);
@@ -491,10 +494,10 @@ TEST(HierarchyCache, TransactionChanges)
     cache.Clear();
 
     {
-        unf::NoticeTransaction transaction(broker);
+        unf::NoticeTransaction transaction(_stage);
 
-        stage->RemovePrim(PXR_NS::SdfPath("/scene/K/M"));
-        stage->DefinePrim(PXR_NS::SdfPath("/scene/K/M/L"));
+        _stage->RemovePrim(PXR_NS::SdfPath("/scene/K/M"));
+        _stage->DefinePrim(PXR_NS::SdfPath("/scene/K/M/L"));
     }
     ASSERT_EQ(cache.GetModified().size(), 2);
     ASSERT_NE(
@@ -505,17 +508,20 @@ TEST(HierarchyCache, TransactionChanges)
         cache.GetModified().end());
     ASSERT_EQ(cache.GetAdded().size(), 0);
     ASSERT_EQ(cache.GetRemoved().size(), 0);
+
     cache.Clear();
 
     {
-        unf::NoticeTransaction transaction(broker);
+        unf::NoticeTransaction transaction(_stage);
 
-        PXR_NS::UsdPrim p2 =
-            stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/sublayerShared"));
-        p2.SetInstanceable(true);
-        stage->DefinePrim(PXR_NS::SdfPath("/scene/sublayerShared/K/k2"));
-        stage->RemovePrim(PXR_NS::SdfPath("/scene/sublayerShared/K/k2"));
+        PXR_NS::UsdPrim prim =
+            _stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/sublayerShared"));
+        prim.SetInstanceable(true);
+
+        _stage->DefinePrim(PXR_NS::SdfPath("/scene/sublayerShared/K/k2"));
+        _stage->RemovePrim(PXR_NS::SdfPath("/scene/sublayerShared/K/k2"));
     }
+
     ASSERT_EQ(cache.GetModified().size(), 3);
     ASSERT_NE(
         cache.GetModified().find(PXR_NS::SdfPath("/scene/sublayerShared")),
@@ -536,12 +542,13 @@ TEST(HierarchyCache, TransactionChanges)
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/sublayerShared/K")));
 
     cache.Clear();
+
     {
-        unf::NoticeTransaction transaction(broker);
+        unf::NoticeTransaction transaction(_stage);
 
         std::string layerIdentifier = GetTestFilePath("/sublayer2.usda");
-        stage->MuteLayer(layerIdentifier);
-        stage->UnmuteLayer(layerIdentifier);
+        _stage->MuteLayer(layerIdentifier);
+        _stage->UnmuteLayer(layerIdentifier);
     }
 
     ASSERT_EQ(cache.GetModified().size(), 39);
@@ -551,13 +558,15 @@ TEST(HierarchyCache, TransactionChanges)
     std::string layer1Identifier = GetTestFilePath("/sublayer.usda");
     std::string layer2Identifier = GetTestFilePath("/sublayer2.usda");
 
-    stage->MuteLayer(layer1Identifier);
-    cache.Clear();
-    {
-        unf::NoticeTransaction transaction(broker);
+    _stage->MuteLayer(layer1Identifier);
 
-        stage->MuteLayer(layer2Identifier);
-        stage->UnmuteLayer(layer1Identifier);
+    cache.Clear();
+
+    {
+        unf::NoticeTransaction transaction(_stage);
+
+        _stage->MuteLayer(layer2Identifier);
+        _stage->UnmuteLayer(layer1Identifier);
     }
 
     ASSERT_EQ(cache.GetModified().size(), 31);
@@ -598,15 +607,17 @@ TEST(HierarchyCache, TransactionChanges)
     ASSERT_EQ(
         false,
         cache.FindNode(PXR_NS::SdfPath("/scene/sublayer2/sublayer2Child")));
+
     cache.Clear();
 
     {
-        unf::NoticeTransaction transaction(broker);
+        unf::NoticeTransaction transaction(_stage);
 
-        PXR_NS::UsdPrim p =
-            stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/sublayerShared"));
-        p.SetActive(false);
+        PXR_NS::UsdPrim prim =
+            _stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/sublayerShared"));
+        prim.SetActive(false);
     }
+
     ASSERT_EQ(cache.GetModified().size(), 1);
     ASSERT_NE(
         cache.GetModified().find(PXR_NS::SdfPath("/scene/sublayerShared")),
@@ -626,13 +637,14 @@ TEST(HierarchyCache, TransactionChanges)
         cache.FindNode(PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild")));
     ASSERT_EQ(
         false, cache.FindNode(PXR_NS::SdfPath("/scene/sublayerShared/K")));
+
     cache.Clear();
 
     {
-        unf::NoticeTransaction transaction(broker);
+        unf::NoticeTransaction transaction(_stage);
 
         PXR_NS::UsdPrim p =
-            stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/sublayerShared"));
+            _stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/sublayerShared"));
         p.SetActive(true);
         p.SetActive(false);
     }
@@ -642,17 +654,19 @@ TEST(HierarchyCache, TransactionChanges)
         cache.GetModified().end());
     ASSERT_EQ(cache.GetAdded().size(), 0);
     ASSERT_EQ(cache.GetRemoved().size(), 0);
+
     cache.Clear();
 
     {
-        unf::NoticeTransaction transaction(broker);
+        unf::NoticeTransaction transaction(_stage);
 
         PXR_NS::UsdPrim p =
-            stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/sublayerShared"));
+            _stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/sublayerShared"));
         p.SetActive(true);
-        PXR_NS::UsdPrim p2 = stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/D"));
+        PXR_NS::UsdPrim p2 = _stage->GetPrimAtPath(PXR_NS::SdfPath("/scene/D"));
         p2.SetActive(false);
     }
+
     ASSERT_EQ(cache.GetModified().size(), 2);
     ASSERT_NE(
         cache.GetModified().find(PXR_NS::SdfPath("/scene/D")),
@@ -686,11 +700,4 @@ TEST(HierarchyCache, TransactionChanges)
         true,
         cache.FindNode(PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild")));
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/sublayerShared/K")));
-    cache.Clear();
-}
-
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }
