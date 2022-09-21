@@ -2,6 +2,7 @@
 #include <unf/cache.h>
 
 #include <unfTest/listener.h>
+#include <unfTest/observer.h>
 #include <unfTest/testNotice.h>
 
 #include <gtest/gtest.h>
@@ -213,23 +214,7 @@ TEST_F(MuteLayersTest, Transaction_ObjectsChanged)
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[0]));
     _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
 
-    using Notice = _Broker::ObjectsChanged;
-
-    class DataListener : public ::Test::ListenerBase<Notice> {
-      public:
-        using ::Test::ListenerBase<Notice>::ListenerBase;
-
-      private:
-        void OnReceiving(
-            const Notice& n, const PXR_NS::UsdStageWeakPtr&) override
-        {
-            ASSERT_EQ(n.GetResyncedPaths().size(), 1);
-            ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath{"/"});
-            ASSERT_EQ(n.GetChangedInfoOnlyPaths().size(), 0);
-        }
-    };
-
-    DataListener listener(_stage);
+    ::Test::Observer<_Broker::ObjectsChanged> observer(_stage);
 
     broker->BeginTransaction();
 
@@ -240,33 +225,23 @@ TEST_F(MuteLayersTest, Transaction_ObjectsChanged)
         std::vector<std::string>{_layerIds[2], _layerIds[1]},
         std::vector<std::string>{});
 
+    ASSERT_EQ(observer.Received(), 0);
+
     broker->EndTransaction();
+
+    ASSERT_EQ(observer.Received(), 1);
+
+    const auto& n = observer.GetLatestNotice();
+    ASSERT_EQ(n.GetResyncedPaths().size(), 1);
+    ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath{"/"});
+    ASSERT_EQ(n.GetChangedInfoOnlyPaths().size(), 0);
 }
 
 TEST_F(MuteLayersTest, Transaction_LayerMutingChanged)
 {
     auto broker = unf::Broker::Create(_stage);
 
-    using Notice = _Broker::LayerMutingChanged;
-
-    class DataListener : public ::Test::ListenerBase<Notice> {
-      public:
-        using ::Test::ListenerBase<Notice>::ListenerBase;
-
-      private:
-        void OnReceiving(
-            const Notice& n, const PXR_NS::UsdStageWeakPtr& stage) override
-        {
-            auto layerIds = stage->GetRootLayer()->GetSubLayerPaths();
-            ASSERT_EQ(n.GetMutedLayers().size(), 3);
-            ASSERT_EQ(n.GetMutedLayers().at(0), std::string(layerIds[0]));
-            ASSERT_EQ(n.GetMutedLayers().at(1), std::string(layerIds[2]));
-            ASSERT_EQ(n.GetMutedLayers().at(2), std::string(layerIds[1]));
-            ASSERT_EQ(n.GetUnmutedLayers().size(), 0);
-        }
-    };
-
-    DataListener listener(_stage);
+    ::Test::Observer<_Broker::LayerMutingChanged> observer(_stage);
 
     broker->BeginTransaction();
 
@@ -277,7 +252,19 @@ TEST_F(MuteLayersTest, Transaction_LayerMutingChanged)
         std::vector<std::string>{_layerIds[2], _layerIds[1]},
         std::vector<std::string>{});
 
+    ASSERT_EQ(observer.Received(), 0);
+
     broker->EndTransaction();
+
+    ASSERT_EQ(observer.Received(), 1);
+
+    const auto& n = observer.GetLatestNotice();
+    auto layerIds = _stage->GetRootLayer()->GetSubLayerPaths();
+    ASSERT_EQ(n.GetMutedLayers().size(), 3);
+    ASSERT_EQ(n.GetMutedLayers().at(0), std::string(layerIds[0]));
+    ASSERT_EQ(n.GetMutedLayers().at(1), std::string(layerIds[2]));
+    ASSERT_EQ(n.GetMutedLayers().at(2), std::string(layerIds[1]));
+    ASSERT_EQ(n.GetUnmutedLayers().size(), 0);
 }
 
 TEST_F(MuteLayersTest, Caching_ObjectsChanged)

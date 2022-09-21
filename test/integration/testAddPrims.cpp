@@ -2,6 +2,7 @@
 #include <unf/cache.h>
 
 #include <unfTest/listener.h>
+#include <unfTest/observer.h>
 #include <unfTest/testNotice.h>
 
 #include <gtest/gtest.h>
@@ -177,25 +178,7 @@ TEST_F(AddPrimsTest, Transaction_ObjectsChanged)
 {
     auto broker = unf::Broker::Create(_stage);
 
-    using Notice = _Broker::ObjectsChanged;
-
-    class DataListener : public ::Test::ListenerBase<Notice> {
-      public:
-        using ::Test::ListenerBase<Notice>::ListenerBase;
-
-      private:
-        void OnReceiving(
-            const Notice& n, const PXR_NS::UsdStageWeakPtr&) override
-        {
-            ASSERT_EQ(n.GetResyncedPaths().size(), 3);
-            ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath{"/Foo"});
-            ASSERT_EQ(n.GetResyncedPaths().at(1), PXR_NS::SdfPath{"/Bar"});
-            ASSERT_EQ(n.GetResyncedPaths().at(2), PXR_NS::SdfPath{"/Baz"});
-            ASSERT_EQ(n.GetChangedInfoOnlyPaths().size(), 0);
-        }
-    };
-
-    DataListener listener(_stage);
+    ::Test::Observer<_Broker::ObjectsChanged> observer(_stage);
 
     broker->BeginTransaction();
 
@@ -203,7 +186,18 @@ TEST_F(AddPrimsTest, Transaction_ObjectsChanged)
     _stage->DefinePrim(PXR_NS::SdfPath{"/Bar"});
     _stage->DefinePrim(PXR_NS::SdfPath{"/Baz"});
 
+    ASSERT_EQ(observer.Received(), 0);
+
     broker->EndTransaction();
+
+    ASSERT_EQ(observer.Received(), 1);
+
+    const auto& n = observer.GetLatestNotice();
+    ASSERT_EQ(n.GetResyncedPaths().size(), 3);
+    ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath{"/Foo"});
+    ASSERT_EQ(n.GetResyncedPaths().at(1), PXR_NS::SdfPath{"/Bar"});
+    ASSERT_EQ(n.GetResyncedPaths().at(2), PXR_NS::SdfPath{"/Baz"});
+    ASSERT_EQ(n.GetChangedInfoOnlyPaths().size(), 0);
 }
 
 TEST_F(AddPrimsTest, Caching_ObjectsChanged)

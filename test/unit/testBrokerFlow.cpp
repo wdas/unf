@@ -1,6 +1,7 @@
 #include <unf/broker.h>
 
 #include <unfTest/listener.h>
+#include <unfTest/observer.h>
 #include <unfTest/testNotice.h>
 
 #include <gtest/gtest.h>
@@ -114,23 +115,7 @@ TEST_F(BrokerFlowTest, MergeableNotice)
 {
     auto broker = unf::Broker::Create(_stage);
 
-    class DataListener : public ::Test::ListenerBase<::Test::MergeableNotice> {
-      public:
-        using ::Test::ListenerBase<::Test::MergeableNotice>::ListenerBase;
-
-      private:
-        void OnReceiving(
-            const ::Test::MergeableNotice& n,
-            const PXR_NS::UsdStageWeakPtr&) override
-        {
-            // Ensure that data is merged as expected.
-            ASSERT_EQ(
-                n.GetData(),
-                ::Test::DataMap({{"Foo", "Test2"}, {"Bar", "Test3"}}));
-        }
-    };
-
-    DataListener dataListener(_stage);
+    ::Test::Observer<::Test::MergeableNotice> observer(_stage);
 
     ASSERT_FALSE(broker->IsInTransaction());
 
@@ -146,4 +131,9 @@ TEST_F(BrokerFlowTest, MergeableNotice)
 
     // Ensure that only one consolidated notice is received.
     ASSERT_EQ(_listener.Received<::Test::MergeableNotice>(), 1);
+
+    const auto& n = observer.GetLatestNotice();
+    ASSERT_EQ(
+        n.GetData(),
+        ::Test::DataMap({{"Foo", "Test2"}, {"Bar", "Test3"}}));
 }

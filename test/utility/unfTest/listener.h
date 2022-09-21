@@ -12,25 +12,6 @@
 
 namespace Test {
 
-// Interface to examine content of notice received.
-template <class T>
-class ListenerBase : public PXR_NS::TfWeakBase {
-  public:
-    ListenerBase(const PXR_NS::UsdStageWeakPtr& stage)
-    {
-        auto self = PXR_NS::TfCreateWeakPtr(this);
-        _key = PXR_NS::TfNotice::Register(
-            PXR_NS::TfCreateWeakPtr(this), &ListenerBase::OnReceiving, stage);
-    }
-
-    virtual ~ListenerBase() { PXR_NS::TfNotice::Revoke(_key); }
-
-  private:
-    virtual void OnReceiving(const T&, const PXR_NS::UsdStageWeakPtr&) = 0;
-
-    PXR_NS::TfNotice::Key _key;
-};
-
 // Container to listen to several types of Tf notices.
 template <class... Types>
 class Listener : public PXR_NS::TfWeakBase {
