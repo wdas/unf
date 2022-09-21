@@ -1,5 +1,5 @@
-#ifndef NOTICE_BROKER_PYTHON_PREDICATE_H
-#define NOTICE_BROKER_PYTHON_PREDICATE_H
+#ifndef USD_NOTICE_FRAMEWORK_PYTHON_PREDICATE_H
+#define USD_NOTICE_FRAMEWORK_PYTHON_PREDICATE_H
 
 #include "unf/broker.h"
 
@@ -34,4 +34,4 @@ static NoticeCaturePredicateFunc WrapPredicate(_CaturePredicateFunc fn)
     };
 }
 
-#endif  // NOTICE_BROKER_PYTHON_PREDICATE_H
+#endif  // USD_NOTICE_FRAMEWORK_PYTHON_PREDICATE_H

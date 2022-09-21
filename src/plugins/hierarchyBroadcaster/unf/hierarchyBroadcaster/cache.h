@@ -1,5 +1,5 @@
-#ifndef NOTICE_BROKER_HIERARCHY_CACHE_H
-#define NOTICE_BROKER_HIERARCHY_CACHE_H
+#ifndef USD_NOTICE_FRAMEWORK_HIERARCHY_CACHE_H
+#define USD_NOTICE_FRAMEWORK_HIERARCHY_CACHE_H
 
 #include <pxr/base/tf/anyWeakPtr.h>
 #include <pxr/base/tf/notice.h>
@@ -101,4 +101,4 @@ class HierarchyCache : public PXR_NS::TfRefBase, PXR_NS::TfWeakBase {
 
 }  // namespace unf
 
-#endif  // NOTICE_BROKER_HIERARCHY_CACHE_H
+#endif  // USD_NOTICE_FRAMEWORK_HIERARCHY_CACHE_H

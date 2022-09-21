@@ -1,5 +1,5 @@
-#ifndef TEST_NOTICE_BROKER_OBSERVER_H
-#define TEST_NOTICE_BROKER_OBSERVER_H
+#ifndef TEST_USD_NOTICE_FRAMEWORK_OBSERVER_H
+#define TEST_USD_NOTICE_FRAMEWORK_OBSERVER_H
 
 #include <pxr/base/tf/notice.h>
 #include <pxr/base/tf/weakBase.h>
@@ -72,4 +72,4 @@ class Observer : public PXR_NS::TfWeakBase {
 
 }  // namespace Test
 
-#endif  // TEST_NOTICE_BROKER_OBSERVER_H
+#endif  // TEST_USD_NOTICE_FRAMEWORK_OBSERVER_H

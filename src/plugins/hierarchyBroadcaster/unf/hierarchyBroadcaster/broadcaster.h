@@ -1,5 +1,5 @@
-#ifndef NOTICE_BROKER_HIERARCHY_BROADCASTER_H
-#define NOTICE_BROKER_HIERARCHY_BROADCASTER_H
+#ifndef USD_NOTICE_FRAMEWORK_HIERARCHY_BROADCASTER_H
+#define USD_NOTICE_FRAMEWORK_HIERARCHY_BROADCASTER_H
 
 #include "cache.h"
 #include "notice.h"
@@ -62,4 +62,4 @@ class HierarchyBroadcaster : public Broadcaster {
 
 }  // namespace unf
 
-#endif  // NOTICE_BROKER_HIERARCHY_BROADCASTER_H
+#endif  // USD_NOTICE_FRAMEWORK_HIERARCHY_BROADCASTER_H

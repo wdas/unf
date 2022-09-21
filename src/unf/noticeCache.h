@@ -1,5 +1,5 @@
-#ifndef NOTICE_BROKER_NOTICE_CACHE_H
-#define NOTICE_BROKER_NOTICE_CACHE_H
+#ifndef USD_NOTICE_FRAMEWORK_NOTICE_CACHE_H
+#define USD_NOTICE_FRAMEWORK_NOTICE_CACHE_H
 
 #include "unf/notice.h"
 
@@ -93,4 +93,4 @@ class NoticeCache : public BaseNoticeCache {
 
 }  // namespace unf
 
-#endif  // NOTICE_BROKER_NOTICE_CACHE_H
+#endif  // USD_NOTICE_FRAMEWORK_NOTICE_CACHE_H

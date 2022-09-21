@@ -1,5 +1,5 @@
-#ifndef TEST_NOTICE_BROKER_NOTICE_H
-#define TEST_NOTICE_BROKER_NOTICE_H
+#ifndef TEST_USD_NOTICE_FRAMEWORK_NOTICE_H
+#define TEST_USD_NOTICE_FRAMEWORK_NOTICE_H
 
 #include <unf/notice.h>
 
@@ -70,4 +70,4 @@ class OutputNotice2 : public unf::BrokerNotice::StageNoticeImpl<OutputNotice2> {
 
 }  // namespace Test
 
-#endif  // TEST_NOTICE_BROKER_NOTICE_H
+#endif  // TEST_USD_NOTICE_FRAMEWORK_NOTICE_H

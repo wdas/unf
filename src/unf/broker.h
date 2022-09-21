@@ -1,5 +1,5 @@
-#ifndef NOTICE_BROKER_BROKER_H
-#define NOTICE_BROKER_BROKER_H
+#ifndef USD_NOTICE_FRAMEWORK_BROKER_H
+#define USD_NOTICE_FRAMEWORK_BROKER_H
 
 #include "unf/notice.h"
 
@@ -194,4 +194,4 @@ void Broker::_LoadFromPlugins(const PXR_NS::TfType& type)
 
 }  // namespace unf
 
-#endif  // NOTICE_BROKER_BROKER_H
+#endif  // USD_NOTICE_FRAMEWORK_BROKER_H

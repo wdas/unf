@@ -1,5 +1,5 @@
-#ifndef NOTICE_BROKER_NOTICE_WRAPPER_H
-#define NOTICE_BROKER_NOTICE_WRAPPER_H
+#ifndef USD_NOTICE_FRAMEWORK_NOTICE_WRAPPER_H
+#define USD_NOTICE_FRAMEWORK_NOTICE_WRAPPER_H
 
 #include "unf/notice.h"
 
@@ -92,4 +92,4 @@ class PyBrokerNoticeWrapper : public PyBrokerNoticeWrapperBase {
 
 }  // namespace unf
 
-#endif  // NOTICE_BROKER_NOTICE_WRAPPER
+#endif  // USD_NOTICE_FRAMEWORK_NOTICE_WRAPPER

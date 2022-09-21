@@ -1,5 +1,5 @@
-#ifndef NOTICE_BROKER_DISPATCHER_H
-#define NOTICE_BROKER_DISPATCHER_H
+#ifndef USD_NOTICE_FRAMEWORK_DISPATCHER_H
+#define USD_NOTICE_FRAMEWORK_DISPATCHER_H
 
 #include "unf/broker.h"
 #include "unf/notice.h"
@@ -82,4 +82,4 @@ void DispatcherDefine()
 
 }  // namespace unf
 
-#endif  // NOTICE_BROKER_DISPATCHER_H
+#endif  // USD_NOTICE_FRAMEWORK_DISPATCHER_H

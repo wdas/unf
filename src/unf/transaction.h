@@ -1,5 +1,5 @@
-#ifndef NOTICE_BROKER_TRANSACTION_H
-#define NOTICE_BROKER_TRANSACTION_H
+#ifndef USD_NOTICE_FRAMEWORK_TRANSACTION_H
+#define USD_NOTICE_FRAMEWORK_TRANSACTION_H
 
 #include "unf/broker.h"
 
@@ -27,4 +27,4 @@ class NoticeTransaction {
 
 }  // namespace unf
 
-#endif  // NOTICE_BROKER_TRANSACTION_H
+#endif  // USD_NOTICE_FRAMEWORK_TRANSACTION_H

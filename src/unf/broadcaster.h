@@ -1,5 +1,5 @@
-#ifndef NOTICE_BROKER_BROADCASTER_H
-#define NOTICE_BROKER_BROADCASTER_H
+#ifndef USD_NOTICE_FRAMEWORK_BROADCASTER_H
+#define USD_NOTICE_FRAMEWORK_BROADCASTER_H
 
 #include "unf/broker.h"
 
@@ -65,4 +65,4 @@ void BroadcasterDefine()
 
 }  // namespace unf
 
-#endif  // NOTICE_BROKER_BROADCASTER_H
+#endif  // USD_NOTICE_FRAMEWORK_BROADCASTER_H

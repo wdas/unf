@@ -1,5 +1,5 @@
-#ifndef TEST_NOTICE_BROKER_LISTENER_H
-#define TEST_NOTICE_BROKER_LISTENER_H
+#ifndef TEST_USD_NOTICE_FRAMEWORK_LISTENER_H
+#define TEST_USD_NOTICE_FRAMEWORK_LISTENER_H
 
 #include <pxr/base/tf/notice.h>
 #include <pxr/base/tf/weakBase.h>
@@ -78,4 +78,4 @@ class Listener : public PXR_NS::TfWeakBase {
 
 }  // namespace Test
 
-#endif  // TEST_NOTICE_BROKER_LISTENER_H
+#endif  // TEST_USD_NOTICE_FRAMEWORK_LISTENER_H

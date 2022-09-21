@@ -1,5 +1,5 @@
-#ifndef NOTICE_BROKER_NOTICE_H
-#define NOTICE_BROKER_NOTICE_H
+#ifndef USD_NOTICE_FRAMEWORK_NOTICE_H
+#define USD_NOTICE_FRAMEWORK_NOTICE_H
 
 #include <pxr/base/tf/notice.h>
 #include <pxr/base/tf/refBase.h>
@@ -167,4 +167,4 @@ class LayerMutingChanged : public StageNoticeImpl<LayerMutingChanged> {
 
 }  // namespace unf
 
-#endif  // NOTICE_BROKER_NOTICE_H
+#endif  // USD_NOTICE_FRAMEWORK_NOTICE_H
