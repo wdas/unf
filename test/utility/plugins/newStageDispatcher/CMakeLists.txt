@@ -1,14 +1,14 @@
-add_library(unfChildBroadcaster
-    unfTest/childBroadcaster.cpp
+add_library(unfTestNewStageDispatcher
+    unfTest/newStageDispatcher/dispatcher.cpp
 )
 
-target_link_libraries(unfChildBroadcaster
+target_link_libraries(unfTestNewStageDispatcher
     PUBLIC
         unf
         unfTest
 )
 
-target_include_directories(unfChildBroadcaster
+target_include_directories(unfTestNewStageDispatcher
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )

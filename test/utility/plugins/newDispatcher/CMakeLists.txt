@@ -1,14 +1,14 @@
-add_library(unfTestDispatcher
-    unfTest/testDispatcher.cpp
+add_library(unfTestNewDispatcher
+    unfTest/newDispatcher/dispatcher.cpp
 )
 
-target_link_libraries(unfTestDispatcher
+target_link_libraries(unfTestNewDispatcher
     PUBLIC
         unf
         unfTest
 )
 
-target_include_directories(unfTestDispatcher
+target_include_directories(unfTestNewDispatcher
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )

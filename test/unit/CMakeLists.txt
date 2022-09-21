@@ -22,8 +22,8 @@ target_link_libraries(testUnitDispatcher
     PRIVATE
         unf
         unfTest
-        unfNewStageDispatcher
-        unfTestDispatcher
+        unfTestNewStageDispatcher
+        unfTestNewDispatcher
         GTest::gtest
         GTest::gtest_main
 )
@@ -34,12 +34,12 @@ target_link_libraries(testUnitDispatcherPlugin
     PRIVATE
         unf
         unfTest
-        unfNewStageDispatcher
-        unfTestDispatcher
+        unfTestNewStageDispatcher
+        unfTestNewDispatcher
         GTest::gtest
         GTest::gtest_main
 )
-set(_path "${CMAKE_CURRENT_BINARY_DIR}/testPlugins/*Dispatcher/plugInfo.json")
+set(_path "$<TARGET_FILE_DIR:unfTest>/plugins/*Dispatcher/plugInfo.json")
 gtest_discover_tests(
     testUnitDispatcherPlugin
     PROPERTIES ENVIRONMENT
@@ -66,25 +66,27 @@ target_link_libraries(testUnitTransaction
 )
 gtest_discover_tests(testUnitTransaction)
 
-add_executable(testUnitBroadcaster testBroadcaster.cpp)
-target_link_libraries(testUnitBroadcaster
+add_executable(testUnitHierarchyBroadcaster testHierarchyBroadcaster.cpp)
+target_link_libraries(testUnitHierarchyBroadcaster
     PRIVATE
         unf
+        unfHierarchyBroadcaster
         unfTest
-        unfChildBroadcaster
+        unfTestChildBroadcaster
         GTest::gtest
         GTest::gtest_main
 )
 gtest_discover_tests(
-    testUnitBroadcaster
+    testUnitHierarchyBroadcaster
     PROPERTIES ENVIRONMENT
-        "USD_TEST_PATH=${CMAKE_CURRENT_SOURCE_DIR}/testBroadcaster"
+        "USD_TEST_PATH=${CMAKE_CURRENT_SOURCE_DIR}/testHierarchyBroadcaster"
 )
 
 add_executable(testUnitHierarchyCache testHierarchyCache.cpp)
 target_link_libraries(testUnitHierarchyCache
     PRIVATE
         unf
+        unfHierarchyBroadcaster
         unfTest
         GTest::gtest
         GTest::gtest_main
@@ -94,8 +96,6 @@ gtest_discover_tests(
     PROPERTIES ENVIRONMENT
         "USD_TEST_PATH=${CMAKE_CURRENT_SOURCE_DIR}/testHierarchyCache"
 )
-
-add_subdirectory(testPlugins)
 
 if (BUILD_PYTHON_BINDINGS)
     add_subdirectory(python)

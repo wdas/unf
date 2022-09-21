@@ -3,13 +3,13 @@
         {
             "Info": {
                 "Types" : {
-                    "Test::TestDispatcher" : {
+                    "Test::NewDispatcher" : {
                         "bases": [ "Dispatcher" ]
                     }
                 }
             },
-            "LibraryPath": "libunfTestDispatcher.so",
-            "Name": "TestDispatcher",
+            "LibraryPath": "libunfTestNewDispatcher.so",
+            "Name": "NewDispatcher",
             "Type": "library"
         }
     ]
