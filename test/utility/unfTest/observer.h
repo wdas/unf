@@ -8,6 +8,8 @@
 
 #include <boost/optional.hpp>
 
+#include <exception>
+
 namespace Test {
 
 // Interface to examine content of notice received.
@@ -38,7 +40,7 @@ class Observer : public PXR_NS::TfWeakBase {
     const T& GetLatestNotice() const
     {
         if (!_notice) {
-            TF_FATAL_ERROR("Impossible to access latest notice.");
+            throw std::runtime_error("Impossible to access latest notice.");
         }
         return *_notice;
     }
