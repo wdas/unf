@@ -133,6 +133,17 @@ BroadcasterPtr& Broker::GetBroadcaster(std::string identifier)
     return _broadcasterMap.at(identifier);
 }
 
+void Broker::Reset()
+{
+    size_t stageHash = hash_value(_stage);
+    Registry.erase(stageHash);
+}
+
+void Broker::ResetAll()
+{
+    Registry.clear();
+}
+
 void Broker::_CleanCache()
 {
     for (auto it = Registry.begin(); it != Registry.end();) {

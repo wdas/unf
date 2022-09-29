@@ -50,3 +50,35 @@ TEST(BrokerTest, CleanRegistry)
     unf::Broker::Create(stage2);
     ASSERT_EQ(broker1->GetCurrentCount(), 1);
 }
+
+TEST(BrokerTest, Reset)
+{
+    auto stage = PXR_NS::UsdStage::CreateInMemory();
+    auto broker = unf::Broker::Create(stage);
+    ASSERT_EQ(broker->GetCurrentCount(), 2);
+
+    broker->Reset();
+
+    ASSERT_EQ(broker->GetCurrentCount(), 1);
+}
+
+TEST(BrokerTest, ResetAll)
+{
+    auto stage1 = PXR_NS::UsdStage::CreateInMemory();
+    auto broker1 = unf::Broker::Create(stage1);
+    ASSERT_EQ(broker1->GetCurrentCount(), 2);
+
+    auto stage2 = PXR_NS::UsdStage::CreateInMemory();
+    auto broker2 = unf::Broker::Create(stage2);
+    ASSERT_EQ(broker2->GetCurrentCount(), 2);
+
+    auto stage3 = PXR_NS::UsdStage::CreateInMemory();
+    auto broker3 = unf::Broker::Create(stage3);
+    ASSERT_EQ(broker3->GetCurrentCount(), 2);
+
+    unf::Broker::ResetAll();
+
+    ASSERT_EQ(broker1->GetCurrentCount(), 1);
+    ASSERT_EQ(broker2->GetCurrentCount(), 1);
+    ASSERT_EQ(broker3->GetCurrentCount(), 1);
+}

@@ -71,6 +71,9 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     template <class T>
     void AddBroadcaster();
 
+    void Reset();
+    static void ResetAll();
+
   private:
     Broker(const PXR_NS::UsdStageWeakPtr&);
 
