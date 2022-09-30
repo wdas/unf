@@ -1,6 +1,7 @@
 add_library(unf
     unf/broker.cpp
     unf/dispatcher.cpp
+    unf/merger.cpp
     unf/notice.cpp
     unf/transaction.cpp
 )

@@ -1,6 +1,7 @@
 #include "unf/broker.h"
 #include "unf/dispatcher.h"
 #include "unf/notice.h"
+#include "unf/merger.h"
 
 #include <pxr/base/tf/weakPtr.h>
 #include <pxr/pxr.h>
@@ -15,7 +16,7 @@ namespace unf {
 std::unordered_map<size_t, BrokerPtr> Broker::Registry;
 
 Broker::Broker(const UsdStageWeakPtr& stage)
-    : _stage(stage), _transactionDepth(0)
+    : _stage(stage)
 {
     // Add default dispatcher.
     _AddDispatcher<StageDispatcher>();
@@ -44,31 +45,13 @@ BrokerPtr Broker::Create(const UsdStageWeakPtr& stage)
     return Registry[stageHash];
 }
 
-void Broker::_MergeNotices()
+bool Broker::IsInTransaction() { return _mergers.size() > 0; }
+
+void Broker::BeginTransaction(
+    const NoticeCaturePredicateFunc& predicate)
 {
-    for (auto& element : _noticeMap) {
-        auto& notices = element.second;
-
-        // If there are more than one notice for this type and
-        // if the notices are mergeable, we only need to keep the
-        // first notice, and all other can be pruned.
-        if (notices.size() > 1 && notices[0]->IsMergeable()) {
-            auto& notice = notices.at(0);
-            auto it = std::next(notices.begin());
-
-            while (it != notices.end()) {
-                // Attempt to merge content of notice with first notice
-                // if this is possible.
-                notice->Merge(std::move(**it));
-                it = notices.erase(it);
-            }
-        }
-    }
+    _mergers.push_back(NoticeMerger(predicate));
 }
-
-bool Broker::IsInTransaction() { return _transactionDepth != 0; }
-
-void Broker::BeginTransaction() { _transactionDepth++; }
 
 void Broker::EndTransaction()
 {
@@ -76,39 +59,26 @@ void Broker::EndTransaction()
         return;
     }
 
-    // If it's the last transaction merge the notices,
-    // send out the queued notices.
-    if (_transactionDepth == 1) {
-        _MergeNotices();
+    NoticeMerger& merger = _mergers.back();
 
-        for (auto& element : _noticeMap) {
-            auto& notices = element.second;
-            // Send all remaining notices.
-            for (const auto& notice : element.second) {
-                notice->Send(_stage);
-            }
-        }
-        _noticeMap.clear();
+    // If there are only one merger left, process all notices.
+    if (_mergers.size() == 1) {
+        merger.Merge();
+        merger.Send(_stage);
+    }
+    // Otherwise, it means that we are in a nested transaction that should
+    // not be processed yet. Join data with next merger.
+    else {
+       (_mergers.end()-2)->Join(merger);
     }
 
-    _transactionDepth--;
+    _mergers.pop_back();
 }
-
-void Broker::AddFilter(const NoticeCaturePredicateFunc& predicate)
-{
-    _predicates.push_back(predicate);
-}
-void Broker::PopFilter() { _predicates.pop_back(); }
 
 void Broker::Send(const BrokerNotice::StageNoticeRefPtr& notice)
 {
-    if (_transactionDepth > 0) {
-        for (auto& p : _predicates) {
-            if (!p(*notice)) {
-                return;
-            }
-        }
-        _noticeMap[notice->GetTypeId()].push_back(notice);
+    if (_mergers.size() > 0) {
+        _mergers.back().Add(notice);
     }
     // Otherwise, send the notice.
     else {

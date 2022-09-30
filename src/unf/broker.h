@@ -2,6 +2,7 @@
 #define USD_NOTICE_FRAMEWORK_BROKER_H
 
 #include "unf/notice.h"
+#include "unf/merger.h"
 
 #include <pxr/base/plug/plugin.h>
 #include <pxr/base/plug/registry.h>
@@ -30,12 +31,6 @@ using BrokerWeakPtr = PXR_NS::TfWeakPtr<Broker>;
 
 using DispatcherPtr = PXR_NS::TfRefPtr<Dispatcher>;
 
-using NoticeCaturePredicateFunc =
-    std::function<bool(const BrokerNotice::StageNotice&)>;
-
-using _StageNoticePtrList = std::vector<BrokerNotice::StageNoticeRefPtr>;
-using _StageNoticePtrMap = std::unordered_map<std::string, _StageNoticePtrList>;
-
 class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
   public:
     static BrokerPtr Create(const PXR_NS::UsdStageWeakPtr& stage);
@@ -50,11 +45,8 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
 
     bool IsInTransaction();
 
-    void BeginTransaction();
+    void BeginTransaction(const NoticeCaturePredicateFunc& predicate=nullptr);
     void EndTransaction();
-
-    void AddFilter(const NoticeCaturePredicateFunc& predicate);
-    void PopFilter();
 
     template <class BrokerNotice, class... Args>
     void Send(Args&&... args);
@@ -72,8 +64,6 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
   private:
     Broker(const PXR_NS::UsdStageWeakPtr&);
 
-    void _MergeNotices();
-
     static void _CleanCache();
 
     void _DiscoverDispatchers();
@@ -90,11 +80,8 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     static std::unordered_map<size_t, BrokerPtr> Registry;
 
     PXR_NS::UsdStageWeakPtr _stage;
-
-    _StageNoticePtrMap _noticeMap;
-    std::vector<NoticeCaturePredicateFunc> _predicates;
+    std::vector<NoticeMerger> _mergers;
     std::unordered_map<std::string, DispatcherPtr> _dispatcherMap;
-    size_t _transactionDepth;
 };
 
 template <class BrokerNotice, class... Args>
