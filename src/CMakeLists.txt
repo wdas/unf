@@ -1,5 +1,4 @@
 add_library(unf
-    unf/broadcaster.cpp
     unf/broker.cpp
     unf/dispatcher.cpp
     unf/notice.cpp
@@ -29,7 +28,6 @@ target_link_libraries(unf
         usd::sdf
         usd::tf
         usd::usd
-        usd::vt
 )
 
 install(TARGETS unf EXPORT ${PROJECT_NAME})

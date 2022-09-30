@@ -1,5 +1,4 @@
 #include "unf/broker.h"
-#include "unf/broadcaster.h"
 #include "unf/dispatcher.h"
 #include "unf/notice.h"
 
@@ -29,9 +28,6 @@ Broker::Broker(const UsdStageWeakPtr& stage)
     for (auto& element : _dispatcherMap) {
         element.second->Register();
     }
-
-    // Discover broadcaster added via plugin to infer granular notices.
-    _DiscoverBroadcasters();
 }
 
 BrokerPtr Broker::Create(const UsdStageWeakPtr& stage)
@@ -80,11 +76,10 @@ void Broker::EndTransaction()
         return;
     }
 
-    // If it's the last transaction merge the notices, execute the broadcasters
-    // and send out the queued notices.
+    // If it's the last transaction merge the notices,
+    // send out the queued notices.
     if (_transactionDepth == 1) {
         _MergeNotices();
-        _ExecuteBroadcasters(_noticeMap);
 
         for (auto& element : _noticeMap) {
             auto& notices = element.second;
@@ -115,7 +110,7 @@ void Broker::Send(const BrokerNotice::StageNoticeRefPtr& notice)
         }
         _noticeMap[notice->GetTypeId()].push_back(notice);
     }
-    // Otherwise, send the notice via broadcaster.
+    // Otherwise, send the notice.
     else {
         BeginTransaction();
         Send(notice);
@@ -126,11 +121,6 @@ void Broker::Send(const BrokerNotice::StageNoticeRefPtr& notice)
 DispatcherPtr& Broker::GetDispatcher(std::string identifier)
 {
     return _dispatcherMap.at(identifier);
-}
-
-BroadcasterPtr& Broker::GetBroadcaster(std::string identifier)
-{
-    return _broadcasterMap.at(identifier);
 }
 
 void Broker::Reset()
@@ -169,54 +159,9 @@ void Broker::_DiscoverDispatchers()
     }
 }
 
-void Broker::_DiscoverBroadcasters()
-{
-    TfType root = TfType::Find<Broadcaster>();
-    std::set<TfType> types;
-    PlugRegistry::GetAllDerivedTypes(root, &types);
-
-    for (const TfType& type : types) {
-        _LoadFromPlugins<BroadcasterPtr, BroadcasterFactory>(type);
-    }
-
-    // Register all broadcasters to build up dependency graph.
-    for (auto& element : _broadcasterMap) {
-        _RegisterBroadcaster(element.second);
-    }
-
-    // Detect errors
-    // TODO: Detect cycles
-}
-
 void Broker::_Add(const DispatcherPtr& dispatcher)
 {
     _dispatcherMap[dispatcher->GetIdentifier()] = dispatcher;
-}
-
-void Broker::_Add(const BroadcasterPtr& broadcaster)
-{
-    _broadcasterMap[broadcaster->GetIdentifier()] = broadcaster;
-}
-
-void Broker::_RegisterBroadcaster(const BroadcasterPtr& broadcaster)
-{
-    const auto& identifier = broadcaster->GetIdentifier();
-    const auto& parentId = broadcaster->GetParentIdentifier();
-
-    if (!parentId.size()) {
-        _rootBroadcasters.push_back(identifier);
-    }
-    else {
-        auto& parent = GetBroadcaster(parentId);
-        parent->_AddChild(broadcaster);
-    }
-}
-
-void Broker::_ExecuteBroadcasters(_StageNoticePtrMap& noticeMap)
-{
-    for (auto& broadcaster : _rootBroadcasters) {
-        GetBroadcaster(broadcaster)->Execute(&noticeMap);
-    }
 }
 
 }  // namespace unf
