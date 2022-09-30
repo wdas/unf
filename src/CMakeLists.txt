@@ -46,8 +46,6 @@ install(EXPORT ${PROJECT_NAME}
     DESTINATION share/cmake/unf
 )
 
-add_subdirectory(plugins)
-
 if (BUILD_PYTHON_BINDINGS)
     add_subdirectory(python)
 endif()
