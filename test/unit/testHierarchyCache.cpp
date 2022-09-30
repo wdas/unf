@@ -48,6 +48,7 @@ class HierarchyCacheTest : public ::testing::Test {
             for (const auto& path : notice.GetResyncedPaths()) {
                 resyncedChanges.push_back(path);
             }
+            PXR_NS::SdfPath::RemoveDescendentPaths(&resyncedChanges);
             cache.Update(resyncedChanges);
         });
 
@@ -67,8 +68,10 @@ TEST_F(HierarchyCacheTest, AddPrim)
     _stage->DefinePrim(PXR_NS::SdfPath("/scene/AA"));
 
     ASSERT_EQ(cache.GetAdded().size(), 1);
-    ASSERT_NE(
-        cache.GetAdded().find(PXR_NS::SdfPath("/scene/AA")),
+    ASSERT_NE((std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/AA"))),
         cache.GetAdded().end());
     ASSERT_EQ(cache.GetModified().size(), 0);
     ASSERT_EQ(cache.GetRemoved().size(), 0);
@@ -92,23 +95,42 @@ TEST_F(HierarchyCacheTest, ModifyPrim)
     cache.Update(PXR_NS::SdfPathVector{PXR_NS::SdfPath("/scene/D")});
 
     ASSERT_EQ(cache.GetModified().size(), 6);
+
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/D/r")),
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/D/r"))),
         cache.GetModified().end());
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/D/b/x")),
+         (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/D/b/x"))),
         cache.GetModified().end());
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/D/r2")),
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/D/r2"))),
         cache.GetModified().end());
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/D/b")),
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/D/b"))),
         cache.GetModified().end());
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/D/a")),
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/D/a"))),
         cache.GetModified().end());
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/D")),
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/D"))),
         cache.GetModified().end());
     ASSERT_EQ(cache.GetAdded().size(), 0);
     ASSERT_EQ(cache.GetRemoved().size(), 0);
@@ -131,7 +153,10 @@ TEST_F(HierarchyCacheTest, RemovePrimBase)
     _stage->RemovePrim(PXR_NS::SdfPath("/scene/A/a"));
     ASSERT_EQ(cache.GetRemoved().size(), 1);
     ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath("/scene/A/a")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/A/a"))),
         cache.GetRemoved().end());
     ASSERT_EQ(cache.GetAdded().size(), 0);
     ASSERT_EQ(cache.GetModified().size(), 0);
@@ -141,13 +166,22 @@ TEST_F(HierarchyCacheTest, RemovePrimBase)
     _stage->RemovePrim(PXR_NS::SdfPath("/scene/A"));
     ASSERT_EQ(cache.GetRemoved().size(), 3);
     ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath("/scene/A")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/A"))),
         cache.GetRemoved().end());
     ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath("/scene/A/b")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/A/b"))),
         cache.GetRemoved().end());
     ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath("/scene/A/b/bb")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/A/b/bb"))),
         cache.GetRemoved().end());
     ASSERT_EQ(cache.GetAdded().size(), 0);
     ASSERT_EQ(cache.GetModified().size(), 0);
@@ -167,13 +201,18 @@ TEST_F(HierarchyCacheTest, RemovePrimComplex)
 
     ASSERT_EQ(cache.GetRemoved().size(), 1);
     ASSERT_NE(
-        cache.GetRemoved().find(
-            PXR_NS::SdfPath("/scene/sublayer2/sublayer2Child")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/sublayer2/sublayer2Child"))),
         cache.GetRemoved().end());
     ASSERT_EQ(cache.GetAdded().size(), 0);
     ASSERT_EQ(cache.GetModified().size(), 1);
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/sublayer2")),
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/sublayer2"))),
         cache.GetModified().end());
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/sublayer2")));
     ASSERT_EQ(
@@ -188,16 +227,23 @@ TEST_F(HierarchyCacheTest, RemovePrimComplex)
 
     ASSERT_EQ(cache.GetModified().size(), 1);
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/sublayerShared")),
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared"))),
         cache.GetModified().end());
     ASSERT_EQ(cache.GetRemoved().size(), 2);
     ASSERT_NE(
-        cache.GetRemoved().find(
-            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild"))),
         cache.GetRemoved().end());
     ASSERT_NE(
-        cache.GetRemoved().find(
-            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild2")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild2"))),
         cache.GetRemoved().end());
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/sublayerShared")));
     ASSERT_EQ(
@@ -215,23 +261,41 @@ TEST_F(HierarchyCacheTest, RemovePrimComplex)
 
     ASSERT_EQ(cache.GetModified().size(), 1);
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/D")),
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/D"))),
         cache.GetModified().end());
     ASSERT_EQ(cache.GetRemoved().size(), 5);
     ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath("/scene/D/r")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/D/r"))),
         cache.GetRemoved().end());
     ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath("/scene/D/r2")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/D/r2"))),
         cache.GetRemoved().end());
     ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath("/scene/D/a")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/D/a"))),
         cache.GetRemoved().end());
     ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath("/scene/D/b")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/D/b"))),
         cache.GetRemoved().end());
     ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath("/scene/D/b/x")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/D/b/x"))),
         cache.GetRemoved().end());
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/D")));
     ASSERT_EQ(false, cache.FindNode(PXR_NS::SdfPath("/scene/D/r")));
@@ -255,12 +319,17 @@ TEST_F(HierarchyCacheTest, AddPrimComplex)
     ASSERT_EQ(cache.GetRemoved().size(), 0);
     ASSERT_EQ(cache.GetAdded().size(), 1);
     ASSERT_NE(
-        cache.GetAdded().find(
-            PXR_NS::SdfPath("/scene/sublayer2/sublayer2Child")),
+        (std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/sublayer2/sublayer2Child"))),
         cache.GetAdded().end());
     ASSERT_EQ(cache.GetModified().size(), 1);
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/sublayer2")),
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/sublayer2"))),
         cache.GetModified().end());
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/sublayer2")));
     ASSERT_EQ(
@@ -277,16 +346,23 @@ TEST_F(HierarchyCacheTest, AddPrimComplex)
 
     ASSERT_EQ(cache.GetModified().size(), 1);
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/sublayerShared")),
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared"))),
         cache.GetModified().end());
     ASSERT_EQ(cache.GetAdded().size(), 2);
     ASSERT_NE(
-        cache.GetAdded().find(
-            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild")),
+        (std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild"))),
         cache.GetAdded().end());
     ASSERT_NE(
-        cache.GetAdded().find(
-            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild2")),
+        (std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild2"))),
         cache.GetAdded().end());
     ASSERT_EQ(cache.GetRemoved().size(), 0);
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/sublayerShared")));
@@ -307,14 +383,23 @@ TEST_F(HierarchyCacheTest, AddPrimComplex)
 
     ASSERT_EQ(cache.GetModified().size(), 1);
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/D")),
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/D"))),
         cache.GetModified().end());
     ASSERT_EQ(cache.GetAdded().size(), 5);
     ASSERT_NE(
-        cache.GetAdded().find(PXR_NS::SdfPath("/scene/D/r2")),
+         (std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/D/r2"))),
         cache.GetAdded().end());
     ASSERT_NE(
-        cache.GetAdded().find(PXR_NS::SdfPath("/scene/D/b/x")),
+         (std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/D/b/x"))),
         cache.GetAdded().end());
     ASSERT_EQ(cache.GetRemoved().size(), 0);
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/D")));
@@ -335,34 +420,42 @@ TEST_F(HierarchyCacheTest, VariantSwitch)
     prim.GetVariantSet("myVariant").SetVariantSelection("v");
 
     ASSERT_EQ(cache.GetAdded().size(), 1);
-    ASSERT_NE(
-        cache.GetAdded().find(PXR_NS::SdfPath(
-            "/scene/testvariant1/V/SphereGroup1/emptyPrim/something2")),
+    ASSERT_NE((std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/testvariant1/V/SphereGroup1/emptyPrim/something2"))),
         cache.GetAdded().end());
     ASSERT_EQ(cache.GetRemoved().size(), 2);
-    ASSERT_NE(
-        cache.GetRemoved().find(
-            PXR_NS::SdfPath("/scene/testvariant1/V/SphereGroup2")),
+    ASSERT_NE((std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/testvariant1/V/SphereGroup2"))),
         cache.GetRemoved().end());
-    ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath(
-            "/scene/testvariant1/V/SphereGroup1/emptyPrim/something1")),
+    ASSERT_NE((std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/testvariant1/V/SphereGroup1/emptyPrim/something1"))),
         cache.GetRemoved().end());
     ASSERT_EQ(cache.GetModified().size(), 4);
-    ASSERT_NE(
-        cache.GetModified().find(
-            PXR_NS::SdfPath("/scene/testvariant1/V/SphereGroup1/sphere")),
+    ASSERT_NE((std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/testvariant1/V/SphereGroup1/sphere"))),
         cache.GetModified().end());
-    ASSERT_NE(
-        cache.GetModified().find(
-            PXR_NS::SdfPath("/scene/testvariant1/V/SphereGroup1")),
+    ASSERT_NE((std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/testvariant1/V/SphereGroup1"))),
         cache.GetModified().end());
-    ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/testvariant1/V")),
+    ASSERT_NE((std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/testvariant1/V"))),
         cache.GetModified().end());
-    ASSERT_NE(
-        cache.GetModified().find(
-            PXR_NS::SdfPath("/scene/testvariant1/V/SphereGroup1/emptyPrim")),
+    ASSERT_NE((std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/testvariant1/V/SphereGroup1/emptyPrim"))),
         cache.GetModified().end());
     ASSERT_EQ(
         false,
@@ -387,18 +480,23 @@ TEST_F(HierarchyCacheTest, MuteAndUnmuteLayers)
     _stage->MuteLayer(layerIdentifier);
 
     ASSERT_EQ(cache.GetRemoved().size(), 3);
-    ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath("/scene/sublayer")),
+    ASSERT_NE((std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/sublayer"))),
         cache.GetRemoved().end());
-    ASSERT_NE(
-        cache.GetRemoved().find(
-            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild")),
+    ASSERT_NE((std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild"))),
         cache.GetRemoved().end());
-    ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath("/scene/B/bb")),
+    ASSERT_NE((std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/B/bb"))),
         cache.GetRemoved().end());
     ASSERT_EQ(cache.GetAdded().size(), 0);
-    ASSERT_EQ(cache.GetModified().size(), 29);
+    ASSERT_EQ(cache.GetModified().size(), 30);
     ASSERT_EQ(false, cache.FindNode(PXR_NS::SdfPath("/scene/sublayer")));
     ASSERT_EQ(
         false,
@@ -409,18 +507,24 @@ TEST_F(HierarchyCacheTest, MuteAndUnmuteLayers)
 
     _stage->UnmuteLayer(layerIdentifier);
     ASSERT_EQ(cache.GetAdded().size(), 3);
-    ASSERT_NE(
-        cache.GetAdded().find(PXR_NS::SdfPath("/scene/sublayer")),
+    ASSERT_NE((std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/sublayer"))),
+        cache.GetAdded().end());
+    ASSERT_NE((std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild"))),
         cache.GetAdded().end());
     ASSERT_NE(
-        cache.GetAdded().find(
-            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild")),
-        cache.GetAdded().end());
-    ASSERT_NE(
-        cache.GetAdded().find(PXR_NS::SdfPath("/scene/B/bb")),
+       (std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/B/bb"))),
         cache.GetAdded().end());
     ASSERT_EQ(cache.GetRemoved().size(), 0);
-    ASSERT_EQ(cache.GetModified().size(), 29);
+    ASSERT_EQ(cache.GetModified().size(), 30);
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/sublayer")));
     ASSERT_EQ(
         true,
@@ -440,19 +544,32 @@ TEST_F(HierarchyCacheTest, TransactionChanges)
         _stage->DefinePrim(PXR_NS::SdfPath("/scene/K/M"));
         _stage->DefinePrim(PXR_NS::SdfPath("/scene/K/M/L"));
     }
+
     ASSERT_EQ(cache.GetModified().size(), 0);
     ASSERT_EQ(cache.GetAdded().size(), 4);
     ASSERT_NE(
-        cache.GetAdded().find(PXR_NS::SdfPath("/scene/K")),
+        (std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/K"))),
         cache.GetAdded().end());
     ASSERT_NE(
-        cache.GetAdded().find(PXR_NS::SdfPath("/scene/K/J")),
+        (std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/K/J"))),
         cache.GetAdded().end());
     ASSERT_NE(
-        cache.GetAdded().find(PXR_NS::SdfPath("/scene/K/M")),
+        (std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/K/M"))),
         cache.GetAdded().end());
     ASSERT_NE(
-        cache.GetAdded().find(PXR_NS::SdfPath("/scene/K/M/L")),
+        (std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/K/M/L"))),
         cache.GetAdded().end());
     ASSERT_EQ(cache.GetRemoved().size(), 0);
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/K/M/L")));
@@ -470,10 +587,16 @@ TEST_F(HierarchyCacheTest, TransactionChanges)
     ASSERT_EQ(cache.GetModified().size(), 0);
     ASSERT_EQ(cache.GetAdded().size(), 2);
     ASSERT_NE(
-        cache.GetAdded().find(PXR_NS::SdfPath("/scene/M")),
+        (std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/M"))),
         cache.GetAdded().end());
     ASSERT_NE(
-        cache.GetAdded().find(PXR_NS::SdfPath("/scene/M/J")),
+        (std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/M/J"))),
         cache.GetAdded().end());
     ASSERT_EQ(cache.GetRemoved().size(), 0);
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/M/J")));
@@ -500,10 +623,16 @@ TEST_F(HierarchyCacheTest, TransactionChanges)
     }
     ASSERT_EQ(cache.GetModified().size(), 2);
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/K/M")),
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/K/M"))),
         cache.GetModified().end());
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/K/M/L")),
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/K/M/L"))),
         cache.GetModified().end());
     ASSERT_EQ(cache.GetAdded().size(), 0);
     ASSERT_EQ(cache.GetRemoved().size(), 0);
@@ -522,20 +651,28 @@ TEST_F(HierarchyCacheTest, TransactionChanges)
     }
 
     ASSERT_EQ(cache.GetModified().size(), 3);
-    ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/sublayerShared")),
+    ASSERT_NE((std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared"))),
+        cache.GetModified().end());
+    ASSERT_NE((std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild"))),
         cache.GetModified().end());
     ASSERT_NE(
-        cache.GetModified().find(
-            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild")),
-        cache.GetModified().end());
-    ASSERT_NE(
-        cache.GetModified().find(
-            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild2")),
+       (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild2"))),
         cache.GetModified().end());
     ASSERT_EQ(cache.GetAdded().size(), 1);
     ASSERT_NE(
-        cache.GetAdded().find(PXR_NS::SdfPath("/scene/sublayerShared/K")),
+        (std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared/K"))),
         cache.GetAdded().end());
     ASSERT_EQ(cache.GetRemoved().size(), 0);
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/sublayerShared/K")));
@@ -550,7 +687,7 @@ TEST_F(HierarchyCacheTest, TransactionChanges)
         _stage->UnmuteLayer(layerIdentifier);
     }
 
-    ASSERT_EQ(cache.GetModified().size(), 39);
+    ASSERT_EQ(cache.GetModified().size(), 40);
     ASSERT_EQ(cache.GetAdded().size(), 0);
     ASSERT_EQ(cache.GetRemoved().size(), 0);
 
@@ -568,35 +705,53 @@ TEST_F(HierarchyCacheTest, TransactionChanges)
         _stage->UnmuteLayer(layer1Identifier);
     }
 
-    ASSERT_EQ(cache.GetModified().size(), 31);
+    ASSERT_EQ(cache.GetModified().size(), 32);
     ASSERT_EQ(cache.GetAdded().size(), 3);
-    ASSERT_NE(
-        cache.GetAdded().find(
-            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild")),
+    ASSERT_NE((std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild"))),
         cache.GetAdded().end());
     ASSERT_NE(
-        cache.GetAdded().find(PXR_NS::SdfPath("/scene/sublayer")),
+        (std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/sublayer"))),
         cache.GetAdded().end());
-    ASSERT_NE(
-        cache.GetAdded().find(PXR_NS::SdfPath("/scene/B/bb")),
+    ASSERT_NE((std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/B/bb"))),
         cache.GetAdded().end());
     ASSERT_EQ(cache.GetRemoved().size(), 5);
-    ASSERT_NE(
-        cache.GetRemoved().find(
-            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild2")),
+    ASSERT_NE((std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild2"))),
         cache.GetRemoved().end());
     ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath("/scene/G")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/G"))),
         cache.GetRemoved().end());
     ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath("/scene/sublayer2")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/sublayer2"))),
         cache.GetRemoved().end());
     ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath("/scene/B/bb2")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/B/bb2"))),
         cache.GetRemoved().end());
     ASSERT_NE(
-        cache.GetRemoved().find(
-            PXR_NS::SdfPath("/scene/sublayer2/sublayer2Child")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/sublayer2/sublayer2Child"))),
         cache.GetRemoved().end());
     ASSERT_EQ(
         true,
@@ -619,15 +774,23 @@ TEST_F(HierarchyCacheTest, TransactionChanges)
 
     ASSERT_EQ(cache.GetModified().size(), 1);
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/sublayerShared")),
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared"))),
         cache.GetModified().end());
     ASSERT_EQ(cache.GetRemoved().size(), 2);
     ASSERT_NE(
-        cache.GetRemoved().find(
-            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild"))),
         cache.GetRemoved().end());
     ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath("/scene/sublayerShared/K")),
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared/K"))),
         cache.GetRemoved().end());
     ASSERT_EQ(cache.GetAdded().size(), 0);
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/sublayerShared")));
@@ -649,7 +812,10 @@ TEST_F(HierarchyCacheTest, TransactionChanges)
     }
     ASSERT_EQ(cache.GetModified().size(), 1);
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/sublayerShared")),
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared"))),
         cache.GetModified().end());
     ASSERT_EQ(cache.GetAdded().size(), 0);
     ASSERT_EQ(cache.GetRemoved().size(), 0);
@@ -668,25 +834,41 @@ TEST_F(HierarchyCacheTest, TransactionChanges)
 
     ASSERT_EQ(cache.GetModified().size(), 2);
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/D")),
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/D"))),
         cache.GetModified().end());
     ASSERT_NE(
-        cache.GetModified().find(PXR_NS::SdfPath("/scene/sublayerShared")),
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared"))),
         cache.GetModified().end());
     ASSERT_EQ(cache.GetRemoved().size(), 5);
     ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath("/scene/D/r2")),
-        cache.GetAdded().end());
+        (std::find(
+            cache.GetModified().begin(),
+            cache.GetModified().end(),
+            PXR_NS::SdfPath("/scene/D/r2"))),
+        cache.GetRemoved().end());
     ASSERT_NE(
-        cache.GetRemoved().find(PXR_NS::SdfPath("/scene/D/b/x")),
-        cache.GetAdded().end());
+        (std::find(
+            cache.GetRemoved().begin(),
+            cache.GetRemoved().end(),
+            PXR_NS::SdfPath("/scene/D/b/x"))),
+        cache.GetRemoved().end());
     ASSERT_EQ(cache.GetAdded().size(), 2);
-    ASSERT_NE(
-        cache.GetAdded().find(
-            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild")),
+    ASSERT_NE((std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared/sublayerChild"))),
         cache.GetAdded().end());
     ASSERT_NE(
-        cache.GetAdded().find(PXR_NS::SdfPath("/scene/sublayerShared/K")),
+        (std::find(
+            cache.GetAdded().begin(),
+            cache.GetAdded().end(),
+            PXR_NS::SdfPath("/scene/sublayerShared/K"))),
         cache.GetAdded().end());
     ASSERT_EQ(true, cache.FindNode(PXR_NS::SdfPath("/scene/D")));
     ASSERT_EQ(false, cache.FindNode(PXR_NS::SdfPath("/scene/D/r")));

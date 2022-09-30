@@ -13,6 +13,9 @@ namespace unf {
 
 namespace BroadcasterNotice {
 
+using UnorderedSdfPathSet =
+    std::unordered_set<PXR_NS::SdfPath, PXR_NS::SdfPath::Hash>;
+    
 class HierarchyChanged
     : public BrokerNotice::StageNoticeImpl<HierarchyChanged> {
   public:

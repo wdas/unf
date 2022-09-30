@@ -18,8 +18,8 @@ using UnorderedSdfPathSet =
 class ChildBroadcasterNotice : public PXR_NS::TfNotice {
   public:
     ChildBroadcasterNotice(
-        UnorderedSdfPathSet added, UnorderedSdfPathSet removed,
-        UnorderedSdfPathSet modified, ChangedFieldMap changedInfo)
+        PXR_NS::SdfPathVector added, PXR_NS::SdfPathVector removed,
+        PXR_NS::SdfPathVector modified, ChangedFieldMap changedInfo)
         : _added(std::move(added)),
           _removed(std::move(removed)),
           _modified(std::move(modified)),
@@ -29,15 +29,15 @@ class ChildBroadcasterNotice : public PXR_NS::TfNotice {
 
     ~ChildBroadcasterNotice() = default;
 
-    const UnorderedSdfPathSet& GetAdded() const { return _added; }
-    const UnorderedSdfPathSet& GetRemoved() const { return _removed; }
-    const UnorderedSdfPathSet& GetModified() const { return _modified; }
+    const PXR_NS::SdfPathVector& GetAdded() const { return _added; }
+    const PXR_NS::SdfPathVector& GetRemoved() const { return _removed; }
+    const PXR_NS::SdfPathVector& GetModified() const { return _modified; }
     const ChangedFieldMap& GetChangedFields() const { return _changedInfo; }
 
   private:
-    UnorderedSdfPathSet _added;
-    UnorderedSdfPathSet _removed;
-    UnorderedSdfPathSet _modified;
+    PXR_NS::SdfPathVector _added;
+    PXR_NS::SdfPathVector _removed;
+    PXR_NS::SdfPathVector _modified;
     ChangedFieldMap _changedInfo;
 };
 

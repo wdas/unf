@@ -1,4 +1,5 @@
 #include "cache.h"
+#include <queue>
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
@@ -23,18 +24,48 @@ std::vector<std::string> _split(
 
 }  // namespace
 
-namespace unf {
+namespace unf{
 
-void HierarchyCache::Update(PXR_NS::SdfPathVector resynced)
+Node::Node(const PXR_NS::UsdPrim& prim) {
+    this->prim = prim;
+    prim_path = prim.GetPath();
+}
+
+NodeRefPtr Node::CreateWithDescendants(const PXR_NS::UsdPrim& prim) {
+    NodeRefPtr root = PXR_NS::TfCreateRefPtr(new Node(prim));
+    std::queue<NodeRefPtr*> nodes;
+    nodes.push(&root);
+    while (!nodes.empty()) {
+        NodeRefPtr& node = *nodes.front();
+        nodes.pop();
+        
+        for (const auto& child_prim : node->prim.GetChildren()) {
+            NodeRefPtr child_node = PXR_NS::TfCreateRefPtr(new Node(child_prim));
+            node->children[child_prim.GetName()] = child_node;
+        }
+
+        for (auto& entry : node->children) {
+            nodes.push(&entry.second);
+        }
+    }
+
+    return root;
+}
+
+HierarchyCache::HierarchyCache(const PXR_NS::UsdStageWeakPtr stage) : _stage(stage) {
+    _root = Node::CreateWithDescendants(stage->GetPseudoRoot());
+}
+
+void HierarchyCache::Update(const PXR_NS::SdfPathVector& resynced)
 {
-    // Remove Descendants
-    SdfPath::RemoveDescendentPaths(&resynced);
-
     for (auto& p : resynced) {
+        if(!p.IsPrimPath() && p != _root->prim_path) {
+            _modified.push_back(p);
+            continue;
+        }
         NodeRefPtr node = _findNodeOrUpdate(p);
         if (node) {
-            _noDescModified.push_back(p);
-            _sync(node, _stage->GetPrimAtPath(p));
+            _sync(node);
         }
     }
 }
@@ -53,18 +84,18 @@ bool HierarchyCache::FindNode(const SdfPath& path)
     return true;
 }
 
-void HierarchyCache::_addToRemoved(NodeRefPtr node)
+void HierarchyCache::_addToRemoved(NodeRefPtr& node)
 {
-    _removed.insert(node->prim_path);
+    _removed.push_back(node->prim_path);
 
     for (auto c : node->children) {
         _addToRemoved(c.second);
     }
 }
 
-void HierarchyCache::_addToAdded(NodeRefPtr node)
+void HierarchyCache::_addToAdded(NodeRefPtr& node)
 {
-    _added.insert(node->prim_path);
+    _added.push_back(node->prim_path);
 
     for (auto c : node->children) {
         _addToAdded(c.second);
@@ -81,7 +112,8 @@ NodeRefPtr HierarchyCache::_findNodeOrUpdate(const SdfPath& path)
     // TODO: make this sdfpath
     std::string partial_path = "";
     for (size_t i = 1; i < split_paths.size(); i++) {
-        partial_path += "/" + split_paths[i];
+        partial_path += "/";
+        partial_path += split_paths[i];
         TfToken p_token = TfToken(split_paths[i]);
         auto child_token = curr_node->children.find(p_token);
         // If we are at the final node of the path, then this is the
@@ -96,7 +128,6 @@ NodeRefPtr HierarchyCache::_findNodeOrUpdate(const SdfPath& path)
             // Doesn't exist in the stage -- then the prim was removed.
             else if (!child) {
                 _addToRemoved(curr_node->children[p_token]);
-                _noDescRemoved.push_back(prim_path);
                 curr_node->children.erase(p_token);
                 return nullptr;
             }
@@ -106,9 +137,8 @@ NodeRefPtr HierarchyCache::_findNodeOrUpdate(const SdfPath& path)
             PXR_NS::UsdPrim child = _stage->GetPrimAtPath(prim_path);
             // Doesn't exist in the cache but in stage -- need to add prim
             if (child) {
-                curr_node->children[p_token] = TfCreateRefPtr(new Node(child));
+                curr_node->children[p_token] = Node::CreateWithDescendants(child);
                 _addToAdded(curr_node->children[p_token]);
-                _noDescAdded.push_back(prim_path);
             }
             return nullptr;
         }
@@ -117,47 +147,53 @@ NodeRefPtr HierarchyCache::_findNodeOrUpdate(const SdfPath& path)
     return curr_node;
 }
 
-void HierarchyCache::_sync(NodeRefPtr node, const PXR_NS::UsdPrim& prim)
+void HierarchyCache::_sync(NodeRefPtr& start_node)
 {
-    if (node->prim_path != _stage->GetPseudoRoot().GetPath()) {
-        _modified.insert(node->prim_path);
-    }
-    // Used to track nodes that exist in tree but not in stage
-    std::unordered_set<PXR_NS::SdfPath, PXR_NS::SdfPath::Hash>
-        node_children_copy;
-    for (auto& child : node->children) {
-        node_children_copy.insert(child.second->prim_path);
-    }
+    std::queue<NodeRefPtr*> nodes;
+    nodes.push(&start_node);
+    while (!nodes.empty()) {
+        NodeRefPtr& node = *nodes.front();
+        nodes.pop();
 
-    // Loop over real prim's children
-    for (const auto& child_prim : prim.GetChildren()) {
-        TfToken child_name = child_prim.GetName();
-        SdfPath child_prim_path = child_prim.GetPath();
-        if (node->children.find(child_name) != node->children.end()) {
-            // Exists in cache
-            // Sync on child and on stage
-            _sync(node->children[child_name], child_prim);
-            // Remove child from temporary list
-            node_children_copy.erase(child_prim_path);
+        _modified.push_back(node->prim_path);
+        
+        if(!node->prim.IsValid()) {
+            node->prim = _stage->GetPrimAtPath(node->prim_path);
         }
-        else {
-            // Doesn't exist in cache but in stage
-            // Doesn't exist in tree
-            node->children[child_prim.GetName()] =
-                TfCreateRefPtr(new Node(child_prim));
-            _addToAdded(node->children[child_prim.GetName()]);
-            _noDescAdded.push_back(child_prim_path);
+        
+        for (const auto& stage_child : node->prim.GetChildren()) {
+            const auto& cache_child = node->children.find(stage_child.GetName());
+            if (cache_child == node->children.end()) {
+                // Not in cache, so added
+                NodeRefPtr new_child = Node::CreateWithDescendants(stage_child);
+                new_child->flag = 1;
+                node->children[stage_child.GetName()] = std::move(new_child);
+            } else {
+                // Is in cache, so modified
+                cache_child->second->flag = 2;
+            }
         }
-    }
 
-    // Exists only on cache, not on stage
-    // Add the non-existant children to the removed set
-    for (auto& child_prim_path : node_children_copy) {
-        TfToken childName = child_prim_path.GetNameToken();
-        _addToRemoved(node->children[childName]);
-        _noDescRemoved.push_back(child_prim_path);
-        node->children.erase(childName);
+        for (auto it = node->children.begin(); it != node->children.end();) {
+            NodeRefPtr& cache_child = it->second;
+            if (cache_child->flag == 0) {
+                // Flag not set, so must not exist anymore
+                _addToRemoved(cache_child);
+                it = node->children.erase(it);
+                continue;
+            } else if (cache_child->flag == 1) {
+                // Node was added, so do nothing
+                _addToAdded(cache_child);
+            } else if (cache_child->flag == 2) {
+                // Because we don't insert in this loop, and erase does not invalidate references
+                // (other than the erased reference) this is safe
+                nodes.push(&cache_child);
+            }
+            // Reset the flag
+            cache_child->flag = 0;
+            ++it;
+        }
     }
 }
 
-}  // namespace unf
+}  // namespace unfTest

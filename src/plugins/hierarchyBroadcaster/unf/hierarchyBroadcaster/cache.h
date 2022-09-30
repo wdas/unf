@@ -13,39 +13,33 @@
 
 #include <string>
 #include <unordered_map>
-#include <unordered_set>
 #include <vector>
 
-namespace unf {
+namespace unf{
 
 struct Node;
 
 using NodeRefPtr = PXR_NS::TfRefPtr<Node>;
-using UnorderedSdfPathSet =
-    std::unordered_set<PXR_NS::SdfPath, PXR_NS::SdfPath::Hash>;
 
 struct Node : public PXR_NS::TfRefBase {
-    Node(const PXR_NS::UsdPrim& prim)
-    {
-        prim_path = prim.GetPath();
-        for (const auto& child : prim.GetChildren()) {
-            children[child.GetName()] = PXR_NS::TfCreateRefPtr(new Node(child));
-        }
-    }
+    Node(const PXR_NS::UsdPrim& prim);
+
+    static NodeRefPtr CreateWithDescendants(const PXR_NS::UsdPrim& prim);
+
+    // TODO: Does prim_path take any time to calculate when getting from prim?
     PXR_NS::SdfPath prim_path;
+    PXR_NS::UsdPrim prim;
     std::unordered_map<
         PXR_NS::TfToken, NodeRefPtr, PXR_NS::TfToken::HashFunctor>
         children;
+    int flag = 0;
 };
 
 class HierarchyCache : public PXR_NS::TfRefBase, PXR_NS::TfWeakBase {
   public:
-    HierarchyCache(const PXR_NS::UsdStageWeakPtr stage) : _stage(stage)
-    {
-        _root = PXR_NS::TfCreateRefPtr(new Node(stage->GetPseudoRoot()));
-    }
+    HierarchyCache(const PXR_NS::UsdStageWeakPtr stage);
 
-    void Update(PXR_NS::SdfPathVector resynced);
+    void Update(const PXR_NS::SdfPathVector& resynced);
 
     bool FindNode(const PXR_NS::SdfPath& path);
 
@@ -55,19 +49,19 @@ class HierarchyCache : public PXR_NS::TfRefBase, PXR_NS::TfWeakBase {
                || _modified.size() != 0;
     }
 
-    const UnorderedSdfPathSet& GetAdded() const { return _added; }
+    const PXR_NS::SdfPathVector& GetAdded() const { return _added; }
 
-    const UnorderedSdfPathSet& GetRemoved() const { return _removed; }
+    const PXR_NS::SdfPathVector& GetRemoved() const { return _removed; }
 
-    const UnorderedSdfPathSet& GetModified() const { return _modified; }
+    const PXR_NS::SdfPathVector& GetModified() const { return _modified; }
 
-    PXR_NS::SdfPathVector&& TakeAdded() { return std::move(_noDescAdded); }
+    PXR_NS::SdfPathVector&& TakeAdded() { return std::move(_added); }
 
-    PXR_NS::SdfPathVector&& TakeRemoved() { return std::move(_noDescRemoved); }
+    PXR_NS::SdfPathVector&& TakeRemoved() { return std::move(_removed); }
 
     PXR_NS::SdfPathVector&& TakeModified()
     {
-        return std::move(_noDescModified);
+        return std::move(_modified);
     }
 
     void Clear()
@@ -75,30 +69,24 @@ class HierarchyCache : public PXR_NS::TfRefBase, PXR_NS::TfWeakBase {
         _added.clear();
         _removed.clear();
         _modified.clear();
-        _noDescAdded.clear();
-        _noDescRemoved.clear();
-        _noDescModified.clear();
     }
 
   private:
-    void _addToRemoved(NodeRefPtr node);
+    void _addToRemoved(NodeRefPtr& node);
 
-    void _addToAdded(NodeRefPtr node);
+    void _addToAdded(NodeRefPtr& node);
 
     NodeRefPtr _findNodeOrUpdate(const PXR_NS::SdfPath& path);
 
-    void _sync(NodeRefPtr node, const PXR_NS::UsdPrim& prim);
+    void _sync(NodeRefPtr& node);
 
     NodeRefPtr _root;
-    UnorderedSdfPathSet _added;
-    UnorderedSdfPathSet _removed;
-    UnorderedSdfPathSet _modified;
-    PXR_NS::SdfPathVector _noDescAdded;
-    PXR_NS::SdfPathVector _noDescRemoved;
-    PXR_NS::SdfPathVector _noDescModified;
+    PXR_NS::SdfPathVector _added;
+    PXR_NS::SdfPathVector _removed;
+    PXR_NS::SdfPathVector _modified;
     PXR_NS::UsdStageWeakPtr _stage;
 };
 
-}  // namespace unf
+}  // namespace unfTest
 
 #endif  // USD_NOTICE_FRAMEWORK_HIERARCHY_CACHE_H

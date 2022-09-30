@@ -15,7 +15,8 @@ void HierarchyBroadcaster::Execute(void* parent)
     if (objChangedNotices.size() == 1) {
         ObjectsChangedRefPtr notice =
             PXR_NS::TfStatic_cast<ObjectsChangedRefPtr>(objChangedNotices[0]);
-
+            
+        notice->RemoveDescendants();
         _cache.Update(notice->GetResyncedPaths());
 
         if (notice->GetChangedInfoOnlyPaths().size() > 0
@@ -25,11 +26,13 @@ void HierarchyBroadcaster::Execute(void* parent)
             for (auto& c : _children) {
                 c->Execute(this);
             }
+            
             _broker->Send<BroadcasterNotice::HierarchyChanged>(
                 _cache.TakeAdded(),
                 _cache.TakeRemoved(),
                 _cache.TakeModified(),
                 *_changedFields);
+            
 
             Clear();
         }

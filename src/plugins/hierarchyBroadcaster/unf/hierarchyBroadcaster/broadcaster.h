@@ -35,16 +35,17 @@ class HierarchyBroadcaster : public Broadcaster {
     {
         return "HierarchyBroadcaster";
     }
-
-    const UnorderedSdfPathSet& GetAdded() const { return _cache.GetAdded(); }
-    const UnorderedSdfPathSet& GetRemoved() const
+    
+    const PXR_NS::SdfPathVector& GetAdded() const { return _cache.GetAdded(); }
+    const PXR_NS::SdfPathVector& GetRemoved() const
     {
         return _cache.GetRemoved();
     }
-    const UnorderedSdfPathSet& GetModified() const
+    const PXR_NS::SdfPathVector& GetModified() const
     {
         return _cache.GetModified();
     }
+    
     const ChangedFieldMap& GetChangedFields() const { return *_changedFields; }
 
     void Clear()
