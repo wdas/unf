@@ -66,6 +66,16 @@ target_link_libraries(testUnitTransaction
 )
 gtest_discover_tests(testUnitTransaction)
 
+add_executable(testUnitObjectsChanged testObjectsChanged.cpp)
+target_link_libraries(testUnitObjectsChanged
+    PRIVATE
+        unf
+        unfTest
+        GTest::gtest
+        GTest::gtest_main
+)
+gtest_discover_tests(testUnitObjectsChanged)
+
 if (BUILD_PYTHON_BINDINGS)
     add_subdirectory(python)
 endif()

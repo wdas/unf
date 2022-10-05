@@ -96,6 +96,14 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
 
     virtual void Merge(ObjectsChanged&&) override;
 
+    bool AffectedObject(const PXR_NS::UsdObject& object) const
+    {
+        return ResyncedObject(object) || ChangedInfoOnly(object);
+    }
+
+    bool ResyncedObject(const PXR_NS::UsdObject&) const;
+    bool ChangedInfoOnly(const PXR_NS::UsdObject&) const;
+
     const PXR_NS::SdfPathVector& GetResyncedPaths() const
     {
         return _resyncChanges;
@@ -106,17 +114,16 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
         return _infoChanges;
     }
 
-    const TfTokenSet& GetChangedFields(const PXR_NS::SdfPath& path) const
-    {
-        return _changedFields.at(path);
-    }
-
+    TfTokenSet GetChangedFields(const PXR_NS::UsdObject&) const;
+    TfTokenSet GetChangedFields(const PXR_NS::SdfPath&) const;
+    bool HasChangedFields(const PXR_NS::UsdObject&) const;
     bool HasChangedFields(const PXR_NS::SdfPath&) const;
 
     const ChangedFieldMap& GetChangedFieldMap() const { return _changedFields; }
 
-    void RemoveDescendants() {
-      PXR_NS::SdfPath::RemoveDescendentPaths(&_resyncChanges);
+    void RemoveDescendants()
+    {
+        PXR_NS::SdfPath::RemoveDescendentPaths(&_resyncChanges);
     }
 
   protected:

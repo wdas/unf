@@ -1,7 +1,7 @@
 #include "unf/broker.h"
 #include "unf/dispatcher.h"
-#include "unf/notice.h"
 #include "unf/merger.h"
+#include "unf/notice.h"
 
 #include <pxr/base/tf/weakPtr.h>
 #include <pxr/pxr.h>
@@ -15,8 +15,7 @@ namespace unf {
 // Initiate static registry.
 std::unordered_map<size_t, BrokerPtr> Broker::Registry;
 
-Broker::Broker(const UsdStageWeakPtr& stage)
-    : _stage(stage)
+Broker::Broker(const UsdStageWeakPtr& stage) : _stage(stage)
 {
     // Add default dispatcher.
     _AddDispatcher<StageDispatcher>();
@@ -47,8 +46,7 @@ BrokerPtr Broker::Create(const UsdStageWeakPtr& stage)
 
 bool Broker::IsInTransaction() { return _mergers.size() > 0; }
 
-void Broker::BeginTransaction(
-    const NoticeCaturePredicateFunc& predicate)
+void Broker::BeginTransaction(const NoticeCaturePredicateFunc& predicate)
 {
     _mergers.push_back(NoticeMerger(predicate));
 }
@@ -69,7 +67,7 @@ void Broker::EndTransaction()
     // Otherwise, it means that we are in a nested transaction that should
     // not be processed yet. Join data with next merger.
     else {
-       (_mergers.end()-2)->Join(merger);
+        (_mergers.end() - 2)->Join(merger);
     }
 
     _mergers.pop_back();
@@ -99,10 +97,7 @@ void Broker::Reset()
     Registry.erase(stageHash);
 }
 
-void Broker::ResetAll()
-{
-    Registry.clear();
-}
+void Broker::ResetAll() { Registry.clear(); }
 
 void Broker::_CleanCache()
 {

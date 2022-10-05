@@ -17,16 +17,18 @@ namespace unf {
 class NoticeMerger;
 
 using NoticeCaturePredicateFunc =
-    std::function<bool (const BrokerNotice::StageNotice &)>;
+    std::function<bool(const BrokerNotice::StageNotice&)>;
 
 using _StageNoticePtrList = std::vector<BrokerNotice::StageNoticeRefPtr>;
 
 using _StageNoticePtrMap = std::unordered_map<std::string, _StageNoticePtrList>;
 
 class NoticeMerger {
-public:
-    NoticeMerger(const NoticeCaturePredicateFunc& predicate=nullptr)
-        : _predicate(predicate) {}
+  public:
+    NoticeMerger(const NoticeCaturePredicateFunc& predicate = nullptr)
+        : _predicate(predicate)
+    {
+    }
 
     void Add(const BrokerNotice::StageNoticeRefPtr&);
     void Join(NoticeMerger&);
@@ -35,11 +37,11 @@ public:
 
     _StageNoticePtrMap& GetNotices() { return _noticeMap; }
 
-private:
+  private:
     _StageNoticePtrMap _noticeMap;
     NoticeCaturePredicateFunc _predicate = nullptr;
 };
 
-} // namespace unf
+}  // namespace unf
 
-#endif // NOTICE_BROKER_MERGER_H
+#endif  // NOTICE_BROKER_MERGER_H

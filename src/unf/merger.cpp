@@ -9,12 +9,10 @@ PXR_NAMESPACE_USING_DIRECTIVE
 
 namespace unf {
 
-void NoticeMerger::Add(
-    const BrokerNotice::StageNoticeRefPtr& notice)
+void NoticeMerger::Add(const BrokerNotice::StageNoticeRefPtr& notice)
 {
     // Indicate whether the notice needs to be captured.
-    if (_predicate && !_predicate(*notice))
-        return;
+    if (_predicate && !_predicate(*notice)) return;
 
     // Store notices per type name, so that each type can be merged if
     // required.
@@ -30,9 +28,7 @@ void NoticeMerger::Join(NoticeMerger& merger)
 
         target.reserve(target.size() + source.size());
         std::move(
-            std::begin(source),
-            std::end(source),
-            std::back_inserter(target));
+            std::begin(source), std::end(source), std::back_inserter(target));
 
         source.clear();
     }
@@ -52,7 +48,7 @@ void NoticeMerger::Merge()
             auto& notice = notices.at(0);
             auto it = std::next(notices.begin());
 
-            while(it != notices.end()) {
+            while (it != notices.end()) {
                 // Attempt to merge content of notice with first notice
                 // if this is possible.
                 notice->Merge(std::move(**it));
@@ -68,10 +64,10 @@ void NoticeMerger::Send(const UsdStageWeakPtr& stage)
         auto& notices = element.second;
 
         // Send all remaining notices.
-        for (const auto& notice: element.second) {
+        for (const auto& notice : element.second) {
             notice->Send(stage);
         }
     }
 }
 
-} // namespace unf
+}  // namespace unf

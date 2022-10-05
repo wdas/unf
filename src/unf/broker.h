@@ -1,8 +1,8 @@
 #ifndef USD_NOTICE_FRAMEWORK_BROKER_H
 #define USD_NOTICE_FRAMEWORK_BROKER_H
 
-#include "unf/notice.h"
 #include "unf/merger.h"
+#include "unf/notice.h"
 
 #include <pxr/base/plug/plugin.h>
 #include <pxr/base/plug/registry.h>
@@ -45,7 +45,7 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
 
     bool IsInTransaction();
 
-    void BeginTransaction(const NoticeCaturePredicateFunc& predicate=nullptr);
+    void BeginTransaction(const NoticeCaturePredicateFunc& predicate = nullptr);
     void EndTransaction();
 
     template <class BrokerNotice, class... Args>

@@ -11,12 +11,12 @@ namespace unf {
 class NoticeTransaction {
   public:
     NoticeTransaction(
-        const BrokerPtr&,
-        const NoticeCaturePredicateFunc& predicate=nullptr);
+        const BrokerPtr &,
+        const NoticeCaturePredicateFunc &predicate = nullptr);
 
     NoticeTransaction(
-        const PXR_NS::UsdStageRefPtr&,
-        const NoticeCaturePredicateFunc& predicate=nullptr);
+        const PXR_NS::UsdStageRefPtr &,
+        const NoticeCaturePredicateFunc &predicate = nullptr);
 
     ~NoticeTransaction();
 

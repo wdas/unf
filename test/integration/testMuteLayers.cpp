@@ -2,8 +2,8 @@
 #include <unf/noticeCache.h>
 
 #include <unfTest/listener.h>
-#include <unfTest/observer.h>
 #include <unfTest/notice.h>
+#include <unfTest/observer.h>
 
 #include <gtest/gtest.h>
 #include <pxr/usd/sdf/layer.h>
@@ -127,8 +127,7 @@ TEST_F(MuteLayersTest, Blocking)
     auto broker = unf::Broker::Create(_stage);
 
     // Pass a predicate to block all broker notices.
-    broker->BeginTransaction(
-        [](const _Broker::StageNotice &){ return false; });
+    broker->BeginTransaction([](const _Broker::StageNotice&) { return false; });
 
     _stage->MuteLayer(_layerIds[0]);
     _stage->MuteLayer(_layerIds[1]);
@@ -168,8 +167,9 @@ TEST_F(MuteLayersTest, PartialBlocking)
     std::string target = typeid(_Broker::LayerMutingChanged).name();
 
     // Pass a predicate to block all broker notices.
-    broker->BeginTransaction(
-        [&](const _Broker::StageNotice &n){return (n.GetTypeId() == target); });
+    broker->BeginTransaction([&](const _Broker::StageNotice& n) {
+        return (n.GetTypeId() == target);
+    });
 
     _stage->MuteLayer(_layerIds[0]);
     _stage->MuteLayer(_layerIds[1]);

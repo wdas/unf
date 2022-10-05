@@ -29,6 +29,7 @@ target_link_libraries(unf
         usd::sdf
         usd::tf
         usd::usd
+        usd::vt
 )
 
 install(TARGETS unf EXPORT ${PROJECT_NAME})

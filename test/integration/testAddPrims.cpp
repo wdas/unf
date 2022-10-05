@@ -2,8 +2,8 @@
 #include <unf/noticeCache.h>
 
 #include <unfTest/listener.h>
-#include <unfTest/observer.h>
 #include <unfTest/notice.h>
+#include <unfTest/observer.h>
 
 #include <gtest/gtest.h>
 #include <pxr/usd/sdf/path.h>
@@ -101,8 +101,7 @@ TEST_F(AddPrimsTest, Blocking)
     auto broker = unf::Broker::Create(_stage);
 
     // Pass a predicate to block all broker notices.
-    broker->BeginTransaction(
-        [](const _Broker::StageNotice &){ return false; });
+    broker->BeginTransaction([](const _Broker::StageNotice&) { return false; });
 
     _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
     _stage->DefinePrim(PXR_NS::SdfPath{"/Bar"});
@@ -139,8 +138,9 @@ TEST_F(AddPrimsTest, PartialBlocking)
     std::string target = typeid(_Broker::ObjectsChanged).name();
 
     // Pass a predicate to block all broker notices.
-    broker->BeginTransaction(
-        [&](const _Broker::StageNotice &n){return (n.GetTypeId() == target); });
+    broker->BeginTransaction([&](const _Broker::StageNotice& n) {
+        return (n.GetTypeId() == target);
+    });
 
     _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
     _stage->DefinePrim(PXR_NS::SdfPath{"/Bar"});

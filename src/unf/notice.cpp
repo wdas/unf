@@ -2,6 +2,7 @@
 
 #include <pxr/base/tf/notice.h>
 #include <pxr/pxr.h>
+#include <pxr/usd/sdf/path.h>
 #include <pxr/usd/usd/notice.h>
 
 #include <utility>
@@ -31,9 +32,9 @@ ObjectsChanged::ObjectsChanged(const UsdNotice::ObjectsChanged& notice)
     }
     for (const auto& path : notice.GetChangedInfoOnlyPaths()) {
         _infoChanges.push_back(path);
-        _changedFields[path] = TfTokenSet(
-            notice.GetChangedFields(path).begin(),
-            notice.GetChangedFields(path).end());
+
+        auto paths = notice.GetChangedFields(path);
+        _changedFields[path] = TfTokenSet(paths.begin(), paths.end());
     }
 }
 
@@ -81,6 +82,39 @@ void ObjectsChanged::Merge(ObjectsChanged&& notice)
                 notice._changedFields[path].end());
         }
     }
+}
+
+bool ObjectsChanged::ResyncedObject(const PXR_NS::UsdObject& object) const
+{
+    auto path = PXR_NS::SdfPathFindLongestPrefix(
+        _resyncChanges.begin(), _resyncChanges.end(), object.GetPath());
+    return path != _resyncChanges.end();
+}
+
+bool ObjectsChanged::ChangedInfoOnly(const PXR_NS::UsdObject& object) const
+{
+    auto path = PXR_NS::SdfPathFindLongestPrefix(
+        _infoChanges.begin(), _infoChanges.end(), object.GetPath());
+    return path != _infoChanges.end();
+}
+
+TfTokenSet ObjectsChanged::GetChangedFields(
+    const PXR_NS::UsdObject& object) const
+{
+    return GetChangedFields(object.GetPath());
+}
+
+TfTokenSet ObjectsChanged::GetChangedFields(const PXR_NS::SdfPath& path) const
+{
+    if (HasChangedFields(path)) {
+        return _changedFields.at(path);
+    }
+    return TfTokenSet();
+}
+
+bool ObjectsChanged::HasChangedFields(const UsdObject& object) const
+{
+    return HasChangedFields(object.GetPath());
 }
 
 bool ObjectsChanged::HasChangedFields(const SdfPath& path) const

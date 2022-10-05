@@ -119,7 +119,7 @@ TEST_F(ChangeEditTargetTest, Blocking)
 
     // Pass a predicate to block all broker notices.
     broker->BeginTransaction(
-        [](const _Broker::StageNotice &){ return false; });
+        [](const _Broker::StageNotice &) { return false; });
 
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[0]));
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[1]));

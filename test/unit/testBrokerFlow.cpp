@@ -1,8 +1,8 @@
 #include <unf/broker.h>
 
 #include <unfTest/listener.h>
-#include <unfTest/observer.h>
 #include <unfTest/notice.h>
+#include <unfTest/observer.h>
 
 #include <gtest/gtest.h>
 #include <pxr/usd/usd/stage.h>

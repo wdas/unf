@@ -17,11 +17,9 @@ using namespace unf;
 PXR_NAMESPACE_USING_DIRECTIVE
 
 // Expose C++ RAII class as python context manager.
-struct PythonNoticeTransaction
-{
+struct PythonNoticeTransaction {
     PythonNoticeTransaction(
-        const BrokerWeakPtr& broker,
-        const _CaturePredicateFunc &predicate)
+        const BrokerWeakPtr& broker, const _CaturePredicateFunc& predicate)
         : _predicate(predicate)
     {
         _makeContext = [&]() {
@@ -30,8 +28,7 @@ struct PythonNoticeTransaction
     }
 
     PythonNoticeTransaction(
-        const UsdStageWeakPtr& stage,
-        const _CaturePredicateFunc &predicate)
+        const UsdStageWeakPtr& stage, const _CaturePredicateFunc& predicate)
         : _predicate(predicate)
     {
         _makeContext = [&]() {
@@ -65,11 +62,11 @@ void wrapTransaction()
 
     class_<PythonNoticeTransaction>("NoticeTransaction", no_init)
 
-        .def(init<const BrokerWeakPtr&, const _CaturePredicateFunc&>
-            ((arg("broker"), arg("predicate") = object())))
+        .def(init<const BrokerWeakPtr&, const _CaturePredicateFunc&>(
+            (arg("broker"), arg("predicate") = object())))
 
-        .def(init<const UsdStageWeakPtr&, const _CaturePredicateFunc&>
-            ((arg("stage"), arg("predicate") = object())))
+        .def(init<const UsdStageWeakPtr&, const _CaturePredicateFunc&>(
+            (arg("stage"), arg("predicate") = object())))
 
         .def(
             "__enter__",
