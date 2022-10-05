@@ -67,6 +67,7 @@ class StageNoticeImpl : public StageNotice {
             new Self(static_cast<const Self&>(*this)));
     }
 
+    using StageNotice::Merge;
     virtual void Merge(StageNotice&& notice) override
     {
         Merge(dynamic_cast<Self&&>(notice));
@@ -94,6 +95,7 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     ObjectsChanged(const ObjectsChanged&);
     ObjectsChanged& operator=(const ObjectsChanged&);
 
+    using StageNoticeImpl<ObjectsChanged>::Merge;
     virtual void Merge(ObjectsChanged&&) override;
 
     bool AffectedObject(const PXR_NS::UsdObject& object) const
@@ -152,6 +154,7 @@ class LayerMutingChanged : public StageNoticeImpl<LayerMutingChanged> {
     LayerMutingChanged(const LayerMutingChanged&);
     LayerMutingChanged& operator=(const LayerMutingChanged&);
 
+    using StageNoticeImpl<LayerMutingChanged>::Merge;
     virtual void Merge(LayerMutingChanged&&) override;
 
     const std::vector<std::string>& GetMutedLayers() const
