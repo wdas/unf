@@ -12,7 +12,7 @@ NoticeTransaction::NoticeTransaction(
     const BrokerPtr& broker, const NoticeCaturePredicateFunc& predicate)
     : _broker(broker)
 {
-    _broker->BeginTransaction();
+    _broker->BeginTransaction(predicate);
 }
 
 NoticeTransaction::NoticeTransaction(
