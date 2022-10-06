@@ -67,6 +67,7 @@ class StageNoticeImpl : public StageNotice {
             new Self(static_cast<const Self&>(*this)));
     }
 
+    using StageNotice::Merge;
     virtual void Merge(StageNotice&& notice) override
     {
         Merge(dynamic_cast<Self&&>(notice));
@@ -94,7 +95,16 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     ObjectsChanged(const ObjectsChanged&);
     ObjectsChanged& operator=(const ObjectsChanged&);
 
+    using StageNoticeImpl<ObjectsChanged>::Merge;
     virtual void Merge(ObjectsChanged&&) override;
+
+    bool AffectedObject(const PXR_NS::UsdObject& object) const
+    {
+        return ResyncedObject(object) || ChangedInfoOnly(object);
+    }
+
+    bool ResyncedObject(const PXR_NS::UsdObject&) const;
+    bool ChangedInfoOnly(const PXR_NS::UsdObject&) const;
 
     const PXR_NS::SdfPathVector& GetResyncedPaths() const
     {
@@ -106,17 +116,16 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
         return _infoChanges;
     }
 
-    const TfTokenSet& GetChangedFields(const PXR_NS::SdfPath& path) const
-    {
-        return _changedFields.at(path);
-    }
-
+    TfTokenSet GetChangedFields(const PXR_NS::UsdObject&) const;
+    TfTokenSet GetChangedFields(const PXR_NS::SdfPath&) const;
+    bool HasChangedFields(const PXR_NS::UsdObject&) const;
     bool HasChangedFields(const PXR_NS::SdfPath&) const;
 
     const ChangedFieldMap& GetChangedFieldMap() const { return _changedFields; }
 
-    void RemoveDescendants() {
-      PXR_NS::SdfPath::RemoveDescendentPaths(&_resyncChanges);
+    void RemoveDescendants()
+    {
+        PXR_NS::SdfPath::RemoveDescendentPaths(&_resyncChanges);
     }
 
   protected:
@@ -145,6 +154,7 @@ class LayerMutingChanged : public StageNoticeImpl<LayerMutingChanged> {
     LayerMutingChanged(const LayerMutingChanged&);
     LayerMutingChanged& operator=(const LayerMutingChanged&);
 
+    using StageNoticeImpl<LayerMutingChanged>::Merge;
     virtual void Merge(LayerMutingChanged&&) override;
 
     const std::vector<std::string>& GetMutedLayers() const

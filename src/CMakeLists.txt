@@ -1,7 +1,7 @@
 add_library(unf
-    unf/broadcaster.cpp
     unf/broker.cpp
     unf/dispatcher.cpp
+    unf/merger.cpp
     unf/notice.cpp
     unf/transaction.cpp
 )
@@ -45,8 +45,6 @@ install(EXPORT ${PROJECT_NAME}
     FILE unfTargets.cmake
     DESTINATION share/cmake/unf
 )
-
-add_subdirectory(plugins)
 
 if (BUILD_PYTHON_BINDINGS)
     add_subdirectory(python)

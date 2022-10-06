@@ -1,3 +1,2 @@
 add_subdirectory(newStageDispatcher)
 add_subdirectory(newDispatcher)
-add_subdirectory(childBroadcaster)
