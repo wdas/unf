@@ -29,12 +29,16 @@ ObjectsChanged::ObjectsChanged(const UsdNotice::ObjectsChanged& notice)
 
     for (const auto& path : notice.GetResyncedPaths()) {
         _resyncChanges.push_back(path);
+
+        auto tokens = notice.GetChangedFields(path);
+        _changedFields[path] = TfTokenSet(tokens.begin(), tokens.end());
+
     }
     for (const auto& path : notice.GetChangedInfoOnlyPaths()) {
         _infoChanges.push_back(path);
 
-        auto paths = notice.GetChangedFields(path);
-        _changedFields[path] = TfTokenSet(paths.begin(), paths.end());
+        auto tokens = notice.GetChangedFields(path);
+        _changedFields[path] = TfTokenSet(tokens.begin(), tokens.end());
     }
 }
 
