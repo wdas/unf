@@ -1,5 +1,6 @@
 add_library(pyUnf SHARED
     module.cpp
+    wrapBlocker.cpp
     wrapBroker.cpp
     wrapNotice.cpp
     wrapNoticeCache.cpp

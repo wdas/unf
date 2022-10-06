@@ -2,6 +2,7 @@
 
 TF_WRAP_MODULE
 {
+    TF_WRAP(Blocker);
     TF_WRAP(Broker);
     TF_WRAP(Notice);
     TF_WRAP(NoticeCache);

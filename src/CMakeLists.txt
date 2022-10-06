@@ -1,4 +1,5 @@
 add_library(unf
+    unf/blocker.cpp
     unf/broker.cpp
     unf/dispatcher.cpp
     unf/merger.cpp
