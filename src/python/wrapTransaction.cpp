@@ -19,7 +19,7 @@ PXR_NAMESPACE_USING_DIRECTIVE
 // Expose C++ RAII class as python context manager.
 struct PythonNoticeTransaction {
     PythonNoticeTransaction(
-        const BrokerWeakPtr& broker, const _CaturePredicateFunc& predicate)
+        const BrokerWeakPtr& broker, const _CapturePredicateFunc& predicate)
         : _predicate(predicate)
     {
         _makeContext = [&]() {
@@ -28,7 +28,7 @@ struct PythonNoticeTransaction {
     }
 
     PythonNoticeTransaction(
-        const UsdStageWeakPtr& stage, const _CaturePredicateFunc& predicate)
+        const UsdStageWeakPtr& stage, const _CapturePredicateFunc& predicate)
         : _predicate(predicate)
     {
         _makeContext = [&]() {
@@ -52,20 +52,20 @@ struct PythonNoticeTransaction {
     std::shared_ptr<NoticeTransaction> _context;
     std::function<NoticeTransaction*()> _makeContext;
 
-    _CaturePredicateFunc _predicate;
+    _CapturePredicateFunc _predicate;
 };
 
 void wrapTransaction()
 {
     // Ensure that predicate function can be passed from Python.
-    TfPyFunctionFromPython<_CaturePredicateFuncRaw>();
+    TfPyFunctionFromPython<_CapturePredicateFuncRaw>();
 
     class_<PythonNoticeTransaction>("NoticeTransaction", no_init)
 
-        .def(init<const BrokerWeakPtr&, const _CaturePredicateFunc&>(
+        .def(init<const BrokerWeakPtr&, const _CapturePredicateFunc&>(
             (arg("broker"), arg("predicate") = object())))
 
-        .def(init<const UsdStageWeakPtr&, const _CaturePredicateFunc&>(
+        .def(init<const UsdStageWeakPtr&, const _CapturePredicateFunc&>(
             (arg("stage"), arg("predicate") = object())))
 
         .def(

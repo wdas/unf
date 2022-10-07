@@ -2,6 +2,7 @@
 #define USD_NOTICE_FRAMEWORK_PYTHON_PREDICATE_H
 
 #include "unf/broker.h"
+#include "unf/predicate.h"
 
 #include <pxr/base/tf/pyLock.h>
 #include <pxr/base/tf/pyNoticeWrapper.h>
@@ -16,10 +17,10 @@ using namespace unf;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
-using _CaturePredicateFuncRaw = bool(object const&);
-using _CaturePredicateFunc = std::function<_CaturePredicateFuncRaw>;
+using _CapturePredicateFuncRaw = bool(object const&);
+using _CapturePredicateFunc = std::function<_CapturePredicateFuncRaw>;
 
-static NoticeCaturePredicateFunc WrapPredicate(_CaturePredicateFunc fn)
+static CapturePredicateFunc WrapPredicate(_CapturePredicateFunc fn)
 {
     // Capture by-copy to prevent boost object from being destroyed.
     return [=](const BrokerNotice::StageNotice& notice) {

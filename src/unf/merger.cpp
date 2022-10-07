@@ -1,5 +1,6 @@
 #include "unf/merger.h"
 #include "unf/dispatcher.h"
+#include "unf/predicate.h"
 #include "unf/notice.h"
 
 #include <pxr/pxr.h>
@@ -9,10 +10,16 @@ PXR_NAMESPACE_USING_DIRECTIVE
 
 namespace unf {
 
+NoticeMerger::NoticeMerger(CapturePredicate predicate)
+    : _predicate(predicate)
+{
+
+}
+
 void NoticeMerger::Add(const BrokerNotice::StageNoticeRefPtr& notice)
 {
     // Indicate whether the notice needs to be captured.
-    if (_predicate && !_predicate(*notice)) return;
+    if (!_predicate(*notice)) return;
 
     // Store notices per type name, so that each type can be merged if
     // required.

@@ -20,7 +20,7 @@ PXR_NAMESPACE_USING_DIRECTIVE
 
 void Broker_BeginTransaction(Broker& self, object predicate)
 {
-    NoticeCaturePredicateFunc _predicate = nullptr;
+    CapturePredicateFunc _predicate = nullptr;
     if (predicate) {
         _predicate = WrapPredicate(predicate);
     }
@@ -36,7 +36,7 @@ void Broker_Send(Broker& self, TfRefPtr<PyBrokerNoticeWrapperBase> notice)
 void wrapBroker()
 {
     // Ensure that predicate function can be passed from Python.
-    TfPyFunctionFromPython<_CaturePredicateFuncRaw>();
+    TfPyFunctionFromPython<_CapturePredicateFuncRaw>();
 
     class_<Broker, BrokerWeakPtr, boost::noncopyable>("Broker", no_init)
 

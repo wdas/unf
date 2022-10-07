@@ -66,16 +66,6 @@ target_link_libraries(testUnitTransaction
 )
 gtest_discover_tests(testUnitTransaction)
 
-add_executable(testUnitBlocker testBlocker.cpp)
-target_link_libraries(testUnitBlocker
-    PRIVATE
-        unf
-        unfTest
-        GTest::gtest
-        GTest::gtest_main
-)
-gtest_discover_tests(testUnitBlocker)
-
 add_executable(testUnitObjectsChanged testObjectsChanged.cpp)
 target_link_libraries(testUnitObjectsChanged
     PRIVATE

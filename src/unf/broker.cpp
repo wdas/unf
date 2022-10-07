@@ -46,9 +46,14 @@ BrokerPtr Broker::Create(const UsdStageWeakPtr& stage)
 
 bool Broker::IsInTransaction() { return _mergers.size() > 0; }
 
-void Broker::BeginTransaction(const NoticeCaturePredicateFunc& predicate)
+void Broker::BeginTransaction(CapturePredicate predicate)
 {
     _mergers.push_back(NoticeMerger(predicate));
+}
+
+void Broker::BeginTransaction(CapturePredicateFunc function)
+{
+    _mergers.push_back(NoticeMerger(CapturePredicate(function)));
 }
 
 void Broker::EndTransaction()
