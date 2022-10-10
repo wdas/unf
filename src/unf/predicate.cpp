@@ -36,7 +36,7 @@ CapturePredicate CapturePredicate::BlockAll()
 CapturePredicate CapturePredicate::BlockType(std::string noticeType)
 {
     auto function = [&](const BrokerNotice::StageNotice& notice) {
-        return (notice.GetTypeId() == noticeType);
+        return (notice.GetTypeId() != noticeType);
     };
 
     return CapturePredicate(function);
@@ -53,7 +53,7 @@ CapturePredicate CapturePredicate::BlockTypes(
             }
         );
 
-        return it != noticeTypes.end();
+        return it == noticeTypes.end();
     };
 
     return CapturePredicate(function);
