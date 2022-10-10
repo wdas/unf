@@ -2,6 +2,7 @@
 
 #include "unf/broker.h"
 #include "unf/transaction.h"
+#include "unf/capturePredicate.h"
 
 #include <pxr/base/tf/pyFunction.h>
 #include <pxr/pxr.h>
@@ -19,20 +20,38 @@ PXR_NAMESPACE_USING_DIRECTIVE
 // Expose C++ RAII class as python context manager.
 struct PythonNoticeTransaction {
     PythonNoticeTransaction(
-        const BrokerWeakPtr& broker, const _CapturePredicateFunc& predicate)
-        : _predicate(predicate)
+        const BrokerWeakPtr& broker, const _CapturePredicateFunc& func)
+        : _func(func)
     {
         _makeContext = [&]() {
-            return new NoticeTransaction(broker, WrapPredicate(_predicate));
+            return new NoticeTransaction(broker, WrapPredicate(_func));
         };
     }
 
     PythonNoticeTransaction(
-        const UsdStageWeakPtr& stage, const _CapturePredicateFunc& predicate)
+        const BrokerWeakPtr& broker, CapturePredicate predicate)
         : _predicate(predicate)
     {
         _makeContext = [&]() {
-            return new NoticeTransaction(stage, WrapPredicate(_predicate));
+            return new NoticeTransaction(broker, _predicate);
+        };
+    }
+
+    PythonNoticeTransaction(
+        const UsdStageWeakPtr& stage, const _CapturePredicateFunc& func)
+        : _func(func)
+    {
+        _makeContext = [&]() {
+            return new NoticeTransaction(stage, WrapPredicate(_func));
+        };
+    }
+
+    PythonNoticeTransaction(
+        const UsdStageWeakPtr& stage, CapturePredicate predicate)
+        : _predicate(predicate)
+    {
+        _makeContext = [&]() {
+            return new NoticeTransaction(stage, _predicate);
         };
     }
 
@@ -52,7 +71,8 @@ struct PythonNoticeTransaction {
     std::shared_ptr<NoticeTransaction> _context;
     std::function<NoticeTransaction*()> _makeContext;
 
-    _CapturePredicateFunc _predicate;
+    _CapturePredicateFunc _func = nullptr;
+    CapturePredicate _predicate = CapturePredicate::Default();
 };
 
 void wrapTransaction()
@@ -62,11 +82,17 @@ void wrapTransaction()
 
     class_<PythonNoticeTransaction>("NoticeTransaction", no_init)
 
+        .def(init<const BrokerWeakPtr&, CapturePredicate>(
+            (arg("broker"), arg("predicate") = CapturePredicate::Default())))
+
         .def(init<const BrokerWeakPtr&, const _CapturePredicateFunc&>(
-            (arg("broker"), arg("predicate") = object())))
+            (arg("broker"), arg("predicate"))))
+
+        .def(init<const UsdStageWeakPtr&, CapturePredicate>(
+            (arg("stage"), arg("predicate") = CapturePredicate::Default())))
 
         .def(init<const UsdStageWeakPtr&, const _CapturePredicateFunc&>(
-            (arg("stage"), arg("predicate") = object())))
+            (arg("stage"), arg("predicate"))))
 
         .def(
             "__enter__",

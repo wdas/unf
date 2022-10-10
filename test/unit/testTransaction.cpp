@@ -1,5 +1,6 @@
 #include <unf/broker.h>
 #include <unf/transaction.h>
+#include <unf/capturePredicate.h>
 
 #include <unfTest/listener.h>
 #include <unfTest/notice.h>
@@ -22,7 +23,7 @@ class TransactionTest : public ::testing::Test {
     Listener _listener;
 };
 
-TEST_F(TransactionTest, Simple)
+TEST_F(TransactionTest, FromBroker)
 {
     auto broker = unf::Broker::Create(_stage);
 
@@ -52,7 +53,7 @@ TEST_F(TransactionTest, Simple)
     ASSERT_EQ(_listener.Received<::Test::UnMergeableNotice>(), 3);
 }
 
-TEST_F(TransactionTest, WithFilter)
+TEST_F(TransactionTest, FromBrokerWithFilter)
 {
     auto broker = unf::Broker::Create(_stage);
 
@@ -88,7 +89,7 @@ TEST_F(TransactionTest, WithFilter)
     ASSERT_EQ(_listener.Received<::Test::UnMergeableNotice>(), 0);
 }
 
-TEST_F(TransactionTest, WithDefaultPredicate)
+TEST_F(TransactionTest, FromBrokerWithDefaultPredicate)
 {
     auto broker = unf::Broker::Create(_stage);
 
@@ -119,7 +120,7 @@ TEST_F(TransactionTest, WithDefaultPredicate)
     ASSERT_EQ(_listener.Received<::Test::UnMergeableNotice>(), 3);
 }
 
-TEST_F(TransactionTest, WithBlockAllPredicate)
+TEST_F(TransactionTest, FromBrokerWithBlockAllPredicate)
 {
     auto broker = unf::Broker::Create(_stage);
 
@@ -150,7 +151,7 @@ TEST_F(TransactionTest, WithBlockAllPredicate)
     ASSERT_EQ(_listener.Received<::Test::UnMergeableNotice>(), 0);
 }
 
-TEST_F(TransactionTest, WithBlockTypePredicate)
+TEST_F(TransactionTest, FromBrokerWithBlockTypePredicate)
 {
     auto broker = unf::Broker::Create(_stage);
 
@@ -184,7 +185,7 @@ TEST_F(TransactionTest, WithBlockTypePredicate)
     ASSERT_EQ(_listener.Received<::Test::UnMergeableNotice>(), 0);
 }
 
-TEST_F(TransactionTest, WithBlockTypesPredicate)
+TEST_F(TransactionTest, FromBrokerWithBlockTypesPredicate)
 {
     auto broker = unf::Broker::Create(_stage);
 
@@ -221,7 +222,7 @@ TEST_F(TransactionTest, WithBlockTypesPredicate)
     ASSERT_EQ(_listener.Received<::Test::UnMergeableNotice>(), 0);
 }
 
-TEST_F(TransactionTest, WithoutBroker)
+TEST_F(TransactionTest, FromStage)
 {
     {
         unf::NoticeTransaction transaction(_stage);
@@ -247,7 +248,7 @@ TEST_F(TransactionTest, WithoutBroker)
     ASSERT_EQ(_listener.Received<::Test::UnMergeableNotice>(), 3);
 }
 
-TEST_F(TransactionTest, WithoutBrokerAndFilter)
+TEST_F(TransactionTest, FromStageWithFilter)
 {
     {
         // Filter out UnMergeableNotice type.
@@ -276,6 +277,123 @@ TEST_F(TransactionTest, WithoutBrokerAndFilter)
 
     // Consolidated notices (if required) are sent when transaction is over.
     ASSERT_EQ(_listener.Received<::Test::MergeableNotice>(), 1);
+    ASSERT_EQ(_listener.Received<::Test::UnMergeableNotice>(), 0);
+}
+
+TEST_F(TransactionTest, FromStageWithDefaultPredicate)
+{
+    {
+        unf::NoticeTransaction transaction(
+            _stage, unf::CapturePredicate::Default());
+
+        auto broker = transaction.GetBroker();
+        ASSERT_EQ(broker, unf::Broker::Create(_stage));
+
+        broker->Send<::Test::MergeableNotice>();
+        broker->Send<::Test::MergeableNotice>();
+        broker->Send<::Test::MergeableNotice>();
+
+        broker->Send<::Test::UnMergeableNotice>();
+        broker->Send<::Test::UnMergeableNotice>();
+        broker->Send<::Test::UnMergeableNotice>();
+
+        // No notices are emitted during a transaction.
+        ASSERT_EQ(_listener.Received<::Test::MergeableNotice>(), 0);
+        ASSERT_EQ(_listener.Received<::Test::UnMergeableNotice>(), 0);
+    }
+
+    // Consolidated notices (if required) are sent when transaction is over.
+    ASSERT_EQ(_listener.Received<::Test::MergeableNotice>(), 1);
+    ASSERT_EQ(_listener.Received<::Test::UnMergeableNotice>(), 3);
+}
+
+TEST_F(TransactionTest, FromStageWithBlockAllPredicate)
+{
+    {
+        unf::NoticeTransaction transaction(
+            _stage, unf::CapturePredicate::BlockAll());
+
+        auto broker = transaction.GetBroker();
+        ASSERT_EQ(broker, unf::Broker::Create(_stage));
+
+        broker->Send<::Test::MergeableNotice>();
+        broker->Send<::Test::MergeableNotice>();
+        broker->Send<::Test::MergeableNotice>();
+
+        broker->Send<::Test::UnMergeableNotice>();
+        broker->Send<::Test::UnMergeableNotice>();
+        broker->Send<::Test::UnMergeableNotice>();
+
+        // No notices are emitted during a transaction.
+        ASSERT_EQ(_listener.Received<::Test::MergeableNotice>(), 0);
+        ASSERT_EQ(_listener.Received<::Test::UnMergeableNotice>(), 0);
+    }
+
+    // No notices are emitted after the transaction either.
+    ASSERT_EQ(_listener.Received<::Test::MergeableNotice>(), 0);
+    ASSERT_EQ(_listener.Received<::Test::UnMergeableNotice>(), 0);
+}
+
+TEST_F(TransactionTest, FromStageWithBlockTypePredicate)
+{
+    {
+        // Filter out UnMergeableNotice type.
+        std::string target = typeid(::Test::UnMergeableNotice).name();
+
+        unf::NoticeTransaction transaction(
+            _stage, unf::CapturePredicate::BlockType(target));
+
+        auto broker = transaction.GetBroker();
+        ASSERT_EQ(broker, unf::Broker::Create(_stage));
+
+        broker->Send<::Test::MergeableNotice>();
+        broker->Send<::Test::MergeableNotice>();
+        broker->Send<::Test::MergeableNotice>();
+
+        broker->Send<::Test::UnMergeableNotice>();
+        broker->Send<::Test::UnMergeableNotice>();
+        broker->Send<::Test::UnMergeableNotice>();
+
+        // No notices are emitted during a transaction.
+        ASSERT_EQ(_listener.Received<::Test::MergeableNotice>(), 0);
+        ASSERT_EQ(_listener.Received<::Test::UnMergeableNotice>(), 0);
+    }
+
+    // Consolidated notices (if required) are sent when transaction is over.
+    ASSERT_EQ(_listener.Received<::Test::MergeableNotice>(), 1);
+    ASSERT_EQ(_listener.Received<::Test::UnMergeableNotice>(), 0);
+}
+
+TEST_F(TransactionTest, FromStageWithBlockTypesPredicate)
+{
+    {
+        // Filter out MergeableNotice and UnMergeableNotice types.
+        std::vector<std::string> targets {
+            typeid(::Test::MergeableNotice).name(),
+            typeid(::Test::UnMergeableNotice).name()
+        };
+
+        unf::NoticeTransaction transaction(
+            _stage, unf::CapturePredicate::BlockTypes(targets));
+
+        auto broker = transaction.GetBroker();
+        ASSERT_EQ(broker, unf::Broker::Create(_stage));
+
+        broker->Send<::Test::MergeableNotice>();
+        broker->Send<::Test::MergeableNotice>();
+        broker->Send<::Test::MergeableNotice>();
+
+        broker->Send<::Test::UnMergeableNotice>();
+        broker->Send<::Test::UnMergeableNotice>();
+        broker->Send<::Test::UnMergeableNotice>();
+
+        // No notices are emitted during a transaction.
+        ASSERT_EQ(_listener.Received<::Test::MergeableNotice>(), 0);
+        ASSERT_EQ(_listener.Received<::Test::UnMergeableNotice>(), 0);
+    }
+
+    // No notices are emitted after the transaction either.
+    ASSERT_EQ(_listener.Received<::Test::MergeableNotice>(), 0);
     ASSERT_EQ(_listener.Received<::Test::UnMergeableNotice>(), 0);
 }
 

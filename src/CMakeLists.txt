@@ -1,9 +1,9 @@
 add_library(unf
     unf/broker.cpp
+    unf/capturePredicate.cpp
     unf/dispatcher.cpp
     unf/merger.cpp
     unf/notice.cpp
-    unf/predicate.cpp
     unf/transaction.cpp
 )
 

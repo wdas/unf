@@ -2,7 +2,7 @@
 #define USD_NOTICE_FRAMEWORK_PYTHON_PREDICATE_H
 
 #include "unf/broker.h"
-#include "unf/predicate.h"
+#include "unf/capturePredicate.h"
 
 #include <pxr/base/tf/pyLock.h>
 #include <pxr/base/tf/pyNoticeWrapper.h>

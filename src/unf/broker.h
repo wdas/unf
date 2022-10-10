@@ -3,7 +3,7 @@
 
 #include "unf/merger.h"
 #include "unf/notice.h"
-#include "unf/predicate.h"
+#include "unf/capturePredicate.h"
 
 #include <pxr/base/plug/plugin.h>
 #include <pxr/base/plug/registry.h>
@@ -48,8 +48,8 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
 
     void BeginTransaction(
         CapturePredicate predicate = CapturePredicate::Default());
-        
-    void BeginTransaction(CapturePredicateFunc);
+
+    void BeginTransaction(const CapturePredicateFunc&);
 
     void EndTransaction();
 

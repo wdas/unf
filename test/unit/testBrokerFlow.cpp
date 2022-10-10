@@ -1,5 +1,5 @@
 #include <unf/broker.h>
-#include <unf/predicate.h>
+#include <unf/capturePredicate.h>
 
 #include <unfTest/listener.h>
 #include <unfTest/notice.h>

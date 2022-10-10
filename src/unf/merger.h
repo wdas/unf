@@ -2,7 +2,7 @@
 #define NOTICE_BROKER_MERGER_H
 
 #include "unf/notice.h"
-#include "unf/predicate.h"
+#include "unf/capturePredicate.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/common.h>

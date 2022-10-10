@@ -2,6 +2,7 @@
 #include "unf/dispatcher.h"
 #include "unf/merger.h"
 #include "unf/notice.h"
+#include "unf/capturePredicate.h"
 
 #include <pxr/base/tf/weakPtr.h>
 #include <pxr/pxr.h>
@@ -51,7 +52,7 @@ void Broker::BeginTransaction(CapturePredicate predicate)
     _mergers.push_back(NoticeMerger(predicate));
 }
 
-void Broker::BeginTransaction(CapturePredicateFunc function)
+void Broker::BeginTransaction(const CapturePredicateFunc& function)
 {
     _mergers.push_back(NoticeMerger(CapturePredicate(function)));
 }

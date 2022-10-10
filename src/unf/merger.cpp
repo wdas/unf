@@ -1,6 +1,6 @@
 #include "unf/merger.h"
 #include "unf/dispatcher.h"
-#include "unf/predicate.h"
+#include "unf/capturePredicate.h"
 #include "unf/notice.h"
 
 #include <pxr/pxr.h>
