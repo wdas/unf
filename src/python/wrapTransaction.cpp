@@ -23,7 +23,7 @@ struct PythonNoticeTransaction {
         const BrokerWeakPtr& broker, const _CapturePredicateFunc& func)
         : _func(func)
     {
-        _makeContext = [&]() {
+        _makeContext = [=]() {
             return new NoticeTransaction(broker, WrapPredicate(_func));
         };
     }
@@ -32,7 +32,7 @@ struct PythonNoticeTransaction {
         const BrokerWeakPtr& broker, CapturePredicate predicate)
         : _predicate(predicate)
     {
-        _makeContext = [&]() {
+        _makeContext = [=]() {
             return new NoticeTransaction(broker, _predicate);
         };
     }
@@ -41,7 +41,7 @@ struct PythonNoticeTransaction {
         const UsdStageWeakPtr& stage, const _CapturePredicateFunc& func)
         : _func(func)
     {
-        _makeContext = [&]() {
+        _makeContext = [=]() {
             return new NoticeTransaction(stage, WrapPredicate(_func));
         };
     }
@@ -50,7 +50,7 @@ struct PythonNoticeTransaction {
         const UsdStageWeakPtr& stage, CapturePredicate predicate)
         : _predicate(predicate)
     {
-        _makeContext = [&]() {
+        _makeContext = [=]() {
             return new NoticeTransaction(stage, _predicate);
         };
     }
