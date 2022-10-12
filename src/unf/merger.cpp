@@ -11,7 +11,7 @@ PXR_NAMESPACE_USING_DIRECTIVE
 namespace unf {
 
 NoticeMerger::NoticeMerger(CapturePredicate predicate)
-    : _predicate(predicate)
+    : _predicate(std::move(predicate))
 {
 
 }
