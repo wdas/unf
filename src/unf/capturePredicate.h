@@ -21,9 +21,6 @@ public:
 
     static CapturePredicate Default();
     static CapturePredicate BlockAll();
-    static CapturePredicate BlockType(std::string);
-    static CapturePredicate BlockTypes(
-        const std::vector<std::string>&);
 
 private:
     CapturePredicateFunc _function = nullptr;

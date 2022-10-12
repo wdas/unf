@@ -10,7 +10,6 @@ using namespace unf;
 PXR_NAMESPACE_USING_DIRECTIVE
 
 
-
 void wrapCapturePredicate()
 {
     class_<CapturePredicate>("CapturePredicate", no_init)
@@ -23,17 +22,5 @@ void wrapCapturePredicate()
         .def(
             "BlockAll",
             &CapturePredicate::BlockAll)
-        .staticmethod("BlockAll")
-
-        .def(
-            "BlockType",
-            &CapturePredicate::BlockType,
-            arg("notice_type"))
-        .staticmethod("BlockType")
-
-        .def(
-            "BlockTypes",
-            &CapturePredicate::BlockTypes,
-            arg("notice_types"))
-        .staticmethod("BlockTypes");
+        .staticmethod("BlockAll");
 }
