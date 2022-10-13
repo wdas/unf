@@ -1,0 +1,21 @@
+---
+BasedOnStyle: Google
+AlignAfterOpenBracket: AlwaysBreak
+AllowAllParametersOfDeclarationOnNextLine: true
+AccessModifierOffset: -2
+BinPackArguments: false
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Stroustrup
+IndentWidth: '4'
+Language: Cpp
+MaxEmptyLinesToKeep: 2
+SpaceAfterControlStatementKeyword: true
+SpaceAfterCStyleCast: false
+SpaceBeforeAssignmentOperators: true
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 2
+SpacesInAngles: false
+SpacesInCStyleCastParentheses: false
+SpacesInParentheses: false
+UseTab: Never
+...

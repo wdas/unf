@@ -1,0 +1,16 @@
+{
+    "Plugins": [
+        {
+            "Info": {
+                "Types" : {
+                    "Test::NewStageDispatcher" : {
+                        "bases": [ "Dispatcher" ]
+                    }
+                }
+            },
+            "LibraryPath": "libunfTestNewStageDispatcher.so",
+            "Name": "NewStageDispatcher",
+            "Type": "library"
+        }
+    ]
+}
