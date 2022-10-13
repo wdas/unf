@@ -1,6 +1,7 @@
 #include "./predicate.h"
 
 #include "unf/broker.h"
+#include "unf/capturePredicate.h"
 #include "unf/pyNoticeWrapper.h"
 
 #include <pxr/base/tf/makePyConstructor.h>
@@ -18,13 +19,9 @@ using namespace unf;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
-void Broker_BeginTransaction(Broker& self, object predicate)
+void Broker_BeginTransaction_WithFunc(Broker& self, object predicate)
 {
-    NoticeCaturePredicateFunc _predicate = nullptr;
-    if (predicate) {
-        _predicate = WrapPredicate(predicate);
-    }
-
+    auto _predicate = WrapPredicate(predicate);
     self.BeginTransaction(_predicate);
 }
 
@@ -36,7 +33,7 @@ void Broker_Send(Broker& self, TfRefPtr<PyBrokerNoticeWrapperBase> notice)
 void wrapBroker()
 {
     // Ensure that predicate function can be passed from Python.
-    TfPyFunctionFromPython<_CaturePredicateFuncRaw>();
+    TfPyFunctionFromPython<_CapturePredicateFuncRaw>();
 
     class_<Broker, BrokerWeakPtr, boost::noncopyable>("Broker", no_init)
 
@@ -60,8 +57,14 @@ void wrapBroker()
 
         .def(
             "BeginTransaction",
-            &Broker_BeginTransaction,
-            ((arg("self"), arg("predicate") = object())))
+            (void(Broker::*)(CapturePredicate))
+            &Broker::BeginTransaction,
+            (arg("predicate") = CapturePredicate::Default()))
+
+        .def(
+            "BeginTransaction",
+            &Broker_BeginTransaction_WithFunc,
+            ((arg("self"), arg("predicate"))))
 
         .def("EndTransaction", &Broker::EndTransaction);
 }

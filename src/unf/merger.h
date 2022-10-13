@@ -2,6 +2,7 @@
 #define NOTICE_BROKER_MERGER_H
 
 #include "unf/notice.h"
+#include "unf/capturePredicate.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/common.h>
@@ -16,19 +17,13 @@ namespace unf {
 
 class NoticeMerger;
 
-using NoticeCaturePredicateFunc =
-    std::function<bool(const BrokerNotice::StageNotice&)>;
-
 using _StageNoticePtrList = std::vector<BrokerNotice::StageNoticeRefPtr>;
 
 using _StageNoticePtrMap = std::unordered_map<std::string, _StageNoticePtrList>;
 
 class NoticeMerger {
   public:
-    NoticeMerger(const NoticeCaturePredicateFunc& predicate = nullptr)
-        : _predicate(predicate)
-    {
-    }
+    NoticeMerger(CapturePredicate predicate = CapturePredicate::Default());
 
     void Add(const BrokerNotice::StageNoticeRefPtr&);
     void Join(NoticeMerger&);
@@ -39,7 +34,7 @@ class NoticeMerger {
 
   private:
     _StageNoticePtrMap _noticeMap;
-    NoticeCaturePredicateFunc _predicate = nullptr;
+    CapturePredicate _predicate;
 };
 
 }  // namespace unf

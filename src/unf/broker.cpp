@@ -2,6 +2,7 @@
 #include "unf/dispatcher.h"
 #include "unf/merger.h"
 #include "unf/notice.h"
+#include "unf/capturePredicate.h"
 
 #include <pxr/base/tf/weakPtr.h>
 #include <pxr/pxr.h>
@@ -46,9 +47,14 @@ BrokerPtr Broker::Create(const UsdStageWeakPtr& stage)
 
 bool Broker::IsInTransaction() { return _mergers.size() > 0; }
 
-void Broker::BeginTransaction(const NoticeCaturePredicateFunc& predicate)
+void Broker::BeginTransaction(CapturePredicate predicate)
 {
     _mergers.push_back(NoticeMerger(predicate));
+}
+
+void Broker::BeginTransaction(const CapturePredicateFunc& function)
+{
+    _mergers.push_back(NoticeMerger(CapturePredicate(function)));
 }
 
 void Broker::EndTransaction()

@@ -2,6 +2,7 @@
 #define USD_NOTICE_FRAMEWORK_TRANSACTION_H
 
 #include "unf/broker.h"
+#include "unf/capturePredicate.h"
 
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/common.h>
@@ -12,11 +13,16 @@ class NoticeTransaction {
   public:
     NoticeTransaction(
         const BrokerPtr &,
-        const NoticeCaturePredicateFunc &predicate = nullptr);
+        CapturePredicate predicate = CapturePredicate::Default());
+
+    NoticeTransaction(const BrokerPtr &, const CapturePredicateFunc&);
 
     NoticeTransaction(
         const PXR_NS::UsdStageRefPtr &,
-        const NoticeCaturePredicateFunc &predicate = nullptr);
+        CapturePredicate predicate = CapturePredicate::Default());
+
+    NoticeTransaction(
+      const PXR_NS::UsdStageRefPtr &, const CapturePredicateFunc&);
 
     ~NoticeTransaction();
 
