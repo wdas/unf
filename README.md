@@ -1,6 +1,6 @@
 # USD Notice Framework
 
-[![Tests](https://github.com/wdas/usd-notice-framework/actions/workflows/test.yml/badge.svg?branch=prototype)](https://github.com/wdas/usd-notice-framework/actions/workflows/test.yml)
+[![Tests](https://github.com/wdas/usd-notice-framework/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/wdas/usd-notice-framework/actions/workflows/test.yml)
 
 Notice management library built over USD Notices.
 
