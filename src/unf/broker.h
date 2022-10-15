@@ -31,8 +31,10 @@ class Dispatcher;
 /// Convenient alias for Broker reference pointer.
 using BrokerPtr = PXR_NS::TfRefPtr<Broker>;
 
+/// Convenient alias for Broker weak pointer.
 using BrokerWeakPtr = PXR_NS::TfWeakPtr<Broker>;
 
+/// Convenient alias for Dispatcher reference pointer.
 using DispatcherPtr = PXR_NS::TfRefPtr<Dispatcher>;
 
 /// \class Broker
