@@ -1,6 +1,8 @@
 #ifndef USD_NOTICE_FRAMEWORK_DISPATCHER_H
 #define USD_NOTICE_FRAMEWORK_DISPATCHER_H
 
+/// \file unf/dispatcher.h
+
 #include "unf/broker.h"
 #include "unf/notice.h"
 

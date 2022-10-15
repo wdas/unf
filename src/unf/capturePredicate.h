@@ -1,6 +1,8 @@
 #ifndef USD_NOTICE_FRAMEWORK_CAPTURE_PREDICATE_H
 #define USD_NOTICE_FRAMEWORK_CAPTURE_PREDICATE_H
 
+/// \file unf/capturePredicate.h
+
 #include "unf/notice.h"
 
 #include <functional>
@@ -9,6 +11,8 @@
 
 namespace unf {
 
+/// Function defining whether a UnfNotice::StageNotice notice
+/// can be captured.
 using CapturePredicateFunc =
     std::function<bool(const UnfNotice::StageNotice&)>;
 

@@ -1,6 +1,8 @@
 #ifndef USD_NOTICE_FRAMEWORK_TRANSACTION_H
 #define USD_NOTICE_FRAMEWORK_TRANSACTION_H
 
+/// \file unf/transaction.h
+
 #include "unf/broker.h"
 #include "unf/capturePredicate.h"
 

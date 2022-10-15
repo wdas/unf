@@ -1,6 +1,8 @@
 #ifndef USD_NOTICE_FRAMEWORK_NOTICE_H
 #define USD_NOTICE_FRAMEWORK_NOTICE_H
 
+/// \file unf/notice.h
+
 #include <pxr/base/arch/demangle.h>
 #include <pxr/base/tf/notice.h>
 #include <pxr/base/tf/refBase.h>
