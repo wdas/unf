@@ -1,7 +1,6 @@
 #ifndef USD_NOTICE_FRAMEWORK_BROKER_H
 #define USD_NOTICE_FRAMEWORK_BROKER_H
 
-#include "unf/merger.h"
 #include "unf/notice.h"
 #include "unf/capturePredicate.h"
 
@@ -84,8 +83,25 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     // A registry of hashed stage ptr to the corresponding stage's broker ptr.
     static std::unordered_map<size_t, BrokerPtr> Registry;
 
+    class _NoticeMerger {
+    public:
+        _NoticeMerger(CapturePredicate predicate = CapturePredicate::Default());
+
+        void Add(const BrokerNotice::StageNoticeRefPtr&);
+        void Join(_NoticeMerger&);
+        void Merge();
+        void Send(const PXR_NS::UsdStageWeakPtr&);
+
+    private:
+        using _NoticePtrList = std::vector<BrokerNotice::StageNoticeRefPtr>;
+        using _NoticePtrMap = std::unordered_map<std::string, _NoticePtrList>;
+
+        _NoticePtrMap _noticeMap;
+        CapturePredicate _predicate;
+    };
+
     PXR_NS::UsdStageWeakPtr _stage;
-    std::vector<NoticeMerger> _mergers;
+    std::vector<_NoticeMerger> _mergers;
     std::unordered_map<std::string, DispatcherPtr> _dispatcherMap;
 };
 

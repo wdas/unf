@@ -1,6 +1,5 @@
 #include "unf/broker.h"
 #include "unf/dispatcher.h"
-#include "unf/merger.h"
 #include "unf/notice.h"
 #include "unf/capturePredicate.h"
 
@@ -49,12 +48,12 @@ bool Broker::IsInTransaction() { return _mergers.size() > 0; }
 
 void Broker::BeginTransaction(CapturePredicate predicate)
 {
-    _mergers.push_back(NoticeMerger(predicate));
+    _mergers.push_back(_NoticeMerger(predicate));
 }
 
 void Broker::BeginTransaction(const CapturePredicateFunc& function)
 {
-    _mergers.push_back(NoticeMerger(CapturePredicate(function)));
+    _mergers.push_back(_NoticeMerger(CapturePredicate(function)));
 }
 
 void Broker::EndTransaction()
@@ -63,7 +62,7 @@ void Broker::EndTransaction()
         return;
     }
 
-    NoticeMerger& merger = _mergers.back();
+    _NoticeMerger& merger = _mergers.back();
 
     // If there are only one merger left, process all notices.
     if (_mergers.size() == 1) {
@@ -133,6 +132,73 @@ void Broker::_DiscoverDispatchers()
 void Broker::_Add(const DispatcherPtr& dispatcher)
 {
     _dispatcherMap[dispatcher->GetIdentifier()] = dispatcher;
+}
+
+Broker::_NoticeMerger::_NoticeMerger(CapturePredicate predicate)
+    : _predicate(std::move(predicate))
+{
+
+}
+
+void Broker::_NoticeMerger::Add(const BrokerNotice::StageNoticeRefPtr& notice)
+{
+    // Indicate whether the notice needs to be captured.
+    if (!_predicate(*notice)) return;
+
+    // Store notices per type name, so that each type can be merged if
+    // required.
+    std::string name = notice->GetTypeId();
+    _noticeMap[name].push_back(notice);
+}
+
+void Broker::_NoticeMerger::Join(_NoticeMerger& merger)
+{
+    for (auto& element : merger._noticeMap) {
+        auto& source = element.second;
+        auto& target = _noticeMap[element.first];
+
+        target.reserve(target.size() + source.size());
+        std::move(
+            std::begin(source), std::end(source), std::back_inserter(target));
+
+        source.clear();
+    }
+
+    merger._noticeMap.clear();
+}
+
+void Broker::_NoticeMerger::Merge()
+{
+    for (auto& element : _noticeMap) {
+        auto& notices = element.second;
+
+        // If there are more than one notice for this type and
+        // if the notices are mergeable, we only need to keep the
+        // first notice, and all other can be pruned.
+        if (notices.size() > 1 && notices[0]->IsMergeable()) {
+            auto& notice = notices.at(0);
+            auto it = std::next(notices.begin());
+
+            while (it != notices.end()) {
+                // Attempt to merge content of notice with first notice
+                // if this is possible.
+                notice->Merge(std::move(**it));
+                it = notices.erase(it);
+            }
+        }
+    }
+}
+
+void Broker::_NoticeMerger::Send(const UsdStageWeakPtr& stage)
+{
+    for (auto& element : _noticeMap) {
+        auto& notices = element.second;
+
+        // Send all remaining notices.
+        for (const auto& notice : element.second) {
+            notice->Send(stage);
+        }
+    }
 }
 
 }  // namespace unf
