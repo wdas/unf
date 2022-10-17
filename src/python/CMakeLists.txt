@@ -3,7 +3,6 @@ add_library(pyUnf SHARED
     wrapBroker.cpp
     wrapCapturePredicate.cpp
     wrapNotice.cpp
-    wrapNoticeWrapper.cpp
     wrapTransaction.cpp
 )
 
