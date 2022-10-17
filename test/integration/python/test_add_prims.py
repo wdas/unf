@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd, Tf
-from usd_notice_framework import Broker, BrokerNotice, NoticeCache
+from usd_notice_framework import Broker, BrokerNotice
 
 import pytest
 
@@ -173,66 +173,3 @@ def test_add_prims_transaction_objectschanged():
 
     # Ensure that one notice was received.
     assert len(received) == 1
-
-def test_add_prims_caching_objectschanged():
-    """Add several prims to stage while caching ObjectsChanged notices.
-    """
-    stage = Usd.Stage.CreateInMemory()
-    Broker.Create(stage)
-
-    cache = NoticeCache(BrokerNotice.ObjectsChanged)
-
-    # Edit the stage...
-    stage.DefinePrim("/Foo")
-    stage.DefinePrim("/Bar")
-    stage.DefinePrim("/Baz")
-
-    # Ensure that three notices have been cached.
-    assert cache.Size() == 3
-
-    # Ensure that notice data are all as expected.
-    assert len(cache.GetAll()[0].GetResyncedPaths()) == 1
-    assert len(cache.GetAll()[0].GetChangedInfoOnlyPaths()) == 0
-    assert cache.GetAll()[0].GetResyncedPaths()[0] == "/Foo"
-
-    assert len(cache.GetAll()[1].GetResyncedPaths()) == 1
-    assert len(cache.GetAll()[1].GetChangedInfoOnlyPaths()) == 0
-    assert cache.GetAll()[1].GetResyncedPaths()[0] == "/Bar"
-
-    assert len(cache.GetAll()[2].GetResyncedPaths()) == 1
-    assert len(cache.GetAll()[2].GetChangedInfoOnlyPaths()) == 0
-    assert cache.GetAll()[2].GetResyncedPaths()[0] == "/Baz"
-
-    cache.MergeAll()
-
-    # Ensure that we have one merged notice after consolidation.
-    assert cache.Size() == 1
-
-    # Ensure that the content of the notice didn't change.
-    assert len(cache.GetAll()[0].GetResyncedPaths()) == 3
-    assert len(cache.GetAll()[0].GetChangedInfoOnlyPaths()) == 0
-    assert cache.GetAll()[0].GetResyncedPaths()[0] == "/Foo"
-    assert cache.GetAll()[0].GetResyncedPaths()[1] == "/Bar"
-    assert cache.GetAll()[0].GetResyncedPaths()[2] == "/Baz"
-
-def test_add_prims_caching_stagecontentschanged():
-    """Add several prims to stage while caching StageContentsChanged notices.
-    """
-    stage = Usd.Stage.CreateInMemory()
-    Broker.Create(stage)
-
-    cache = NoticeCache(BrokerNotice.StageContentsChanged)
-
-    # Edit the stage...
-    stage.DefinePrim("/Foo")
-    stage.DefinePrim("/Bar")
-    stage.DefinePrim("/Baz")
-
-    # Ensure that three notices have been cached.
-    assert cache.Size() == 3
-
-    cache.MergeAll()
-
-    # Ensure that we have one merged notice after consolidation.
-    assert cache.Size() == 1
-

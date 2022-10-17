@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd, Sdf, Tf
-from usd_notice_framework import Broker, BrokerNotice, NoticeCache
+from usd_notice_framework import Broker, BrokerNotice
 
 import pytest
 
@@ -154,28 +154,3 @@ def test_change_edit_target_blocking(
 
     # Ensure that no broker notices have been received.
     assert len(received_broker) == 0
-
-def test_change_edit_target_caching(stage_with_layers):
-    """Change edit target while caching StageEditTargetChanged notices.
-    """
-    stage = stage_with_layers
-    Broker.Create(stage)
-
-    cache = NoticeCache(BrokerNotice.StageEditTargetChanged)
-
-    # Edit the stage...
-    layers = stage.GetRootLayer().subLayerPaths
-    layer1 = Sdf.Layer.Find(layers[0])
-    layer2 = Sdf.Layer.Find(layers[1])
-
-    stage.SetEditTarget(Usd.EditTarget(layer1))
-    stage.SetEditTarget(Usd.EditTarget(layer2))
-
-    # Ensure that two notices has been cached.
-    assert cache.Size() == 2
-
-    cache.MergeAll()
-
-    # Ensure that we have one notice after consolidation.
-    assert cache.Size() == 1
-
