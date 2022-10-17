@@ -1,5 +1,4 @@
 #include <unf/broker.h>
-#include <unf/noticeCache.h>
 
 #include <unfTest/listener.h>
 #include <unfTest/notice.h>
@@ -194,70 +193,4 @@ TEST_F(AddPrimsTest, Transaction_ObjectsChanged)
     ASSERT_EQ(n.GetResyncedPaths().at(1), PXR_NS::SdfPath{"/Bar"});
     ASSERT_EQ(n.GetResyncedPaths().at(2), PXR_NS::SdfPath{"/Baz"});
     ASSERT_EQ(n.GetChangedInfoOnlyPaths().size(), 0);
-}
-
-TEST_F(AddPrimsTest, Caching_ObjectsChanged)
-{
-    auto broker = unf::Broker::Create(_stage);
-
-    unf::NoticeCache<_Broker::ObjectsChanged> cache;
-
-    _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
-    _stage->DefinePrim(PXR_NS::SdfPath{"/Bar"});
-    _stage->DefinePrim(PXR_NS::SdfPath{"/Baz"});
-
-    // Ensure that three notices have been cached.
-    ASSERT_EQ(cache.Size(), 3);
-
-    // Ensure that notice data are all as expected.
-    {
-        auto& n1 = cache.GetAll().at(0);
-        ASSERT_EQ(n1->GetResyncedPaths().size(), 1);
-        ASSERT_EQ(n1->GetResyncedPaths().at(0), PXR_NS::SdfPath{"/Foo"});
-        ASSERT_EQ(n1->GetChangedInfoOnlyPaths().size(), 0);
-
-        auto& n2 = cache.GetAll().at(1);
-        ASSERT_EQ(n2->GetResyncedPaths().size(), 1);
-        ASSERT_EQ(n2->GetResyncedPaths().at(0), PXR_NS::SdfPath{"/Bar"});
-        ASSERT_EQ(n2->GetChangedInfoOnlyPaths().size(), 0);
-
-        auto& n3 = cache.GetAll().at(2);
-        ASSERT_EQ(n3->GetResyncedPaths().size(), 1);
-        ASSERT_EQ(n3->GetResyncedPaths().at(0), PXR_NS::SdfPath{"/Baz"});
-        ASSERT_EQ(n3->GetChangedInfoOnlyPaths().size(), 0);
-    }
-
-    cache.MergeAll();
-
-    // Ensure that we have one merged notice after consolidation.
-    ASSERT_EQ(cache.Size(), 1);
-
-    // Ensure that the content of the notice is correct.
-    {
-        auto& n = cache.GetAll().at(0);
-        ASSERT_EQ(n->GetResyncedPaths().size(), 3);
-        ASSERT_EQ(n->GetResyncedPaths().at(0), PXR_NS::SdfPath{"/Foo"});
-        ASSERT_EQ(n->GetResyncedPaths().at(1), PXR_NS::SdfPath{"/Bar"});
-        ASSERT_EQ(n->GetResyncedPaths().at(2), PXR_NS::SdfPath{"/Baz"});
-        ASSERT_EQ(n->GetChangedInfoOnlyPaths().size(), 0);
-    }
-}
-
-TEST_F(AddPrimsTest, Caching_StageContentsChanged)
-{
-    auto broker = unf::Broker::Create(_stage);
-
-    unf::NoticeCache<_Broker::StageContentsChanged> cache;
-
-    _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
-    _stage->DefinePrim(PXR_NS::SdfPath{"/Bar"});
-    _stage->DefinePrim(PXR_NS::SdfPath{"/Baz"});
-
-    // Ensure that three notices have been cached.
-    ASSERT_EQ(cache.Size(), 3);
-
-    cache.MergeAll();
-
-    // Ensure that we have one merged notice after consolidation.
-    ASSERT_EQ(cache.Size(), 1);
 }

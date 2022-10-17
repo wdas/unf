@@ -1,5 +1,4 @@
 #include <unf/broker.h>
-#include <unf/noticeCache.h>
 
 #include <unfTest/listener.h>
 #include <unfTest/notice.h>
@@ -146,22 +145,4 @@ TEST_F(ChangeEditTargetTest, Blocking)
     ASSERT_EQ(_brokerListener.Received<_Broker::ObjectsChanged>(), 0);
     ASSERT_EQ(_brokerListener.Received<_Broker::StageEditTargetChanged>(), 0);
     ASSERT_EQ(_brokerListener.Received<_Broker::LayerMutingChanged>(), 0);
-}
-
-TEST_F(ChangeEditTargetTest, Caching_StageEditTargetChanged)
-{
-    auto broker = unf::Broker::Create(_stage);
-
-    unf::NoticeCache<_Broker::StageEditTargetChanged> cache;
-
-    _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[0]));
-    _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[1]));
-
-    // Ensure that two notices have been cached.
-    ASSERT_EQ(cache.Size(), 2);
-
-    cache.MergeAll();
-
-    // Ensure that we have one merged notice after consolidation.
-    ASSERT_EQ(cache.Size(), 1);
 }

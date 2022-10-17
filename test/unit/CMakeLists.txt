@@ -46,16 +46,6 @@ gtest_discover_tests(
         "PXR_PLUGINPATH_NAME=${_path}:$ENV{PXR_PLUGINPATH_NAME}"
 )
 
-add_executable(testUnitNoticeCache testNoticeCache.cpp)
-target_link_libraries(testUnitNoticeCache
-    PRIVATE
-        unf
-        unfTest
-        GTest::gtest
-        GTest::gtest_main
-)
-gtest_discover_tests(testUnitNoticeCache)
-
 add_executable(testUnitTransaction testTransaction.cpp)
 target_link_libraries(testUnitTransaction
     PRIVATE
