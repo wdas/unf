@@ -2,7 +2,6 @@
 
 #include "unf/broker.h"
 #include "unf/capturePredicate.h"
-#include "unf/pyNoticeWrapper.h"
 
 #include <pxr/base/tf/makePyConstructor.h>
 #include <pxr/base/tf/pyFunction.h>
@@ -23,11 +22,6 @@ void Broker_BeginTransaction_WithFunc(Broker& self, object predicate)
 {
     auto _predicate = WrapPredicate(predicate);
     self.BeginTransaction(_predicate);
-}
-
-void Broker_Send(Broker& self, TfRefPtr<PyBrokerNoticeWrapperBase> notice)
-{
-    self.Send(notice->Get());
 }
 
 void wrapBroker()
@@ -52,8 +46,6 @@ void wrapBroker()
             return_value_policy<return_by_value>())
 
         .def("IsInTransaction", &Broker::IsInTransaction)
-
-        .def("Send", &Broker_Send)
 
         .def(
             "BeginTransaction",
