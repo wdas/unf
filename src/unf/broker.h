@@ -52,10 +52,10 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
 
     void EndTransaction();
 
-    template <class BrokerNotice, class... Args>
+    template <class UnfNotice, class... Args>
     void Send(Args&&... args);
 
-    void Send(const BrokerNotice::StageNoticeRefPtr&);
+    void Send(const UnfNotice::StageNoticeRefPtr&);
 
     DispatcherPtr& GetDispatcher(std::string identifier);
 
@@ -87,13 +87,13 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     public:
         _NoticeMerger(CapturePredicate predicate = CapturePredicate::Default());
 
-        void Add(const BrokerNotice::StageNoticeRefPtr&);
+        void Add(const UnfNotice::StageNoticeRefPtr&);
         void Join(_NoticeMerger&);
         void Merge();
         void Send(const PXR_NS::UsdStageWeakPtr&);
 
     private:
-        using _NoticePtrList = std::vector<BrokerNotice::StageNoticeRefPtr>;
+        using _NoticePtrList = std::vector<UnfNotice::StageNoticeRefPtr>;
         using _NoticePtrMap = std::unordered_map<std::string, _NoticePtrList>;
 
         _NoticePtrMap _noticeMap;
@@ -105,11 +105,11 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     std::unordered_map<std::string, DispatcherPtr> _dispatcherMap;
 };
 
-template <class BrokerNotice, class... Args>
+template <class UnfNotice, class... Args>
 void Broker::Send(Args&&... args)
 {
-    PXR_NS::TfRefPtr<BrokerNotice> _notice =
-        BrokerNotice::Create(std::forward<Args>(args)...);
+    PXR_NS::TfRefPtr<UnfNotice> _notice =
+        UnfNotice::Create(std::forward<Args>(args)...);
 
     Send(_notice);
 }

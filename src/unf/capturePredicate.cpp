@@ -15,7 +15,7 @@ CapturePredicate::CapturePredicate(const CapturePredicateFunc& function)
 }
 
 bool CapturePredicate::operator()(
-    const BrokerNotice::StageNotice& notice) const
+    const UnfNotice::StageNotice& notice) const
 {
     if (!_function) return true;
     return _function(notice);
@@ -23,13 +23,13 @@ bool CapturePredicate::operator()(
 
 CapturePredicate CapturePredicate::Default()
 {
-    auto function = [](const BrokerNotice::StageNotice&) { return true; };
+    auto function = [](const UnfNotice::StageNotice&) { return true; };
     return CapturePredicate(function);
 }
 
 CapturePredicate CapturePredicate::BlockAll()
 {
-    auto function = [](const BrokerNotice::StageNotice&) { return false; };
+    auto function = [](const UnfNotice::StageNotice&) { return false; };
     return CapturePredicate(function);
 }
 

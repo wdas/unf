@@ -23,7 +23,7 @@ using _CapturePredicateFunc = std::function<_CapturePredicateFuncRaw>;
 static CapturePredicateFunc WrapPredicate(_CapturePredicateFunc fn)
 {
     // Capture by-copy to prevent boost object from being destroyed.
-    return [=](const BrokerNotice::StageNotice& notice) {
+    return [=](const UnfNotice::StageNotice& notice) {
         TfPyLock lock;
 
         if (!fn) return true;

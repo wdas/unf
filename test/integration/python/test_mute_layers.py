@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd, Sdf, Tf
-from usd_notice_framework import Broker, BrokerNotice
+from usd_notice_framework import Broker, UnfNotice
 
 import pytest
 
@@ -28,7 +28,7 @@ def test_mute_layers(notice_type, excepted, stage_with_layers):
     # Listen to broker notice.
     received_broker = []
     key1 = Tf.Notice.Register(
-        getattr(BrokerNotice, notice_type),
+        getattr(UnfNotice, notice_type),
         lambda n, _: received_broker.append(n), stage)
 
     # Listen to corresponding USD notice.
@@ -76,7 +76,7 @@ def test_mute_layers_batching(
     # Listen to broker notice.
     received_broker = []
     key1 = Tf.Notice.Register(
-        getattr(BrokerNotice, notice_type),
+        getattr(UnfNotice, notice_type),
         lambda n, _: received_broker.append(n), stage)
 
     # Listen to corresponding USD notice.
@@ -133,7 +133,7 @@ def test_mute_layers_blocking(
     # Listen to broker notice.
     received_broker = []
     key1 = Tf.Notice.Register(
-        getattr(BrokerNotice, notice_type),
+        getattr(UnfNotice, notice_type),
         lambda n, _: received_broker.append(n), stage)
 
     # Listen to corresponding USD notice.
@@ -192,7 +192,7 @@ def test_mute_layers_transaction_objectschanged(stage_with_layers):
     stage.SetEditTarget(Usd.EditTarget(layer2))
     stage.DefinePrim("/Bar")
 
-    key = Tf.Notice.Register(BrokerNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
 
     broker.BeginTransaction()
 
@@ -227,7 +227,7 @@ def test_mute_layers_transaction_layermutingchanged(stage_with_layers):
         assert notice.GetMutedLayers()[2] == layers[1]
         received.append(notice)
 
-    key = Tf.Notice.Register(BrokerNotice.LayerMutingChanged, _validate, stage)
+    key = Tf.Notice.Register(UnfNotice.LayerMutingChanged, _validate, stage)
 
     broker.BeginTransaction()
 

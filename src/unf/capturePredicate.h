@@ -10,14 +10,14 @@
 namespace unf {
 
 using CapturePredicateFunc =
-    std::function<bool(const BrokerNotice::StageNotice&)>;
+    std::function<bool(const UnfNotice::StageNotice&)>;
 
 class CapturePredicate
 {
 public:
     CapturePredicate(const CapturePredicateFunc&);
 
-    bool operator()(const BrokerNotice::StageNotice&) const;
+    bool operator()(const UnfNotice::StageNotice&) const;
 
     static CapturePredicate Default();
     static CapturePredicate BlockAll();

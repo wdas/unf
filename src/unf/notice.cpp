@@ -11,7 +11,7 @@ PXR_NAMESPACE_USING_DIRECTIVE
 
 namespace unf {
 
-namespace BrokerNotice {
+namespace UnfNotice {
 
 TF_REGISTRY_FUNCTION(TfType)
 {
@@ -188,6 +188,6 @@ void LayerMutingChanged::Merge(LayerMutingChanged&& notice)
     }
 }
 
-}  // namespace BrokerNotice
+}  // namespace UnfNotice
 
 }  // namespace unf

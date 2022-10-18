@@ -20,7 +20,7 @@ using TfTokenSet =
 using ChangedFieldMap =
     std::unordered_map<PXR_NS::SdfPath, TfTokenSet, PXR_NS::SdfPath::Hash>;
 
-namespace BrokerNotice {
+namespace UnfNotice {
 
 class StageNotice : public PXR_NS::TfNotice, public PXR_NS::TfRefBase {
   public:
@@ -177,7 +177,7 @@ class LayerMutingChanged : public StageNoticeImpl<LayerMutingChanged> {
     friend StageNoticeImpl<LayerMutingChanged>;
 };
 
-}  // namespace BrokerNotice
+}  // namespace UnfNotice
 
 }  // namespace unf
 

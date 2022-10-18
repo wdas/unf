@@ -29,7 +29,7 @@ TEST_F(ObjectsChangedTest, ResyncedObject)
 {
     auto prim1 = _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
 
-    ::Test::Observer<unf::BrokerNotice::ObjectsChanged> observer(_stage);
+    ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
 
     auto prim2 = _stage->DefinePrim(PXR_NS::SdfPath{"/Bar"});
 
@@ -47,7 +47,7 @@ TEST_F(ObjectsChangedTest, ChangedInfoOnly)
     auto prim1 = _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
     auto prim2 = _stage->DefinePrim(PXR_NS::SdfPath{"/Bar"});
 
-    ::Test::Observer<unf::BrokerNotice::ObjectsChanged> observer(_stage);
+    ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
 
     prim2.SetMetadata(PXR_NS::TfToken{"comment"}, "This is a test");
 
@@ -62,7 +62,7 @@ TEST_F(ObjectsChangedTest, ChangedInfoOnly)
 
 TEST_F(ObjectsChangedTest, GetResyncedPaths)
 {
-    ::Test::Observer<unf::BrokerNotice::ObjectsChanged> observer(_stage);
+    ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
 
     _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
 
@@ -77,7 +77,7 @@ TEST_F(ObjectsChangedTest, GetChangedInfoOnlyPaths)
 {
     auto prim = _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
 
-    ::Test::Observer<unf::BrokerNotice::ObjectsChanged> observer(_stage);
+    ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
 
     prim.SetMetadata(PXR_NS::TfToken{"comment"}, "This is a test");
 
@@ -93,7 +93,7 @@ TEST_F(ObjectsChangedTest, GetChangedFields)
 {
     auto prim = _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
 
-    ::Test::Observer<unf::BrokerNotice::ObjectsChanged> observer(_stage);
+    ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
 
     prim.SetMetadata(PXR_NS::TfToken{"comment"}, "This is a test");
 
@@ -113,7 +113,7 @@ TEST_F(ObjectsChangedTest, HasChangedFields)
 {
     auto prim = _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
 
-    ::Test::Observer<unf::BrokerNotice::ObjectsChanged> observer(_stage);
+    ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
 
     prim.SetMetadata(PXR_NS::TfToken{"comment"}, "This is a test");
 

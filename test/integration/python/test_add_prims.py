@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd, Tf
-from usd_notice_framework import Broker, BrokerNotice
+from usd_notice_framework import Broker, UnfNotice
 
 import pytest
 
@@ -28,7 +28,7 @@ def test_add_prims(notice_type, excepted):
     # Listen to broker notice.
     received_broker = []
     key1 = Tf.Notice.Register(
-        getattr(BrokerNotice, notice_type),
+        getattr(UnfNotice, notice_type),
         lambda n, _: received_broker.append(n), stage)
 
     # Listen to corresponding USD notice.
@@ -67,7 +67,7 @@ def test_add_prims_batching(notice_type, expected_usd, expected_broker):
     # Listen to broker notice.
     received_broker = []
     key1 = Tf.Notice.Register(
-        getattr(BrokerNotice, notice_type),
+        getattr(UnfNotice, notice_type),
         lambda n, _: received_broker.append(n), stage)
 
     # Listen to corresponding USD notice.
@@ -115,7 +115,7 @@ def test_add_prims_blocking(notice_type, expected_usd):
     # Listen to broker notice.
     received_broker = []
     key1 = Tf.Notice.Register(
-        getattr(BrokerNotice, notice_type),
+        getattr(UnfNotice, notice_type),
         lambda n, _: received_broker.append(n), stage)
 
     # Listen to corresponding USD notice.
@@ -161,7 +161,7 @@ def test_add_prims_transaction_objectschanged():
         assert notice.GetResyncedPaths()[2] == "/Baz"
         received.append(notice)
 
-    key = Tf.Notice.Register(BrokerNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
 
     broker.BeginTransaction()
 

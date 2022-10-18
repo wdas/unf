@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd, Sdf, Tf
-from usd_notice_framework import Broker, BrokerNotice
+from usd_notice_framework import Broker, UnfNotice
 
 import pytest
 
@@ -28,7 +28,7 @@ def test_change_edit_target(notice_type, excepted, stage_with_layers):
     # Listen to broker notice.
     received_broker = []
     key1 = Tf.Notice.Register(
-        getattr(BrokerNotice, notice_type),
+        getattr(UnfNotice, notice_type),
         lambda n, _: received_broker.append(n), stage)
 
     # Listen to corresponding USD notice.
@@ -72,7 +72,7 @@ def test_change_edit_target_batching(
     # Listen to broker notice.
     received_broker = []
     key1 = Tf.Notice.Register(
-        getattr(BrokerNotice, notice_type),
+        getattr(UnfNotice, notice_type),
         lambda n, _: received_broker.append(n), stage)
 
     # Listen to corresponding USD notice.
@@ -125,7 +125,7 @@ def test_change_edit_target_blocking(
     # Listen to broker notice.
     received_broker = []
     key1 = Tf.Notice.Register(
-        getattr(BrokerNotice, notice_type),
+        getattr(UnfNotice, notice_type),
         lambda n, _: received_broker.append(n), stage)
 
     # Listen to corresponding USD notice.

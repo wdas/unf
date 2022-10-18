@@ -78,7 +78,7 @@ void Broker::EndTransaction()
     _mergers.pop_back();
 }
 
-void Broker::Send(const BrokerNotice::StageNoticeRefPtr& notice)
+void Broker::Send(const UnfNotice::StageNoticeRefPtr& notice)
 {
     if (_mergers.size() > 0) {
         _mergers.back().Add(notice);
@@ -140,7 +140,7 @@ Broker::_NoticeMerger::_NoticeMerger(CapturePredicate predicate)
 
 }
 
-void Broker::_NoticeMerger::Add(const BrokerNotice::StageNoticeRefPtr& notice)
+void Broker::_NoticeMerger::Add(const UnfNotice::StageNoticeRefPtr& notice)
 {
     // Indicate whether the notice needs to be captured.
     if (!_predicate(*notice)) return;

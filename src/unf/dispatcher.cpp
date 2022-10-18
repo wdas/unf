@@ -33,14 +33,14 @@ void StageDispatcher::Register()
 
     _Register<
         UsdNotice::StageContentsChanged,
-        BrokerNotice::StageContentsChanged>();
-    _Register<UsdNotice::ObjectsChanged, BrokerNotice::ObjectsChanged>();
+        UnfNotice::StageContentsChanged>();
+    _Register<UsdNotice::ObjectsChanged, UnfNotice::ObjectsChanged>();
     _Register<
         UsdNotice::StageEditTargetChanged,
-        BrokerNotice::StageEditTargetChanged>();
+        UnfNotice::StageEditTargetChanged>();
     _Register<
         UsdNotice::LayerMutingChanged,
-        BrokerNotice::LayerMutingChanged>();
+        UnfNotice::LayerMutingChanged>();
 }
 
 }  // namespace unf

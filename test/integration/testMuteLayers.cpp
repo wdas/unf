@@ -15,7 +15,7 @@
 
 // namespace aliases for convenience.
 using _USD = PXR_NS::UsdNotice;
-namespace _Broker = unf::BrokerNotice;
+namespace _UNF = unf::UnfNotice;
 
 class MuteLayersTest : public ::testing::Test {
   protected:
@@ -24,9 +24,9 @@ class MuteLayersTest : public ::testing::Test {
         _USD::StageEditTargetChanged, _USD::LayerMutingChanged>;
 
     using BrokerListener = ::Test::Listener<
-        _Broker::StageNotice, _Broker::StageContentsChanged,
-        _Broker::ObjectsChanged, _Broker::StageEditTargetChanged,
-        _Broker::LayerMutingChanged>;
+        _UNF::StageNotice, _UNF::StageContentsChanged,
+        _UNF::ObjectsChanged, _UNF::StageEditTargetChanged,
+        _UNF::LayerMutingChanged>;
 
     void SetUp() override
     {
@@ -77,11 +77,11 @@ TEST_F(MuteLayersTest, Simple)
     ASSERT_EQ(_usdListener.Received<_USD::StageEditTargetChanged>(), 0);
     ASSERT_EQ(_usdListener.Received<_USD::LayerMutingChanged>(), 4);
 
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageNotice>(), 12);
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageContentsChanged>(), 4);
-    ASSERT_EQ(_brokerListener.Received<_Broker::ObjectsChanged>(), 4);
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageEditTargetChanged>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::LayerMutingChanged>(), 4);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageNotice>(), 12);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageContentsChanged>(), 4);
+    ASSERT_EQ(_brokerListener.Received<_UNF::ObjectsChanged>(), 4);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageEditTargetChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::LayerMutingChanged>(), 4);
 }
 
 TEST_F(MuteLayersTest, Batching)
@@ -105,20 +105,20 @@ TEST_F(MuteLayersTest, Batching)
     ASSERT_EQ(_usdListener.Received<_USD::LayerMutingChanged>(), 4);
 
     // While broker notices are blocked during a transaction.
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageNotice>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageContentsChanged>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::ObjectsChanged>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageEditTargetChanged>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::LayerMutingChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageNotice>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageContentsChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::ObjectsChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageEditTargetChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::LayerMutingChanged>(), 0);
 
     broker->EndTransaction();
 
     // Ensure that consolidated broker notices are sent after a transaction.
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageNotice>(), 3);
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageContentsChanged>(), 1);
-    ASSERT_EQ(_brokerListener.Received<_Broker::ObjectsChanged>(), 1);
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageEditTargetChanged>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::LayerMutingChanged>(), 1);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageNotice>(), 3);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageContentsChanged>(), 1);
+    ASSERT_EQ(_brokerListener.Received<_UNF::ObjectsChanged>(), 1);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageEditTargetChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::LayerMutingChanged>(), 1);
 }
 
 TEST_F(MuteLayersTest, Blocking)
@@ -126,7 +126,7 @@ TEST_F(MuteLayersTest, Blocking)
     auto broker = unf::Broker::Create(_stage);
 
     // Pass a predicate to block all broker notices.
-    broker->BeginTransaction([](const _Broker::StageNotice&) { return false; });
+    broker->BeginTransaction([](const _UNF::StageNotice&) { return false; });
 
     _stage->MuteLayer(_layerIds[0]);
     _stage->MuteLayer(_layerIds[1]);
@@ -143,30 +143,30 @@ TEST_F(MuteLayersTest, Blocking)
     ASSERT_EQ(_usdListener.Received<_USD::LayerMutingChanged>(), 4);
 
     // While broker notices are blocked during a transaction.
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageNotice>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageContentsChanged>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::ObjectsChanged>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageEditTargetChanged>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::LayerMutingChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageNotice>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageContentsChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::ObjectsChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageEditTargetChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::LayerMutingChanged>(), 0);
 
     broker->EndTransaction();
 
     // Ensure that no broker notices are sent after a transaction either.
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageNotice>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageContentsChanged>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::ObjectsChanged>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageEditTargetChanged>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::LayerMutingChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageNotice>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageContentsChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::ObjectsChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageEditTargetChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::LayerMutingChanged>(), 0);
 }
 
 TEST_F(MuteLayersTest, PartialBlocking)
 {
     auto broker = unf::Broker::Create(_stage);
 
-    std::string target = typeid(_Broker::LayerMutingChanged).name();
+    std::string target = typeid(_UNF::LayerMutingChanged).name();
 
     // Pass a predicate to block all broker notices.
-    broker->BeginTransaction([&](const _Broker::StageNotice& n) {
+    broker->BeginTransaction([&](const _UNF::StageNotice& n) {
         return (n.GetTypeId() == target);
     });
 
@@ -185,20 +185,20 @@ TEST_F(MuteLayersTest, PartialBlocking)
     ASSERT_EQ(_usdListener.Received<_USD::LayerMutingChanged>(), 4);
 
     // While broker notices are blocked during a transaction.
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageNotice>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageContentsChanged>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::ObjectsChanged>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageEditTargetChanged>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::LayerMutingChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageNotice>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageContentsChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::ObjectsChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageEditTargetChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::LayerMutingChanged>(), 0);
 
     broker->EndTransaction();
 
     // Ensure that only consolidated LayerMutingChanged broker notice are sent.
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageNotice>(), 1);
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageContentsChanged>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::ObjectsChanged>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::StageEditTargetChanged>(), 0);
-    ASSERT_EQ(_brokerListener.Received<_Broker::LayerMutingChanged>(), 1);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageNotice>(), 1);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageContentsChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::ObjectsChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::StageEditTargetChanged>(), 0);
+    ASSERT_EQ(_brokerListener.Received<_UNF::LayerMutingChanged>(), 1);
 }
 
 TEST_F(MuteLayersTest, Transaction_ObjectsChanged)
@@ -209,7 +209,7 @@ TEST_F(MuteLayersTest, Transaction_ObjectsChanged)
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[0]));
     _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
 
-    ::Test::Observer<_Broker::ObjectsChanged> observer(_stage);
+    ::Test::Observer<_UNF::ObjectsChanged> observer(_stage);
 
     broker->BeginTransaction();
 
@@ -236,7 +236,7 @@ TEST_F(MuteLayersTest, Transaction_LayerMutingChanged)
 {
     auto broker = unf::Broker::Create(_stage);
 
-    ::Test::Observer<_Broker::LayerMutingChanged> observer(_stage);
+    ::Test::Observer<_UNF::LayerMutingChanged> observer(_stage);
 
     broker->BeginTransaction();
 

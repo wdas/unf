@@ -11,19 +11,19 @@ TF_REGISTRY_FUNCTION(TfType)
 {
     TfType::Define<
         ::Test::MergeableNotice,
-        TfType::Bases<unf::BrokerNotice::StageNotice> >();
+        TfType::Bases<unf::UnfNotice::StageNotice> >();
 
     TfType::Define<
         ::Test::UnMergeableNotice,
-        TfType::Bases<unf::BrokerNotice::StageNotice> >();
+        TfType::Bases<unf::UnfNotice::StageNotice> >();
 
     TfType::Define< ::Test::InputNotice, TfType::Bases<TfNotice> >();
 
     TfType::Define<
         ::Test::OutputNotice1,
-        TfType::Bases<unf::BrokerNotice::StageNotice> >();
+        TfType::Bases<unf::UnfNotice::StageNotice> >();
 
     TfType::Define<
         ::Test::OutputNotice2,
-        TfType::Bases<unf::BrokerNotice::StageNotice> >();
+        TfType::Bases<unf::UnfNotice::StageNotice> >();
 }

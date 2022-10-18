@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd, Tf, Sdf
-from usd_notice_framework import Broker, BrokerNotice
+from usd_notice_framework import Broker, UnfNotice
 
 
 def test_resynced_object():
@@ -21,7 +21,7 @@ def test_resynced_object():
         assert notice.AffectedObject(stage.GetPrimAtPath("/Bar")) is True
         received.append(notice)
 
-    key = Tf.Notice.Register(BrokerNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
 
     stage.DefinePrim("/Bar")
 
@@ -47,7 +47,7 @@ def test_changed_info_only():
         assert notice.AffectedObject(stage.GetPrimAtPath("/Bar")) is True
         received.append(notice)
 
-    key = Tf.Notice.Register(BrokerNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
 
     prim.SetMetadata("comment", "This is a test")
 
@@ -67,7 +67,7 @@ def test_get_resynced_paths():
         assert notice.GetResyncedPaths() == [Sdf.Path("/Foo")]
         received.append(notice)
 
-    key = Tf.Notice.Register(BrokerNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
 
     stage.DefinePrim("/Foo")
 
@@ -89,7 +89,7 @@ def test_get_changed_info_only_paths():
         assert notice.GetChangedInfoOnlyPaths() == [Sdf.Path("/Foo")]
         received.append(notice)
 
-    key = Tf.Notice.Register(BrokerNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
 
     prim.SetMetadata("comment", "This is a test")
 
@@ -112,7 +112,7 @@ def test_get_changed_fields():
         assert notice.GetChangedFields(Sdf.Path("/Incorrect")) == []
         received.append(notice)
 
-    key = Tf.Notice.Register(BrokerNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
 
     prim.SetMetadata("comment", "This is a test")
 
@@ -135,7 +135,7 @@ def test_has_changed_fields():
         assert notice.HasChangedFields(Sdf.Path("/Incorrect")) is False
         received.append(notice)
 
-    key = Tf.Notice.Register(BrokerNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
 
     prim.SetMetadata("comment", "This is a test")
 

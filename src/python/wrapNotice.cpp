@@ -10,7 +10,7 @@
 #include <boost/python.hpp>
 
 using namespace boost::python;
-using namespace unf::BrokerNotice;
+using namespace unf::UnfNotice;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
@@ -21,12 +21,12 @@ TF_INSTANTIATE_NOTICE_WRAPPER(StageEditTargetChanged, StageNotice);
 TF_INSTANTIATE_NOTICE_WRAPPER(LayerMutingChanged, StageNotice);
 
 // Dummy class to reproduce namespace in Python.
-class PythonBrokerNotice {
+class PythonUnfNotice {
 };
 
 void wrapNotice()
 {
-    scope s = class_<PythonBrokerNotice>("BrokerNotice", no_init);
+    scope s = class_<PythonUnfNotice>("UnfNotice", no_init);
 
     TfPyNoticeWrapper<StageNotice, TfNotice>::Wrap();
 
