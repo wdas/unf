@@ -2,22 +2,6 @@
 cmake_minimum_required(VERSION ${CMAKE_VERSION})
 
 if(CMAKE_SCRIPT_MODE_FILE)
-    set(libpath $ENV{LD_LIBRARY_PATH})
-    set(pythonpath $ENV{PYTHONPATH})
-
-    if (LIBRARY_PATH_PREPEND)
-        list(REVERSE "${LIBRARY_PATH_PREPEND}")
-        foreach (_path ${LIBRARY_PATH_PREPEND})
-            set(libpath "${_path}:${libpath}")
-        endforeach()
-    endif()
-
-    if (PYTHON_PATH_PREPEND)
-        list(REVERSE "${PYTHON_PATH_PREPEND}")
-        foreach (_path ${PYTHON_PATH_PREPEND})
-            set(pythonpath "${_path}:${pythonpath}")
-        endforeach()
-    endif()
 
     # Set Cmake test file to execute each test.
     set(_content "")
@@ -41,8 +25,8 @@ if(CMAKE_SCRIPT_MODE_FILE)
 
     else()
         # Set environment for collecting tests.
-        set(ENV{LD_LIBRARY_PATH} ${libpath})
-        set(ENV{PYTHONPATH} ${pythonpath})
+	set(ENV{LD_LIBRARY_PATH} ${LIB_PATH})
+	set(ENV{PYTHONPATH} ${PYTHON_PATH})
 
         execute_process(
             COMMAND ${PYTEST_EXECUTABLE} --collect-only -q
@@ -90,12 +74,12 @@ if(CMAKE_SCRIPT_MODE_FILE)
                 ")\n"
                 "set_tests_properties(\n"
                 "     \"${test_name}\" PROPERTIES\n"
-                "     ENVIRONMENT LD_LIBRARY_PATH=${libpath}\n"
+		"     ENVIRONMENT LD_LIBRARY_PATH=${LIB_PATH}\n"
                 ")\n"
                 "set_tests_properties(\n"
                 "     \"${test_name}\"\n"
                 "     APPEND PROPERTIES\n"
-                "     ENVIRONMENT PYTHONPATH=${pythonpath}\n"
+		"     ENVIRONMENT PYTHONPATH=${PYTHON_PATH}\n"
                 ")\n"
             )
         endforeach()

@@ -59,6 +59,23 @@ if (Pytest_FOUND AND NOT TARGET Pytest::Pytest)
             "LIBRARY_PATH_PREPEND;PYTHON_PATH_PREPEND"
         )
 
+        set(libpath $ENV{LD_LIBRARY_PATH})
+        set(pythonpath $ENV{PYTHONPATH})
+
+        if (_LIBRARY_PATH_PREPEND)
+            list(REVERSE "${_LIBRARY_PATH_PREPEND}")
+            foreach (_path ${_LIBRARY_PATH_PREPEND})
+                set(libpath "${_path}:${libpath}")
+            endforeach()
+        endif()
+
+        if (_PYTHON_PATH_PREPEND)
+            list(REVERSE "${_PYTHON_PATH_PREPEND}")
+            foreach (_path ${_PYTHON_PATH_PREPEND})
+                set(pythonpath "${_path}:${pythonpath}")
+            endforeach()
+        endif()
+
         if (NOT _WORKING_DIRECTORY)
             set(_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
         endif()
@@ -77,8 +94,8 @@ if (Pytest_FOUND AND NOT TARGET Pytest::Pytest)
                 -D "PYTEST_EXECUTABLE=${PYTEST_EXECUTABLE}"
                 -D "TEST_GROUP_NAME=${NAME}"
                 -D "BUNDLE_TESTS=${_BUNDLE_TESTS}"
-                -D "LIBRARY_PATH_PREPEND=${_LIBRARY_PATH_PREPEND}"
-                -D "PYTHON_PATH_PREPEND=${_PYTHON_PATH_PREPEND}"
+                -D "LIBRARY_PATH=${libpath}"
+                -D "PYTHON_PATH=${pythonpath}"
                 -D "TRIM_FROM_NAME=${_TRIM_FROM_NAME}"
                 -D "WORKING_DIRECTORY=${_WORKING_DIRECTORY}"
                 -D "PROJECT_SOURCE_DIR=${PROJECT_SOURCE_DIR}"
