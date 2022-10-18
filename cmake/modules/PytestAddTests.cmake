@@ -14,18 +14,18 @@ if(CMAKE_SCRIPT_MODE_FILE)
             ")\n"
             "set_tests_properties(\n"
             "     \"${TEST_GROUP_NAME}\" PROPERTIES\n"
-            "     ENVIRONMENT LD_LIBRARY_PATH=${libpath}\n"
+            "     ENVIRONMENT LD_LIBRARY_PATH=${LIBRARY_PATH}\n"
             ")\n"
             "set_tests_properties(\n"
             "     \"${TEST_GROUP_NAME}\"\n"
             "     APPEND PROPERTIES\n"
-            "     ENVIRONMENT PYTHONPATH=${pythonpath}\n"
+            "     ENVIRONMENT PYTHONPATH=${PYTHON_PATH}\n"
             ")\n"
         )
 
     else()
         # Set environment for collecting tests.
-	set(ENV{LD_LIBRARY_PATH} ${LIB_PATH})
+	set(ENV{LD_LIBRARY_PATH} ${LIBRARY_PATH})
 	set(ENV{PYTHONPATH} ${PYTHON_PATH})
 
         execute_process(
@@ -74,7 +74,7 @@ if(CMAKE_SCRIPT_MODE_FILE)
                 ")\n"
                 "set_tests_properties(\n"
                 "     \"${test_name}\" PROPERTIES\n"
-		"     ENVIRONMENT LD_LIBRARY_PATH=${LIB_PATH}\n"
+		"     ENVIRONMENT LD_LIBRARY_PATH=${LIBRARY_PATH}\n"
                 ")\n"
                 "set_tests_properties(\n"
                 "     \"${test_name}\"\n"
