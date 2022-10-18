@@ -18,8 +18,11 @@
 
 namespace unf {
 
+/// Convenient alias for set of tokens.
 using TfTokenSet =
     std::unordered_set<PXR_NS::TfToken, PXR_NS::TfToken::HashFunctor>;
+
+/// Convenient alias for map of token sets organized per path.
 using ChangedFieldMap =
     std::unordered_map<PXR_NS::SdfPath, TfTokenSet, PXR_NS::SdfPath::Hash>;
 
