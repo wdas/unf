@@ -34,14 +34,16 @@ class StageNotice : public PXR_NS::TfNotice, public PXR_NS::TfRefBase {
     virtual void Merge(StageNotice&&){};
     virtual std::string GetTypeId() const { return ""; }
 
-    // Exposes the Copy function to the interface
-    virtual PXR_NS::TfRefPtr<StageNotice> CopyAsStageNotice() const
+    PXR_NS::TfRefPtr<StageNotice> Clone() const
     {
-        return nullptr;
+        return PXR_NS::TfCreateRefPtr(_Clone());
     }
 
   protected:
     StageNotice() = default;
+
+  private:
+    virtual StageNotice* _Clone() const { return nullptr; }
 };
 
 using StageNoticeRefPtr = PXR_NS::TfRefPtr<StageNotice>;
@@ -56,28 +58,24 @@ class StageNoticeImpl : public StageNotice {
         return PXR_NS::TfCreateRefPtr(new Self(std::forward<Args>(args)...));
     }
 
-    virtual PXR_NS::TfRefPtr<StageNotice> CopyAsStageNotice() const override
+    PXR_NS::TfRefPtr<Self> Clone() const
     {
-        return Copy();
+        return PXR_NS::TfCreateRefPtr(static_cast<Self*>(_Clone()));
     }
 
-    PXR_NS::TfRefPtr<Self> Copy() const
-    {
-        return PXR_NS::TfCreateRefPtr(
-            new Self(static_cast<const Self&>(*this)));
-    }
-
-    using StageNotice::Merge;
     virtual void Merge(StageNotice&& notice) override
     {
-        Merge(dynamic_cast<Self&&>(notice));
+        StageNotice::Merge(dynamic_cast<Self&&>(notice));
     }
 
     virtual void Merge(Self&&) {}
 
-    virtual std::string GetTypeId() const { return GetStaticTypeId(); }
+    virtual std::string GetTypeId() const { return typeid(Self).name(); }
 
-    static std::string GetStaticTypeId() { return typeid(Self).name(); }
+  private:
+    virtual StageNotice* _Clone() const {
+        return new Self(static_cast<const Self&>(*this));
+    }
 };
 
 class StageContentsChanged : public StageNoticeImpl<StageContentsChanged> {
