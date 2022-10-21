@@ -101,6 +101,14 @@
   <compound kind="class">
     <name>PXR_NS::UsdNotice::LayerMutingChanged</name>
     <filename>class_usd_notice_1_1_layer_muting_changed.html</filename>
+    <member kind="function">
+      <name>GetMutedLayers</name>
+      <anchor>a46081415d09be1ff2b028fd18f78ef16</anchor>
+    </member>
+    <member kind="function">
+      <name>GetUnmutedLayers</name>
+      <anchor>afbb387a15c8d7e1441cb4b962999aa07</anchor>
+    </member>
   </compound>
   <compound kind="class">
     <name>PXR_NS::UsdNotice::ObjectsChanged</name>

@@ -211,12 +211,15 @@ class StageContentsChanged : public StageNoticeImpl<StageContentsChanged> {
 /// PXR_NS::UsdNotice::ObjectsChanged notice type.
 class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
   public:
+    virtual ~ObjectsChanged() = default;
+
     /// Copy constructor.
     ObjectsChanged(const ObjectsChanged&);
 
     /// Assignment operator.
     ObjectsChanged& operator=(const ObjectsChanged&);
 
+    /// \brief
     /// Merge notice with another ObjectsChanged notice.
     ///
     /// \note
@@ -305,55 +308,109 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     /// PXR_NS::UsdNotice::ObjectsChanged::HasChangedFields(const SdfPath&) const
     bool HasChangedFields(const PXR_NS::SdfPath&) const;
 
+    /// \brief
+    /// Return map of affected token sets organized per path.
     const ChangedFieldMap& GetChangedFieldMap() const { return _changedFields; }
 
   protected:
+      /// Create notice from PXR_NS::UsdNotice::ObjectsChanged instance.
     explicit ObjectsChanged(const PXR_NS::UsdNotice::ObjectsChanged&);
 
-  private:
-    PXR_NS::SdfPathVector _resyncChanges;
-    PXR_NS::SdfPathVector _infoChanges;
-    ChangedFieldMap _changedFields;
-
+    /// Ensure that StageNoticeImpl::Create method can call constructor.
     friend StageNoticeImpl<ObjectsChanged>;
+
+  private:
+      /// List of resynced paths.
+    PXR_NS::SdfPathVector _resyncChanges;
+
+    /// List of paths which are modified but not resynced.
+    PXR_NS::SdfPathVector _infoChanges;
+
+    /// Map of affected token sets organized per path.
+    ChangedFieldMap _changedFields;
 };
 
+/// \class StageEditTargetChanged
+///
+/// \brief
+/// Notice sent when a stage's EditTarget has changed.
+///
+/// This notice type is the autonomous equivalent of the
+/// PXR_NS::UsdNotice::StageEditTargetChanged notice type.
 class StageEditTargetChanged : public StageNoticeImpl<StageEditTargetChanged> {
+  public:
+    virtual ~StageEditTargetChanged() = default;
+
   protected:
+    /// Create notice from PXR_NS::UsdNotice::StageEditTargetChanged instance.
     explicit StageEditTargetChanged(
         const PXR_NS::UsdNotice::StageEditTargetChanged&)
     {
     }
 
+    /// Ensure that StageNoticeImpl::Create method can call constructor.
     friend StageNoticeImpl<StageEditTargetChanged>;
 };
 
+/// \class LayerMutingChanged
+///
+/// \brief
+/// Notice sent after a set of layers have been newly muted or unmuted.
+///
+/// This notice type is the autonomous equivalent of the
+/// PXR_NS::UsdNotice::LayerMutingChanged notice type.
 class LayerMutingChanged : public StageNoticeImpl<LayerMutingChanged> {
   public:
+    virtual ~LayerMutingChanged() = default;
+
+    /// Copy constructor.
     LayerMutingChanged(const LayerMutingChanged&);
+
+    /// Assignment operator.
     LayerMutingChanged& operator=(const LayerMutingChanged&);
 
-    using StageNoticeImpl<LayerMutingChanged>::Merge;
+    /// \brief
+    /// Merge notice with another LayerMutingChanged notice.
+    ///
+    /// \note
+    /// Data will be move out of incoming LayerMutingChanged notice.
     virtual void Merge(LayerMutingChanged&&) override;
 
+    /// \brief
+    /// Returns the identifier of the layers that were muted.
+    ///
+    /// \note
+    /// Equivalent from
+    /// PXR_NS::UsdNotice::LayerMutingChanged::GetMutedLayers
     const std::vector<std::string>& GetMutedLayers() const
     {
         return _mutedLayers;
     }
 
+    /// \brief
+    /// Returns the identifier of the layers that were unmuted.
+    ///
+    /// \note
+    /// Equivalent from
+    /// PXR_NS::UsdNotice::LayerMutingChanged::GetUnmutedLayers
     const std::vector<std::string>& GetUnmutedLayers() const
     {
         return _unmutedLayers;
     }
 
   protected:
+    /// Create notice from PXR_NS::UsdNotice::LayerMutingChanged instance.
     explicit LayerMutingChanged(const PXR_NS::UsdNotice::LayerMutingChanged&);
 
-  private:
-    std::vector<std::string> _mutedLayers;
-    std::vector<std::string> _unmutedLayers;
-
+    /// Ensure that StageNoticeImpl::Create method can call constructor.
     friend StageNoticeImpl<LayerMutingChanged>;
+
+  private:
+    /// List of layer identifiers that were muted.
+    std::vector<std::string> _mutedLayers;
+
+    /// List of layer identifiers that were unmuted.
+    std::vector<std::string> _unmutedLayers;
 };
 
 }  // namespace UnfNotice

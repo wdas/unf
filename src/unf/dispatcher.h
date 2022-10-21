@@ -85,7 +85,10 @@ class Dispatcher : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
         _broker->Send(_notice);
     }
 
+    /// Broker that the dispatcher is attached to.
     BrokerWeakPtr _broker;
+
+    /// List of handle-objects used for registering listeners.
     std::vector<PXR_NS::TfNotice::Key> _keys;
 };
 
