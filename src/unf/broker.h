@@ -40,8 +40,8 @@ using DispatcherPtr = PXR_NS::TfRefPtr<Dispatcher>;
 /// \class Broker
 ///
 /// \brief
-/// The notice broker is an intermediate between the Usd Stage and any clients
-/// that needs asynchronous handling and upstream filtering of notices.
+/// Intermediate object between the Usd Stage and any clients that needs
+/// asynchronous handling and upstream filtering of notices.
 class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
   public:
     /// \brief

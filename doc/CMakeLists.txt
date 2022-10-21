@@ -15,7 +15,6 @@ set(DOXYGEN_QUIET YES)
 set(DOXYGEN_SORT_MEMBER_DOCS NO)
 set(DOXYGEN_FULL_PATH_NAMES NO)
 set(DOXYGEN_FILE_PATTERNS *.dox *.h)
-set(DOXYGEN_PREDEFINED "PXR_NS")
 set(DOXYGEN_TAGFILES
     "${PROJECT_SOURCE_DIR}/doc/doxygen/USD.tag \
     = https://graphics.pixar.com/usd/release/api/")
