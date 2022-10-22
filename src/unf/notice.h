@@ -65,7 +65,7 @@ class StageNoticeImpl : public StageNotice {
 
     virtual void Merge(StageNotice&& notice) override
     {
-        StageNotice::Merge(dynamic_cast<Self&&>(notice));
+        Merge(dynamic_cast<Self&&>(notice));
     }
 
     virtual void Merge(Self&&) {}
