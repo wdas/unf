@@ -277,7 +277,7 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     }
 
     /// \brief
-    /// Return the set of changed fields in layers that affected \p object.
+    /// Return the set of changed fields in layers that affected the \p object.
     ///
     /// \note
     /// Equivalent from
@@ -285,7 +285,7 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     TfTokenSet GetChangedFields(const PXR_NS::UsdObject&) const;
 
     /// \brief
-    /// Return the set of changed fields in layers that affected \p path.
+    /// Return the set of changed fields in layers that affected the \p path.
     ///
     /// \note
     /// Equivalent from
@@ -293,7 +293,7 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     TfTokenSet GetChangedFields(const PXR_NS::SdfPath&) const;
 
     /// \brief
-    /// Indicate whether any changed fields affected \p object.
+    /// Indicate whether any changed fields affected the \p object.
     ///
     /// \note
     /// Equivalent from
@@ -301,7 +301,7 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     bool HasChangedFields(const PXR_NS::UsdObject&) const;
 
     /// \brief
-    /// Indicate whether any changed fields affected \p path.
+    /// Indicate whether any changed fields affected the \p path.
     ///
     /// \note
     /// Equivalent from
@@ -377,7 +377,7 @@ class LayerMutingChanged : public StageNoticeImpl<LayerMutingChanged> {
     virtual void Merge(LayerMutingChanged&&) override;
 
     /// \brief
-    /// Returns the identifier of the layers that were muted.
+    /// Returns identifiers of the layers that were muted.
     ///
     /// \note
     /// Equivalent from
@@ -388,7 +388,7 @@ class LayerMutingChanged : public StageNoticeImpl<LayerMutingChanged> {
     }
 
     /// \brief
-    /// Returns the identifier of the layers that were unmuted.
+    /// Returns identifiers of the layers that were unmuted.
     ///
     /// \note
     /// Equivalent from

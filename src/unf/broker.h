@@ -73,13 +73,15 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     /// Notices derived from UnfNotice::StageNotice will be held during
     /// the transaction and emitted at the end.
     ///
-    /// By default, all UnfNotice::StageNotice notices will be captured.
-    /// A CapturePredicate can be passed to influence which notices are
-    /// captured. Notices that are not captured will not be emitted.
+    /// By default, all UnfNotice::StageNotice notices will be captured during
+    /// the entire scope of the transaction. A CapturePredicate can be passed to
+    /// influence which notices are captured. Notices that are not captured
+    /// will not be emitted.
     ///
     /// \warning
-    /// It is preferrable to use NoticeTransaction over this API to manage
-    /// transactions for safety.
+    /// Each transaction started must be closed with EndTransaction.
+    /// It is preferrable to use NoticeTransaction over this API to safely
+    /// manage transactions.
     ///
     /// \sa EndTransaction
     /// \sa NoticeTransaction
@@ -99,8 +101,9 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     /// \endcode
     ///
     /// \warning
-    /// It is preferrable to use NoticeTransaction over this API to manage
-    /// transactions for safety.
+    /// Each transaction started must be closed with EndTransaction.
+    /// It is preferrable to use NoticeTransaction over this API to safely
+    /// manage transactions.
     ///
     /// \sa EndTransaction
     /// \sa NoticeTransaction
@@ -114,8 +117,8 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     /// consolidated before emission if applicable.
     ///
     /// \warning
-    /// It is preferrable to use NoticeTransaction over this API to manage
-    /// transactions for safety.
+    /// It is preferrable to use NoticeTransaction over this API to safely
+    /// manage transactions.
     ///
     /// \sa BeginTransaction
     /// \sa NoticeTransaction

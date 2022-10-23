@@ -4,6 +4,10 @@
 Installing
 **********
 
+.. warning::
+
+    This library has only been tested on Linux platforms.
+
 .. highlight:: bash
 
 The library can be installed using :term:`CMake` (any version over `3.15

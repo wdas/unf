@@ -15,7 +15,8 @@ namespace unf {
 ///
 /// \brief
 /// Convenient [RAII](https://en.cppreference.com/w/cpp/language/raii) object
-/// to consolidate and filter upstream notices within a specific scope.
+/// to consolidate and filter notices derived from UnfNotice::StageNotice
+/// within a specific scope.
 class NoticeTransaction {
   public:
     /// \brief
@@ -24,9 +25,10 @@ class NoticeTransaction {
     /// Notices derived from UnfNotice::StageNotice will be held during
     /// the transaction and emitted at the end.
     ///
-    /// By default, all UnfNotice::StageNotice notices will be captured.
-    /// A CapturePredicate can be passed to influence which notices are
-    /// captured. Notices that are not captured will not be emitted.
+    /// By default, all UnfNotice::StageNotice notices will be captured during
+    /// the entire scope of the transaction. A CapturePredicate can be passed to
+    /// influence which notices are captured. Notices that are not captured
+    /// will not be emitted.
     NoticeTransaction(
         const BrokerPtr &,
         CapturePredicate predicate = CapturePredicate::Default());
