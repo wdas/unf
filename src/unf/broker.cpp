@@ -86,9 +86,7 @@ void Broker::Send(const UnfNotice::StageNoticeRefPtr& notice)
     }
     // Otherwise, send the notice.
     else {
-        BeginTransaction();
-        Send(notice);
-        EndTransaction();
+        notice->Send(_stage);
     }
 }
 
