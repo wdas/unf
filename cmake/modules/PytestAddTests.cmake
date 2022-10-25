@@ -25,15 +25,14 @@ if(CMAKE_SCRIPT_MODE_FILE)
 
     else()
         # Set environment for collecting tests.
-	set(ENV{LD_LIBRARY_PATH} ${LIBRARY_PATH})
-	set(ENV{PYTHONPATH} ${PYTHON_PATH})
+        set(ENV{LD_LIBRARY_PATH} ${LIBRARY_PATH})
+        set(ENV{PYTHONPATH} ${PYTHON_PATH})
 
         execute_process(
-            COMMAND ${PYTEST_EXECUTABLE} --collect-only -q
+            COMMAND ${PYTEST_EXECUTABLE} --collect-only -q ${WORKING_DIRECTORY}
             OUTPUT_VARIABLE _output_list
             ERROR_VARIABLE _output_list
             OUTPUT_STRIP_TRAILING_WHITESPACE
-            WORKING_DIRECTORY ${WORKING_DIRECTORY}
         )
 
         # Convert output into list.
@@ -74,12 +73,12 @@ if(CMAKE_SCRIPT_MODE_FILE)
                 ")\n"
                 "set_tests_properties(\n"
                 "     \"${test_name}\" PROPERTIES\n"
-		"     ENVIRONMENT LD_LIBRARY_PATH=${LIBRARY_PATH}\n"
+                "     ENVIRONMENT LD_LIBRARY_PATH=${LIBRARY_PATH}\n"
                 ")\n"
                 "set_tests_properties(\n"
                 "     \"${test_name}\"\n"
                 "     APPEND PROPERTIES\n"
-		"     ENVIRONMENT PYTHONPATH=${PYTHON_PATH}\n"
+                "     ENVIRONMENT PYTHONPATH=${PYTHON_PATH}\n"
                 ")\n"
             )
         endforeach()
