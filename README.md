@@ -2,15 +2,46 @@
 
 [![Tests](https://github.com/wdas/usd-notice-framework/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/wdas/usd-notice-framework/actions/workflows/test.yml)
 
-Notice management library built over USD Notices.
+The Usd Notice Framework is built over the
+[Tf Notification System](https://graphics.pixar.com/usd/release/api/page_tf__notification.html).
+It provides a C++ and Python API to efficiently manage the flow of notifications
+emitted when authoring the [Usd](https://github.com/PixarAnimationStudios/USD)
+stage.
 
-## Building
+It introduces the concept of autonomous notices and notice transaction which
+defers notification and consolidate notices per type when applicable:
 
-Build the library as follows:
+```cpp
+from pxr import Usd, Tf
+import usd_notice_framework as unf
 
-```bash
-cd usd-notice-framework
-mkdir build && cd build
-cmake -DCMAKE_INSTALL_PREFIX=/tmp ..
-cmake --build . --target install
+stage = Usd.Stage.CreateInMemory()
+
+def updated(notice, stage):
+    """Print resynced paths from the stage."""
+    print(notice.GetResyncedPaths())
+
+key = Tf.Notice.Register(unf.UnfNotice.ObjectsChanged, updated, stage)
+
+with unf.NoticeTransaction(stage):
+    prim = stage.DefinePrim("/Foo", "Cylinder")
+    prim.GetAttribute("radius").Set(5)
+    prim.GetAttribute("height").Set(10)
 ```
+
+A predicate can be applied during a transaction to block some or all Unf notices
+emitted in this scope:
+
+```cpp
+with unf.NoticeTransaction(
+    stage, predicate=unf.CapturePredicate.BlockAll()
+):
+    prim = stage.DefinePrim("/Foo", "Cylinder")
+    prim.GetAttribute("radius").Set(5)
+    prim.GetAttribute("height").Set(10)
+```
+
+## Documentation
+
+Full documentation, including installation and setup guides, can be found at
+https://usd-notice-framework.readthedocs.io/en/stable/

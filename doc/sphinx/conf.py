@@ -31,4 +31,5 @@ html_copy_source = True
 
 intersphinx_mapping = {
     "python": ("http://docs.python.org/", None),
+    "usd": ("https://graphics.pixar.com/usd/release", None)
 }

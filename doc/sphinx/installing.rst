@@ -113,7 +113,7 @@ running the tests.
 .. note::
 
     :term:`Pytest` is not necessary is you set the ``BUILD_PYTHON_BINDINGS``
-    to false.
+    :term:`CMake` option to false.
 
 Once the library and all tests are built, you can run the tests using
 :term:`Ctest` within the build folder as follows::
@@ -133,4 +133,5 @@ You can increase the verbosity or run a specific test as follows::
 
 By default, Python tests from one scope will be decomposed into separated tests
 that can be individually targeted. Set the ``BUNDLE_PYTHON_TESTS`` :term:`CMake`
-option to true if you want to combine Python tests per scope.
+option (or environment variable) to true if you want to combine Python tests
+per scope.

@@ -54,6 +54,13 @@ Glossary
 
         .. seealso:: https://docutils.sourceforge.io/rst.html
 
+    SDF
+        Scene Description Foundations (SDF) provides the foundations for
+        serializing scene description and provides the primitive abstractions
+        for interacting with it.
+
+        .. seealso:: https://graphics.pixar.com/usd/release/api/sdf_page_front.html
+
     Sphinx
         Python documentation generator which converts :term:`reStructuredText`
         files into HTML and other formats.
