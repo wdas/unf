@@ -106,6 +106,7 @@ def test_add_prims_batching(notice_type, expected_usd, expected_broker):
     "StageEditTargetChanged",
     "LayerMutingChanged",
 ])
+
 def test_add_prims_blocking(notice_type, expected_usd):
     """Add several prims to the stage and block broker notices.
     """

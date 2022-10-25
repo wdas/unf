@@ -124,3 +124,30 @@ TEST_F(ObjectsChangedTest, HasChangedFields)
     ASSERT_TRUE(n.HasChangedFields(PXR_NS::SdfPath{"/Foo"}));
     ASSERT_FALSE(n.HasChangedFields(PXR_NS::SdfPath{"/Incorrect"}));
 }
+
+TEST_F(ObjectsChangedTest, Descendants)
+{
+    ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
+
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Foo/Bar"});
+
+    ASSERT_EQ(observer.Received(), 2);
+
+    const auto& n = observer.GetLatestNotice();
+    ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath{"/Foo/Bar"});
+}
+
+TEST_F(ObjectsChangedTest, Transaction)
+{
+    ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
+
+    _broker->BeginTransaction();
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Foo/Bar"});
+    _broker->EndTransaction();
+
+    ASSERT_EQ(observer.Received(), 1);
+
+    const auto& n = observer.GetLatestNotice();
+    ASSERT_EQ(n.GetResyncedPaths().size(), 1);
+    ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath{"/Foo"});
+}
