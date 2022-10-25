@@ -179,7 +179,7 @@ def test_mute_layers_transaction_objectschanged(stage_with_layers):
         """Validate notice received."""
         assert len(notice.GetResyncedPaths()) == 1
         assert len(notice.GetChangedInfoOnlyPaths()) == 0
-        assert notice.GetResyncedPaths()[0] == "/"
+        assert "/" in notice.GetResyncedPaths()
         received.append(notice)
 
     # Create prim before caching to trigger resync path when muting.

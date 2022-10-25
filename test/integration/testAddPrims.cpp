@@ -188,9 +188,10 @@ TEST_F(AddPrimsTest, Transaction_ObjectsChanged)
     ASSERT_EQ(observer.Received(), 1);
 
     const auto& n = observer.GetLatestNotice();
-    ASSERT_EQ(n.GetResyncedPaths().size(), 3);
-    ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath{"/Foo"});
-    ASSERT_EQ(n.GetResyncedPaths().at(1), PXR_NS::SdfPath{"/Bar"});
-    ASSERT_EQ(n.GetResyncedPaths().at(2), PXR_NS::SdfPath{"/Baz"});
+    const auto& resyncedPaths = n.GetResyncedPaths();
+    ASSERT_EQ(resyncedPaths.size(), 3);
+    ASSERT_NE(std::find(resyncedPaths.begin(), resyncedPaths.end(), PXR_NS::SdfPath{"/Foo"}), resyncedPaths.end());
+    ASSERT_NE(std::find(resyncedPaths.begin(), resyncedPaths.end(), PXR_NS::SdfPath{"/Bar"}), resyncedPaths.end());
+    ASSERT_NE(std::find(resyncedPaths.begin(), resyncedPaths.end(), PXR_NS::SdfPath{"/Baz"}), resyncedPaths.end());
     ASSERT_EQ(n.GetChangedInfoOnlyPaths().size(), 0);
 }
