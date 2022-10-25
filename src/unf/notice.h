@@ -123,11 +123,6 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
 
     const ChangedFieldMap& GetChangedFieldMap() const { return _changedFields; }
 
-    void RemoveDescendants()
-    {
-        PXR_NS::SdfPath::RemoveDescendentPaths(&_resyncChanges);
-    }
-
   protected:
     explicit ObjectsChanged(const PXR_NS::UsdNotice::ObjectsChanged&);
 
