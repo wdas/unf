@@ -11,7 +11,7 @@ stage.
 It introduces the concept of autonomous notices and notice transaction which
 defers notification and consolidate notices per type when applicable:
 
-```cpp
+```python
 from pxr import Usd, Tf
 import usd_notice_framework as unf
 
@@ -32,7 +32,7 @@ with unf.NoticeTransaction(stage):
 A predicate can be applied during a transaction to block some or all Unf notices
 emitted in this scope:
 
-```cpp
+```python
 with unf.NoticeTransaction(
     stage, predicate=unf.CapturePredicate.BlockAll()
 ):
