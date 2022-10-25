@@ -88,6 +88,10 @@ void ObjectsChanged::Merge(ObjectsChanged&& notice)
     }
 }
 
+void ObjectsChanged::PostProcess() {
+    SdfPath::RemoveDescendentPaths(&_resyncChanges);
+}
+
 bool ObjectsChanged::ResyncedObject(const PXR_NS::UsdObject& object) const
 {
     auto path = PXR_NS::SdfPathFindLongestPrefix(

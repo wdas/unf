@@ -32,6 +32,7 @@ class StageNotice : public PXR_NS::TfNotice, public PXR_NS::TfRefBase {
     // TODO: Should those methods be pure virtual?
     virtual bool IsMergeable() const { return true; }
     virtual void Merge(StageNotice&&){};
+    virtual void PostProcess(){};
     virtual std::string GetTypeId() const { return ""; }
 
     PXR_NS::TfRefPtr<StageNotice> Clone() const
@@ -95,6 +96,7 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
 
     using StageNoticeImpl<ObjectsChanged>::Merge;
     virtual void Merge(ObjectsChanged&&) override;
+    virtual void PostProcess() override;
 
     bool AffectedObject(const PXR_NS::UsdObject& object) const
     {

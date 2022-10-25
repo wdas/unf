@@ -67,6 +67,7 @@ void Broker::EndTransaction()
     // If there are only one merger left, process all notices.
     if (_mergers.size() == 1) {
         merger.Merge();
+        merger.PostProcess();
         merger.Send(_stage);
     }
     // Otherwise, it means that we are in a nested transaction that should
@@ -186,6 +187,13 @@ void Broker::_NoticeMerger::Merge()
                 it = notices.erase(it);
             }
         }
+    }
+}
+
+void Broker::_NoticeMerger::PostProcess() {
+    for(auto& element : _noticeMap) {
+        auto& notice = element.second[0];
+        notice->PostProcess();
     }
 }
 

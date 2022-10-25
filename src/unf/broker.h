@@ -90,6 +90,7 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
         void Add(const UnfNotice::StageNoticeRefPtr&);
         void Join(_NoticeMerger&);
         void Merge();
+        void PostProcess();
         void Send(const PXR_NS::UsdStageWeakPtr&);
 
     private:
