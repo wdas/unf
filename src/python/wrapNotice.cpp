@@ -28,7 +28,9 @@ void wrapNotice()
 {
     scope s = class_<PythonUnfNotice>("Notice", no_init);
 
-    TfPyNoticeWrapper<StageNotice, TfNotice>::Wrap();
+    TfPyNoticeWrapper<StageNotice, TfNotice>::Wrap()
+        .def("IsMergeable", &StageNotice::IsMergeable)
+        .def("GetTypeId", &StageNotice::GetTypeId);
 
     TfPyNoticeWrapper<StageContentsChanged, StageNotice>::Wrap();
 

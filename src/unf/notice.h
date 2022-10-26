@@ -1,6 +1,7 @@
 #ifndef USD_NOTICE_FRAMEWORK_NOTICE_H
 #define USD_NOTICE_FRAMEWORK_NOTICE_H
 
+#include <pxr/base/arch/demangle.h>
 #include <pxr/base/tf/notice.h>
 #include <pxr/base/tf/refBase.h>
 #include <pxr/base/tf/refPtr.h>
@@ -71,7 +72,10 @@ class StageNoticeImpl : public StageNotice {
 
     virtual void Merge(Self&&) {}
 
-    virtual std::string GetTypeId() const { return typeid(Self).name(); }
+    virtual std::string GetTypeId() const
+    {
+        return PXR_NS::ArchGetDemangled(typeid(Self).name());
+    }
 
   private:
     virtual StageNotice* _Clone() const {

@@ -4,7 +4,30 @@ from pxr import Usd, Tf, Sdf
 import usd_notice_framework as unf
 
 
-def test_resynced_object():
+def test_objects_changed():
+    """Test whether ObjectsChanged notice is as expected."""
+    stage = Usd.Stage.CreateInMemory()
+    unf.Broker.Create(stage)
+
+    stage.DefinePrim("/Foo")
+
+    received = []
+
+    def _validate(notice, stage):
+        """Validate notice received."""
+        assert notice.IsMergeable() is True
+        assert notice.GetTypeId() == "unf::UnfNotice::ObjectsChanged"
+        received.append(notice)
+
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
+
+    stage.DefinePrim("/Bar")
+
+    # Ensure that one notice was received.
+    assert len(received) == 1
+
+
+def test_objects_changed_resynced_object():
     """Check whether object has been resynced."""
     stage = Usd.Stage.CreateInMemory()
     unf.Broker.Create(stage)
@@ -29,7 +52,7 @@ def test_resynced_object():
     assert len(received) == 1
 
 
-def test_changed_info_only():
+def test_objects_changed_changed_info_only():
     """Check whether only info from object has changed."""
     stage = Usd.Stage.CreateInMemory()
     unf.Broker.Create(stage)
@@ -55,7 +78,7 @@ def test_changed_info_only():
     assert len(received) == 1
 
 
-def test_get_resynced_paths():
+def test_objects_changed_get_resynced_paths():
     """Ensure that expected resynced paths are returned."""
     stage = Usd.Stage.CreateInMemory()
     unf.Broker.Create(stage)
@@ -75,7 +98,7 @@ def test_get_resynced_paths():
     assert len(received) == 1
 
 
-def test_get_changed_info_only_paths():
+def test_objects_changed_get_changed_info_only_paths():
     """Ensure that expected paths with non-resyncable info are returned."""
     stage = Usd.Stage.CreateInMemory()
     unf.Broker.Create(stage)
@@ -96,7 +119,7 @@ def test_get_changed_info_only_paths():
     # Ensure that one notice was received.
     assert len(received) == 1
 
-def test_get_changed_fields():
+def test_objects_changed_get_changed_fields():
     """Ensure that expected set of fields are returned."""
     stage = Usd.Stage.CreateInMemory()
     unf.Broker.Create(stage)
@@ -119,7 +142,7 @@ def test_get_changed_fields():
     # Ensure that one notice was received.
     assert len(received) == 1
 
-def test_has_changed_fields():
+def test_objects_changed_has_changed_fields():
     """Check whether path or prim have changed fields."""
     stage = Usd.Stage.CreateInMemory()
     unf.Broker.Create(stage)
