@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd, Sdf, Tf
-from usd_notice_framework import Broker, UnfNotice
+import usd_notice_framework as unf
 
 import pytest
 
@@ -23,12 +23,12 @@ def test_change_edit_target(notice_type, excepted, stage_with_layers):
     """Change edit target.
     """
     stage = stage_with_layers
-    Broker.Create(stage)
+    unf.Broker.Create(stage)
 
     # Listen to broker notice.
     received_broker = []
     key1 = Tf.Notice.Register(
-        getattr(UnfNotice, notice_type),
+        getattr(unf.Notice, notice_type),
         lambda n, _: received_broker.append(n), stage)
 
     # Listen to corresponding USD notice.
@@ -67,12 +67,12 @@ def test_change_edit_target_batching(
     """Change edit target and batch broker notices.
     """
     stage = stage_with_layers
-    broker = Broker.Create(stage)
+    broker = unf.Broker.Create(stage)
 
     # Listen to broker notice.
     received_broker = []
     key1 = Tf.Notice.Register(
-        getattr(UnfNotice, notice_type),
+        getattr(unf.Notice, notice_type),
         lambda n, _: received_broker.append(n), stage)
 
     # Listen to corresponding USD notice.
@@ -120,12 +120,12 @@ def test_change_edit_target_blocking(
     """Change edit target and block broker notices.
     """
     stage = stage_with_layers
-    broker = Broker.Create(stage)
+    broker = unf.Broker.Create(stage)
 
     # Listen to broker notice.
     received_broker = []
     key1 = Tf.Notice.Register(
-        getattr(UnfNotice, notice_type),
+        getattr(unf.Notice, notice_type),
         lambda n, _: received_broker.append(n), stage)
 
     # Listen to corresponding USD notice.

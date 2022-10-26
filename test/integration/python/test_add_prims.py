@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd, Tf
-from usd_notice_framework import Broker, UnfNotice
+import usd_notice_framework as unf
 
 import pytest
 
@@ -23,12 +23,12 @@ def test_add_prims(notice_type, excepted):
     """Add several prims to the stage.
     """
     stage = Usd.Stage.CreateInMemory()
-    Broker.Create(stage)
+    unf.Broker.Create(stage)
 
     # Listen to broker notice.
     received_broker = []
     key1 = Tf.Notice.Register(
-        getattr(UnfNotice, notice_type),
+        getattr(unf.Notice, notice_type),
         lambda n, _: received_broker.append(n), stage)
 
     # Listen to corresponding USD notice.
@@ -62,12 +62,12 @@ def test_add_prims_batching(notice_type, expected_usd, expected_broker):
     """Add several prims to the stage and batch broker notices.
     """
     stage = Usd.Stage.CreateInMemory()
-    broker = Broker.Create(stage)
+    broker = unf.Broker.Create(stage)
 
     # Listen to broker notice.
     received_broker = []
     key1 = Tf.Notice.Register(
-        getattr(UnfNotice, notice_type),
+        getattr(unf.Notice, notice_type),
         lambda n, _: received_broker.append(n), stage)
 
     # Listen to corresponding USD notice.
@@ -111,12 +111,12 @@ def test_add_prims_blocking(notice_type, expected_usd):
     """Add several prims to the stage and block broker notices.
     """
     stage = Usd.Stage.CreateInMemory()
-    broker = Broker.Create(stage)
+    broker = unf.Broker.Create(stage)
 
     # Listen to broker notice.
     received_broker = []
     key1 = Tf.Notice.Register(
-        getattr(UnfNotice, notice_type),
+        getattr(unf.Notice, notice_type),
         lambda n, _: received_broker.append(n), stage)
 
     # Listen to corresponding USD notice.
@@ -149,7 +149,7 @@ def test_add_prims_transaction_objectschanged():
 
     """
     stage = Usd.Stage.CreateInMemory()
-    broker = Broker.Create(stage)
+    broker = unf.Broker.Create(stage)
 
     received = []
 
@@ -162,7 +162,7 @@ def test_add_prims_transaction_objectschanged():
         assert notice.GetResyncedPaths()[2] == "/Foo"
         received.append(notice)
 
-    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
 
     broker.BeginTransaction()
 
