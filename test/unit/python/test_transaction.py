@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd, Tf
-from usd_notice_framework import (
-    Broker, UnfNotice, NoticeTransaction, CapturePredicate
-)
+import usd_notice_framework as unf
 
 
 def test_create_from_broker():
     """Create a transaction from broker."""
     stage = Usd.Stage.CreateInMemory()
-    broker = Broker.Create(stage)
+    broker = unf.Broker.Create(stage)
 
     assert broker.IsInTransaction() is False
 
@@ -20,9 +18,9 @@ def test_create_from_broker():
         assert notice.GetResyncedPaths() == ["/Foo"]
         received.append(notice)
 
-    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
 
-    with NoticeTransaction(broker) as transaction:
+    with unf.NoticeTransaction(broker) as transaction:
         stage.DefinePrim("/Foo")
 
         assert transaction.GetBroker() == broker
@@ -37,7 +35,7 @@ def test_create_from_broker():
 def test_create_from_broker_with_filter():
     """Create a transaction from broker with filter."""
     stage = Usd.Stage.CreateInMemory()
-    broker = Broker.Create(stage)
+    broker = unf.Broker.Create(stage)
 
     assert broker.IsInTransaction() is False
 
@@ -50,11 +48,11 @@ def test_create_from_broker_with_filter():
 
     def _filter(notice):
         """Filter out ObjectsChanged notice."""
-        return type(notice) != UnfNotice.ObjectsChanged
+        return type(notice) != unf.Notice.ObjectsChanged
 
-    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
 
-    with NoticeTransaction(broker, predicate=_filter) as transaction:
+    with unf.NoticeTransaction(broker, predicate=_filter) as transaction:
         stage.DefinePrim("/Foo")
 
         assert transaction.GetBroker() == broker
@@ -69,7 +67,7 @@ def test_create_from_broker_with_filter():
 def test_create_from_broker_with_default_predicate():
     """Create a transaction from broker with default predicate."""
     stage = Usd.Stage.CreateInMemory()
-    broker = Broker.Create(stage)
+    broker = unf.Broker.Create(stage)
 
     received = []
 
@@ -78,10 +76,10 @@ def test_create_from_broker_with_default_predicate():
         assert notice.GetResyncedPaths() == ["/Foo"]
         received.append(notice)
 
-    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
 
-    with NoticeTransaction(
-        broker, predicate=CapturePredicate.Default()
+    with unf.NoticeTransaction(
+        broker, predicate=unf.CapturePredicate.Default()
     ) as transaction:
 
         stage.DefinePrim("/Foo")
@@ -98,7 +96,7 @@ def test_create_from_broker_with_default_predicate():
 def test_create_from_broker_with_blockall_predicate():
     """Create a transaction and block all notices in that scope."""
     stage = Usd.Stage.CreateInMemory()
-    broker = Broker.Create(stage)
+    broker = unf.Broker.Create(stage)
 
     received = []
 
@@ -106,10 +104,10 @@ def test_create_from_broker_with_blockall_predicate():
         """Validate notice received."""
         received.append(notice)
 
-    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
 
-    with NoticeTransaction(
-        broker, predicate=CapturePredicate.BlockAll()
+    with unf.NoticeTransaction(
+        broker, predicate=unf.CapturePredicate.BlockAll()
     ) as transaction:
 
         stage.DefinePrim("/Foo")
@@ -134,9 +132,9 @@ def test_create_from_stage():
         assert notice.GetResyncedPaths() == ["/Foo"]
         received.append(notice)
 
-    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
 
-    with NoticeTransaction(stage) as transaction:
+    with unf.NoticeTransaction(stage) as transaction:
         stage.DefinePrim("/Foo")
 
         broker = transaction.GetBroker()
@@ -161,11 +159,11 @@ def test_create_from_stage_with_filter():
 
     def _filter(notice):
         """Filter out ObjectsChanged notice."""
-        return type(notice) != UnfNotice.ObjectsChanged
+        return type(notice) != unf.Notice.ObjectsChanged
 
-    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
 
-    with NoticeTransaction(stage, predicate=_filter) as transaction:
+    with unf.NoticeTransaction(stage, predicate=_filter) as transaction:
         stage.DefinePrim("/Foo")
 
         broker = transaction.GetBroker()
@@ -188,10 +186,10 @@ def test_create_from_stage_with_default_predicate():
         assert notice.GetResyncedPaths() == ["/Foo"]
         received.append(notice)
 
-    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
 
-    with NoticeTransaction(
-        stage, predicate=CapturePredicate.Default()
+    with unf.NoticeTransaction(
+        stage, predicate=unf.CapturePredicate.Default()
     ) as transaction:
 
         stage.DefinePrim("/Foo")
@@ -215,10 +213,10 @@ def test_create_from_stage_with_blockall_predicate():
         """Validate notice received."""
         received.append(notice)
 
-    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
 
-    with NoticeTransaction(
-        stage, predicate=CapturePredicate.BlockAll()
+    with unf.NoticeTransaction(
+        stage, predicate=unf.CapturePredicate.BlockAll()
     ) as transaction:
 
         stage.DefinePrim("/Foo")
@@ -243,16 +241,16 @@ def test_nested():
         assert notice.GetResyncedPaths() == ["/Foo", "/Bar"]
         received.append(notice)
 
-    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
 
-    with NoticeTransaction(stage) as transaction1:
+    with unf.NoticeTransaction(stage) as transaction1:
         stage.DefinePrim("/Foo")
 
         broker = transaction1.GetBroker()
         assert broker.GetStage() == stage
         assert broker.IsInTransaction() is True
 
-        with NoticeTransaction(stage) as transaction2:
+        with unf.NoticeTransaction(stage) as transaction2:
             stage.DefinePrim("/Bar")
 
             _broker = transaction2.GetBroker()
@@ -280,18 +278,18 @@ def test_nested_with_filter():
 
     def _filter(notice):
         """Filter out ObjectsChanged notice."""
-        return type(notice) != UnfNotice.ObjectsChanged
+        return type(notice) != unf.Notice.ObjectsChanged
 
-    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
 
-    with NoticeTransaction(stage) as transaction1:
+    with unf.NoticeTransaction(stage) as transaction1:
         stage.DefinePrim("/Foo")
 
         broker = transaction1.GetBroker()
         assert broker.GetStage() == stage
         assert broker.IsInTransaction() is True
 
-        with NoticeTransaction(stage, predicate=_filter) as transaction2:
+        with unf.NoticeTransaction(stage, predicate=_filter) as transaction2:
             stage.DefinePrim("/Bar")
 
             _broker = transaction2.GetBroker()

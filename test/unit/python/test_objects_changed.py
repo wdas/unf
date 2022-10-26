@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd, Tf, Sdf
-from usd_notice_framework import Broker, UnfNotice
+import usd_notice_framework as unf
 
 
 def test_resynced_object():
     """Check whether object has been resynced."""
     stage = Usd.Stage.CreateInMemory()
-    Broker.Create(stage)
+    unf.Broker.Create(stage)
 
     stage.DefinePrim("/Foo")
 
@@ -21,7 +21,7 @@ def test_resynced_object():
         assert notice.AffectedObject(stage.GetPrimAtPath("/Bar")) is True
         received.append(notice)
 
-    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
 
     stage.DefinePrim("/Bar")
 
@@ -32,7 +32,7 @@ def test_resynced_object():
 def test_changed_info_only():
     """Check whether only info from object has changed."""
     stage = Usd.Stage.CreateInMemory()
-    Broker.Create(stage)
+    unf.Broker.Create(stage)
 
     stage.DefinePrim("/Foo")
     prim = stage.DefinePrim("/Bar")
@@ -47,7 +47,7 @@ def test_changed_info_only():
         assert notice.AffectedObject(stage.GetPrimAtPath("/Bar")) is True
         received.append(notice)
 
-    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
 
     prim.SetMetadata("comment", "This is a test")
 
@@ -58,7 +58,7 @@ def test_changed_info_only():
 def test_get_resynced_paths():
     """Ensure that expected resynced paths are returned."""
     stage = Usd.Stage.CreateInMemory()
-    Broker.Create(stage)
+    unf.Broker.Create(stage)
 
     received = []
 
@@ -67,7 +67,7 @@ def test_get_resynced_paths():
         assert notice.GetResyncedPaths() == [Sdf.Path("/Foo")]
         received.append(notice)
 
-    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
 
     stage.DefinePrim("/Foo")
 
@@ -78,7 +78,7 @@ def test_get_resynced_paths():
 def test_get_changed_info_only_paths():
     """Ensure that expected paths with non-resyncable info are returned."""
     stage = Usd.Stage.CreateInMemory()
-    Broker.Create(stage)
+    unf.Broker.Create(stage)
 
     prim = stage.DefinePrim("/Foo")
 
@@ -89,7 +89,7 @@ def test_get_changed_info_only_paths():
         assert notice.GetChangedInfoOnlyPaths() == [Sdf.Path("/Foo")]
         received.append(notice)
 
-    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
 
     prim.SetMetadata("comment", "This is a test")
 
@@ -99,7 +99,7 @@ def test_get_changed_info_only_paths():
 def test_get_changed_fields():
     """Ensure that expected set of fields are returned."""
     stage = Usd.Stage.CreateInMemory()
-    Broker.Create(stage)
+    unf.Broker.Create(stage)
 
     prim = stage.DefinePrim("/Foo")
 
@@ -112,7 +112,7 @@ def test_get_changed_fields():
         assert notice.GetChangedFields(Sdf.Path("/Incorrect")) == []
         received.append(notice)
 
-    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
 
     prim.SetMetadata("comment", "This is a test")
 
@@ -122,7 +122,7 @@ def test_get_changed_fields():
 def test_has_changed_fields():
     """Check whether path or prim have changed fields."""
     stage = Usd.Stage.CreateInMemory()
-    Broker.Create(stage)
+    unf.Broker.Create(stage)
 
     prim = stage.DefinePrim("/Foo")
 
@@ -135,7 +135,7 @@ def test_has_changed_fields():
         assert notice.HasChangedFields(Sdf.Path("/Incorrect")) is False
         received.append(notice)
 
-    key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _validate, stage)
 
     prim.SetMetadata("comment", "This is a test")
 

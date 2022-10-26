@@ -26,7 +26,7 @@ class PythonUnfNotice {
 
 void wrapNotice()
 {
-    scope s = class_<PythonUnfNotice>("UnfNotice", no_init);
+    scope s = class_<PythonUnfNotice>("Notice", no_init);
 
     TfPyNoticeWrapper<StageNotice, TfNotice>::Wrap();
 
