@@ -32,8 +32,14 @@ void wrapNotice()
         no_init);
 
     TfPyNoticeWrapper<StageNotice, TfNotice>::Wrap()
-        .def("IsMergeable", &StageNotice::IsMergeable)
-        .def("GetTypeId", &StageNotice::GetTypeId);
+        .def("IsMergeable",
+            &StageNotice::IsMergeable,
+            "Indicate whether notice from the same type can be consolidated "
+            "during a transaction")
+
+        .def("GetTypeId",
+            &StageNotice::GetTypeId,
+            "Return unique type identifier");
 
     TfPyNoticeWrapper<StageContentsChanged, StageNotice>::Wrap();
 

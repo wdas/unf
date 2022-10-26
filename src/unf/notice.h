@@ -44,12 +44,14 @@ class StageNotice : public PXR_NS::TfNotice, public PXR_NS::TfRefBase {
     virtual ~StageNotice() = default;
 
     /// \brief
-    /// Indicate whether notice can be merged with other StageNotice notices.
+    /// Indicate whether notice from the same type can be consolidated during a
+    /// transaction.
     ///
     /// By default, this method return true.
     ///
     /// \sa
     /// Merge
+    /// NoticeTransaction
     virtual bool IsMergeable() const { return true; }
 
     /// \brief
