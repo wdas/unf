@@ -12,7 +12,6 @@
 #include <pxr/usd/usd/primRange.h>
 #include <pxr/usd/usd/stage.h>
 
-
 class ObjectsChangedTest : public ::testing::Test {
   protected:
     void SetUp() override
@@ -123,4 +122,54 @@ TEST_F(ObjectsChangedTest, HasChangedFields)
     ASSERT_TRUE(n.HasChangedFields(prim));
     ASSERT_TRUE(n.HasChangedFields(PXR_NS::SdfPath{"/Foo"}));
     ASSERT_FALSE(n.HasChangedFields(PXR_NS::SdfPath{"/Incorrect"}));
+}
+
+TEST_F(ObjectsChangedTest, Descendants)
+{
+    ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
+
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Foo/Bar"});
+
+    ASSERT_EQ(observer.Received(), 2);
+
+    const auto& n = observer.GetLatestNotice();
+    ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath{"/Foo/Bar"});
+}
+
+TEST_F(ObjectsChangedTest, Transaction)
+{
+    ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
+
+    _broker->BeginTransaction();
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Foo/Bar"});
+    _broker->EndTransaction();
+
+    ASSERT_EQ(observer.Received(), 1);
+
+    const auto& n = observer.GetLatestNotice();
+    const auto& resyncedPaths = n.GetResyncedPaths();
+    ASSERT_EQ(resyncedPaths.size(), 1);
+    ASSERT_EQ(resyncedPaths.at(0), PXR_NS::SdfPath{"/Foo"});
+}
+
+TEST_F(ObjectsChangedTest, TransactionProperties)
+{
+    ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
+
+    _broker->BeginTransaction();
+    auto prim = _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"}, TfToken("Cylinder"));
+    prim.GetAttribute(TfToken("radius")).Set(5.0);
+    prim.GetAttribute(TfToken("height")).Set(10.0);
+    _broker->EndTransaction();
+
+    ASSERT_EQ(observer.Received(), 1);
+
+    const auto& n = observer.GetLatestNotice();
+    const auto& resyncedPaths = n.GetResyncedPaths();
+    ASSERT_EQ(resyncedPaths.size(), 1);
+    ASSERT_EQ(resyncedPaths.at(0), PXR_NS::SdfPath{"/Foo"});
+    const auto& changedInfoPaths = n.GetChangedInfoOnlyPaths();
+    ASSERT_EQ(changedInfoPaths.size(), 2);
+    ASSERT_NE(std::find(changedInfoPaths.begin(), changedInfoPaths.end(), PXR_NS::SdfPath{"/Foo.radius"}), changedInfoPaths.end());
+    ASSERT_NE(std::find(changedInfoPaths.begin(), changedInfoPaths.end(), PXR_NS::SdfPath{"/Foo.height"}), changedInfoPaths.end());
 }

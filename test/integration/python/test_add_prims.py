@@ -106,6 +106,7 @@ def test_add_prims_batching(notice_type, expected_usd, expected_broker):
     "StageEditTargetChanged",
     "LayerMutingChanged",
 ])
+
 def test_add_prims_blocking(notice_type, expected_usd):
     """Add several prims to the stage and block broker notices.
     """
@@ -156,9 +157,9 @@ def test_add_prims_transaction_objectschanged():
         """Validate notice received."""
         assert len(notice.GetResyncedPaths()) == 3
         assert len(notice.GetChangedInfoOnlyPaths()) == 0
-        assert notice.GetResyncedPaths()[0] == "/Foo"
-        assert notice.GetResyncedPaths()[1] == "/Bar"
-        assert notice.GetResyncedPaths()[2] == "/Baz"
+        assert notice.GetResyncedPaths()[0] == "/Bar"
+        assert notice.GetResyncedPaths()[1] == "/Baz"
+        assert notice.GetResyncedPaths()[2] == "/Foo"
         received.append(notice)
 
     key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
