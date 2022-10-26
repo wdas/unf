@@ -52,7 +52,12 @@ class StageNotice : public PXR_NS::TfNotice, public PXR_NS::TfRefBase {
     /// Merge
     virtual bool IsMergeable() const { return true; }
 
-    virtual void PostProcess(){};
+    /// \brief
+    /// Base method for adding post process after merging data within a
+    /// transaction.
+    ///
+    /// By default, no process is done.
+    virtual void PostProcess() {};
 
     /// \brief
     /// Interface method for merging StageNotice.
