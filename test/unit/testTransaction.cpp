@@ -63,7 +63,7 @@ TEST_F(TransactionTest, FromBrokerWithFilter)
         // Filter out UnMergeableNotice type.
         std::string target = typeid(::Test::UnMergeableNotice).name();
         auto predicate = [&](const unf::UnfNotice::StageNotice& n) {
-            return (n.GetTypeId() != target);
+            return (typeid(n).name() != target);
         };
 
         unf::NoticeTransaction transaction(broker, predicate);
@@ -183,7 +183,7 @@ TEST_F(TransactionTest, FromStageWithFilter)
         // Filter out UnMergeableNotice type.
         std::string target = typeid(::Test::UnMergeableNotice).name();
         auto predicate = [&](const unf::UnfNotice::StageNotice& n) {
-            return (n.GetTypeId() != target);
+            return (typeid(n).name() != target);
         };
 
         unf::NoticeTransaction transaction(_stage, predicate);
@@ -341,7 +341,7 @@ TEST_F(TransactionTest, NestedWithFilter)
             // Filter out UnMergeableNotice type.
             std::string target = typeid(::Test::UnMergeableNotice).name();
             auto predicate = [&](const unf::UnfNotice::StageNotice& n) {
-                return (n.GetTypeId() != target);
+                return (typeid(n).name() != target);
             };
 
             unf::NoticeTransaction transaction2(broker, predicate);

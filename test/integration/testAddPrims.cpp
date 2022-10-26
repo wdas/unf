@@ -138,7 +138,7 @@ TEST_F(AddPrimsTest, PartialBlocking)
 
     // Pass a predicate to block all broker notices.
     broker->BeginTransaction([&](const _UNF::StageNotice& n) {
-        return (n.GetTypeId() == target);
+        return (typeid(n).name() == target);
     });
 
     _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});

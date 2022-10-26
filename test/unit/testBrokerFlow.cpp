@@ -147,7 +147,7 @@ TEST_F(BrokerFlowTest, WithFilter)
     // Filter out UnMergeableNotice type.
     std::string target = typeid(::Test::UnMergeableNotice).name();
     auto predicate = [&](const unf::UnfNotice::StageNotice& n) {
-        return (n.GetTypeId() != target);
+        return (typeid(n).name() != target);
     };
 
     broker->BeginTransaction(predicate);

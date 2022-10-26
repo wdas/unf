@@ -167,7 +167,7 @@ TEST_F(MuteLayersTest, PartialBlocking)
 
     // Pass a predicate to block all broker notices.
     broker->BeginTransaction([&](const _UNF::StageNotice& n) {
-        return (n.GetTypeId() == target);
+        return (typeid(n).name() == target);
     });
 
     _stage->MuteLayer(_layerIds[0]);

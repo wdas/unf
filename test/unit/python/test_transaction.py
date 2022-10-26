@@ -4,7 +4,7 @@ from pxr import Usd, Tf
 import usd_notice_framework as unf
 
 
-def test_create_from_broker():
+def test_transaction_create_from_broker():
     """Create a transaction from broker."""
     stage = Usd.Stage.CreateInMemory()
     broker = unf.Broker.Create(stage)
@@ -32,7 +32,7 @@ def test_create_from_broker():
     # Ensure that one notice was received.
     assert len(received) == 1
 
-def test_create_from_broker_with_filter():
+def test_transaction_create_from_broker_with_filter():
     """Create a transaction from broker with filter."""
     stage = Usd.Stage.CreateInMemory()
     broker = unf.Broker.Create(stage)
@@ -64,7 +64,7 @@ def test_create_from_broker_with_filter():
     # Ensure that no notice was received.
     assert len(received) == 0
 
-def test_create_from_broker_with_default_predicate():
+def test_transaction_create_from_broker_with_default_predicate():
     """Create a transaction from broker with default predicate."""
     stage = Usd.Stage.CreateInMemory()
     broker = unf.Broker.Create(stage)
@@ -93,7 +93,7 @@ def test_create_from_broker_with_default_predicate():
     # Ensure that one notice was received.
     assert len(received) == 1
 
-def test_create_from_broker_with_blockall_predicate():
+def test_transaction_create_from_broker_with_blockall_predicate():
     """Create a transaction and block all notices in that scope."""
     stage = Usd.Stage.CreateInMemory()
     broker = unf.Broker.Create(stage)
@@ -121,7 +121,7 @@ def test_create_from_broker_with_blockall_predicate():
     # Ensure that no notices were received.
     assert len(received) == 0
 
-def test_create_from_stage():
+def test_transaction_create_from_stage():
     """Create a transaction from stage."""
     stage = Usd.Stage.CreateInMemory()
 
@@ -146,7 +146,7 @@ def test_create_from_stage():
     # Ensure that one notice was received.
     assert len(received) == 1
 
-def test_create_from_stage_with_filter():
+def test_transaction_create_from_stage_with_filter():
     """Create a transaction from stage with filter."""
     stage = Usd.Stage.CreateInMemory()
 
@@ -175,7 +175,7 @@ def test_create_from_stage_with_filter():
     # Ensure that no notice was received.
     assert len(received) == 0
 
-def test_create_from_stage_with_default_predicate():
+def test_transaction_create_from_stage_with_default_predicate():
     """Create a transaction from stage with default predicate."""
     stage = Usd.Stage.CreateInMemory()
 
@@ -203,7 +203,7 @@ def test_create_from_stage_with_default_predicate():
     # Ensure that one notice was received.
     assert len(received) == 1
 
-def test_create_from_stage_with_blockall_predicate():
+def test_transaction_create_from_stage_with_blockall_predicate():
     """Create a transaction and block all notices in that scope."""
     stage = Usd.Stage.CreateInMemory()
 
@@ -230,7 +230,7 @@ def test_create_from_stage_with_blockall_predicate():
     # Ensure that no notices were received.
     assert len(received) == 0
 
-def test_nested():
+def test_transaction_nested():
     """Create nested transactions."""
     stage = Usd.Stage.CreateInMemory()
 
@@ -265,7 +265,7 @@ def test_nested():
     # Ensure that one notice was received.
     assert len(received) == 1
 
-def test_nested_with_filter():
+def test_transaction_nested_with_filter():
     """Create nested transactions with filter."""
     stage = Usd.Stage.CreateInMemory()
 
