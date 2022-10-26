@@ -240,8 +240,7 @@ def test_nested():
 
     def _validate(notice, stage):
         """Validate notice received."""
-        assert "/Bar" in notice.GetResyncedPaths()
-        assert "/Foo" in notice.GetResyncedPaths()
+        assert notice.GetResyncedPaths() == ["/Bar", "/Foo"]
         received.append(notice)
 
     key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)

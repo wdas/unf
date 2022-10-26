@@ -157,9 +157,9 @@ def test_add_prims_transaction_objectschanged():
         """Validate notice received."""
         assert len(notice.GetResyncedPaths()) == 3
         assert len(notice.GetChangedInfoOnlyPaths()) == 0
-        assert "/Foo" in notice.GetResyncedPaths()
-        assert "/Bar" in notice.GetResyncedPaths()
-        assert "/Baz" in notice.GetResyncedPaths()
+        assert notice.GetResyncedPaths()[0] == "/Bar"
+        assert notice.GetResyncedPaths()[1] == "/Baz"
+        assert notice.GetResyncedPaths()[2] == "/Foo"
         received.append(notice)
 
     key = Tf.Notice.Register(UnfNotice.ObjectsChanged, _validate, stage)
