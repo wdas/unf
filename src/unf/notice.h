@@ -53,13 +53,6 @@ class StageNotice : public PXR_NS::TfNotice, public PXR_NS::TfRefBase {
     virtual bool IsMergeable() const { return true; }
 
     /// \brief
-    /// Base method for adding post process after merging data within a
-    /// transaction.
-    ///
-    /// By default, no process is done.
-    virtual void PostProcess() {};
-
-    /// \brief
     /// Interface method for merging StageNotice.
     ///
     /// \warning
@@ -68,6 +61,13 @@ class StageNotice : public PXR_NS::TfNotice, public PXR_NS::TfRefBase {
         PXR_NAMESPACE_USING_DIRECTIVE
         TF_FATAL_ERROR("Abstract class 'StageNotice' cannot be merged.");
     }
+
+    /// \brief
+    /// Base method for adding post process after merging data within a
+    /// transaction.
+    ///
+    /// By default, no process is done.
+    virtual void PostProcess() {};
 
     /// \brief
     /// Interface method for returing unique type identifier.
