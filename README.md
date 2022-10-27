@@ -22,7 +22,7 @@ def updated(notice, stage):
     """Print resynced paths from the stage."""
     print(notice.GetResyncedPaths())
 
-key = Tf.Notice.Register(unf.UnfNotice.ObjectsChanged, updated, stage)
+key = Tf.Notice.Register(unf.Notice.ObjectsChanged, updated, stage)
 
 with unf.NoticeTransaction(stage):
     prim = stage.DefinePrim("/Foo", "Cylinder")
