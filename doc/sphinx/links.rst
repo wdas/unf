@@ -14,3 +14,5 @@
 .. _`UnfNotice::StageEditTargetChanged`: ./doxygen/classunf_1_1UnfNotice_1_1StageEditTargetChanged.html
 .. _Broker: ./doxygen/classunf_1_1Broker.html
 .. _NoticeTransaction: ./doxygen/classunf_1_1NoticeTransaction.html
+.. _Dispatcher: ./doxygen/classunf_1_1Dispatcher.html
+.. _StageDispatcher: ./doxygen/classunf_1_1StageDispatcher.html

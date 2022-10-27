@@ -139,10 +139,8 @@ associated with the stage::
 
 .. note::
 
-    The :class:`Broker` is using a default Dispatcher called "StageDispatcher"
-    to create an autonomous Unf notice for each existing Usd notice. It is
-    possible to override this dispatcher or create new one if you need different
-    notices to be triggered.
+    The :class:`Broker` is using a :ref:`dispatcher <dispatchers>` to
+    emit an autonomous notice for each Usd notice.
 
 Let's now edit the stage once again with the :term:`Usd` API::
 
@@ -203,4 +201,4 @@ to block all notices emitted during a transaction::
     ):
         # Stage editing ...
 
-.. seealso:: :ref:`autonomous_notice`
+.. seealso:: :ref:`notices`

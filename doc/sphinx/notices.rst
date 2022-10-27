@@ -1,4 +1,4 @@
-.. _autonomous_notice:
+.. _notices:
 
 ***********************
 Using Autonomous Notice
@@ -22,7 +22,7 @@ reachable.
 This makes it possible to reduce the number of notices emitted during a
 transaction without loosing information.
 
-.. _autonomous_notice/transaction:
+.. _notices/transaction:
 
 Using notice transaction
 ========================
@@ -38,6 +38,7 @@ a NoticeTransaction_ instance:
 
     {
         unf::NoticeTransaction transaction(broker);
+
         // Emission of autonomous notices is deferred until the end of the
         // transaction. Other notices are sent as normal.
     }
@@ -87,7 +88,7 @@ It can also be created separately and sent as follows:
 
 .. note::
 
-    The sending process is usually handled by a :ref:`Dispatcher <dispatcher>`.
+    The sending process is usually handled by a :ref:`Dispatcher <dispatchers>`.
 
 A notice can be defined as "mergeable" or "unmergeable". If a notice is defined
 as unmergeable, no consolidation will take place during a transaction. In the
@@ -141,7 +142,7 @@ during a transaction:
         // ...
     }
 
-.. _autonomous_notice/default:
+.. _notices/default:
 
 Default notices
 ===============
@@ -160,19 +161,19 @@ Usd notices                           Autonomous Notices
 
 Python bindings are provided for each notice:
 
-* :class:`~UnfNotice.ObjectsChanged`
-* :class:`~UnfNotice.LayerMutingChanged`
-* :class:`~UnfNotice.StageContentsChanged`
-* :class:`~UnfNotice.StageEditTargetChanged`
+* :class:`~Notice.ObjectsChanged`
+* :class:`~Notice.LayerMutingChanged`
+* :class:`~Notice.StageContentsChanged`
+* :class:`~Notice.StageEditTargetChanged`
 
 All of these notices are defined as mergeable and therefore will be
 consolidated per notice type during a transaction.
 
 .. note::
 
-    These notices are handled by the StageDispatcher.
+    These notices are handled by the :ref:`StageDispatcher <dispatchers/stage>`.
 
-.. _autonomous_notice/custom:
+.. _notices/custom:
 
 Custom notices
 ==============
@@ -236,3 +237,7 @@ with other notices:
 
     The copy constructor and assignment operator should be implemented as well
     if the notice contains data.
+
+.. warning::
+
+    Custom autonomous notices can not be implemented in Python.

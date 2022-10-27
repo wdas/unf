@@ -44,6 +44,11 @@ Glossary
 
         .. seealso:: http://google.github.io/googletest/
 
+    Plug
+        Plugin framework included with the :term:`Usd` API.
+
+        .. seealso:: https://graphics.pixar.com/usd/release/api/plug_page_front.html
+
     Pytest
         Python testing framework.
 

@@ -1,5 +1,0 @@
-.. _dispatcher:
-
-****************
-Using Dispatcher
-****************
