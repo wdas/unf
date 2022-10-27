@@ -27,6 +27,10 @@ html_theme = "sphinx_rtd_theme"
 # If True, copy src rst files to output for reference.
 html_copy_source = True
 
+# Ensure that common links are available.
+with open("links.rst") as stream:
+     rst_epilog = stream.read().replace(":orphan:", "")
+
 # -- Intersphinx --------------------------------------------------------------
 
 intersphinx_mapping = {

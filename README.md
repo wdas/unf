@@ -2,7 +2,8 @@
 
 [![Tests](https://github.com/wdas/usd-notice-framework/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/wdas/usd-notice-framework/actions/workflows/test.yml)
 
-The Usd Notice Framework is built over the
+The Usd Notice Framework is built over
+[Usd](https://github.com/PixarAnimationStudios/USD) notices and uses the
 [Tf Notification System](https://graphics.pixar.com/usd/release/api/page_tf__notification.html).
 It provides a C++ and Python API to efficiently manage the flow of notifications
 emitted when authoring the [Usd](https://github.com/PixarAnimationStudios/USD)

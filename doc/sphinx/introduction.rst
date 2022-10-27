@@ -4,8 +4,8 @@
 Introduction
 ************
 
-The Usd Notice Framework is built over the :term:`Tf Notification System`. It
-provides a :ref:`C++ <api_reference/cpp>` and
+The Usd Notice Framework is built over :term:`USD` notices and uses the
+:term:`Tf Notification System`. It provides a :ref:`C++ <api_reference/cpp>` and
 :ref:`Python <api_reference/python>` API to efficiently manage the flow of
 notifications emitted when authoring the :term:`Usd` stage.
 
@@ -54,10 +54,7 @@ of notices.
 While bringing such features directly into the :term:`Usd` API has
 been considered (see `prototype
 <https://github.com/wdas/USD/compare/release...prototype-transaction>`_),
-ensuring that USD notices such as `ObjectsChanged
-<https://graphics.pixar.com/usd/release/api/class_usd_notice_1_1_objects_changed.html>`_
-or `LayerMutingChanged
-<https://graphics.pixar.com/usd/release/api/class_usd_notice_1_1_layer_muting_changed.html>`_
-own their data instead of referencing it from stage would have added an overhead
-which would have degraded the performance for client not interested with this
-feature.
+ensuring that USD notices such as `ObjectsChanged <UsdNotice::ObjectsChanged>`_
+or `LayerMutingChanged <UsdNotice::LayerMutingChanged>`_ own their data instead
+of referencing it from stage would have added an overhead which would have
+degraded the performance for client not interested with this feature.

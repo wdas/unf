@@ -15,7 +15,8 @@ Editing the Stage
 =================
 
 Let's start by creating a :term:`Usd` stage in memory and register a callback
-to listen to `Usd.Notice.ObjectsChanged`_ and print all resynced paths::
+to listen to `Usd.Notice.ObjectsChanged <UsdNotice::ObjectsChanged>`_ and print
+all resynced paths::
 
     from pxr import Usd, Tf
 
@@ -40,11 +41,11 @@ Let's now edit the stage by adding a cylinder prim and update the attributes::
     prim.GetAttribute("radius").Set(5)
     prim.GetAttribute("height").Set(10)
 
-This should have triggered five `Usd.Notice.ObjectsChanged`_ notices to be
-emitted. The first notice was emitted when the prim was created, the second
-and the fourth when both attributes where created, the third and fifth when
-they were given a default value. As a result, the following information will be
-printed in the shell:
+This should have triggered five `Usd.Notice.ObjectsChanged
+<UsdNotice::ObjectsChanged>`_ notices to be emitted. The first notice was
+emitted when the prim was created, the second and the fourth when both
+attributes where created, the third and fifth when they were given a default
+value. As a result, the following information will be printed in the shell:
 
 .. code-block:: bash
 
@@ -69,8 +70,9 @@ Editing the Layer
 =================
 
 To consolidate the number of notices emitted, we could use the :term:`Sdf` API
-to edit the root layer, then use a `Sdf.ChangeBlock`_ which would also limit the
-number of recompositions and greatly improve overall performance::
+to edit the root layer, then use a `Sdf.ChangeBlock <SdfChangeBlock>`_ which
+would also limit the number of recompositions and greatly improve overall
+performance::
 
     from pxr import Sdf
 
@@ -99,10 +101,10 @@ One single notice will be emitted:
     Resynced Paths: [(Sdf.Path('/Foo'), ['specifier', 'typeName'])]
     ChangedInfoOnly Paths: []
 
-.. _getting_started/using_broker:
+.. _getting_started/using:
 
-Using the Broker
-================
+Using the library
+=================
 
 Let's now create a new stage and modify the notice registration to target the
 :class:`UnfNotice.ObjectsChanged` notice:
@@ -129,8 +131,8 @@ Let's now create a new stage and modify the notice registration to target the
     key = Tf.Notice.Register(unf.UnfNotice.ObjectsChanged, _updated, stage)
 
 To ensure that a :class:`UnfNotice.ObjectsChanged` notice is sent whenever a
-`Usd.Notice.ObjectsChanged`_ is emitted, we need to create a :class:`Broker`
-associated with the stage::
+`Usd.Notice.ObjectsChanged <UsdNotice::ObjectsChanged>`_ is emitted, we need to
+create a :class:`Broker` associated with the stage::
 
     broker = unf.Broker.Create(stage)
 
@@ -148,10 +150,10 @@ Let's now edit the stage once again with the :term:`Usd` API::
     prim.GetAttribute("height").Set(10)
 
 Like in the first section, five notices are emitted with the same information
-as with the `Usd.Notice.ObjectsChanged`_ notice. However, the
-:class:`UnfNotice.ObjectsChanged` notice is defined as mergeable so it is
-possible to reduce the number of notices emitted without having to edit the
-layer with the :term:`Sdf` API by using a notice transaction::
+as with the `Usd.Notice.ObjectsChanged <UsdNotice::ObjectsChanged>`_ notice.
+However, the :class:`UnfNotice.ObjectsChanged` notice is defined as mergeable
+so it is possible to reduce the number of notices emitted without having to
+edit the layer with the :term:`Sdf` API by using a notice transaction::
 
     broker.BeginTransaction()
 
@@ -169,23 +171,12 @@ instead which can be used as a context manager::
         prim.GetAttribute("radius").Set(5)
         prim.GetAttribute("height").Set(10)
 
-.. note::
-
-    The :class:`NoticeTransaction` object can also be constructed directly with
-    the Usd stage, which encapsulates the creation of the broker if none have
-    been previously created for this stage.
-
 As a result, only one notice will be emitted:
 
 .. code-block:: bash
 
     Resynced Paths: [(Sdf.Path('/Foo'), ['typeName', 'specifier'])]
     ChangedInfoOnly Paths: [(Sdf.Path('/Foo.radius'), ['default']), (Sdf.Path('/Foo.height'), ['default'])]
-
-.. _getting_started/filtering:
-
-Filtering Notices
-=================
 
 It is sometimes necessary to de-register listeners to a particular set of
 notices when editing the stage does not require updating the clients. If many
@@ -210,5 +201,4 @@ to block all notices emitted during a transaction::
     ):
         # Stage editing ...
 
-.. _Usd.Notice.ObjectsChanged: https://graphics.pixar.com/usd/release/api/class_usd_notice_1_1_objects_changed.html
-.. _Sdf.ChangeBlock: https://graphics.pixar.com/usd/release/api/class_sdf_change_block.html
+.. seealso:: :ref:`autonomous_notice`

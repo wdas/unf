@@ -12,6 +12,8 @@ Notice management library built over :term:`USD` Notices.
     introduction
     installing
     getting_started
+    autonomous_notice
+    dispatcher
     api_reference/index
     release/index
     glossary

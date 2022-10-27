@@ -49,9 +49,8 @@ class StageNotice : public PXR_NS::TfNotice, public PXR_NS::TfRefBase {
     ///
     /// By default, this method return true.
     ///
-    /// \sa
-    /// Merge
-    /// NoticeTransaction
+    /// \sa Merge
+    /// \sa NoticeTransaction
     virtual bool IsMergeable() const { return true; }
 
     /// \brief
