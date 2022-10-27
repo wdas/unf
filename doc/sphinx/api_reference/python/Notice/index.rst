@@ -1,8 +1,8 @@
-*********
-UnfNotice
-*********
+******
+Notice
+******
 
-.. py:class:: UnfNotice
+.. py:class:: Notice
 
     Regroup all autonomous notices used by the library.
 

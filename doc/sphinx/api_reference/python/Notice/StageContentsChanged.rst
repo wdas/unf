@@ -1,10 +1,10 @@
-******************************
-UnfNotice.StageContentsChanged
-******************************
+***************************
+Notice.StageContentsChanged
+***************************
 
-.. py:class:: UnfNotice.StageContentsChanged
+.. py:class:: Notice.StageContentsChanged
 
-    Base: :py:class:`UnfNotice.StageNotice`
+    Base: :py:class:`Notice.StageNotice`
 
     Notice sent when the given Usd Stage's contents have changed in
     any way.

@@ -5,7 +5,7 @@ NoticeTransaction
 .. py:class:: NoticeTransaction
 
     Context manager object which consolidates and filter notices derived from
-    :class:`UnfNotice.StageNotice` within a specific scope.
+    :class:`Notice.StageNotice` within a specific scope.
 
     A transaction can be started with a :class:`Broker` instance, or with
     a Usd Stage instance. If the later option is chosen, a :class:`Broker`
@@ -23,7 +23,7 @@ NoticeTransaction
             broker = transaction.GetBroker()
 
 
-    By default, all :class:`UnfNotice.StageNotice` notices will be
+    By default, all :class:`Notice.StageNotice` notices will be
     captured during the entire scope of the transaction. A function
     *predicate* or a :class:`CapturePredicate` instance can be passed to
     influence which notices are captured.
@@ -49,7 +49,7 @@ NoticeTransaction
         :param target: Instance of :class:`Broker` or Usd Stage.
 
         :param predicate: Instance of :class:`CapturePredicate` or function
-            taking a :class:`UnfNotice.StageNotice` instance and returning a
+            taking a :class:`Notice.StageNotice` instance and returning a
             boolean value. By default, the :meth:`CapturePredicate.Default`
             predicate is used.
 

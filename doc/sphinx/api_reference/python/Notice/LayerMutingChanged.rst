@@ -1,10 +1,10 @@
-****************************
-UnfNotice.LayerMutingChanged
-****************************
+*************************
+Notice.LayerMutingChanged
+*************************
 
-.. py:class:: UnfNotice.LayerMutingChanged
+.. py:class:: Notice.LayerMutingChanged
 
-    Base: :py:class:`UnfNotice.StageNotice`
+    Base: :py:class:`Notice.StageNotice`
 
     Notice sent after a set of layers have been newly muted or unmuted.
 

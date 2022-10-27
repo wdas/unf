@@ -1,10 +1,10 @@
-************************
-UnfNotice.ObjectsChanged
-************************
+*********************
+Notice.ObjectsChanged
+*********************
 
-.. py:class:: UnfNotice.ObjectsChanged
+.. py:class:: Notice.ObjectsChanged
 
-    Base: :py:class:`UnfNotice.StageNotice`
+    Base: :py:class:`Notice.StageNotice`
 
     Notice sent in response to authored changes that affect any
     Usd Object.

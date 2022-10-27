@@ -41,10 +41,10 @@ Broker
 
         Start a notice transaction.
 
-        Notices derived from :class:`UnfNotice.StageNotice` will be held during
+        Notices derived from :class:`Notice.StageNotice` will be held during
         the transaction and emitted at the end.
 
-        By default, all :class:`UnfNotice.StageNotice` notices will be
+        By default, all :class:`Notice.StageNotice` notices will be
         captured during the entire scope of the transaction. A function
         *predicate* or a :class:`CapturePredicate` instance can be passed to
         influence which notices are captured.
@@ -68,7 +68,7 @@ Broker
             to safely manage transactions.
 
         :param predicate: Instance of :class:`CapturePredicate` or function
-            taking a :class:`UnfNotice.StageNotice` instance and returning a
+            taking a :class:`Notice.StageNotice` instance and returning a
             boolean value. By default, the :meth:`CapturePredicate.Default`
             predicate is used.
 
@@ -77,7 +77,7 @@ Broker
         Stop a notice transaction.
 
         This will trigger the emission of all captured
-        :class:`UnfNotice.StageNotice` notices. Each notice type will be
+        :class:`Notice.StageNotice` notices. Each notice type will be
         consolidated before emission if applicable.
 
         .. warning::

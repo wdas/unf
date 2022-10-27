@@ -107,7 +107,7 @@ Using the library
 =================
 
 Let's now create a new stage and modify the notice registration to target the
-:class:`UnfNotice.ObjectsChanged` notice:
+:class:`unf.Notice.ObjectsChanged <Notice.ObjectsChanged>` notice:
 
 .. code-block:: python
     :emphasize-lines: 2,17
@@ -128,11 +128,12 @@ Let's now create a new stage and modify the notice registration to target the
             for path in notice.GetChangedInfoOnlyPaths()
         ]))
 
-    key = Tf.Notice.Register(unf.UnfNotice.ObjectsChanged, _updated, stage)
+    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _updated, stage)
 
-To ensure that a :class:`UnfNotice.ObjectsChanged` notice is sent whenever a
-`Usd.Notice.ObjectsChanged <UsdNotice::ObjectsChanged>`_ is emitted, we need to
-create a :class:`Broker` associated with the stage::
+To ensure that a :class:`unf.Notice.ObjectsChanged <Notice.ObjectsChanged>`
+notice is sent whenever a `Usd.Notice.ObjectsChanged
+<UsdNotice::ObjectsChanged>`_ is emitted, we need to create a :class:`Broker`
+associated with the stage::
 
     broker = unf.Broker.Create(stage)
 
@@ -151,9 +152,10 @@ Let's now edit the stage once again with the :term:`Usd` API::
 
 Like in the first section, five notices are emitted with the same information
 as with the `Usd.Notice.ObjectsChanged <UsdNotice::ObjectsChanged>`_ notice.
-However, the :class:`UnfNotice.ObjectsChanged` notice is defined as mergeable
-so it is possible to reduce the number of notices emitted without having to
-edit the layer with the :term:`Sdf` API by using a notice transaction::
+However, the :class:`unf.Notice.ObjectsChanged <Notice.ObjectsChanged>`
+notice is defined as mergeable so it is possible to reduce the number of notices
+emitted without having to edit the layer with the :term:`Sdf` API by using a
+notice transaction::
 
     broker.BeginTransaction()
 
