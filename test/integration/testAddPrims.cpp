@@ -22,9 +22,8 @@ class AddPrimsTest : public ::testing::Test {
         _USD::StageEditTargetChanged, _USD::LayerMutingChanged>;
 
     using BrokerListener = ::Test::Listener<
-        _UNF::StageNotice, _UNF::StageContentsChanged,
-        _UNF::ObjectsChanged, _UNF::StageEditTargetChanged,
-        _UNF::LayerMutingChanged>;
+        _UNF::StageNotice, _UNF::StageContentsChanged, _UNF::ObjectsChanged,
+        _UNF::StageEditTargetChanged, _UNF::LayerMutingChanged>;
 
     void SetUp() override
     {

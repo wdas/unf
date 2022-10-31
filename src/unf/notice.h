@@ -58,7 +58,8 @@ class StageNotice : public PXR_NS::TfNotice, public PXR_NS::TfRefBase {
     ///
     /// \warning
     /// This method should be considered as pure virtual.
-    virtual void Merge(StageNotice&&) {
+    virtual void Merge(StageNotice&&)
+    {
         PXR_NAMESPACE_USING_DIRECTIVE
         TF_FATAL_ERROR("Abstract class 'StageNotice' cannot be merged.");
     }
@@ -68,17 +69,18 @@ class StageNotice : public PXR_NS::TfNotice, public PXR_NS::TfRefBase {
     /// transaction.
     ///
     /// By default, no process is done.
-    virtual void PostProcess() {};
+    virtual void PostProcess(){};
 
     /// \brief
     /// Interface method for returing unique type identifier.
     ///
     /// \warning
     /// This method should be considered as pure virtual.
-    virtual std::string GetTypeId() const {
+    virtual std::string GetTypeId() const
+    {
         PXR_NAMESPACE_USING_DIRECTIVE
         TF_FATAL_ERROR(
-          "Abstract class 'StageNotice' does not have a unique identifier.");
+            "Abstract class 'StageNotice' does not have a unique identifier.");
         return "";
     }
 
@@ -105,7 +107,8 @@ class StageNotice : public PXR_NS::TfNotice, public PXR_NS::TfRefBase {
     ///
     /// \warning
     /// This method should be considered as pure virtual.
-    virtual StageNotice* _Clone() const {
+    virtual StageNotice* _Clone() const
+    {
         PXR_NAMESPACE_USING_DIRECTIVE
         TF_FATAL_ERROR("Abstract class 'StageNotice' cannot be cloned.");
         return nullptr;
@@ -179,7 +182,8 @@ class StageNoticeImpl : public StageNotice {
     /// \note
     /// Intermediate method needed as covariant return type is not possible
     /// with PXR_NS::TfRefPtr.
-    virtual StageNotice* _Clone() const {
+    virtual StageNotice* _Clone() const
+    {
         return new Self(static_cast<const Self&>(*this));
     }
 };
@@ -287,7 +291,8 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     ///
     /// \note
     /// Equivalent from
-    /// PXR_NS::UsdNotice::ObjectsChanged::GetChangedFields(const UsdObject&) const
+    /// PXR_NS::UsdNotice::ObjectsChanged::GetChangedFields(const UsdObject&)
+    /// const
     TfTokenSet GetChangedFields(const PXR_NS::UsdObject&) const;
 
     /// \brief
@@ -295,7 +300,8 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     ///
     /// \note
     /// Equivalent from
-    /// PXR_NS::UsdNotice::ObjectsChanged::GetChangedFields(const SdfPath&) const
+    /// PXR_NS::UsdNotice::ObjectsChanged::GetChangedFields(const SdfPath&)
+    /// const
     TfTokenSet GetChangedFields(const PXR_NS::SdfPath&) const;
 
     /// \brief
@@ -303,7 +309,8 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     ///
     /// \note
     /// Equivalent from
-    /// PXR_NS::UsdNotice::ObjectsChanged::HasChangedFields(const UsdObject&) const
+    /// PXR_NS::UsdNotice::ObjectsChanged::HasChangedFields(const UsdObject&)
+    /// const
     bool HasChangedFields(const PXR_NS::UsdObject&) const;
 
     /// \brief
@@ -311,7 +318,8 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     ///
     /// \note
     /// Equivalent from
-    /// PXR_NS::UsdNotice::ObjectsChanged::HasChangedFields(const SdfPath&) const
+    /// PXR_NS::UsdNotice::ObjectsChanged::HasChangedFields(const SdfPath&)
+    /// const
     bool HasChangedFields(const PXR_NS::SdfPath&) const;
 
     /// \brief
@@ -319,14 +327,14 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     const ChangedFieldMap& GetChangedFieldMap() const { return _changedFields; }
 
   protected:
-      /// Create notice from PXR_NS::UsdNotice::ObjectsChanged instance.
+    /// Create notice from PXR_NS::UsdNotice::ObjectsChanged instance.
     explicit ObjectsChanged(const PXR_NS::UsdNotice::ObjectsChanged&);
 
     /// Ensure that StageNoticeImpl::Create method can call constructor.
     friend StageNoticeImpl<ObjectsChanged>;
 
   private:
-      /// List of resynced paths.
+    /// List of resynced paths.
     PXR_NS::SdfPathVector _resyncChanges;
 
     /// List of paths which are modified but not resynced.

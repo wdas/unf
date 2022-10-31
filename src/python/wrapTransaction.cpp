@@ -1,8 +1,8 @@
 #include "./predicate.h"
 
 #include "unf/broker.h"
-#include "unf/transaction.h"
 #include "unf/capturePredicate.h"
+#include "unf/transaction.h"
 
 #include <pxr/base/tf/pyFunction.h>
 #include <pxr/pxr.h>

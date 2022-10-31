@@ -85,6 +85,21 @@ BUILD_SHARED_LIBS     Indicate whether library should be built shared. Default i
 BUNDLE_PYTHON_TESTS   Bundle Python tests per group (faster). Default is false.
 ===================== ==================================================================
 
+.. _installing/clang-format:
+
+Apply clang-format
+==================
+
+Ensure that :term:`Clang-format` is installed for applying C++ style.
+
+Then run the program as follows::
+
+    cmake --build . --target format
+
+.. warning::
+
+    When contributing, please run this command before committing your code.
+
 .. _installing/documentation:
 
 Building documentation

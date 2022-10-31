@@ -1,7 +1,7 @@
 #include "unf/broker.h"
+#include "unf/capturePredicate.h"
 #include "unf/dispatcher.h"
 #include "unf/notice.h"
-#include "unf/capturePredicate.h"
 
 #include <pxr/base/tf/weakPtr.h>
 #include <pxr/pxr.h>
@@ -136,7 +136,6 @@ void Broker::_Add(const DispatcherPtr& dispatcher)
 Broker::_NoticeMerger::_NoticeMerger(CapturePredicate predicate)
     : _predicate(std::move(predicate))
 {
-
 }
 
 void Broker::_NoticeMerger::Add(const UnfNotice::StageNoticeRefPtr& notice)
@@ -188,8 +187,9 @@ void Broker::_NoticeMerger::Merge()
     }
 }
 
-void Broker::_NoticeMerger::PostProcess() {
-    for(auto& element : _noticeMap) {
+void Broker::_NoticeMerger::PostProcess()
+{
+    for (auto& element : _noticeMap) {
         auto& notice = element.second[0];
         notice->PostProcess();
     }

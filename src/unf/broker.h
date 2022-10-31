@@ -3,8 +3,8 @@
 
 /// \file unf/broker.h
 
-#include "unf/notice.h"
 #include "unf/capturePredicate.h"
+#include "unf/notice.h"
 
 #include <pxr/base/plug/plugin.h>
 #include <pxr/base/plug/registry.h>
@@ -184,7 +184,7 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     static std::unordered_map<size_t, BrokerPtr> Registry;
 
     class _NoticeMerger {
-    public:
+      public:
         _NoticeMerger(CapturePredicate predicate = CapturePredicate::Default());
 
         void Add(const UnfNotice::StageNoticeRefPtr&);
@@ -193,7 +193,7 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
         void PostProcess();
         void Send(const PXR_NS::UsdStageWeakPtr&);
 
-    private:
+      private:
         using _NoticePtrList = std::vector<UnfNotice::StageNoticeRefPtr>;
         using _NoticePtrMap = std::unordered_map<std::string, _NoticePtrList>;
 

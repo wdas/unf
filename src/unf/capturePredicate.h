@@ -6,14 +6,13 @@
 #include "unf/notice.h"
 
 #include <functional>
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace unf {
 
 /// Convenient alias for function defining whether notice can be captured.
-using CapturePredicateFunc =
-    std::function<bool(const UnfNotice::StageNotice&)>;
+using CapturePredicateFunc = std::function<bool(const UnfNotice::StageNotice&)>;
 
 /// \class CapturePredicate
 ///
@@ -26,9 +25,8 @@ using CapturePredicateFunc =
 /// \note
 /// We used a functor embedding a CapturePredicateFunc instead of defining
 /// common predicates via free functions to simplify the Python binding process.
-class CapturePredicate
-{
-public:
+class CapturePredicate {
+  public:
     /// \brief
     /// Create predicate from a \p function.
     ///
@@ -51,7 +49,7 @@ public:
     /// Create a predicate which return false for each notice type.
     static CapturePredicate BlockAll();
 
-private:
+  private:
     CapturePredicateFunc _function = nullptr;
 };
 

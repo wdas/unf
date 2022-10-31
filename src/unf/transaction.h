@@ -44,7 +44,7 @@ class NoticeTransaction {
     ///     return (n.GetTypeId() != typeid(Foo).name());
     /// });
     /// \endcode
-    NoticeTransaction(const BrokerPtr &, const CapturePredicateFunc&);
+    NoticeTransaction(const BrokerPtr &, const CapturePredicateFunc &);
 
     /// \brief
     /// Create transaction from a UsdStage.
@@ -52,7 +52,8 @@ class NoticeTransaction {
     /// Convenient constructor to encapsulate the creation of the broker.
     ///
     /// \sa
-    /// NoticeTransaction(const BrokerPtr &, CapturePredicate predicate = CapturePredicate::Default())
+    /// NoticeTransaction(const BrokerPtr &, CapturePredicate predicate =
+    /// CapturePredicate::Default())
     NoticeTransaction(
         const PXR_NS::UsdStageRefPtr &,
         CapturePredicate predicate = CapturePredicate::Default());
@@ -66,7 +67,7 @@ class NoticeTransaction {
     /// NoticeTransaction(const BrokerPtr &, const CapturePredicateFunc&)
 
     NoticeTransaction(
-      const PXR_NS::UsdStageRefPtr &, const CapturePredicateFunc&);
+        const PXR_NS::UsdStageRefPtr &, const CapturePredicateFunc &);
 
     /// Delete object and end transaction.
     virtual ~NoticeTransaction();

@@ -1,6 +1,6 @@
 #include <unf/broker.h>
-#include <unf/transaction.h>
 #include <unf/capturePredicate.h>
+#include <unf/transaction.h>
 
 #include <unfTest/listener.h>
 #include <unfTest/notice.h>

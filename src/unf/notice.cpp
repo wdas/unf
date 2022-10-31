@@ -32,7 +32,6 @@ ObjectsChanged::ObjectsChanged(const UsdNotice::ObjectsChanged& notice)
 
         auto tokens = notice.GetChangedFields(path);
         _changedFields[path] = TfTokenSet(tokens.begin(), tokens.end());
-
     }
     for (const auto& path : notice.GetChangedInfoOnlyPaths()) {
         _infoChanges.push_back(path);
@@ -88,7 +87,8 @@ void ObjectsChanged::Merge(ObjectsChanged&& notice)
     }
 }
 
-void ObjectsChanged::PostProcess() {
+void ObjectsChanged::PostProcess()
+{
     SdfPath::RemoveDescendentPaths(&_resyncChanges);
 }
 

@@ -32,29 +32,34 @@ void wrapNotice()
         no_init);
 
     TfPyNoticeWrapper<StageNotice, TfNotice>::Wrap()
-        .def("IsMergeable",
+        .def(
+            "IsMergeable",
             &StageNotice::IsMergeable,
             "Indicate whether notice from the same type can be consolidated "
             "during a transaction")
 
-        .def("GetTypeId",
+        .def(
+            "GetTypeId",
             &StageNotice::GetTypeId,
             "Return unique type identifier");
 
     TfPyNoticeWrapper<StageContentsChanged, StageNotice>::Wrap();
 
     TfPyNoticeWrapper<ObjectsChanged, StageNotice>::Wrap()
-        .def("AffectedObject",
+        .def(
+            "AffectedObject",
             &ObjectsChanged::AffectedObject,
             "Indicate whether object was affected by the change that generated "
             "this notice.")
 
-        .def("ResyncedObject",
+        .def(
+            "ResyncedObject",
             &ObjectsChanged::ResyncedObject,
             "Indicate whether object was resynced by the change that generated "
             "this notice.")
 
-        .def("ChangedInfoOnly",
+        .def(
+            "ChangedInfoOnly",
             &ObjectsChanged::ChangedInfoOnly,
             "Indicate whether object was modified but not resynced by the "
             "change that generated this notice.")
@@ -76,7 +81,8 @@ void wrapNotice()
             "GetChangedFields",
             (unf::TfTokenSet(ObjectsChanged::*)(const SdfPath&) const)
                 & ObjectsChanged::GetChangedFields,
-            "Return the list of changed fields in layers that affected the path",
+            "Return the list of changed fields in layers that affected the "
+            "path",
             return_value_policy<TfPySequenceToList>())
 
         .def(
