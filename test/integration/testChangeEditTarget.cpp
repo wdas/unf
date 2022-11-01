@@ -23,9 +23,8 @@ class ChangeEditTargetTest : public ::testing::Test {
         _USD::StageEditTargetChanged, _USD::LayerMutingChanged>;
 
     using BrokerListener = ::Test::Listener<
-        _UNF::StageNotice, _UNF::StageContentsChanged,
-        _UNF::ObjectsChanged, _UNF::StageEditTargetChanged,
-        _UNF::LayerMutingChanged>;
+        _UNF::StageNotice, _UNF::StageContentsChanged, _UNF::ObjectsChanged,
+        _UNF::StageEditTargetChanged, _UNF::LayerMutingChanged>;
 
     void SetUp() override
     {
@@ -117,8 +116,7 @@ TEST_F(ChangeEditTargetTest, Blocking)
     auto broker = unf::Broker::Create(_stage);
 
     // Pass a predicate to block all broker notices.
-    broker->BeginTransaction(
-        [](const _UNF::StageNotice &) { return false; });
+    broker->BeginTransaction([](const _UNF::StageNotice &) { return false; });
 
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[0]));
     _stage->SetEditTarget(PXR_NS::UsdEditTarget(_layers[1]));

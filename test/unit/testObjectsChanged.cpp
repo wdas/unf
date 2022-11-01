@@ -157,7 +157,8 @@ TEST_F(ObjectsChangedTest, TransactionProperties)
     ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
 
     _broker->BeginTransaction();
-    auto prim = _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"}, TfToken("Cylinder"));
+    auto prim =
+        _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"}, TfToken("Cylinder"));
     prim.GetAttribute(TfToken("radius")).Set(5.0);
     prim.GetAttribute(TfToken("height")).Set(10.0);
     _broker->EndTransaction();
@@ -170,6 +171,16 @@ TEST_F(ObjectsChangedTest, TransactionProperties)
     ASSERT_EQ(resyncedPaths.at(0), PXR_NS::SdfPath{"/Foo"});
     const auto& changedInfoPaths = n.GetChangedInfoOnlyPaths();
     ASSERT_EQ(changedInfoPaths.size(), 2);
-    ASSERT_NE(std::find(changedInfoPaths.begin(), changedInfoPaths.end(), PXR_NS::SdfPath{"/Foo.radius"}), changedInfoPaths.end());
-    ASSERT_NE(std::find(changedInfoPaths.begin(), changedInfoPaths.end(), PXR_NS::SdfPath{"/Foo.height"}), changedInfoPaths.end());
+    ASSERT_NE(
+        std::find(
+            changedInfoPaths.begin(),
+            changedInfoPaths.end(),
+            PXR_NS::SdfPath{"/Foo.radius"}),
+        changedInfoPaths.end());
+    ASSERT_NE(
+        std::find(
+            changedInfoPaths.begin(),
+            changedInfoPaths.end(),
+            PXR_NS::SdfPath{"/Foo.height"}),
+        changedInfoPaths.end());
 }

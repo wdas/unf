@@ -4,15 +4,17 @@
 USD Notice Framework
 ####################
 
-Notice management library built over
-:term:`USD Notices<Tf Notification System>`.
+Notice management library built over :term:`USD` Notices.
 
 .. toctree::
     :maxdepth: 1
 
     introduction
     installing
-    tutorial
+    getting_started
+    notices
+    dispatchers
+    environment_variables
     api_reference/index
     release/index
     glossary

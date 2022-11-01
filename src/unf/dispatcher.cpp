@@ -38,9 +38,7 @@ void StageDispatcher::Register()
     _Register<
         UsdNotice::StageEditTargetChanged,
         UnfNotice::StageEditTargetChanged>();
-    _Register<
-        UsdNotice::LayerMutingChanged,
-        UnfNotice::LayerMutingChanged>();
+    _Register<UsdNotice::LayerMutingChanged, UnfNotice::LayerMutingChanged>();
 }
 
 }  // namespace unf

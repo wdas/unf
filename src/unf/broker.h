@@ -1,8 +1,10 @@
 #ifndef USD_NOTICE_FRAMEWORK_BROKER_H
 #define USD_NOTICE_FRAMEWORK_BROKER_H
 
-#include "unf/notice.h"
+/// \file unf/broker.h
+
 #include "unf/capturePredicate.h"
+#include "unf/notice.h"
 
 #include <pxr/base/plug/plugin.h>
 #include <pxr/base/plug/registry.h>
@@ -26,65 +28,163 @@ namespace unf {
 class Broker;
 class Dispatcher;
 
+/// Convenient alias for Broker reference pointer.
 using BrokerPtr = PXR_NS::TfRefPtr<Broker>;
+
+/// Convenient alias for Broker weak pointer.
 using BrokerWeakPtr = PXR_NS::TfWeakPtr<Broker>;
 
+/// Convenient alias for Dispatcher reference pointer.
 using DispatcherPtr = PXR_NS::TfRefPtr<Dispatcher>;
 
+/// \class Broker
+///
+/// \brief
+/// Intermediate object between the Usd Stage and any clients that needs
+/// asynchronous handling and upstream filtering of notices.
 class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
   public:
+    /// \brief
+    /// Create a broker from a Usd Stage.
+    ///
+    /// If a broker has already been created from this \p stage, it will be
+    /// returned. Otherwise, a new one will be created and returned.
     static BrokerPtr Create(const PXR_NS::UsdStageWeakPtr& stage);
 
-    virtual ~Broker() {}
+    virtual ~Broker() = default;
 
-    // Don't allow copies
+    /// Remove default copy constructor.
     Broker(const Broker&) = delete;
+
+    /// Remove default assignment operator.
     Broker& operator=(const Broker&) = delete;
 
+    /// Return Usd Stage associated with the broker.
     const PXR_NS::UsdStageWeakPtr GetStage() const { return _stage; }
 
+    /// \brief
+    /// Indicate whether a notice transaction has been started.
+    /// \sa BeginTransaction
     bool IsInTransaction();
 
+    /// \brief
+    /// Start a notice transaction.
+    ///
+    /// Notices derived from UnfNotice::StageNotice will be held during
+    /// the transaction and emitted at the end.
+    ///
+    /// By default, all UnfNotice::StageNotice notices will be captured during
+    /// the entire scope of the transaction. A CapturePredicate can be passed to
+    /// influence which notices are captured. Notices that are not captured
+    /// will not be emitted.
+    ///
+    /// \warning
+    /// Each transaction started must be closed with EndTransaction.
+    /// It is preferrable to use NoticeTransaction over this API to safely
+    /// manage transactions.
+    ///
+    /// \sa EndTransaction
+    /// \sa NoticeTransaction
     void BeginTransaction(
         CapturePredicate predicate = CapturePredicate::Default());
 
+    /// \brief
+    /// Start a notice transaction with a capture predicate function.
+    ///
+    /// The following example will filter out all 'Foo' notices emitted during
+    /// the transaction.
+    ///
+    /// \code{.cpp}
+    /// broker->BeginTransaction([&](const unf::UnfNotice::StageNotice& n) {
+    ///     return (n.GetTypeId() != typeid(Foo).name());
+    /// });
+    /// \endcode
+    ///
+    /// \warning
+    /// Each transaction started must be closed with EndTransaction.
+    /// It is preferrable to use NoticeTransaction over this API to safely
+    /// manage transactions.
+    ///
+    /// \sa EndTransaction
+    /// \sa NoticeTransaction
     void BeginTransaction(const CapturePredicateFunc&);
 
+    /// \brief
+    /// Stop a notice transaction.
+    ///
+    /// This will trigger the emission of all captured
+    /// UnfNotice::StageNotice notices. Each notice type will be
+    /// consolidated before emission if applicable.
+    ///
+    /// \warning
+    /// It is preferrable to use NoticeTransaction over this API to safely
+    /// manage transactions.
+    ///
+    /// \sa BeginTransaction
+    /// \sa NoticeTransaction
     void EndTransaction();
 
+    /// \brief
+    /// Create and send a UnfNotice::StageNotice notice via the broker.
+    ///
+    /// \note
+    /// The associated stage will be used as sender.
     template <class UnfNotice, class... Args>
     void Send(Args&&... args);
 
+    /// \brief
+    /// Send a UnfNotice::StageNotice notice via the broker.
+    ///
+    /// \note
+    /// The associated stage will be used as sender.
     void Send(const UnfNotice::StageNoticeRefPtr&);
 
+    /// Return dispatcher reference associated with \p identifier.
     DispatcherPtr& GetDispatcher(std::string identifier);
 
+    /// \brief
+    /// Create and register a new dispatcher.
+    ///
+    /// This will call the Dispatcher::Register method.
     template <class T>
     void AddDispatcher();
 
+    /// \brief
+    /// Un-register broker.
+    ///
+    /// \warning
+    /// The broker is not safe to use after this call.
     void Reset();
+
+    /// Un-register all brokers.
     static void ResetAll();
 
   private:
     Broker(const PXR_NS::UsdStageWeakPtr&);
 
+    /// Un-register brokers targeting expired stages.
     static void _CleanCache();
 
+    /// Discover all dispatchers registered as plugins.
     void _DiscoverDispatchers();
 
+    /// Register dispacther within broker by its identifier.
     void _Add(const DispatcherPtr&);
 
+    /// Create and register dispacther within broker without running the
+    /// Dispatcher::Register method.
     template <class T>
     DispatcherPtr _AddDispatcher();
 
+    /// Load all dispatchers from discovered factory types.
     template <class OutputPtr, class OutputFactory>
     void _LoadFromPlugins(const PXR_NS::TfType& type);
 
-    // A registry of hashed stage ptr to the corresponding stage's broker ptr.
+    /// Record each hashed stage pointer to its corresponding broker pointer.
     static std::unordered_map<size_t, BrokerPtr> Registry;
 
     class _NoticeMerger {
-    public:
+      public:
         _NoticeMerger(CapturePredicate predicate = CapturePredicate::Default());
 
         void Add(const UnfNotice::StageNoticeRefPtr&);
@@ -93,7 +193,7 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
         void PostProcess();
         void Send(const PXR_NS::UsdStageWeakPtr&);
 
-    private:
+      private:
         using _NoticePtrList = std::vector<UnfNotice::StageNoticeRefPtr>;
         using _NoticePtrMap = std::unordered_map<std::string, _NoticePtrList>;
 
@@ -101,8 +201,13 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
         CapturePredicate _predicate;
     };
 
+    /// Usd Stage associated with broker.
     PXR_NS::UsdStageWeakPtr _stage;
+
+    /// List of NoticeMerger objects which handle transactions.
     std::vector<_NoticeMerger> _mergers;
+
+    /// List of registered Dispatchers.
     std::unordered_map<std::string, DispatcherPtr> _dispatcherMap;
 };
 

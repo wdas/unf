@@ -1,21 +1,19 @@
 #include "unf/capturePredicate.h"
 
-#include <typeinfo>
-#include <functional>
-#include <vector>
-#include <string>
 #include <algorithm>
+#include <functional>
+#include <string>
+#include <typeinfo>
+#include <vector>
 
 namespace unf {
 
 CapturePredicate::CapturePredicate(const CapturePredicateFunc& function)
     : _function(function)
 {
-
 }
 
-bool CapturePredicate::operator()(
-    const UnfNotice::StageNotice& notice) const
+bool CapturePredicate::operator()(const UnfNotice::StageNotice& notice) const
 {
     if (!_function) return true;
     return _function(notice);

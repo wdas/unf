@@ -26,44 +26,84 @@ class PythonUnfNotice {
 
 void wrapNotice()
 {
-    scope s = class_<PythonUnfNotice>("Notice", no_init);
+    scope s = class_<PythonUnfNotice>(
+        "Notice",
+        "Regroup all autonomous notices used by the library.",
+        no_init);
 
     TfPyNoticeWrapper<StageNotice, TfNotice>::Wrap()
-        .def("IsMergeable", &StageNotice::IsMergeable)
-        .def("GetTypeId", &StageNotice::GetTypeId);
+        .def(
+            "IsMergeable",
+            &StageNotice::IsMergeable,
+            "Indicate whether notice from the same type can be consolidated "
+            "during a transaction")
+
+        .def(
+            "GetTypeId",
+            &StageNotice::GetTypeId,
+            "Return unique type identifier");
 
     TfPyNoticeWrapper<StageContentsChanged, StageNotice>::Wrap();
 
     TfPyNoticeWrapper<ObjectsChanged, StageNotice>::Wrap()
-        .def("AffectedObject", &ObjectsChanged::AffectedObject)
-        .def("ResyncedObject", &ObjectsChanged::ResyncedObject)
-        .def("ChangedInfoOnly", &ObjectsChanged::ChangedInfoOnly)
+        .def(
+            "AffectedObject",
+            &ObjectsChanged::AffectedObject,
+            "Indicate whether object was affected by the change that generated "
+            "this notice.")
+
+        .def(
+            "ResyncedObject",
+            &ObjectsChanged::ResyncedObject,
+            "Indicate whether object was resynced by the change that generated "
+            "this notice.")
+
+        .def(
+            "ChangedInfoOnly",
+            &ObjectsChanged::ChangedInfoOnly,
+            "Indicate whether object was modified but not resynced by the "
+            "change that generated this notice.")
+
         .def(
             "GetResyncedPaths",
             &ObjectsChanged::GetResyncedPaths,
+            "Return list of paths that are resynced in lexicographical order.",
             return_value_policy<return_by_value>())
+
         .def(
             "GetChangedInfoOnlyPaths",
             &ObjectsChanged::GetChangedInfoOnlyPaths,
+            "Return list of paths that are modified but not resynced in "
+            "lexicographical order.",
             return_value_policy<return_by_value>())
+
         .def(
             "GetChangedFields",
             (unf::TfTokenSet(ObjectsChanged::*)(const SdfPath&) const)
                 & ObjectsChanged::GetChangedFields,
+            "Return the list of changed fields in layers that affected the "
+            "path",
             return_value_policy<TfPySequenceToList>())
+
         .def(
             "GetChangedFields",
             (unf::TfTokenSet(ObjectsChanged::*)(const UsdObject&) const)
                 & ObjectsChanged::GetChangedFields,
+            "Return the list of changed fields in layers that affected the "
+            "object",
             return_value_policy<TfPySequenceToList>())
+
         .def(
             "HasChangedFields",
             (bool (ObjectsChanged::*)(const SdfPath&) const)
-                & ObjectsChanged::HasChangedFields)
+                & ObjectsChanged::HasChangedFields,
+            "Indicate whether any changed fields affected the path")
+
         .def(
             "HasChangedFields",
             (bool (ObjectsChanged::*)(const UsdObject&) const)
-                & ObjectsChanged::HasChangedFields);
+                & ObjectsChanged::HasChangedFields,
+            "Indicate whether any changed fields affected the object");
 
     TfPyNoticeWrapper<StageEditTargetChanged, StageNotice>::Wrap();
 
@@ -71,9 +111,12 @@ void wrapNotice()
         .def(
             "GetMutedLayers",
             &LayerMutingChanged::GetMutedLayers,
+            "Returns identifiers of the layers that were muted.",
             return_value_policy<return_by_value>())
+
         .def(
             "GetUnmutedLayers",
             &LayerMutingChanged::GetUnmutedLayers,
+            "Returns identifiers of the layers that were unmuted.",
             return_value_policy<return_by_value>());
 }

@@ -1,8 +1,8 @@
 #include "./predicate.h"
 
 #include "unf/broker.h"
-#include "unf/transaction.h"
 #include "unf/capturePredicate.h"
+#include "unf/transaction.h"
 
 #include <pxr/base/tf/pyFunction.h>
 #include <pxr/pxr.h>
@@ -80,19 +80,29 @@ void wrapTransaction()
     // Ensure that predicate function can be passed from Python.
     TfPyFunctionFromPython<_CapturePredicateFuncRaw>();
 
-    class_<PythonNoticeTransaction>("NoticeTransaction", no_init)
+    class_<PythonNoticeTransaction>(
+        "NoticeTransaction",
+        "Context manager object which consolidates and filter notices derived "
+        "from UnfNotice.StageNotice within a specific scope",
+        no_init)
 
         .def(init<const BrokerWeakPtr&, CapturePredicate>(
-            (arg("broker"), arg("predicate") = CapturePredicate::Default())))
+            (arg("broker"), arg("predicate") = CapturePredicate::Default()),
+            "Create transaction from a Broker."))
 
         .def(init<const BrokerWeakPtr&, const _CapturePredicateFunc&>(
-            (arg("broker"), arg("predicate"))))
+            (arg("broker"), arg("predicate")),
+            "Create transaction from a Broker with a capture predicate "
+            "function."))
 
         .def(init<const UsdStageWeakPtr&, CapturePredicate>(
-            (arg("stage"), arg("predicate") = CapturePredicate::Default())))
+            (arg("stage"), arg("predicate") = CapturePredicate::Default()),
+            "Create transaction from a UsdStage."))
 
         .def(init<const UsdStageWeakPtr&, const _CapturePredicateFunc&>(
-            (arg("stage"), arg("predicate"))))
+            (arg("stage"), arg("predicate")),
+            "Create transaction from a UsdStage with a capture predicate "
+            "function."))
 
         .def(
             "__enter__",
@@ -104,5 +114,6 @@ void wrapTransaction()
         .def(
             "GetBroker",
             &PythonNoticeTransaction::GetBroker,
+            "Return associated Broker instance.",
             return_value_policy<return_by_value>());
 }

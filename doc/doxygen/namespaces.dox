@@ -1,0 +1,7 @@
+/*!
+\namespace unf
+Scope of the Usd Notice Framework library.
+
+\namespace unf::UnfNotice
+Regroup all autonomous notices used by the library.
+*/

@@ -4,6 +4,8 @@
 API Reference
 *************
 
-* `C++ API Documentation <../doxygen/index.html>`_
-* Python API Documentation (not available yet)
+.. toctree::
+    :maxdepth: 1
 
+    cpp
+    python/index

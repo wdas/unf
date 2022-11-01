@@ -2,54 +2,47 @@
 
 [![Tests](https://github.com/wdas/usd-notice-framework/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/wdas/usd-notice-framework/actions/workflows/test.yml)
 
-Notice management library built over USD Notices.
+The Usd Notice Framework is built over
+[Usd](https://github.com/PixarAnimationStudios/USD) notices and uses the
+[Tf Notification System](https://graphics.pixar.com/usd/release/api/page_tf__notification.html).
+It provides a C++ and Python API to efficiently manage the flow of notifications
+emitted when authoring the [Usd](https://github.com/PixarAnimationStudios/USD)
+stage.
 
-## Building
+It introduces the concept of autonomous notices and notice transaction which
+defers notification and consolidate notices per type when applicable:
 
-Build the library as follows:
+```python
+from pxr import Usd, Tf
+import usd_notice_framework as unf
 
-```bash
-cd usd-notice-framework
-mkdir build && cd build
-cmake -DCMAKE_INSTALL_PREFIX=/tmp ..
-cmake --build . --target install
+stage = Usd.Stage.CreateInMemory()
+
+def updated(notice, stage):
+    """Print resynced paths from the stage."""
+    print(notice.GetResyncedPaths())
+
+key = Tf.Notice.Register(unf.Notice.ObjectsChanged, updated, stage)
+
+with unf.NoticeTransaction(stage):
+    prim = stage.DefinePrim("/Foo", "Cylinder")
+    prim.GetAttribute("radius").Set(5)
+    prim.GetAttribute("height").Set(10)
 ```
 
-Here a few CMake options that can be used to influence the building process:
+A predicate can be applied during a transaction to block some or all Unf notices
+emitted in this scope:
 
-| Option                 | Description                                                         |
-| ---------------------- | ------------------------------------------------------------------- |
-| BUILD_TESTS            | Indicate whether tests should be built. Default is true.            |
-| BUILD_DOCS             | Indicate whether documentation should be built. Default is true.    |
-| BUILD_PYTHON_BINDINGS  | Indicate whether Python bindings should be built. Default is true.  |
-| BUILD_SHARED_LIBS      | Indicate whether library should be built shared. Default is true.   |
-| BUNDLE_PYTHON_TESTS    | Bundle Python tests per group (faster). Default is false.           |
-
-Custom search paths to dependent packages can be provided with the following
-Cmake options (or environment variable):
-
-| Option / Environment Variable  | Description                              |
-| ------------------------------ | ---------------------------------------- |
-| USD_ROOT                       | Add search path to USD package.          |
-| TBB_ROOT                       | Add search path to TBB package.          |
-| Boost_ROOT                     | Add search path to Boost package.        |
-| Pytest_ROOT                    | Add search path to pytest program.       |
-| Sphinx_ROOT                    | Add search path to sphinx-build program. |
-| ClangFormat_ROOT               | Add search path to clang-format program. |
-
-For instance:
-
-```bash
-cmake -DUSD_ROOT=/path/to/usd -DCMAKE_INSTALL_PREFIX=/tmp ..
-```
-## Testing
-
-Once the library and all tests are build (with the `BUILD_TESTS` option), run
-the tests as follows:
-
-```bash
-ctest -VV
+```python
+with unf.NoticeTransaction(
+    stage, predicate=unf.CapturePredicate.BlockAll()
+):
+    prim = stage.DefinePrim("/Foo", "Cylinder")
+    prim.GetAttribute("radius").Set(5)
+    prim.GetAttribute("height").Set(10)
 ```
 
-Ensure that [pytest](https://docs.pytest.org/en/stable/) is installed to test
-python bindings.
+## Documentation
+
+Full documentation, including installation and setup guides, can be found at
+https://usd-notice-framework.readthedocs.io/en/stable/
