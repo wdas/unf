@@ -157,10 +157,10 @@ TEST_F(ObjectsChangedTest, TransactionProperties)
     ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
 
     _broker->BeginTransaction();
-    auto prim =
-        _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"}, TfToken("Cylinder"));
-    prim.GetAttribute(TfToken("radius")).Set(5.0);
-    prim.GetAttribute(TfToken("height")).Set(10.0);
+    auto prim = _stage->DefinePrim(
+        PXR_NS::SdfPath{"/Foo"}, PXR_NS::TfToken("Cylinder"));
+    prim.GetAttribute(PXR_NS::TfToken("radius")).Set(5.0);
+    prim.GetAttribute(PXR_NS::TfToken("height")).Set(10.0);
     _broker->EndTransaction();
 
     ASSERT_EQ(observer.Received(), 1);
