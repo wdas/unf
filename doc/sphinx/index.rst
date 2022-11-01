@@ -14,6 +14,7 @@ Notice management library built over :term:`USD` Notices.
     getting_started
     notices
     dispatchers
+    environment_variables
     api_reference/index
     release/index
     glossary

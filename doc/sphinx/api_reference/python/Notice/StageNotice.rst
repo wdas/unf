@@ -7,7 +7,7 @@ Notice.StageNotice
     Interface class for autonomous Usd Stage notices.
 
     This notice type is the autonomous equivalent of the
-    :class:`Usd.Notice.StageNotice` notice type.
+    `Usd.Notice.StageNotice`_ notice type.
 
     .. py:method:: IsMergeable()
 

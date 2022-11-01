@@ -7,6 +7,13 @@
 .. _`UsdNotice::StageEditTargetChanged`: https://graphics.pixar.com/usd/release/api/class_usd_notice_1_1_stage_edit_target_changed.html
 .. _SdfChangeBlock: https://graphics.pixar.com/usd/release/api/class_sdf_change_block.html
 
+.. _`Usd.Notice.StageNotice`: https://graphics.pixar.com/usd/release/api/class_usd_notice_1_1_stage_notice.html
+.. _`Usd.Notice.ObjectsChanged`: https://graphics.pixar.com/usd/release/api/class_usd_notice_1_1_objects_changed.html
+.. _`Usd.Notice.LayerMutingChanged`: https://graphics.pixar.com/usd/release/api/class_usd_notice_1_1_layer_muting_changed.html
+.. _`Usd.Notice.StageContentsChanged`: https://graphics.pixar.com/usd/release/api/class_usd_notice_1_1_stage_contents_changed.html
+.. _`Usd.Notice.StageEditTargetChanged`: https://graphics.pixar.com/usd/release/api/class_usd_notice_1_1_stage_edit_target_changed.html
+.. _`Sdf.ChangeBlock`: https://graphics.pixar.com/usd/release/api/class_sdf_change_block.html
+
 .. _`UnfNotice::StageNotice`: ./doxygen/classunf_1_1UnfNotice_1_1StageNotice.html
 .. _`UnfNotice::ObjectsChanged`: ./doxygen/classunf_1_1UnfNotice_1_1ObjectsChanged.html
 .. _`UnfNotice::LayerMutingChanged`: ./doxygen/classunf_1_1UnfNotice_1_1LayerMutingChanged.html

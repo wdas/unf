@@ -105,8 +105,8 @@ Then run the program as follows::
 Building documentation
 ======================
 
-Ensure that :term:`Sphinx` and :term:`Doxygen` are installed for building the
-documentation.
+Ensure that :term:`Doxygen` and :term:`Sphinx` with the `lowdown
+<https://pypi.org/project/Lowdown/>`_ extension are installed.
 
 Then build the documentation as follows::
 
@@ -122,8 +122,7 @@ Then build the documentation as follows::
 Running tests
 =============
 
-Ensure that :term:`GTest` and :term:`Pytest` are installed for building and
-running the tests.
+Ensure that :term:`GTest` and :term:`Pytest` are installed.
 
 .. note::
 
@@ -135,18 +134,18 @@ Once the library and all tests are built, you can run the tests using
 
     ctest
 
-You can increase the verbosity or run a specific test as follows::
+You can increase the verbosity and filter in one or several tests as follows::
 
     ctest -VV
-    ctest -R BrokerTest.Create
     ctest -R BrokerTest.Create -VV
+    ctest -R BrokerTest.* -VV
 
 .. note::
 
     Tests are automatically built with default installation, unless you
     set the ``BUILD_TESTS`` :term:`CMake` option to false.
 
-By default, Python tests from one scope will be decomposed into separated tests
-that can be individually targeted. Set the ``BUNDLE_PYTHON_TESTS`` :term:`CMake`
-option (or environment variable) to true if you want to combine Python tests
-per scope.
+By default, unit tests and integration tests in Python will be decomposed into
+separated tests that can be individually filtered. Set the
+``BUNDLE_PYTHON_TESTS`` :term:`CMake` option (or environment variable) to true
+if you want to combine Python tests per test type.

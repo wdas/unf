@@ -8,6 +8,7 @@
 extensions = [
     "sphinx.ext.extlinks",
     "sphinx.ext.intersphinx",
+    "lowdown"
 ]
 
 # The suffix of src filenames.

@@ -54,7 +54,7 @@ of notices.
 While bringing such features directly into the :term:`Usd` API has
 been considered (see `prototype
 <https://github.com/wdas/USD/compare/release...prototype-transaction>`_),
-ensuring that USD notices such as `ObjectsChanged <UsdNotice::ObjectsChanged>`_
-or `LayerMutingChanged <UsdNotice::LayerMutingChanged>`_ own their data instead
-of referencing it from stage would have added an overhead which would have
-degraded the performance for client not interested with this feature.
+ensuring that USD notices such as `UsdNotice::ObjectsChanged`_
+or `UsdNotice::LayerMutingChanged`_ own their data instead of referencing it
+from stage would have added an overhead which would have degraded the
+performance for client not interested with this feature.

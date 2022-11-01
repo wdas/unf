@@ -10,7 +10,7 @@ Notice.ObjectsChanged
     Usd Object.
 
     This notice type is the autonomous equivalent of the
-    :class:`Usd.Notice.ObjectsChanged` notice type.
+    `Usd.Notice.ObjectsChanged`_ notice type.
 
     .. py:method:: AffectedObject(object)
 

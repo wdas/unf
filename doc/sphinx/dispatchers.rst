@@ -68,7 +68,7 @@ new notices.
 
 A convenient "_Register" protected method is provided to trigger a new notice
 from one specific notice type. The new notice will be created by passing the
-notice received its constructor:
+notice received to its constructor:
 
 .. code-block:: cpp
 
@@ -77,7 +77,7 @@ notice received its constructor:
         NewDispatcher(const unf::BrokerWeakPtr& broker)
         : unf::Dispatcher(broker) {}
 
-        virtual std::string GetIdentifier() const { return "NewDispatcher"; };
+        std::string GetIdentifier() const override { return "NewDispatcher"; };
 
         void Register() {
             // Register listener to create and emit 'OutputNotice' when
@@ -95,7 +95,7 @@ Otherwise, the listener can be registered as follows:
         NewDispatcher(const unf::BrokerWeakPtr& broker)
         : unf::Dispatcher(broker) {}
 
-        virtual std::string GetIdentifier() const { return "NewDispatcher"; };
+        std::string GetIdentifier() const override { return "NewDispatcher"; };
 
         void Register() {
             auto self = PXR_NS::TfCreateWeakPtr(this);

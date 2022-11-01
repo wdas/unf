@@ -15,15 +15,14 @@ Editing the Stage
 =================
 
 Let's start by creating a :term:`Usd` stage in memory and register a callback
-to listen to `Usd.Notice.ObjectsChanged <UsdNotice::ObjectsChanged>`_ and print
-all resynced paths::
+to listen to `Usd.Notice.ObjectsChanged`_ and print all updated paths::
 
     from pxr import Usd, Tf
 
     stage = Usd.Stage.CreateInMemory()
 
     def _updated(notice, stage):
-        """Print resynced paths from the stage."""
+        """Print updated paths from the stage."""
         print("Resynced Paths: {}".format([
             (path, notice.GetChangedFields(path))
             for path in notice.GetResyncedPaths()
@@ -41,11 +40,11 @@ Let's now edit the stage by adding a cylinder prim and update the attributes::
     prim.GetAttribute("radius").Set(5)
     prim.GetAttribute("height").Set(10)
 
-This should have triggered five `Usd.Notice.ObjectsChanged
-<UsdNotice::ObjectsChanged>`_ notices to be emitted. The first notice was
-emitted when the prim was created, the second and the fourth when both
-attributes where created, the third and fifth when they were given a default
-value. As a result, the following information will be printed in the shell:
+This should have triggered five `Usd.Notice.ObjectsChanged`_ notices to be
+emitted. The first notice was emitted when the prim was created, the second and
+the fourth when both attributes where created, the third and fifth when they
+were given a default value. As a result, the following information will be
+printed in the shell:
 
 .. code-block:: bash
 
@@ -70,9 +69,8 @@ Editing the Layer
 =================
 
 To consolidate the number of notices emitted, we could use the :term:`Sdf` API
-to edit the root layer, then use a `Sdf.ChangeBlock <SdfChangeBlock>`_ which
-would also limit the number of recompositions and greatly improve overall
-performance::
+to edit the root layer, then use a `Sdf.ChangeBlock`_ which would also limit the
+number of recompositions and greatly improve overall performance::
 
     from pxr import Sdf
 
@@ -118,7 +116,7 @@ Let's now create a new stage and modify the notice registration to target the
     stage = Usd.Stage.CreateInMemory()
 
     def _updated(notice, stage):
-        """Print resynced paths from the stage."""
+        """Print updated paths from the stage."""
         print("Resynced Paths: {}".format([
             (path, notice.GetChangedFields(path))
             for path in notice.GetResyncedPaths()
@@ -131,9 +129,8 @@ Let's now create a new stage and modify the notice registration to target the
     key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _updated, stage)
 
 To ensure that a :class:`unf.Notice.ObjectsChanged <Notice.ObjectsChanged>`
-notice is sent whenever a `Usd.Notice.ObjectsChanged
-<UsdNotice::ObjectsChanged>`_ is emitted, we need to create a :class:`Broker`
-associated with the stage::
+notice is sent whenever a `Usd.Notice.ObjectsChanged`_ is emitted, we need to
+create a :class:`Broker` associated with the stage::
 
     broker = unf.Broker.Create(stage)
 
@@ -149,11 +146,10 @@ Let's now edit the stage once again with the :term:`Usd` API::
     prim.GetAttribute("height").Set(10)
 
 Like in the first section, five notices are emitted with the same information
-as with the `Usd.Notice.ObjectsChanged <UsdNotice::ObjectsChanged>`_ notice.
-However, the :class:`unf.Notice.ObjectsChanged <Notice.ObjectsChanged>`
-notice is defined as mergeable so it is possible to reduce the number of notices
-emitted without having to edit the layer with the :term:`Sdf` API by using a
-notice transaction::
+as with the `Usd.Notice.ObjectsChanged`_ notice. However, the
+:class:`unf.Notice.ObjectsChanged <Notice.ObjectsChanged>` notice is defined as
+mergeable. It is therefore possible to reduce the number of notices emitted by
+using a :ref:`notice transaction <notices/transaction>`::
 
     broker.BeginTransaction()
 
@@ -179,8 +175,8 @@ As a result, only one notice will be emitted:
     ChangedInfoOnly Paths: [(Sdf.Path('/Foo.radius'), ['default']), (Sdf.Path('/Foo.height'), ['default'])]
 
 It is sometimes necessary to de-register listeners to a particular set of
-notices when editing the stage does not require updating the clients. If many
-clients are listening to Usd notices, this process can be tedious.
+notices when editing the stage. If many clients are listening to Usd notices,
+this process can be tedious.
 
 The Unf library provides a way to filter out some or all Unf notices during a
 transaction using a predicate function. For instance, the following transaction

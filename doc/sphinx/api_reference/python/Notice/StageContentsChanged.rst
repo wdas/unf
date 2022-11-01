@@ -10,4 +10,4 @@ Notice.StageContentsChanged
     any way.
 
     This notice type is the autonomous equivalent of the
-    :class:`Usd.Notice.StageContentsChanged` notice type.
+    `Usd.Notice.StageContentsChanged`_ notice type.

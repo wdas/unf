@@ -12,10 +12,9 @@ Autonomous notices present the following features:
 1. **They do not reference data from the stage**
 
 This rule ensures that notices are safe to use in asynchronous context.
-By contrast, Usd notices such as `ObjectsChanged <UsdNotice::ObjectsChanged>`_
-and `LayerMutingChanged <UsdNotice::LayerMutingChanged>`_ both reference data
-from the stage and thus are not safe to use when the stage is not longer
-reachable.
+By contrast, Usd notices such as `UsdNotice::ObjectsChanged`_ and
+`UsdNotice::LayerMutingChanged`_ both reference data from the stage and thus
+are not safe to use when the stage is not longer reachable.
 
 2. **They can include logic for consolidation with notice of the same type**
 
@@ -53,6 +52,7 @@ previously created for this stage:
 
     {
         unf::NoticeTransaction transaction(stage);
+
         // ...
     }
 
@@ -128,6 +128,7 @@ only filter in the "Foo" notices:
 
     {
         unf::NoticeTransaction transaction(broker, predicate);
+
         // ...
     }
 
@@ -139,6 +140,7 @@ during a transaction:
     {
         unf::NoticeTransaction transaction(
             broker, unf::CapturePredicate::BlockAll());
+
         // ...
     }
 
@@ -159,7 +161,7 @@ Usd notices                           Autonomous Notices
 `UsdNotice::StageEditTargetChanged`_  `UnfNotice::StageEditTargetChanged`_
 ===================================== ====================================
 
-Python bindings are provided for each notice:
+Python bindings are also provided for each notice:
 
 * :class:`~Notice.ObjectsChanged`
 * :class:`~Notice.LayerMutingChanged`
@@ -199,7 +201,7 @@ follows:
         Foo() = default;
         virtual ~Foo() = default;
 
-        virtual bool IsMergeable() const { return false; }
+        bool IsMergeable() const override { return false; }
     };
 
 If the notice is mergeable and contain some data, the "Merge" method needs
@@ -216,14 +218,14 @@ with other notices:
         Foo() = default;
         virtual ~Foo() = default;
 
-        virtual void Merge(Foo&& notice) override
+        void Merge(Foo&& notice) override
         {
             for (const auto& it : notice._data) {
                 _data[it.first] = std::move(it.second);
             }
         }
 
-        virtual void PostProcess() override
+        void PostProcess() override
         {
             // ...
         }
