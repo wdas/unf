@@ -33,7 +33,6 @@ add_dependencies(documentation
 
 install(
     DIRECTORY
-        "${CMAKE_CURRENT_BINARY_DIR}/doc"
-    DESTINATION
-        ${CMAKE_INSTALL_PREFIX}
+        "${CMAKE_CURRENT_BINARY_DIR}/doc/"
+    DESTINATION "${CMAKE_INSTALL_DOCDIR}"
 )
