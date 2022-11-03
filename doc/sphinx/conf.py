@@ -3,13 +3,14 @@
 """Configuration file for the Sphinx documentation builder."""
 
 import os
-import doxygen
 
 # -- General ------------------------------------------------------------------
 
 extensions = ["lowdown"]
 
 if os.environ.get("READTHEDOCS"):
+    import doxygen
+
     doxygen.create_cmake_config()
     doxygen.build()
 
