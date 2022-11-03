@@ -3,6 +3,7 @@
 """Configuration file for the Sphinx documentation builder."""
 
 import os
+import re
 
 # -- General ------------------------------------------------------------------
 
@@ -25,6 +26,19 @@ master_doc = "index"
 # General information about the project.
 project = u"Usd Notice Framework"
 copyright = u"2022, Walt Disney Animation Studio"
+
+# Version
+with open(
+    os.path.join(
+        os.path.dirname(__file__), "..", "..", "CMakeLists.txt",
+    )
+) as _version_file:
+    _version = re.search(
+        r"project\(.* VERSION ([\d\\.]+)", _version_file.read(), re.DOTALL
+    ).group(1)
+
+version = _version
+release = _version
 
 # -- HTML output --------------------------------------------------------------
 

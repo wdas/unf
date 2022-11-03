@@ -1,0 +1,19 @@
+{
+    "files": {
+        "CMakeLists.txt": [
+            [
+                "    VERSION ([\\d\\.]+)",
+                "    VERSION [version]"
+            ]
+        ],
+        "doc/sphinx/release/release_notes.rst": [
+            [
+                ".. release:: Upcoming",
+                ".. release:: [version]\n    :date: [version_date]"
+            ]
+        ]
+    },
+    "changelog": {
+        "enabled": false
+    }
+}

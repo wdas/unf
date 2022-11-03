@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(unf LANGUAGES CXX)
+project(unf
+    VERSION 0.1.0
+    LANGUAGES CXX
+)
 
 include(GNUInstallDirs)
 
@@ -96,8 +99,15 @@ find_package(ClangFormat 7)
 
 include(CMakePackageConfigHelpers)
 
+write_basic_package_version_file(
+    "unfConfigVersion.cmake"
+    COMPATIBILITY AnyNewerVersion
+)
+
 install(
     FILES
         "cmake/unfConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/unfConfigVersion.cmake"
+
     DESTINATION share/cmake/unf
 )
