@@ -2,14 +2,18 @@
 
 """Configuration file for the Sphinx documentation builder."""
 
+import os
+import doxygen
+
 # -- General ------------------------------------------------------------------
 
-# Extensions.
-extensions = [
-    "sphinx.ext.extlinks",
-    "sphinx.ext.intersphinx",
-    "lowdown"
-]
+extensions = ["lowdown"]
+
+if os.environ.get("READTHEDOCS"):
+    doxygen.create_cmake_config()
+    doxygen.build()
+
+    html_extra_path = ["./api"]
 
 # The suffix of src filenames.
 source_suffix = ".rst"
@@ -31,10 +35,3 @@ html_copy_source = True
 # Ensure that common links are available.
 with open("links.rst") as stream:
      rst_epilog = stream.read().replace(":orphan:", "")
-
-# -- Intersphinx --------------------------------------------------------------
-
-intersphinx_mapping = {
-    "python": ("http://docs.python.org/", None),
-    "usd": ("https://graphics.pixar.com/usd/release", None)
-}

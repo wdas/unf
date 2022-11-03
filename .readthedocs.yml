@@ -1,0 +1,16 @@
+version: 2
+
+build:
+  os: ubuntu-20.04
+  apt_packages:
+    - doxygen
+    - cmake
+  tools:
+    python: "3.9"
+
+sphinx:
+   configuration: doc/sphinx/conf.py
+
+python:
+   install:
+   - requirements: doc/requirements.txt
