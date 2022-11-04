@@ -7,7 +7,7 @@ project(unf
 
 include(GNUInstallDirs)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 14 CACHE STRING "Default C++ standard")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -16,6 +16,12 @@ option(BUILD_DOCS "Build documentation" ON)
 option(BUILD_PYTHON_BINDINGS "Build Python Bindings" ON)
 option(BUNDLE_PYTHON_TESTS "Bundle Python tests per group (faster)" OFF)
 option(BUILD_SHARED_LIBS "Build Shared Library" ON)
+
+# Update build type from environment for CMake < 3.22
+if (DEFINED ENV{CMAKE_BUILD_TYPE})
+    set(CMAKE_BUILD_TYPE $ENV{CMAKE_BUILD_TYPE}
+        CACHE STRING "Specifies the build type" FORCE)
+endif()
 
 # Make module finder scripts available for TBB and USD.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
@@ -99,15 +105,20 @@ find_package(ClangFormat 7)
 
 include(CMakePackageConfigHelpers)
 
+configure_package_config_file(
+    "cmake/unf-config.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/unf-config.cmake"
+    INSTALL_DESTINATION share/cmake/unf
+)
+
 write_basic_package_version_file(
-    "unfConfigVersion.cmake"
+    "unf-config-version.cmake"
     COMPATIBILITY AnyNewerVersion
 )
 
 install(
     FILES
-        "cmake/unfConfig.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/unfConfigVersion.cmake"
-
+        "${CMAKE_CURRENT_BINARY_DIR}/unf-config.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/unf-config-version.cmake"
     DESTINATION share/cmake/unf
 )

@@ -85,6 +85,9 @@ BUILD_SHARED_LIBS     Indicate whether library should be built shared. Default i
 BUNDLE_PYTHON_TESTS   Bundle Python tests per group (faster). Default is false.
 ===================== ==================================================================
 
+The library can then be used by other programs or libraries via the ``unf::unf``
+:term:`Cmake` target.
+
 .. _installing/clang-format:
 
 Apply clang-format
