@@ -7,7 +7,12 @@ project(unf
 
 include(GNUInstallDirs)
 
-set(CMAKE_CXX_STANDARD 14 CACHE STRING "Default C++ standard")
+if (DEFINED ENV{CXXFLAGS_STD})
+    string(SUBSTRING "$ENV{CXXFLAGS_STD}" 3 -1 cxx_std)
+else()
+    set(cxx_std 14)
+endif()
+set(CMAKE_CXX_STANDARD "${cxx_std}" CACHE STRING "Default C++ standard")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
