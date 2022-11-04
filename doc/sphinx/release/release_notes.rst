@@ -4,7 +4,8 @@
 Release Notes
 *************
 
-.. release:: Upcoming
+.. release:: 0.2.0
+    :date: 2022-11-04
 
     .. change:: changed
 
