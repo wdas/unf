@@ -4,6 +4,20 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: changed
+
+        Updated :term:`CMake` configuration to update C++ standard via the
+        :envvar:`CXXFLAGS_STD` environment variable.
+
+    .. change:: changed
+
+        Set `CMAKE_EXPORT_COMPILE_COMMANDS
+        <https://cmake.org/cmake/help/latest/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html>`_
+        to generates a :file:`compile_commands.json` file for use by editors and
+        other developer tools.
+
 .. release:: 0.2.0
     :date: 2022-11-04
 
