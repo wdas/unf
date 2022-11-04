@@ -42,7 +42,8 @@ install(
 )
 
 install(EXPORT ${PROJECT_NAME}
-    FILE unfTargets.cmake
+    FILE unf-targets.cmake
+    NAMESPACE unf::
     DESTINATION share/cmake/unf
 )
 

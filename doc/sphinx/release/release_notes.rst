@@ -4,6 +4,44 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: changed
+
+        Updated :term:`CMake` configuration to export target with a ``unf::``
+        namespace for safety.
+
+    .. change:: changed
+
+        Updated :ref:`building <installing/building>` documentation.
+
+    .. change:: changed
+
+        Updated exported :term:`CMake` configuration file names to use
+        kebab-case instead of CamelCase.
+
+    .. change:: changed
+
+        Updated :term:`CMake` configuration to ensure that the
+        ``CMAKE_BUILD_TYPE`` environment variable can be used to specify the
+        build type when :term:`CMake` is used under version 3.22 which
+        provides this feature.
+
+        .. seealso::
+
+            https://gitlab.kitware.com/cmake/cmake/-/merge_requests/6291
+
+    .. change:: fixed
+
+        Updated :term:`CMake` configuration to use
+        :func:`configure_package_config_file` which ensures a that the package
+        file contains required data.
+
+        .. seealso::
+
+            `CMakePackageConfigHelpers
+            <https://cmake.org/cmake/help/latest/module/CMakePackageConfigHelpers.html>`_
+
 .. release:: 0.1.1
     :date: 2022-11-03
 
