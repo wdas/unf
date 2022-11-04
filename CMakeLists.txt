@@ -31,6 +31,13 @@ endif()
 # Make module finder scripts available for TBB and USD.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
 
+# Silence "Up-to-date:" install messages
+set(CMAKE_INSTALL_MESSAGE NEVER)
+
+# Generate "compile_commands.json" for use by editors and other developer tools.
+# https://cmake.org/cmake/help/v3.5/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+
 # Discover Python per best matching location instead of highest version.
 # https://cmake.org/cmake/help/latest/policy/CMP0094.html
 cmake_policy(SET CMP0094 NEW)
