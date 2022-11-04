@@ -7,7 +7,12 @@ project(unf
 
 include(GNUInstallDirs)
 
-set(CMAKE_CXX_STANDARD 14 CACHE STRING "Default C++ standard")
+if (DEFINED ENV{CXXFLAGS_STD})
+    string(SUBSTRING "$ENV{CXXFLAGS_STD}" 3 -1 cxx_std)
+else()
+    set(cxx_std 14)
+endif()
+set(CMAKE_CXX_STANDARD "${cxx_std}" CACHE STRING "Default C++ standard")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -25,6 +30,13 @@ endif()
 
 # Make module finder scripts available for TBB and USD.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
+
+# Silence "Up-to-date:" install messages
+set(CMAKE_INSTALL_MESSAGE NEVER)
+
+# Generate "compile_commands.json" for use by editors and other developer tools.
+# https://cmake.org/cmake/help/v3.5/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
 # Discover Python per best matching location instead of highest version.
 # https://cmake.org/cmake/help/latest/policy/CMP0094.html
