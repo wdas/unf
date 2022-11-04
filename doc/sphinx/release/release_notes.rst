@@ -42,6 +42,12 @@ Release Notes
             `CMakePackageConfigHelpers
             <https://cmake.org/cmake/help/latest/module/CMakePackageConfigHelpers.html>`_
 
+    .. change:: fixed
+
+        Updated :term:`CMake` configuration to ensure that
+        ``CMAKE_CXX_STANDARD`` is defaulted to C++ 14 but can be overwritten by
+        user.
+
 .. release:: 0.1.1
     :date: 2022-11-03
 
