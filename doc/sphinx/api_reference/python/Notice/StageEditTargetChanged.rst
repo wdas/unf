@@ -1,10 +1,10 @@
-*****************************
-Notice.StageEditTargetChanged
-*****************************
+*********************************
+unf.Notice.StageEditTargetChanged
+*********************************
 
-.. py:class:: Notice.StageEditTargetChanged
+.. py:class:: unf.Notice.StageEditTargetChanged
 
-    Base: :py:class:`Notice.StageNotice`
+    Base: :py:class:`unf.Notice.StageNotice`
 
     Notice sent when a stage's EditTarget has changed.
 

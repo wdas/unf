@@ -15,7 +15,7 @@ defers notification and consolidate notices per type when applicable:
 .. code-block:: python
 
     from pxr import Usd, Tf
-    import usd_notice_framework as unf
+    import unf
 
     stage = Usd.Stage.CreateInMemory()
 

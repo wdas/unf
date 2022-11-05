@@ -163,10 +163,10 @@ Usd notices                           Autonomous Notices
 
 Python bindings are also provided for each notice:
 
-* :class:`~Notice.ObjectsChanged`
-* :class:`~Notice.LayerMutingChanged`
-* :class:`~Notice.StageContentsChanged`
-* :class:`~Notice.StageEditTargetChanged`
+* :class:`~unf.Notice.ObjectsChanged`
+* :class:`~unf.Notice.LayerMutingChanged`
+* :class:`~unf.Notice.StageContentsChanged`
+* :class:`~unf.Notice.StageEditTargetChanged`
 
 All of these notices are defined as mergeable and therefore will be
 consolidated per notice type during a transaction.

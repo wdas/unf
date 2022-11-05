@@ -4,6 +4,8 @@
 Environment variables
 *********************
 
+Environment variables directly defined or referenced by this package.
+
 .. envvar:: PXR_PLUGINPATH_NAME
 
     Environment variable used to locate :term:`Usd` plugin paths.
