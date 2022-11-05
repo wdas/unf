@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd, Sdf, Tf
-import usd_notice_framework as unf
+import unf
 
 import pytest
 

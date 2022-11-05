@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pxr import Usd, Tf, Sdf
-import usd_notice_framework as unf
+import unf
 
 
 def test_layer_muting_changed():

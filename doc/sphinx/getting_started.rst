@@ -105,13 +105,13 @@ Using the library
 =================
 
 Let's now create a new stage and modify the notice registration to target the
-:class:`unf.Notice.ObjectsChanged <Notice.ObjectsChanged>` notice:
+:class:`unf.Notice.ObjectsChanged` notice:
 
 .. code-block:: python
     :emphasize-lines: 2,17
 
     from pxr import Usd, Tf
-    import usd_notice_framework as unf
+    import unf
 
     stage = Usd.Stage.CreateInMemory()
 
@@ -128,15 +128,15 @@ Let's now create a new stage and modify the notice registration to target the
 
     key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _updated, stage)
 
-To ensure that a :class:`unf.Notice.ObjectsChanged <Notice.ObjectsChanged>`
-notice is sent whenever a `Usd.Notice.ObjectsChanged`_ is emitted, we need to
-create a :class:`Broker` associated with the stage::
+To ensure that a :class:`unf.Notice.ObjectsChanged` notice is sent whenever a
+`Usd.Notice.ObjectsChanged`_ is emitted, we need to create a
+:class:`~unf.Broker` associated with the stage::
 
     broker = unf.Broker.Create(stage)
 
 .. note::
 
-    The :class:`Broker` is using a :ref:`dispatcher <dispatchers>` to
+    The :class:`~unf.Broker` is using a :ref:`dispatcher <dispatchers>` to
     emit an autonomous notice for each Usd notice.
 
 Let's now edit the stage once again with the :term:`Usd` API::
@@ -147,9 +147,9 @@ Let's now edit the stage once again with the :term:`Usd` API::
 
 Like in the first section, five notices are emitted with the same information
 as with the `Usd.Notice.ObjectsChanged`_ notice. However, the
-:class:`unf.Notice.ObjectsChanged <Notice.ObjectsChanged>` notice is defined as
-mergeable. It is therefore possible to reduce the number of notices emitted by
-using a :ref:`notice transaction <notices/transaction>`::
+:class:`unf.Notice.ObjectsChanged` notice is defined as mergeable. It is
+therefore possible to reduce the number of notices emitted by using a
+:ref:`notice transaction <notices/transaction>`::
 
     broker.BeginTransaction()
 
@@ -159,7 +159,7 @@ using a :ref:`notice transaction <notices/transaction>`::
 
     broker.EndTransaction()
 
-For safety, it is recommended to use the :class:`NoticeTransaction` object
+For safety, it is recommended to use the :class:`unf.NoticeTransaction` object
 instead which can be used as a context manager::
 
     with unf.NoticeTransaction(broker):
@@ -189,8 +189,8 @@ will only emit "Foo" notices::
     with unf.NoticeTransaction(stage, predicate=_predicate):
         # Stage editing ...
 
-For convenience, a :meth:`CapturePredicate.BlockAll` predicate has been provided
-to block all notices emitted during a transaction::
+For convenience, a :meth:`unf.CapturePredicate.BlockAll` predicate has been
+provided to block all notices emitted during a transaction::
 
     with unf.NoticeTransaction(
         stage, predicate=unf.CapturePredicate.BlockAll()

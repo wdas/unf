@@ -30,8 +30,8 @@ target_link_libraries(pyUnf
 set_target_properties(pyUnf
     PROPERTIES
         PREFIX ""
-        OUTPUT_NAME _usd_notice_framework
-        LIBRARY_OUTPUT_DIRECTORY usd_notice_framework
+        OUTPUT_NAME _unf
+        LIBRARY_OUTPUT_DIRECTORY unf
 )
 
 target_compile_definitions(
@@ -40,20 +40,18 @@ target_compile_definitions(
         BOOST_PYTHON_NO_PY_SIGNATURES
         PXR_PYTHON_ENABLED=1
         PXR_PYTHON_MODULES_ENABLED=1
-        MFB_PACKAGE_MODULE=usd_notice_framework
-        MFB_PACKAGE_NAME=usd_notice_framework
-        MFB_ALT_PACKAGE_NAME=usd_notice_framework
+        MFB_PACKAGE_MODULE=unf
+        MFB_PACKAGE_NAME=unf
+        MFB_ALT_PACKAGE_NAME=unf
 )
 
-configure_file(
-    "__init__.py"
-    "${CMAKE_CURRENT_BINARY_DIR}/usd_notice_framework/__init__.py")
+configure_file("__init__.py" "${CMAKE_CURRENT_BINARY_DIR}/unf/__init__.py")
 
 install(
     TARGETS pyUnf
-    DESTINATION ${PYTHON_DESTINATION}/usd_notice_framework
+    DESTINATION ${PYTHON_DESTINATION}/unf
 )
 install(
     FILES __init__.py
-    DESTINATION ${PYTHON_DESTINATION}/usd_notice_framework
+    DESTINATION ${PYTHON_DESTINATION}/unf
 )

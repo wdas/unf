@@ -4,6 +4,12 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: changed
+
+        Renamed python package to :mod:`unf` for consistency.
+
 .. release:: 0.3.0
     :date: 2022-11-04
 

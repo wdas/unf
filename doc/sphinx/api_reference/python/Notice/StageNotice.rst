@@ -1,8 +1,8 @@
-******************
-Notice.StageNotice
-******************
+**********************
+unf.Notice.StageNotice
+**********************
 
-.. py:class:: Notice.StageNotice
+.. py:class:: unf.Notice.StageNotice
 
     Interface class for autonomous Usd Stage notices.
 
