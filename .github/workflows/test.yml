@@ -14,7 +14,7 @@ jobs:
             fail-fast: false
             matrix:
                 name: [
-                    "USD-22.05-py37",
+                    "USD-22.11-py37",
                     "USD-20.11-py37",
                 ]
 
