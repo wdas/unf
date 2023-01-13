@@ -54,6 +54,12 @@ Glossary
 
         .. seealso:: https://docs.pytest.org/
 
+    Pytest CMake
+        Python library providing :term:`CMake` package configuration for
+        :term:`Pytest`
+
+        .. seealso:: https://github.com/buddly27/pytest-cmake/
+
     reStructuredText
         Lightweight markup language.
 
