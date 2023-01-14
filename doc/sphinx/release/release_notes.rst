@@ -4,6 +4,12 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: changed
+
+        Updated Python test configuration to use :term:`Pytest CMake`.
+
 .. release:: 0.4.0
     :date: 2022-11-04
 
