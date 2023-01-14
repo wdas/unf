@@ -8,28 +8,25 @@ on:
 
 jobs:
     Test-Linux:
+        runs-on: ubuntu-20.04
         timeout-minutes: 300
 
         strategy:
             fail-fast: false
             matrix:
                 name: [
-                    "USD-22.11-py37",
+                    "USD-22.05-py37",
                     "USD-20.11-py37",
                 ]
 
                 include:
-                  -   name: "USD-22.11-py37"
-                      usd-tag: "v22.11"
+                  -   name: "USD-22.05-py37"
+                      usd-tag: "v22.05"
                       python: "3.7"
-                      platform: "ubuntu-latest"
 
                   -   name: "USD-20.11-py37"
                       usd-tag: "v20.11"
                       python: "3.7"
-                      platform: "ubuntu-20.04"
-
-        runs-on: "${{ matrix.platform }}"
 
         steps:
             -   name: Set up Python ${{ matrix.python }}
