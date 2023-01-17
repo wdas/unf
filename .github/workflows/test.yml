@@ -15,17 +15,17 @@ jobs:
             fail-fast: false
             matrix:
                 name: [
-                    "USD-22.11-py39",
+                    "USD-22.05-py39",
                     "USD-20.11-py39",
                 ]
 
                 include:
-                  -   name: "USD-22.11-py39"
-                      usd-tag: "v22.11"
-                      python: "3.9"
-                  -   name: "USD-20.11-py39"
+                  -   name: "USD-22.05-py37"
+                      usd-tag: "v22.05"
+                      python: "3.7"
+                  -   name: "USD-20.11-py37"
                       usd-tag: "v20.11"
-                      python: "3.9"
+                      python: "3.7"
 
         steps:
             -   name: Set up Python ${{ matrix.python }}
