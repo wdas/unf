@@ -229,6 +229,10 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     /// Assignment operator.
     ObjectsChanged& operator=(const ObjectsChanged&);
 
+    // Bring all Merge declarations from base class to prevent
+    // overloaded-virtual warning.
+    using StageNoticeImpl<ObjectsChanged>::Merge;
+
     /// \brief
     /// Merge notice with another ObjectsChanged notice.
     ///
@@ -382,6 +386,10 @@ class LayerMutingChanged : public StageNoticeImpl<LayerMutingChanged> {
 
     /// Assignment operator.
     LayerMutingChanged& operator=(const LayerMutingChanged&);
+
+    // Bring all Merge declarations from base class to prevent
+    // overloaded-virtual warning.
+    using StageNoticeImpl<LayerMutingChanged>::Merge;
 
     /// \brief
     /// Merge notice with another LayerMutingChanged notice.
