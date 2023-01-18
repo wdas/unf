@@ -4,6 +4,12 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+
+        Updated logic to hash ``UsdStageWeakPtr`` object.
+
 .. release:: 0.4.1
     :date: 2023-01-17
 
