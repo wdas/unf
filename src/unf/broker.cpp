@@ -13,7 +13,8 @@ PXR_NAMESPACE_USING_DIRECTIVE
 namespace unf {
 
 // Initiate static registry.
-std::unordered_map<UsdStageWeakPtr, BrokerPtr, Broker::UsdStageWeakPtrHasher> Broker::Registry;
+std::unordered_map<UsdStageWeakPtr, BrokerPtr, Broker::UsdStageWeakPtrHasher>
+    Broker::Registry;
 
 Broker::Broker(const UsdStageWeakPtr& stage) : _stage(stage)
 {
@@ -93,10 +94,7 @@ DispatcherPtr& Broker::GetDispatcher(std::string identifier)
     return _dispatcherMap.at(identifier);
 }
 
-void Broker::Reset()
-{
-    Registry.erase(_stage);
-}
+void Broker::Reset() { Registry.erase(_stage); }
 
 void Broker::ResetAll() { Registry.clear(); }
 

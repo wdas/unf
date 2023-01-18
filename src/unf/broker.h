@@ -180,8 +180,7 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     template <class OutputPtr, class OutputFactory>
     void _LoadFromPlugins(const PXR_NS::TfType& type);
 
-    struct UsdStageWeakPtrHasher
-    {
+    struct UsdStageWeakPtrHasher {
         std::size_t operator()(const UsdStageWeakPtr& k) const
         {
             return hash_value(k);
@@ -189,7 +188,8 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     };
 
     /// Record each hashed stage pointer to its corresponding broker pointer.
-    static std::unordered_map<UsdStageWeakPtr, BrokerPtr, UsdStageWeakPtrHasher> Registry;
+    static std::unordered_map<UsdStageWeakPtr, BrokerPtr, UsdStageWeakPtrHasher>
+        Registry;
 
     class _NoticeMerger {
       public:
