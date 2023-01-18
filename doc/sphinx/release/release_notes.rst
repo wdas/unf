@@ -4,6 +4,15 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+
+        Ensure that :ref:`notices <notices>` implementing consolidation
+        logic also expose :meth:`Merge` methods from
+        `UnfNotice::StageNoticeImpl`_ to prevent errors when the
+        ``overloaded-virtual`` flag is used.
+
 .. release:: 0.4.0
     :date: 2022-11-04
 
