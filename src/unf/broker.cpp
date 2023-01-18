@@ -13,7 +13,8 @@ PXR_NAMESPACE_USING_DIRECTIVE
 namespace unf {
 
 // Initiate static registry.
-std::unordered_map<size_t, BrokerPtr> Broker::Registry;
+std::unordered_map<UsdStageWeakPtr, BrokerPtr, Broker::UsdStageWeakPtrHasher>
+    Broker::Registry;
 
 Broker::Broker(const UsdStageWeakPtr& stage) : _stage(stage)
 {
@@ -32,16 +33,14 @@ Broker::Broker(const UsdStageWeakPtr& stage) : _stage(stage)
 
 BrokerPtr Broker::Create(const UsdStageWeakPtr& stage)
 {
-    size_t stageHash = hash_value(stage);
-
     Broker::_CleanCache();
 
     // If there doesn't exist a broker for the given stage, create a new broker.
-    if (Registry.find(stageHash) == Registry.end()) {
-        Registry[stageHash] = TfCreateRefPtr(new Broker(stage));
+    if (Registry.find(stage) == Registry.end()) {
+        Registry[stage] = TfCreateRefPtr(new Broker(stage));
     }
 
-    return Registry[stageHash];
+    return Registry[stage];
 }
 
 bool Broker::IsInTransaction() { return _mergers.size() > 0; }
@@ -95,11 +94,7 @@ DispatcherPtr& Broker::GetDispatcher(std::string identifier)
     return _dispatcherMap.at(identifier);
 }
 
-void Broker::Reset()
-{
-    size_t stageHash = hash_value(_stage);
-    Registry.erase(stageHash);
-}
+void Broker::Reset() { Registry.erase(_stage); }
 
 void Broker::ResetAll() { Registry.clear(); }
 

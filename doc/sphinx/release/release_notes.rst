@@ -10,6 +10,10 @@ Release Notes
 
         Updated Python test configuration to use :term:`Pytest CMake`.
 
+    .. change:: fixed
+
+        Updated logic to hash ``UsdStageWeakPtr`` object.
+
 .. release:: 0.4.1
     :date: 2023-01-17
 
