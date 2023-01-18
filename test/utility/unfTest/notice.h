@@ -31,6 +31,10 @@ class MergeableNotice
 
     virtual ~MergeableNotice() = default;
 
+    // Bring all Merge declarations from base class to prevent
+    // overloaded-virtual warning.
+    using unf::UnfNotice::StageNoticeImpl<MergeableNotice>::Merge;
+
     virtual void Merge(MergeableNotice&& notice) override
     {
         for (const auto& it : notice.GetData()) {

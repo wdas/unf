@@ -10,6 +10,16 @@ Release Notes
 
         Updated Python test configuration to use :term:`Pytest CMake`.
 
+.. release:: 0.4.1
+    :date: 2023-01-17
+
+    .. change:: fixed
+
+        Ensure that :ref:`notices <notices>` implementing consolidation
+        logic also expose :meth:`Merge` methods from
+        `UnfNotice::StageNoticeImpl`_ to prevent errors when the
+        ``overloaded-virtual`` flag is used.
+
 .. release:: 0.4.0
     :date: 2022-11-04
 

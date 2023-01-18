@@ -15,6 +15,7 @@
 .. _`Sdf.ChangeBlock`: https://graphics.pixar.com/usd/release/api/class_sdf_change_block.html
 
 .. _`UnfNotice::StageNotice`: ./doxygen/classunf_1_1UnfNotice_1_1StageNotice.html
+.. _`UnfNotice::StageNoticeImpl`: ../doxygen/classunf_1_1UnfNotice_1_1StageNoticeImpl.html
 .. _`UnfNotice::ObjectsChanged`: ./doxygen/classunf_1_1UnfNotice_1_1ObjectsChanged.html
 .. _`UnfNotice::LayerMutingChanged`: ./doxygen/classunf_1_1UnfNotice_1_1LayerMutingChanged.html
 .. _`UnfNotice::StageContentsChanged`: ./doxygen/classunf_1_1UnfNotice_1_1StageContentsChanged.html
