@@ -4,12 +4,14 @@
 Release Notes
 *************
 
-.. release:: 0.4.2
-    :date: 2023-01-18
+.. release:: Upcoming
 
     .. change:: changed
 
         Updated Python test configuration to use :term:`Pytest CMake`.
+
+.. release:: 0.4.2
+    :date: 2023-01-18
 
     .. change:: fixed
 
