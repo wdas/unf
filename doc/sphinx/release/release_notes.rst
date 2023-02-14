@@ -4,6 +4,12 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+
+        Fixed issue with the :term:`CMake` module for running :term:`Pytest`.
+
 .. release:: 0.4.2
     :date: 2023-01-18
 
