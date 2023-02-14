@@ -29,10 +29,13 @@ if(CMAKE_SCRIPT_MODE_FILE)
         set(ENV{PYTHONPATH} ${PYTHON_PATH})
 
         execute_process(
-            COMMAND ${PYTEST_EXECUTABLE} --collect-only -q ${WORKING_DIRECTORY}
+            COMMAND ${PYTEST_EXECUTABLE}
+                --collect-only -q
+                --rootdir=${WORKING_DIRECTORY} .
             OUTPUT_VARIABLE _output_list
             ERROR_VARIABLE _output_list
             OUTPUT_STRIP_TRAILING_WHITESPACE
+            WORKING_DIRECTORY ${WORKING_DIRECTORY}
         )
 
         # Convert output into list.
@@ -64,7 +67,7 @@ if(CMAKE_SCRIPT_MODE_FILE)
             endif()
 
             set(test_name "${TEST_GROUP_NAME}.${test_name}")
-            set(test_case "${PROJECT_SOURCE_DIR}/${test_case}")
+            set(test_case "${WORKING_DIRECTORY}/${test_case}")
 
             string(APPEND _content
                 "add_test(\n"
@@ -82,6 +85,10 @@ if(CMAKE_SCRIPT_MODE_FILE)
                 ")\n"
             )
         endforeach()
+
+        if(NOT _content)
+            message(WARNING "No Python tests have been discovered.")
+        endif()
     endif()
 
     file(WRITE ${CTEST_FILE} ${_content})

@@ -20,6 +20,7 @@
 include(FindPackageHandleStandardArgs)
 
 find_program(PYTEST_EXECUTABLE NAMES pytest)
+mark_as_advanced(PYTEST_EXECUTABLE)
 
 if(PYTEST_EXECUTABLE)
     execute_process(
@@ -29,14 +30,10 @@ if(PYTEST_EXECUTABLE)
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
-    if (_version MATCHES "pytest version ([0-9]+\\.[0-9]+\\.[0-9]+),")
-        set(PYTEST_VERSION "${CMAKE_MATCH_1}")
+    if (_version MATCHES "pytest (version )?([0-9]+\\.[0-9]+\\.[0-9]+)")
+        set(PYTEST_VERSION "${CMAKE_MATCH_2}")
     endif()
-
-    mark_as_advanced(_version)
 endif()
-
-mark_as_advanced(PYTEST_EXECUTABLE PYTEST_VERSION)
 
 find_package_handle_standard_args(
     Pytest
@@ -44,10 +41,11 @@ find_package_handle_standard_args(
         PYTEST_EXECUTABLE
     VERSION_VAR
         PYTEST_VERSION
+    HANDLE_COMPONENTS
 )
 
 if (Pytest_FOUND AND NOT TARGET Pytest::Pytest)
-    add_executable(Pytest::Pytest IMPORTED GLOBAL)
+    add_executable(Pytest::Pytest IMPORTED)
     set_target_properties(Pytest::Pytest PROPERTIES
         IMPORTED_LOCATION "${PYTEST_EXECUTABLE}"
     )
@@ -56,7 +54,7 @@ if (Pytest_FOUND AND NOT TARGET Pytest::Pytest)
         cmake_parse_arguments(
             PARSE_ARGV 1 "" ""
             "WORKING_DIRECTORY;TRIM_FROM_NAME;BUNDLE_TESTS"
-            "LIBRARY_PATH_PREPEND;PYTHON_PATH_PREPEND"
+            "LIBRARY_PATH_PREPEND;PYTHON_PATH_PREPEND;DEPENDS"
         )
 
         set(libpath $ENV{LD_LIBRARY_PATH})
@@ -90,6 +88,7 @@ if (Pytest_FOUND AND NOT TARGET Pytest::Pytest)
         add_custom_target(
             ${NAME} ALL VERBATIM
             BYPRODUCTS "${_tests_file}"
+            DEPENDS ${_DEPENDS}
             COMMAND ${CMAKE_COMMAND}
                 -D "PYTEST_EXECUTABLE=${PYTEST_EXECUTABLE}"
                 -D "TEST_GROUP_NAME=${NAME}"
