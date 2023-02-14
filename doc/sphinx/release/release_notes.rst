@@ -4,7 +4,8 @@
 Release Notes
 *************
 
-.. release:: Upcoming
+.. release:: 0.4.3
+    :date: 2023-02-14
 
     .. change:: fixed
 
