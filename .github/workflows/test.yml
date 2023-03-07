@@ -35,7 +35,7 @@ jobs:
             -   uses: actions/checkout@v3
             -   name: Install Conan
                 run: |
-                    pip install conan numpy pytest
+                    pip install conan<2 numpy pytest
                     conan profile new default --detect
                     conan profile update settings.compiler.libcxx=libstdc++11 default
                     conan profile show default
