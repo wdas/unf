@@ -118,10 +118,16 @@ TEST_F(ObjectsChangedTest, HasChangedFields)
 
     ASSERT_EQ(observer.Received(), 1);
 
-    const auto& n = observer.GetLatestNotice();
-    ASSERT_TRUE(n.HasChangedFields(prim));
-    ASSERT_TRUE(n.HasChangedFields(PXR_NS::SdfPath{"/Foo"}));
-    ASSERT_FALSE(n.HasChangedFields(PXR_NS::SdfPath{"/Incorrect"}));
+    const auto& n1 = observer.GetLatestNotice();
+    ASSERT_TRUE(n1.HasChangedFields(prim));
+    ASSERT_TRUE(n1.HasChangedFields(PXR_NS::SdfPath{"/Foo"}));
+    ASSERT_FALSE(n1.HasChangedFields(PXR_NS::SdfPath{"/Incorrect"}));
+
+    _stage->RemovePrim(PXR_NS::SdfPath{"/Foo"});
+
+    // No change field expected when prim is removed.
+    const auto& n2 = observer.GetLatestNotice();
+    ASSERT_FALSE(n2.HasChangedFields(PXR_NS::SdfPath{"/Foo"}));
 }
 
 TEST_F(ObjectsChangedTest, Descendants)
