@@ -4,6 +4,13 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+
+        Fixed merging logic for ``UnfNotice::ObjectsChanged`` to prevent
+        recording empty changed fields.
+
 .. release:: 0.4.3
     :date: 2023-02-14
 
