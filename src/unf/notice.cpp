@@ -63,12 +63,17 @@ ObjectsChanged& ObjectsChanged::operator=(const ObjectsChanged& other)
 
 void ObjectsChanged::Merge(ObjectsChanged&& notice)
 {
-    SdfPathSet resyncSet;
+    SdfPathSet resyncSet(_resyncChanges.begin(), _resyncChanges.end());
 
-    for (const auto& path : _resyncChanges) {
-        resyncSet.insert(path);
+    // Update resyncChanges if necessary.
+    for (const auto& path : notice._resyncChanges) {
+        if (resyncSet.find(path) == resyncSet.end()) {
+            resyncSet.insert(path);
+            _resyncChanges.push_back(std::move(path));
+        }
     }
 
+    // Update infoChanges if necessary.
     for (const auto& path : notice._infoChanges) {
         const SdfPath& primPath = path.GetPrimPath();
 
@@ -89,24 +94,23 @@ void ObjectsChanged::Merge(ObjectsChanged&& notice)
             continue;
         }
 
-        // Update infoChanges and changeFields
         auto it = std::find(_infoChanges.begin(), _infoChanges.end(), path);
         if (it == _infoChanges.end()) {
-            _changedFields[path] = std::move(notice._changedFields[path]);
             _infoChanges.push_back(std::move(path));
+        }
+    }
+
+    // Update changeFields.
+    for (auto const &entry: notice._changedFields) {
+        auto const path = entry.first;
+
+        if (_changedFields.find(path) == _changedFields.end()) {
+            _changedFields[path] = std::move(notice._changedFields[path]);
         }
         else {
             _changedFields[path].insert(
                 notice._changedFields[path].begin(),
                 notice._changedFields[path].end());
-        }
-    }
-
-    // Update resyncChanges if necessary.
-    for (const auto& path : notice._resyncChanges) {
-        if (resyncSet.find(path) == resyncSet.end()) {
-            resyncSet.insert(path);
-            _resyncChanges.push_back(std::move(path));
         }
     }
 }
