@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
 project(unf
-    VERSION 0.4.4
+    VERSION 0.4.5
     LANGUAGES CXX
 )
 
