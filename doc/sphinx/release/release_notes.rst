@@ -4,6 +4,14 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+
+        Fixed merging logic for ``UnfNotice::ObjectsChanged`` to prevent
+        recording prim paths in the "changeInfo" list when they are already 
+        recorded in the "resyncPaths" list.
+
 .. release:: 0.4.4
     :date: 2023-03-07
 

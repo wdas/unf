@@ -136,13 +136,63 @@ TEST_F(ObjectsChangedTest, Descendants)
 
     _stage->DefinePrim(PXR_NS::SdfPath{"/Foo/Bar"});
 
+    // Ensure that two Unf notices are received (for "/Foo" and "/Foo/Bar")
     ASSERT_EQ(observer.Received(), 2);
 
     const auto& n = observer.GetLatestNotice();
     ASSERT_EQ(n.GetResyncedPaths().at(0), PXR_NS::SdfPath{"/Foo/Bar"});
 }
 
-TEST_F(ObjectsChangedTest, Transaction)
+TEST_F(ObjectsChangedTest, MergingResyncSingle)
+{
+    ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
+
+    _broker->BeginTransaction();
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
+    _broker->EndTransaction();
+
+    ASSERT_EQ(observer.Received(), 1);
+
+    const auto& n = observer.GetLatestNotice();
+    ASSERT_EQ(
+        n.GetResyncedPaths(), PXR_NS::SdfPathVector{PXR_NS::SdfPath{"/Foo"}});
+    ASSERT_EQ(
+        n.GetChangedFields(PXR_NS::SdfPath{"/Foo"}),
+        unf::TfTokenSet{PXR_NS::TfToken{"specifier"}});
+}
+
+TEST_F(ObjectsChangedTest, MergingResyncMultiple)
+{
+    ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
+
+    _broker->BeginTransaction();
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Bar"});
+    _stage->DefinePrim(PXR_NS::SdfPath{"/Bim"});
+    _broker->EndTransaction();
+
+    ASSERT_EQ(observer.Received(), 1);
+
+    // Ensure that Unf notice includes sorted resynced prims from all events.
+    const auto& n = observer.GetLatestNotice();
+    const auto& paths = n.GetResyncedPaths();
+    ASSERT_EQ(paths.size(), 3);
+    ASSERT_EQ(paths.at(0), PXR_NS::SdfPath{"/Bar"});
+    ASSERT_EQ(paths.at(1), PXR_NS::SdfPath{"/Bim"});
+    ASSERT_EQ(paths.at(2), PXR_NS::SdfPath{"/Foo"});
+
+    ASSERT_EQ(
+        n.GetChangedFields(PXR_NS::SdfPath{"/Foo"}),
+        unf::TfTokenSet{PXR_NS::TfToken{"specifier"}});
+    ASSERT_EQ(
+        n.GetChangedFields(PXR_NS::SdfPath{"/Bar"}),
+        unf::TfTokenSet{PXR_NS::TfToken{"specifier"}});
+    ASSERT_EQ(
+        n.GetChangedFields(PXR_NS::SdfPath{"/Foo"}),
+        unf::TfTokenSet{PXR_NS::TfToken{"specifier"}});
+}
+
+TEST_F(ObjectsChangedTest, MergingResyncDescendants)
 {
     ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
 
@@ -152,13 +202,78 @@ TEST_F(ObjectsChangedTest, Transaction)
 
     ASSERT_EQ(observer.Received(), 1);
 
+    // Ensure that Unf notice only includes top-level resynced prim.
     const auto& n = observer.GetLatestNotice();
-    const auto& resyncedPaths = n.GetResyncedPaths();
-    ASSERT_EQ(resyncedPaths.size(), 1);
-    ASSERT_EQ(resyncedPaths.at(0), PXR_NS::SdfPath{"/Foo"});
+    ASSERT_EQ(
+        n.GetResyncedPaths(), PXR_NS::SdfPathVector{PXR_NS::SdfPath{"/Foo"}});
+
+    ASSERT_EQ(
+        n.GetChangedFields(PXR_NS::SdfPath{"/Foo"}),
+        unf::TfTokenSet{PXR_NS::TfToken{"specifier"}});
+    ASSERT_EQ(
+        n.GetChangedFields(PXR_NS::SdfPath{"/Foo/Bar"}),
+        unf::TfTokenSet{PXR_NS::TfToken{"specifier"}});
 }
 
-TEST_F(ObjectsChangedTest, TransactionProperties)
+TEST_F(ObjectsChangedTest, MergingChangeInfoSingle)
+{
+    auto prim = _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
+
+    ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
+
+    _broker->BeginTransaction();
+    prim.SetMetadata(PXR_NS::TfToken{"comment"}, "This is a test");
+    _broker->EndTransaction();
+
+    ASSERT_EQ(observer.Received(), 1);
+
+    // Ensure that Unf notice only includes top-level resynced prim.
+    const auto& n = observer.GetLatestNotice();
+    ASSERT_EQ(
+        n.GetChangedInfoOnlyPaths(),
+        PXR_NS::SdfPathVector{PXR_NS::SdfPath{"/Foo"}});
+
+    ASSERT_EQ(
+        n.GetChangedFields(PXR_NS::SdfPath{"/Foo"}),
+        unf::TfTokenSet{PXR_NS::TfToken{"comment"}});
+}
+
+TEST_F(ObjectsChangedTest, MergingChangeInfoMultiple)
+{
+    auto prim1 = _stage->DefinePrim(PXR_NS::SdfPath{"/Foo"});
+    auto prim2 = _stage->DefinePrim(PXR_NS::SdfPath{"/Bar"});
+    auto prim3 = _stage->DefinePrim(PXR_NS::SdfPath{"/Bim"});
+
+    ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
+
+    _broker->BeginTransaction();
+    prim1.SetMetadata(PXR_NS::TfToken{"comment"}, "This is a test");
+    prim2.SetMetadata(PXR_NS::TfToken{"comment"}, "This is a test");
+    prim3.SetMetadata(PXR_NS::TfToken{"comment"}, "This is a test");
+    _broker->EndTransaction();
+
+    ASSERT_EQ(observer.Received(), 1);
+
+    // Ensure that Unf notice includes resynced prims from all events.
+    const auto& n = observer.GetLatestNotice();
+    const auto& paths = n.GetChangedInfoOnlyPaths();
+    ASSERT_EQ(paths.size(), 3);
+    ASSERT_EQ(paths.at(0), PXR_NS::SdfPath{"/Foo"});
+    ASSERT_EQ(paths.at(1), PXR_NS::SdfPath{"/Bar"});
+    ASSERT_EQ(paths.at(2), PXR_NS::SdfPath{"/Bim"});
+
+    ASSERT_EQ(
+        n.GetChangedFields(PXR_NS::SdfPath{"/Foo"}),
+        unf::TfTokenSet{PXR_NS::TfToken{"comment"}});
+    ASSERT_EQ(
+        n.GetChangedFields(PXR_NS::SdfPath{"/Bar"}),
+        unf::TfTokenSet{PXR_NS::TfToken{"comment"}});
+    ASSERT_EQ(
+        n.GetChangedFields(PXR_NS::SdfPath{"/Bim"}),
+        unf::TfTokenSet{PXR_NS::TfToken{"comment"}});
+}
+
+TEST_F(ObjectsChangedTest, MergingResyncAndChangeInfo)
 {
     ::Test::Observer<unf::UnfNotice::ObjectsChanged> observer(_stage);
 
@@ -173,20 +288,16 @@ TEST_F(ObjectsChangedTest, TransactionProperties)
 
     const auto& n = observer.GetLatestNotice();
     const auto& resyncedPaths = n.GetResyncedPaths();
-    ASSERT_EQ(resyncedPaths.size(), 1);
-    ASSERT_EQ(resyncedPaths.at(0), PXR_NS::SdfPath{"/Foo"});
+    ASSERT_EQ(
+        n.GetResyncedPaths(), PXR_NS::SdfPathVector{PXR_NS::SdfPath{"/Foo"}});
+
+    // Prim defined as resynced are not recorded in changeinfo
     const auto& changedInfoPaths = n.GetChangedInfoOnlyPaths();
-    ASSERT_EQ(changedInfoPaths.size(), 2);
-    ASSERT_NE(
-        std::find(
-            changedInfoPaths.begin(),
-            changedInfoPaths.end(),
-            PXR_NS::SdfPath{"/Foo.radius"}),
-        changedInfoPaths.end());
-    ASSERT_NE(
-        std::find(
-            changedInfoPaths.begin(),
-            changedInfoPaths.end(),
-            PXR_NS::SdfPath{"/Foo.height"}),
-        changedInfoPaths.end());
+    ASSERT_EQ(changedInfoPaths.size(), 0);
+
+    // tokens
+    const auto& tokens = n.GetChangedFields(PXR_NS::SdfPath{"/Foo"});
+    ASSERT_EQ(tokens.size(), 2);
+    ASSERT_NE(tokens.find(PXR_NS::TfToken{"specifier"}), tokens.end());
+    ASSERT_NE(tokens.find(PXR_NS::TfToken{"typeName"}), tokens.end());
 }

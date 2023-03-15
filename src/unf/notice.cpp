@@ -63,25 +63,49 @@ ObjectsChanged& ObjectsChanged::operator=(const ObjectsChanged& other)
 
 void ObjectsChanged::Merge(ObjectsChanged&& notice)
 {
-    size_t resyncChangesSize = _resyncChanges.size();
+    SdfPathSet resyncSet(_resyncChanges.begin(), _resyncChanges.end());
 
+    // Update resyncChanges if necessary.
     for (const auto& path : notice._resyncChanges) {
-        auto begin = _resyncChanges.begin();
-        auto end = _resyncChanges.end();
-        auto it = std::find(begin, end, path);
-        if (it == end) {
+        if (resyncSet.find(path) == resyncSet.end()) {
+            resyncSet.insert(path);
             _resyncChanges.push_back(std::move(path));
         }
     }
 
-    size_t infoChangesSize = _infoChanges.size();
+    // Update infoChanges if necessary.
     for (const auto& path : notice._infoChanges) {
-        auto begin = _infoChanges.begin();
-        auto end = _infoChanges.end();
-        auto it = std::find(begin, end, path);
-        if (it == end) {
-            _changedFields[path] = std::move(notice._changedFields[path]);
+        const SdfPath& primPath = path.GetPrimPath();
+
+        // Skip if the path is already in resyncedPaths.
+        if (resyncSet.find(primPath) != resyncSet.end()) {
+            continue;
+        }
+
+        // Skip if an ancestor of the path is already in resyncedPaths.
+        bool ancestorResynced = false;
+        for (const auto& ancestor : primPath.GetPrefixes()) {
+            if (resyncSet.find(ancestor) != resyncSet.end()) {
+                ancestorResynced = true;
+                break;
+            }
+        }
+        if (ancestorResynced) {
+            continue;
+        }
+
+        auto it = std::find(_infoChanges.begin(), _infoChanges.end(), path);
+        if (it == _infoChanges.end()) {
             _infoChanges.push_back(std::move(path));
+        }
+    }
+
+    // Update changeFields.
+    for (auto const &entry: notice._changedFields) {
+        auto const path = entry.first;
+
+        if (_changedFields.find(path) == _changedFields.end()) {
+            _changedFields[path] = std::move(notice._changedFields[path]);
         }
         else {
             _changedFields[path].insert(

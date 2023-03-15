@@ -172,7 +172,7 @@ As a result, only one notice will be emitted:
 .. code-block:: bash
 
     Resynced Paths: [(Sdf.Path('/Foo'), ['typeName', 'specifier'])]
-    ChangedInfoOnly Paths: [(Sdf.Path('/Foo.radius'), ['default']), (Sdf.Path('/Foo.height'), ['default'])]
+    ChangedInfoOnly Paths: []
 
 It is sometimes necessary to de-register listeners to a particular set of
 notices when editing the stage. If many clients are listening to Usd notices,
