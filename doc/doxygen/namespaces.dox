@@ -3,5 +3,5 @@
 Scope of the Usd Notice Framework library.
 
 \namespace unf::UnfNotice
-Regroup all autonomous notices used by the library.
+Regroup all standalone notices used by the library.
 */

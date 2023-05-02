@@ -8,8 +8,8 @@ unf.Notice.LayerMutingChanged
 
     Notice sent after a set of layers have been newly muted or unmuted.
 
-    This notice type is the autonomous equivalent of the
-    `Usd.Notice.LayerMutingChanged`_ notice type.
+    This notice type is the standalone equivalent of the
+    :usd-cpp:`UsdNotice::LayerMutingChanged` notice type.
 
     .. py:method:: GetMutedLayers()
 

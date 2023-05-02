@@ -101,7 +101,7 @@ void ObjectsChanged::Merge(ObjectsChanged&& notice)
     }
 
     // Update changeFields.
-    for (auto const &entry: notice._changedFields) {
+    for (auto const& entry : notice._changedFields) {
         auto const path = entry.first;
 
         if (_changedFields.find(path) == _changedFields.end()) {

@@ -48,7 +48,7 @@ class MergeableNotice
     DataMap _data;
 };
 
-// Notice with can not be consolidated within broker transactions.
+// Notice which cannot be consolidated within broker transactions.
 class UnMergeableNotice
     : public unf::UnfNotice::StageNoticeImpl<UnMergeableNotice> {
   public:
