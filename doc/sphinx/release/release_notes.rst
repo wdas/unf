@@ -4,13 +4,20 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: changed
+
+        Updated Github workflow configuration to test library against
+        :term:`USD` v23.05.
+
 .. release:: 0.4.5
     :date: 2023-03-15
 
     .. change:: fixed
 
         Fixed merging logic for ``UnfNotice::ObjectsChanged`` to prevent
-        recording prim paths in the "changeInfo" list when they are already 
+        recording prim paths in the "changeInfo" list when they are already
         recorded in the "resyncPaths" list.
 
 .. release:: 0.4.4

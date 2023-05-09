@@ -15,13 +15,13 @@ jobs:
             fail-fast: false
             matrix:
                 name: [
-                    "USD-22.05-py37",
+                    "USD-23.05-py37",
                     "USD-20.11-py37",
                 ]
 
                 include:
-                  -   name: "USD-22.05-py37"
-                      usd-tag: "v22.05"
+                  -   name: "USD-23.05-py37"
+                      usd-tag: "v23.05"
                       python: "3.7"
                   -   name: "USD-20.11-py37"
                       usd-tag: "v20.11"
@@ -73,6 +73,7 @@ jobs:
                         -DPYTHON_EXECUTABLE="${PY_EXE}" \
                         -DPYTHON_LIBRARY="${PY_LIBDIR}/${PY_LIBNAME}" \
                         -DPYTHON_INCLUDE_DIR="${PY_INCLUDE}" \
+                        -DPython3_FIND_STRATEGY="LOCATION" \
                         -DBoost_PYTHON_LIBRARY="Boost::python" \
                         -DTBB_tbb_LIBRARY="TBB::tbb" \
                         -DPXR_BUILD_DOCUMENTATION=False \
