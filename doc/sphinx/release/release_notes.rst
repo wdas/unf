@@ -8,7 +8,12 @@ Release Notes
 
     .. change:: changed
 
-        Updated :ref:`documentation <main>`
+        Updated Github workflow configuration to test library against
+        :term:`USD` v23.05.
+
+    .. change:: changed
+
+        Updated :ref:`documentation <main>`.
 
 .. release:: 0.4.5
     :date: 2023-03-15
