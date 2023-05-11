@@ -162,4 +162,8 @@
     <name>PXR_NS::UsdNotice::StageEditTargetChanged</name>
     <filename>class_usd_notice_1_1_stage_edit_target_changed.html</filename>
   </compound>
+  <compound kind="class">
+    <name>PXR_NS::SdfChangeBlock</name>
+    <filename>class_sdf_change_block.html</filename>
+  </compound>
 </tagfile>

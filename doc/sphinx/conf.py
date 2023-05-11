@@ -7,7 +7,7 @@ import re
 
 # -- General ------------------------------------------------------------------
 
-extensions = ["lowdown"]
+extensions = ["sphinxcontrib.doxylink", "lowdown"]
 
 if os.environ.get("READTHEDOCS"):
     import doxygen
@@ -24,15 +24,13 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"Usd Notice Framework"
-copyright = u"2022, Walt Disney Animation Studio"
+project = u"USD Notice Framework"
+copyright = u"2023, Walt Disney Animation Studio"
+
+_root = os.path.join(os.path.dirname(__file__), "..", "..")
 
 # Version
-with open(
-    os.path.join(
-        os.path.dirname(__file__), "..", "..", "CMakeLists.txt",
-    )
-) as _version_file:
+with open(os.path.join(_root, "CMakeLists.txt")) as _version_file:
     _version = re.search(
         r"project\(.* VERSION ([\d\\.]+)", _version_file.read(), re.DOTALL
     ).group(1)
@@ -40,13 +38,20 @@ with open(
 version = _version
 release = _version
 
+doxylink = {
+    "usd-cpp": (
+        os.path.join(_root, "doc", "doxygen", "USD.tag"),
+        "https://graphics.pixar.com/usd/release/api"
+    ),
+    "unf-cpp": (
+        os.path.join(_root, "build", "doc", "doc", "UNF.tag"),
+        os.path.join(_root, "build", "doc", "doc", "doxygen")
+    )
+}
+
 # -- HTML output --------------------------------------------------------------
 
 html_theme = "sphinx_rtd_theme"
 
 # If True, copy src rst files to output for reference.
 html_copy_source = True
-
-# Ensure that common links are available.
-with open("links.rst") as stream:
-     rst_epilog = stream.read().replace(":orphan:", "")

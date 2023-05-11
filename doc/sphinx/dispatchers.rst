@@ -4,15 +4,16 @@
 Using Dispatchers
 *****************
 
-As mentioned :ref:`previously <notices>`, in order to capture autonomour
-notices during a transaction, it needs to be sent via the Broker_. However,
-notices are rarely sent directly within the transaction like in our examples.
-Most of the time, we want autonomous notices to be triggered by other incoming
-notices.
+As mentioned :ref:`previously <notices>`, in order to capture standalone
+notices during a transaction, it needs to be sent via the :unf-cpp:`Broker`.
+owever, notices are rarely sent directly within the transaction like in our
+examples. Most of the time, we want standalone notices to be triggered by other
+incoming notices.
 
-It is therefore preferrable to send autonomous notices within a Dispatcher_.
-A dispatcher is an object which triggers :ref:`notices <notices>` when incoming
-notices are received. It can be retrieved from the Broker_ via its identifier:
+This is therefore preferable to send standalone notices using a
+:unf-cpp:`Dispatcher`. A dispatcher is an object which triggers :ref:`notices
+<notices>` when incoming notices are received. It can be retrieved from the
+:unf-cpp:`Broker` via its identifier:
 
 .. code-block:: cpp
 
@@ -33,16 +34,16 @@ follows:
 
 .. warning::
 
-    Dispatchers can not be manipulated in Python.
+    Dispatchers cannot be manipulated in Python.
 
 .. _dispatchers/stage:
 
 Stage Dispatcher
 ================
 
-By default, the Broker_ only contains the StageDispatcher_, which is in charge
-of emitting :ref:`default autonomous notices <notices/default>` for each
-:term:`Usd` notices received.
+By default, the :unf-cpp:`Broker` only contains the :unf-cpp:`StageDispatcher`,
+which is in charge of emitting a :ref:`default standalone notice
+<notices/default>` for each :term:`USD` notice received.
 
 Its identifier is "StageDispatcher":
 
@@ -62,9 +63,9 @@ Its identifier is "StageDispatcher":
 Creating a Dispatcher
 =====================
 
-The Dispatcher_ interface can be used to create a new dispatcher. The "Register"
-method must be implemented to register the listeners in charge of emitting the
-new notices.
+The :unf-cpp:`Dispatcher` interface can be used to create a new dispatcher. The
+"Register" method must be implemented to register the listeners in charge of
+emitting the new notices.
 
 A convenient "_Register" protected method is provided to trigger a new notice
 from one specific notice type. The new notice will be created by passing the
@@ -111,7 +112,7 @@ Otherwise, the listener can be registered as follows:
 
     };
 
-The new dispatcher can be added to the Broker_ as follows:
+The new dispatcher can be added to the :unf-cpp:`Broker` as follows:
 
 .. code-block:: cpp
 
@@ -126,7 +127,7 @@ Creating a plugin
 =================
 
 The new dispatcher can be automatically discovered and registered when the
-Broker_ is created using the :term:`Plug` framework.
+:unf-cpp:`Broker` is created using the :term:`Plug` framework.
 
 First, a corresponding runtime TfType must be defined:
 

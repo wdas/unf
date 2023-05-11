@@ -45,9 +45,15 @@ Glossary
         .. seealso:: http://google.github.io/googletest/
 
     Plug
-        Plugin framework included with the :term:`Usd` API.
+        Plugin framework included with the :term:`USD` API.
 
         .. seealso:: https://graphics.pixar.com/usd/release/api/plug_page_front.html
+
+    Presto Animation
+        Presto is the proprietary software developed and used in-house by Pixar
+        Animation Studios in the animation of its features and short films.
+
+        .. seealso:: https://en.wikipedia.org/wiki/Presto_(animation_software)
 
     Pytest
         Python testing framework.

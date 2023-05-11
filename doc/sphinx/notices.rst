@@ -1,20 +1,20 @@
 .. _notices:
 
 ***********************
-Using Autonomous Notice
+Using Standalone Notice
 ***********************
 
-The Usd Notice Framework provides a `UnfNotice::StageNotice`_ interface
-which can be used to create autonomous notices related to the :term:`Usd` stage.
+The USD Notice Framework provides a :unf-cpp:`UnfNotice::StageNotice` interface
+which can be used to create standalone notices related to the :term:`USD` stage.
 
-Autonomous notices present the following features:
+Standalone notices present the following features:
 
 1. **They do not reference data from the stage**
 
 This rule ensures that notices are safe to use in asynchronous context.
-By contrast, Usd notices such as `UsdNotice::ObjectsChanged`_ and
-`UsdNotice::LayerMutingChanged`_ both reference data from the stage and thus
-are not safe to use when the stage is not longer reachable.
+By contrast, Usd notices such as :usd-cpp:`UsdNotice::ObjectsChanged` and
+:usd-cpp:`UsdNotice::LayerMutingChanged` both reference data from the stage and
+thus are not safe to use when the stage is not longer reachable.
 
 2. **They can include logic for consolidation with notice of the same type**
 
@@ -26,9 +26,9 @@ transaction without loosing information.
 Using notice transaction
 ========================
 
-A transaction is a time frame during which the emission of autonomous notices
-needs to be withheld. The Broker_ is in charge of capturing these notices via
-a NoticeTransaction_ instance:
+A transaction is a time frame during which the emission of standalone notices
+needs to be withheld. The :unf-cpp:`Broker` is in charge of capturing these
+notices via a :unf-cpp:`NoticeTransaction` instance:
 
 .. code-block:: cpp
 
@@ -38,12 +38,12 @@ a NoticeTransaction_ instance:
     {
         unf::NoticeTransaction transaction(broker);
 
-        // Emission of autonomous notices is deferred until the end of the
+        // Emission of standalone notices is deferred until the end of the
         // transaction. Other notices are sent as normal.
     }
 
-A NoticeTransaction_ instance can also be constructed directly from the Usd
-stage, which encapsulates the creation of the broker if none have been
+A :unf-cpp:`NoticeTransaction` instance can also be constructed directly from
+the Usd stage, which encapsulates the creation of the broker if none have been
 previously created for this stage:
 
 .. code-block:: cpp
@@ -56,10 +56,10 @@ previously created for this stage:
         // ...
     }
 
-At the end of a transaction, all notices captured are emitted. for an autonomous
-notice to be captured, it needs to be sent via the Broker_. Let's consider a
-ficticious autonomous notice named "Foo". It can be created and sent with
-this templated method:
+At the end of a transaction, all notices captured are emitted. for a standalone
+notice to be captured, it needs to be sent via the :unf-cpp:`Broker`. Let's
+consider a ficticious standalone notice named "Foo". It can be created and sent
+with this templated method:
 
 .. code-block:: cpp
 
@@ -84,7 +84,7 @@ It can also be created separately and sent as follows:
         auto notice = Foo::Create();
         notice->Send();
 
-    Autonomous notices can not be sent in Python.
+    Standalone notices cannot be sent in Python.
 
 .. note::
 
@@ -149,17 +149,17 @@ during a transaction:
 Default notices
 ===============
 
-By default, the broker will emit autonomous equivalent for each :term:`Usd`
+By default, the broker will emit standalone equivalents for each :term:`USD`
 notices:
 
-===================================== ====================================
-Usd notices                           Autonomous Notices
-===================================== ====================================
-`UsdNotice::ObjectsChanged`_          `UnfNotice::ObjectsChanged`_
-`UsdNotice::LayerMutingChanged`_      `UnfNotice::LayerMutingChanged`_
-`UsdNotice::StageContentsChanged`_    `UnfNotice::StageContentsChanged`_
-`UsdNotice::StageEditTargetChanged`_  `UnfNotice::StageEditTargetChanged`_
-===================================== ====================================
+============================================= =============================================
+Usd notices                                   Standalone Notices
+============================================= =============================================
+:usd-cpp:`UsdNotice::ObjectsChanged`          :unf-cpp:`UnfNotice::ObjectsChanged`
+:usd-cpp:`UsdNotice::LayerMutingChanged`      :unf-cpp:`UnfNotice::LayerMutingChanged`
+:usd-cpp:`UsdNotice::StageContentsChanged`    :unf-cpp:`UnfNotice::StageContentsChanged`
+:usd-cpp:`UsdNotice::StageEditTargetChanged`  :unf-cpp:`UnfNotice::StageEditTargetChanged`
+============================================= =============================================
 
 Python bindings are also provided for each notice:
 
@@ -180,8 +180,8 @@ consolidated per notice type during a transaction.
 Custom notices
 ==============
 
-The `UnfNotice::StageNotice`_ interface can be safely derived as follows to
-create new notices:
+The :unf-cpp:`UnfNotice::StageNotice` interface can be safely derived as follows
+to create new notices:
 
 .. code-block:: cpp
 
@@ -242,4 +242,4 @@ with other notices:
 
 .. warning::
 
-    Custom autonomous notices can not be implemented in Python.
+    Custom standalone notices cannot be implemented in Python.

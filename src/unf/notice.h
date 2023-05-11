@@ -23,8 +23,7 @@ using TfTokenSet =
     std::unordered_set<PXR_NS::TfToken, PXR_NS::TfToken::HashFunctor>;
 
 /// Convenient alias for set of paths.
-using SdfPathSet = 
-    std::unordered_set<PXR_NS::SdfPath, PXR_NS::SdfPath::Hash>;
+using SdfPathSet = std::unordered_set<PXR_NS::SdfPath, PXR_NS::SdfPath::Hash>;
 
 /// Convenient alias for map of token sets organized per path.
 using ChangedFieldMap =
@@ -35,9 +34,9 @@ namespace UnfNotice {
 /// \class StageNotice
 ///
 /// \brief
-/// Base class for autonomous PXR_NS::UsdStage notices.
+/// Base class for standalone PXR_NS::UsdStage notices.
 ///
-/// This notice type is the autonomous equivalent of the
+/// This notice type is the standalone equivalent of the
 /// PXR_NS::UsdNotice::StageNotice notice type.
 ///
 /// \note
@@ -198,7 +197,7 @@ class StageNoticeImpl : public StageNotice {
 /// Notice sent when the given PXR_NS::UsdStage's contents have changed in
 /// any way.
 ///
-/// This notice type is the autonomous equivalent of the
+/// This notice type is the standalone equivalent of the
 /// PXR_NS::UsdNotice::StageContentsChanged notice type.
 class StageContentsChanged : public StageNoticeImpl<StageContentsChanged> {
   public:
@@ -221,7 +220,7 @@ class StageContentsChanged : public StageNoticeImpl<StageContentsChanged> {
 /// Notice sent in response to authored changes that affect any
 /// PXR_NS::UsdObject.
 ///
-/// This notice type is the autonomous equivalent of the
+/// This notice type is the standalone equivalent of the
 /// PXR_NS::UsdNotice::ObjectsChanged notice type.
 class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
   public:
@@ -357,7 +356,7 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
 /// \brief
 /// Notice sent when a stage's EditTarget has changed.
 ///
-/// This notice type is the autonomous equivalent of the
+/// This notice type is the standalone equivalent of the
 /// PXR_NS::UsdNotice::StageEditTargetChanged notice type.
 class StageEditTargetChanged : public StageNoticeImpl<StageEditTargetChanged> {
   public:
@@ -379,7 +378,7 @@ class StageEditTargetChanged : public StageNoticeImpl<StageEditTargetChanged> {
 /// \brief
 /// Notice sent after a set of layers have been newly muted or unmuted.
 ///
-/// This notice type is the autonomous equivalent of the
+/// This notice type is the standalone equivalent of the
 /// PXR_NS::UsdNotice::LayerMutingChanged notice type.
 class LayerMutingChanged : public StageNoticeImpl<LayerMutingChanged> {
   public:

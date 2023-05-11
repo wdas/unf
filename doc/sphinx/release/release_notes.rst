@@ -11,12 +11,16 @@ Release Notes
         Updated Github workflow configuration to test library against
         :term:`USD` v23.05.
 
+    .. change:: changed
+
+        Updated :ref:`documentation <main>`.
+
 .. release:: 0.4.5
     :date: 2023-03-15
 
     .. change:: fixed
 
-        Fixed merging logic for ``UnfNotice::ObjectsChanged`` to prevent
+        Fixed merging logic for :unf-cpp:`UnfNotice::ObjectsChanged` to prevent
         recording prim paths in the "changeInfo" list when they are already
         recorded in the "resyncPaths" list.
 
@@ -25,7 +29,7 @@ Release Notes
 
     .. change:: fixed
 
-        Fixed merging logic for ``UnfNotice::ObjectsChanged`` to prevent
+        Fixed merging logic for :unf-cpp:`UnfNotice::ObjectsChanged` to prevent
         recording empty changed fields.
 
 .. release:: 0.4.3
@@ -40,7 +44,7 @@ Release Notes
 
     .. change:: fixed
 
-        Updated logic to hash ``UsdStageWeakPtr`` object.
+        Updated logic to hash :usd-cpp:`UsdStageWeakPtr` object.
 
 .. release:: 0.4.1
     :date: 2023-01-17
@@ -49,7 +53,7 @@ Release Notes
 
         Ensure that :ref:`notices <notices>` implementing consolidation
         logic also expose :meth:`Merge` methods from
-        `UnfNotice::StageNoticeImpl`_ to prevent errors when the
+        :unf-cpp:`UnfNotice::StageNoticeImpl` to prevent errors when the
         ``overloaded-virtual`` flag is used.
 
 .. release:: 0.4.0

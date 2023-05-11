@@ -2,45 +2,45 @@
 
 [![Tests](https://github.com/wdas/usd-notice-framework/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/wdas/usd-notice-framework/actions/workflows/test.yml)
 
-The Usd Notice Framework is built over
-[Usd](https://github.com/PixarAnimationStudios/USD) notices and uses the
+
+The USD Notice Framework (UNF) is built over [USD](https://github.com/PixarAnimationStudios/USD)'s
 [Tf Notification System](https://graphics.pixar.com/usd/release/api/page_tf__notification.html).
-It provides a C++ and Python API to efficiently manage the flow of notifications
-emitted when authoring the [Usd](https://github.com/PixarAnimationStudios/USD)
-stage.
+It provides a C++ and Python API to efficiently manage the flow of
+notifications emitted when authoring the USD stage.
 
-It introduces the concept of autonomous notices and notice transaction which
-defers notification and consolidate notices per type when applicable:
+While USD notices are delivered synchronously and tightly coupled with
+the sender, UNF introduces standalone notices that can be used
+for deferred delivery and can be aggregated per notice type, when applicable.
 
-```python
-from pxr import Usd, Tf
-import unf
+## What does this solve?
 
-stage = Usd.Stage.CreateInMemory()
+Pixar designed [USD](https://github.com/PixarAnimationStudios/USD) as an open
+and extensible framework for composable data interchange across different tools.
+As such, it is highly optimized for that purpose. Born out of Pixar's
+[Presto Animation](https://en.wikipedia.org/wiki/Presto_(animation_software))
+package, some application-level features were intentionally omitted to maintain
+speed, scalability, and robustness to support its core usage.
 
-def updated(notice, stage):
-    """Print resynced paths from the stage."""
-    print(notice.GetResyncedPaths())
+Given that, there are challenges when using USD "out of the box" when building
+interactive applications directly on top of USD as a data model. UNF is designed
+as a framework for use in higher-level APIs and application logic to help
+mitigate those issues.
 
-key = Tf.Notice.Register(unf.Notice.ObjectsChanged, updated, stage)
+One of the challenges a developer might face when developing an application on
+top of USD data is the interactive editing performance when using USD as a data
+model. When editing USD data, the stage andor layers produce a high volume of
+change notifications that can be hard to manage when crafting a performant user
+experience. This high volume of notices can cause frequent and costly cache
+invalidation overhead, leading to sluggish performance and overly complicated
+code.
 
-with unf.NoticeTransaction(stage):
-    prim = stage.DefinePrim("/Foo", "Cylinder")
-    prim.GetAttribute("radius").Set(5)
-    prim.GetAttribute("height").Set(10)
-```
+UNF provides a framework to aggregate and even simplify change notifications
+across a series of edits on a USD stage. In doing so, it introduces *some*
+overhead on top of USD but allows developers to write more performant and
+sustainable tools to observe and author the USD stage directly.
 
-A predicate can be applied during a transaction to block some or all Unf notices
-emitted in this scope:
-
-```python
-with unf.NoticeTransaction(
-    stage, predicate=unf.CapturePredicate.BlockAll()
-):
-    prim = stage.DefinePrim("/Foo", "Cylinder")
-    prim.GetAttribute("radius").Set(5)
-    prim.GetAttribute("height").Set(10)
-```
+Note that UNF does not affect the *internal* performance of USD and therefore,
+will not affect composition performance or the results they generate.
 
 ## Documentation
 
