@@ -9,8 +9,8 @@ unf.Notice.ObjectsChanged
     Notice sent in response to authored changes that affect any
     Usd Object.
 
-    This notice type is the autonomous equivalent of the
-    `Usd.Notice.ObjectsChanged`_ notice type.
+    This notice type is the standalone equivalent of the
+    :usd-cpp:`UsdNotice::ObjectsChanged` notice type.
 
     .. py:method:: AffectedObject(object)
 

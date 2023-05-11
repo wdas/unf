@@ -4,10 +4,10 @@ unf.Notice.StageNotice
 
 .. py:class:: unf.Notice.StageNotice
 
-    Interface class for autonomous Usd Stage notices.
+    Interface class for standalone Usd Stage notices.
 
-    This notice type is the autonomous equivalent of the
-    `Usd.Notice.StageNotice`_ notice type.
+    This notice type is the standalone equivalent of the
+    :usd-cpp:`UsdNotice::StageNotice` notice type.
 
     .. py:method:: IsMergeable()
 

@@ -28,7 +28,7 @@ void wrapNotice()
 {
     scope s = class_<PythonUnfNotice>(
         "Notice",
-        "Regroup all autonomous notices used by the library.",
+        "Regroup all standalone notices used by the library.",
         no_init);
 
     TfPyNoticeWrapper<StageNotice, TfNotice>::Wrap()

@@ -4,57 +4,45 @@
 Introduction
 ************
 
-The Usd Notice Framework is built over :term:`USD` notices and uses the
+The Usd Notice Framework (UNF) is built over :term:`USD`'s
 :term:`Tf Notification System`. It provides a :ref:`C++ <api_reference/cpp>` and
 :ref:`Python <api_reference/python>` API to efficiently manage the flow of
-notifications emitted when authoring the :term:`Usd` stage.
+notifications emitted when authoring the :term:`USD` stage.
 
-It introduces the concept of autonomous notices and notice transaction which
-defers notification and consolidate notices per type when applicable:
+While :term:`USD` notices are delivered synchronously and tightly coupled with
+the sender, UNF introduces :ref:`standalone notices <notices>` that can be used
+for deferred delivery and can be aggregated per notice type, when applicable.
 
-.. code-block:: python
-
-    from pxr import Usd, Tf
-    import unf
-
-    stage = Usd.Stage.CreateInMemory()
-
-    def updated(notice, stage):
-        """Print resynced paths from the stage."""
-        print(notice.GetResyncedPaths())
-
-    key = Tf.Notice.Register(unf.Notice.ObjectsChanged, updated, stage)
-
-    with unf.NoticeTransaction(stage):
-        prim = stage.DefinePrim("/Foo", "Cylinder")
-        prim.GetAttribute("radius").Set(5)
-        prim.GetAttribute("height").Set(10)
-
-A predicate can be applied during a transaction to block some or all Unf notices
-emitted in this scope:
-
-.. code-block:: python
-
-    with unf.NoticeTransaction(
-        stage, predicate=unf.CapturePredicate.BlockAll()
-    ):
-        prim = stage.DefinePrim("/Foo", "Cylinder")
-        prim.GetAttribute("radius").Set(5)
-        prim.GetAttribute("height").Set(10)
-
-.. _introduction/why:
-
-Why is it necessary ?
+What does this solve?
 =====================
 
-The information provided by the :term:`Usd` stage has high volume and low-level
-data. It is lacking features for asynchronous handling and upstream filtering
-of notices.
+Pixar designed :term:`USD` as an open and extensible framework for composable
+data interchange across different tools.  As such, it is highly optimized for
+that purpose. Born out of Pixar's :term:`Presto Animation` package, some
+application-level features were intentionally omitted to maintain speed,
+scalability, and robustness to support its core usage.
 
-While bringing such features directly into the :term:`Usd` API has
-been considered (see `prototype
-<https://github.com/wdas/USD/compare/release...prototype-transaction>`_),
-ensuring that USD notices such as `UsdNotice::ObjectsChanged`_
-or `UsdNotice::LayerMutingChanged`_ own their data instead of referencing it
-from stage would have added an overhead which would have degraded the
-performance for client not interested with this feature.
+Given that, there are challenges when using :term:`USD` "out of the box" when
+building interactive applications directly on top of :term:`USD` as a data
+model. UNF is designed as a framework for use in higher-level APIs and
+application logic to help mitigate those issues.
+
+One of the challenges a developer might face when developing an application
+on top of :term:`USD` data is the interactive editing performance when using
+:term:`USD` as a data model. When editing :term:`USD` data, the stage andor
+layers produce a high volume of change notifications that can be hard to manage
+when crafting a performant user experience. This high volume of notices can
+cause frequent and costly cache invalidation overhead, leading to sluggish
+performance and overly complicated code.
+
+UNF provides a framework to aggregate and even simplify change notifications
+across a series of edits on a :term:`USD` stage. In doing so, it introduces
+*some* overhead on top of :term:`USD` but allows developers to write more
+performant and sustainable tools to observe and author the :term:`USD` stage
+directly.
+
+Note that UNF does not affect the *internal* performance of :term:`USD` and
+therefore, will not affect composition performance or the results they
+generate.
+
+.. seealso:: :ref:`getting_started`

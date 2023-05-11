@@ -14,8 +14,9 @@ test the Python API by following a simple example.
 Editing the Stage
 =================
 
-Let's start by creating a :term:`Usd` stage in memory and register a callback
-to listen to `Usd.Notice.ObjectsChanged`_ and print all updated paths::
+Let's start by creating a :term:`USD` stage in memory and register a callback
+to listen to :usd-cpp:`Usd.Notice.ObjectsChanged <ObjectsChanged>` and print all
+updated paths::
 
     from pxr import Usd, Tf
 
@@ -40,11 +41,11 @@ Let's now edit the stage by adding a cylinder prim and update the attributes::
     prim.GetAttribute("radius").Set(5)
     prim.GetAttribute("height").Set(10)
 
-This should have triggered five `Usd.Notice.ObjectsChanged`_ notices to be
-emitted. The first notice was emitted when the prim was created, the second and
-the fourth when both attributes where created, the third and fifth when they
-were given a default value. As a result, the following information will be
-printed in the shell:
+This should have triggered five :usd-cpp:`Usd.Notice.ObjectsChanged
+<ObjectsChanged>` notices to be emitted. The first notice was emitted when the
+prim was created, the second and the fourth when both attributes where created,
+the third and fifth when they were given a default value. As a result, the
+following information will be printed in the shell:
 
 .. code-block:: bash
 
@@ -69,8 +70,9 @@ Editing the Layer
 =================
 
 To consolidate the number of notices emitted, we could use the :term:`Sdf` API
-to edit the root layer, then use a `Sdf.ChangeBlock`_ which would also limit the
-number of recompositions and greatly improve overall performance::
+to edit the root layer, then use a :usd-cpp:`Sdf.ChangeBlock <SdfChangeBlock>`
+which would also limit the number of recompositions and greatly improve overall
+performance::
 
     from pxr import Sdf
 
@@ -89,8 +91,8 @@ number of recompositions and greatly improve overall performance::
 
 .. warning::
 
-    It is not safe to edit the stage with the :term:`Usd` API when using
-    `Sdf.ChangeBlock`_.
+    It is not safe to edit the stage with the :term:`USD` API when using
+    :usd-cpp:`Sdf.ChangeBlock <SdfChangeBlock>`.
 
 One single notice will be emitted:
 
@@ -129,26 +131,26 @@ Let's now create a new stage and modify the notice registration to target the
     key = Tf.Notice.Register(unf.Notice.ObjectsChanged, _updated, stage)
 
 To ensure that a :class:`unf.Notice.ObjectsChanged` notice is sent whenever a
-`Usd.Notice.ObjectsChanged`_ is emitted, we need to create a
-:class:`~unf.Broker` associated with the stage::
+:usd-cpp:`Usd.Notice.ObjectsChanged <ObjectsChanged>` is emitted, we need to
+create a :class:`~unf.Broker` associated with the stage::
 
     broker = unf.Broker.Create(stage)
 
 .. note::
 
     The :class:`~unf.Broker` is using a :ref:`dispatcher <dispatchers>` to
-    emit an autonomous notice for each Usd notice.
+    emit a standalone notice for each Usd notice.
 
-Let's now edit the stage once again with the :term:`Usd` API::
+Let's now edit the stage once again with the :term:`USD` API::
 
     prim = stage.DefinePrim("/Foo", "Cylinder")
     prim.GetAttribute("radius").Set(5)
     prim.GetAttribute("height").Set(10)
 
 Like in the first section, five notices are emitted with the same information
-as with the `Usd.Notice.ObjectsChanged`_ notice. However, the
-:class:`unf.Notice.ObjectsChanged` notice is defined as mergeable. It is
-therefore possible to reduce the number of notices emitted by using a
+as with the :usd-cpp:`Usd.Notice.ObjectsChanged <ObjectsChanged>` notice.
+However, the :class:`unf.Notice.ObjectsChanged` notice is defined as mergeable.
+It is therefore possible to reduce the number of notices emitted by using a
 :ref:`notice transaction <notices/transaction>`::
 
     broker.BeginTransaction()

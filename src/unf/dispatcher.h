@@ -18,7 +18,7 @@ namespace unf {
 /// \class Dispatcher
 ///
 /// \brief
-/// Interface for objects emitting autonomous notices triggered by incoming
+/// Interface for objects emitting standalone notices triggered by incoming
 /// PXR_NS::TfNotice derived notices.
 class Dispatcher : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
   public:
