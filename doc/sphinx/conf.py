@@ -13,9 +13,15 @@ if os.environ.get("READTHEDOCS"):
     import doxygen
 
     doxygen.create_cmake_config()
-    doxygen.build()
+    build_path = doxygen.build()
+    source_path = os.path.join(os.path.dirname(__file__), "..", "..")
 
     html_extra_path = ["./api"]
+
+else:
+    # variables provided by CMake if not using RTD.
+    build_path = "@CMAKE_CURRENT_BINARY_DIR@/doc"
+    source_path = "@PROJECT_SOURCE_DIR@"
 
 # The suffix of src filenames.
 source_suffix = ".rst"
@@ -27,10 +33,8 @@ master_doc = "index"
 project = u"USD Notice Framework"
 copyright = u"2023, Walt Disney Animation Studio"
 
-_root = os.path.join(os.path.dirname(__file__), "..", "..")
-
 # Version
-with open(os.path.join(_root, "CMakeLists.txt")) as _version_file:
+with open(os.path.join(source_path, "CMakeLists.txt")) as _version_file:
     _version = re.search(
         r"project\(.* VERSION ([\d\\.]+)", _version_file.read(), re.DOTALL
     ).group(1)
@@ -40,12 +44,12 @@ release = _version
 
 doxylink = {
     "usd-cpp": (
-        os.path.join(_root, "doc", "doxygen", "USD.tag"),
+        os.path.join(source_path, "doc", "doxygen", "USD.tag"),
         "https://graphics.pixar.com/usd/release/api"
     ),
     "unf-cpp": (
-        os.path.join(_root, "build", "doc", "doc", "UNF.tag"),
-        os.path.join(_root, "build", "doc", "doc", "doxygen")
+        os.path.join(build_path, "UNF.tag"),
+        "./doxygen"
     )
 }
 

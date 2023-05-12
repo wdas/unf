@@ -20,10 +20,17 @@ def build():
     output_path = os.path.join(ROOT, "api")
     os.makedirs(output_path)
 
-    return shutil.move(
+    shutil.move(
         os.path.join(build_path, "doxygen"),
         os.path.join(output_path, "doxygen")
     )
+
+    shutil.move(
+        os.path.join(build_path, "UNF.tag"),
+        os.path.join(output_path, "UNF.tag")
+    )
+
+    return output_path
 
 
 def create_cmake_config():
@@ -88,6 +95,13 @@ def fetch_api_doc_content():
     content = re.sub(
         r"(set\(\s*DOXYGEN_HTML_OUTPUT )(.*?)(\s*\))",
         r'\g<1>"doxygen"\g<3>',
+        content, re.MULTILINE | re.DOTALL
+    )
+
+    # Update tag file path.
+    content = re.sub(
+        r"(set\(\s*DOXYGEN_GENERATE_TAGFILE )(.*?)(\s*\))",
+        r'\g<1>"${CMAKE_CURRENT_BINARY_DIR}/UNF.tag"\g<3>',
         content, re.MULTILINE | re.DOTALL
     )
 
