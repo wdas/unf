@@ -4,6 +4,14 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+
+        Fixed :term:`Sphinx` configuration to generate links to the C++ symbols
+        documentation using the `sphinxcontrib-doxylink
+        <https://pypi.org/project/sphinxcontrib-doxylink/>`_ plugin.
+
 .. release:: 0.5.0
     :date: 2023-05-10
 

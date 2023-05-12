@@ -109,7 +109,8 @@ Building documentation
 ======================
 
 Ensure that :term:`Doxygen` and :term:`Sphinx` with the `lowdown
-<https://pypi.org/project/Lowdown/>`_ extension are installed.
+<https://pypi.org/project/Lowdown/>`_ and `sphinxcontrib-doxylink
+<https://pypi.org/project/sphinxcontrib-doxylink/>`_ extensions are installed.
 
 Then build the documentation as follows::
 
