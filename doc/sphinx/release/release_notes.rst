@@ -4,6 +4,13 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: changed
+
+        The project's license has been updated to `Apache 2.0 Modified
+        <https://github.com/wdas/unf/blob/main/LICENSE.txt>`_.
+
 .. release:: 0.5.1
     :date: 2023-05-12
 

@@ -1,7 +1,9 @@
 # USD Notice Framework
 
-[![Tests](https://github.com/wdas/usd-notice-framework/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/wdas/usd-notice-framework/actions/workflows/test.yml)
-
+[![CMake](https://img.shields.io/badge/CMake-3.15...3.26-blue.svg?logo=CMake&logoColor=blue)](https://cmake.org)
+[![Documentation](https://readthedocs.org/projects/usd-notice-framework/badge/?version=stable)](https://usd-notice-framework.readthedocs.io/en/stable/)
+[![Tests](https://github.com/wdas/unf/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/wdas/unf/actions/workflows/test.yml)
+[![License](https://img.shields.io/badge/License-Modified%20Apache%202.0-yellow.svg)](https://github.com/wdas/unf/blob/main/LICENSE.txt)
 
 The USD Notice Framework (UNF) is built over [USD](https://github.com/PixarAnimationStudios/USD)'s
 [Tf Notification System](https://graphics.pixar.com/usd/release/api/page_tf__notification.html).
