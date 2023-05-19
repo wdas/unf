@@ -118,8 +118,8 @@ Then build the documentation as follows::
 
 .. note::
 
-    Documentation is automatically built with default installation, unless you
-    set the ``BUILD_DOCS`` :term:`CMake` option to false.
+    The documentation will not be automatically built by default, unless you
+    set the ``BUILD_DOCS`` :term:`CMake` option to true.
 
 .. _installing/test:
 

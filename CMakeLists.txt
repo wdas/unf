@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(BUILD_TESTS "Build tests" ON)
-option(BUILD_DOCS "Build documentation" ON)
+option(BUILD_DOCS "Build documentation" OFF)
 option(BUILD_PYTHON_BINDINGS "Build Python Bindings" ON)
 option(BUNDLE_PYTHON_TESTS "Bundle Python tests per group (faster)" OFF)
 option(BUILD_SHARED_LIBS "Build Shared Library" ON)
