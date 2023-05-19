@@ -4,6 +4,14 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: changed
+
+        Disabled the documentation generation by default.
+
+        .. seealso:: :ref:`installing/documentation`.
+
 .. release:: 0.5.2
     :date: 2023-05-15
 
