@@ -4,6 +4,16 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+
+        Updated :unf-cpp:`Broker::AddDispatcher` to explicitly define the error
+        message raised when the template parameter provided is incorrect. It is
+        necessary as the message option cannot be ommitted from a `static_assert
+        <https://en.cppreference.com/w/cpp/language/static_assert>`_ declaration
+        before C++17.
+
 .. release:: 0.5.3
     :date: 2023-05-19
 

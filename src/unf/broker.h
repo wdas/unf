@@ -232,7 +232,10 @@ void Broker::Send(Args&&... args)
 template <class T>
 DispatcherPtr Broker::_AddDispatcher()
 {
-    static_assert(std::is_base_of<Dispatcher, T>::value);
+    static_assert(
+        std::is_base_of<Dispatcher, T>::value,
+        "Expecting a type derived from unf::Dispatcher.");
+
     auto self = PXR_NS::TfCreateWeakPtr(this);
     DispatcherPtr dispatcher = PXR_NS::TfCreateRefPtr(new T(self));
     _Add(dispatcher);
