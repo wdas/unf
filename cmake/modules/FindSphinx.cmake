@@ -52,14 +52,13 @@ if (Sphinx_FOUND AND NOT TARGET Sphinx::Build)
     )
 
     function(sphinx_add_docs targetName)
-        set(_comment "Generate documentation for ${targetName}")
-
-        cmake_parse_arguments(PARSE_ARGV 1 _args "" "SOURCE;OUTPUT" "")
+        cmake_parse_arguments(PARSE_ARGV 1 "" "" "SOURCE;OUTPUT" "DEPENDS")
 
         add_custom_target(${targetName} VERBATIM
-            COMMAND ${CMAKE_COMMAND} -E make_directory ${_args_OUTPUT}
-            COMMAND Sphinx::Build -b html ${_args_SOURCE} ${_args_OUTPUT}
-            COMMENT ${_comment}
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${_OUTPUT}
+            COMMAND Sphinx::Build -b html ${_SOURCE} ${_OUTPUT}
+            COMMENT "Generate documentation for ${targetName}"
+            DEPENDS ${_DEPENDS}
         )
     endfunction()
 endif()

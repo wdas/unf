@@ -1,13 +1,5 @@
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc")
 
-file(COPY sphinx DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-configure_file(sphinx/conf.py sphinx/conf.py @ONLY)
-
-sphinx_add_docs(unfDoc
-    SOURCE "${CMAKE_CURRENT_BINARY_DIR}/sphinx"
-    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/doc"
-)
-
 set(DOXYGEN_PROJECT_NAME "Usd Notice Framework")
 set(DOXYGEN_HTML_OUTPUT "doc/doxygen")
 set(DOXYGEN_EXTENSION_MAPPING "h=C++")
@@ -28,6 +20,15 @@ doxygen_add_docs(unfApiRefDoc
     "${PROJECT_SOURCE_DIR}/doc/doxygen/index.dox"
     "${PROJECT_SOURCE_DIR}/doc/doxygen/namespaces.dox"
     "${PROJECT_SOURCE_DIR}/src/unf"
+)
+
+file(COPY sphinx DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+configure_file(sphinx/conf.py sphinx/conf.py @ONLY)
+
+sphinx_add_docs(unfDoc
+    SOURCE "${CMAKE_CURRENT_BINARY_DIR}/sphinx"
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/doc"
+    DEPENDS unfApiRefDoc
 )
 
 add_custom_target(documentation ALL)
