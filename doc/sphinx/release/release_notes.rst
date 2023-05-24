@@ -4,6 +4,23 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+
+        Updated :term:`CMake` configuration to ensure the C++ API
+        documentation generated via :term:`Doxygen` is created before the
+        :term:`Sphinx` documentation. It was necessary as the
+        `sphinxcontrib-doxylink
+        <https://pypi.org/project/sphinxcontrib-doxylink/>`_
+        plugin depends on TAG files created by :term:`Doxygen`.
+
+    .. change:: changed
+
+        Renenabled the documentation generation by default.
+
+        .. seealso:: :ref:`installing/documentation`.
+
 .. release:: 0.5.3
     :date: 2023-05-19
 
