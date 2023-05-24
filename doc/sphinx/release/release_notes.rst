@@ -8,6 +8,14 @@ Release Notes
 
     .. change:: fixed
 
+        Updated :unf-cpp:`Broker::AddDispatcher` to explicitly define the error
+        message raised when the template parameter provided is incorrect. It is
+        necessary as the message option cannot be ommitted from a `static_assert
+        <https://en.cppreference.com/w/cpp/language/static_assert>`_ declaration
+        before C++17.
+
+    .. change:: fixed
+
         Updated :term:`CMake` configuration to ensure the C++ API
         documentation generated via :term:`Doxygen` is created before the
         :term:`Sphinx` documentation. It was necessary as the
