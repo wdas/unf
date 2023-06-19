@@ -73,5 +73,3 @@ void wrapBroker()
             &Broker::EndTransaction,
             "Stop a notice transaction.");
 }
-
-TF_REFPTR_CONST_VOLATILE_GET(Broker)
