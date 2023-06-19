@@ -4,6 +4,13 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+
+        Removed unnecessary usage of the ``TF_REFPTR_CONST_VOLATILE_GET`` macro,
+        which is no longer available in :term:`USD` v23.08.
+
 .. release:: 0.5.4
     :date: 2023-05-23
 
