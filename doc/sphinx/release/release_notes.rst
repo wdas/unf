@@ -4,6 +4,13 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: changed
+
+        Updated Github workflow configuration to build USD using the Python
+        script instead of :term:`CMake` to be consistent with Pixar's process.
+
 .. release:: 0.5.5
     :date: 2023-06-19
 
@@ -34,7 +41,7 @@ Release Notes
 
     .. change:: changed
 
-        Renenabled the documentation generation by default.
+        Re-enabled the documentation generation by default.
 
         .. seealso:: :ref:`installing/documentation`.
 

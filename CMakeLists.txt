@@ -77,7 +77,7 @@ else()
 endif()
 
 find_package(USD 0.20.11 REQUIRED)
-find_package(TBB 2018.0 COMPONENTS tbb REQUIRED)
+find_package(TBB 2017.0 COMPONENTS tbb REQUIRED)
 
 add_subdirectory(src)
 
