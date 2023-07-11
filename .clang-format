@@ -6,6 +6,7 @@ AccessModifierOffset: -2
 BinPackArguments: false
 BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeBraces: Stroustrup
+FixNamespaceComments: false
 IndentWidth: '4'
 Language: Cpp
 MaxEmptyLinesToKeep: 2
@@ -17,5 +18,6 @@ SpacesBeforeTrailingComments: 2
 SpacesInAngles: false
 SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false
+SortIncludes: false
 UseTab: Never
 ...

@@ -173,7 +173,7 @@ class StageNoticeImpl : public StageNotice {
     /// Base method for returing unique type identifier.
     ///
     /// By default, the full type name of the notice is returned.
-    virtual std::string GetTypeId() const
+    virtual std::string GetTypeId() const override
     {
         return PXR_NS::ArchGetDemangled(typeid(Self).name());
     }
@@ -185,7 +185,7 @@ class StageNoticeImpl : public StageNotice {
     /// \note
     /// Intermediate method needed as covariant return type is not possible
     /// with PXR_NS::TfRefPtr.
-    virtual StageNotice* _Clone() const
+    virtual StageNotice* _Clone() const override
     {
         return new Self(static_cast<const Self&>(*this));
     }
