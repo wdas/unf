@@ -1,102 +1,88 @@
-name: Tests
+name: linux
 
 on:
-    push:
-        branches: [ main ]
-    pull_request:
-        branches: [ main ]
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main, dev ]
+
+permissions:
+  contents: read
 
 jobs:
-    Test-Linux:
-        runs-on: ubuntu-20.04
-        timeout-minutes: 300
+  test:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 300
 
-        strategy:
-            fail-fast: false
-            matrix:
-                name: [
-                    "USD-23.05-py37",
-                    "USD-20.11-py37",
-                ]
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [
+          "USD-23.05-py37",
+          "USD-20.11-py37",
+        ]
 
-                include:
-                  -   name: "USD-23.05-py37"
-                      usd-tag: "v23.05"
-                      python: "3.7"
-                  -   name: "USD-20.11-py37"
-                      usd-tag: "v20.11"
-                      python: "3.7"
+        include:
+          - name: "USD-23.05-py37"
+            usd-tag: "v23.05"
+            python: "3.7"
+          - name: "USD-20.11-py37"
+            usd-tag: "v20.11"
+            python: "3.7"
 
-        steps:
-            -   name: Set up Python ${{ matrix.python }}
-                uses: actions/setup-python@v4
-                with:
-                    python-version: ${{ matrix.python }}
-            -   uses: actions/checkout@v3
-            -   name: Install Conan
-                run: |
-                    pip install conan==1.* numpy pytest
-                    conan profile new default --detect
-                    conan profile update settings.compiler.libcxx=libstdc++11 default
-                    conan profile show default
-            -   name: Install Boost + TBB + Gtest
-                run: |
-                    mkdir -p build && cd build
-                    conan install boost/1.70.0@ \
-                        --options=boost:shared=True \
-                        --options=boost:without_python=False \
-                        --generator=cmake_find_package \
-                        --build=missing
-                    conan install tbb/2020.3@ \
-                        --generator=cmake_find_package \
-                        --build=missing
-                    conan install gtest/1.10.0@ \
-                        --generator=cmake_find_package \
-                        --build=missing
-            -   name: Install USD
-                run: |
-                    mkdir -p USD/build && cd USD/build
-                    git clone https://github.com/PixarAnimationStudios/USD.git \
-                        --depth 1 --branch ${{ matrix.usd-tag }} .
-                    NUM_JOBS=$(python -c "import multiprocessing; \
-                        print(multiprocessing.cpu_count())")
-                    PY_EXE=$(python -c "import sys; print(sys.executable)")
-                    PY_LIBDIR=$(python -c "import sysconfig as sc; \
-                        print(sc.get_config_var(\"LIBDIR\"))")
-                    PY_LIBNAME=$(python -c "import sysconfig as sc; \
-                        print(sc.get_config_var(\"LDLIBRARY\"))")
-                    PY_INCLUDE=$(python -c "import sysconfig as sc; \
-                        print(sc.get_config_var(\"INCLUDEPY\"))")
-                    cmake \
-                        -DCMAKE_MODULE_PATH:FILEPATH="$(pwd)/../../build" \
-                        -DPXR_BUILD_IMAGING=False \
-                        -DPYTHON_EXECUTABLE="${PY_EXE}" \
-                        -DPYTHON_LIBRARY="${PY_LIBDIR}/${PY_LIBNAME}" \
-                        -DPYTHON_INCLUDE_DIR="${PY_INCLUDE}" \
-                        -DPython3_FIND_STRATEGY="LOCATION" \
-                        -DBoost_PYTHON_LIBRARY="Boost::python" \
-                        -DTBB_tbb_LIBRARY="TBB::tbb" \
-                        -DPXR_BUILD_DOCUMENTATION=False \
-                        -DPXR_BUILD_TESTS=False \
-                        -DPXR_BUILD_EXAMPLES=False \
-                        -DPXR_BUILD_TUTORIALS=False \
-                        -DPXR_BUILD_USD_TOOLS=False \
-                        -DPXR_ENABLE_HDF5_SUPPORT=False \
-                        -DPXR_ENABLE_PTEX_SUPPORT=False \
-                        -DCMAKE_INSTALL_PREFIX="$(pwd)/.." \
-                        .
-                    cmake --build . --target install -- -j ${NUM_JOBS}
-            -   name: Buid
-                run: |
-                    cd build
-                    PYTHONPATH="$(pwd)/../USD/lib/python" cmake \
-                        -DUSD_ROOT="$(pwd)/../USD" \
-                        -DCMAKE_MODULE_PATH:FILEPATH="$(pwd)" \
-                        -DCMAKE_INSTALL_PREFIX="$(pwd)/inst" \
-                        -DBUILD_DOCS=False \
-                        ..
-                    cmake --build . --target install
-            -   name: Run tests
-                run: |
-                    cd build
-                    ctest -VV
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Create Build Environment
+        run: |
+          sudo apt update
+          sudo apt install -y libgtest-dev ninja-build
+          pip install pytest
+          mkdir -p ${{github.workspace}}/build
+          mkdir -p ${{runner.temp}}/USD
+
+      - name: Install USD
+        working-directory: ${{runner.temp}}/USD
+        run: |
+          git clone https://github.com/PixarAnimationStudios/OpenUSD.git \
+              --depth 1 --branch ${{ matrix.usd-tag }} ./src
+          python ./src/build_scripts/build_usd.py . \
+              --no-tests \
+              --no-examples \
+              --no-tutorials \
+              --no-tools \
+              --no-docs \
+              --no-imaging \
+              --no-materialx \
+              -v
+
+      - name: Configure & Build
+        working-directory: ${{github.workspace}}/build
+        run: |
+          export PYTHONPATH="${{runner.temp}}/USD/lib/python"
+          cmake \
+              -D "BUILD_DOCS=OFF" \
+              -D "CMAKE_INCLUDE_PATH=${{runner.temp}}/USD/include" \
+              -D "CMAKE_LIBRARY_PATH=${{runner.temp}}/USD/lib" \
+              ${GITHUB_WORKSPACE}
+          cmake --build . --config Release
+
+      - name: Check for formatting errors
+        working-directory: ${{github.workspace}}/build
+        run: |
+          cmake --build . --target format
+          git -C ${GITHUB_WORKSPACE} status --porcelain
+          if [ -n "$(git -C ${GITHUB_WORKSPACE} status --porcelain)" ]; \
+            then echo "Code formatting errors found."; \
+            exit 1; fi
+
+      - name: Run Test
+        working-directory: ${{github.workspace}}/build
+        run: ctest -VV
+        env:
+          CTEST_OUTPUT_ON_FAILURE: True

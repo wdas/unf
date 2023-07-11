@@ -108,7 +108,7 @@ class StageDispatcher : public Dispatcher {
     /// \brief
     /// Register listeners to each PXR_NS::UsdNotice::StageNotice derived
     /// notices.
-    virtual void Register();
+    virtual void Register() override;
 
   private:
     StageDispatcher(const BrokerWeakPtr& broker);
