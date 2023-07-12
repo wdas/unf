@@ -7,12 +7,12 @@ add_library(unf
 )
 
 # Suppress warning sfrom USD regarding deprecated TBB features.
-# https://github.com/PixarAnimationStudios/USD/issues/1471
+# https://github.com/PixarAnimationStudios/OpenUSD/issues/1471
 target_compile_definitions(unf
     PUBLIC TBB_SUPPRESS_DEPRECATED_MESSAGES)
 
 # Suppress warnings from USD library including <ext/hash_set> .
-# https://github.com/PixarAnimationStudios/USD/issues/1057
+# https://github.com/PixarAnimationStudios/OpenUSD/issues/1057
 target_compile_definitions(unf
     PUBLIC _GLIBCXX_PERMIT_BACKWARD_HASH)
 

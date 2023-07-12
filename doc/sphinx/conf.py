@@ -5,42 +5,36 @@
 import os
 import re
 
-# -- General ------------------------------------------------------------------
-
 extensions = ["sphinxcontrib.doxylink", "lowdown"]
 
-if os.environ.get("READTHEDOCS"):
+# This deployment mode exists so that documentation can be built within a
+# Github runner without requiring USD/TBB/Boost to be installed. We would be
+# able to simplify the process if we could rely on pre-built dependencies which
+# will be quick to install.
+if os.environ.get("BUILD_DOCS_WITHOUT_CMAKE"):
     import doxygen
 
     doxygen.create_cmake_config()
     build_path = doxygen.build()
     source_path = os.path.join(os.path.dirname(__file__), "..", "..")
 
+    with open(os.path.join(source_path, "CMakeLists.txt")) as stream:
+        pattern = r"project\(.* VERSION ([\d\\.]+)"
+        version = re.search(pattern, stream.read(), re.DOTALL).group(1)
+
     html_extra_path = ["./api"]
 
 else:
-    # variables provided by CMake if not using RTD.
     build_path = "@CMAKE_CURRENT_BINARY_DIR@/doc"
     source_path = "@PROJECT_SOURCE_DIR@"
+    version = "@CMAKE_PROJECT_VERSION@"
 
-# The suffix of src filenames.
 source_suffix = ".rst"
-
-# The master toctree document.
 master_doc = "index"
 
-# General information about the project.
 project = u"USD Notice Framework"
 copyright = u"2023, Walt Disney Animation Studio"
-
-# Version
-with open(os.path.join(source_path, "CMakeLists.txt")) as _version_file:
-    _version = re.search(
-        r"project\(.* VERSION ([\d\\.]+)", _version_file.read(), re.DOTALL
-    ).group(1)
-
-version = _version
-release = _version
+release = version
 
 doxylink = {
     "usd-cpp": (
@@ -53,9 +47,6 @@ doxylink = {
     )
 }
 
-# -- HTML output --------------------------------------------------------------
-
 html_theme = "sphinx_rtd_theme"
+html_favicon = "favicon.png"
 
-# If True, copy src rst files to output for reference.
-html_copy_source = True

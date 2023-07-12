@@ -11,6 +11,11 @@ Release Notes
         Updated Github workflow configuration to build USD using the Python
         script instead of :term:`CMake` to be consistent with Pixar's process.
 
+    .. change:: changed
+
+        Added Github workflow configuration to release documentation to
+        Github Pages instead of ReadTheDocs.org.
+
 .. release:: 0.5.5
     :date: 2023-06-19
 
