@@ -1,0 +1,60 @@
+name: docs-deploy
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Create Build Environment
+        run: |
+          sudo apt update
+          sudo apt install -y doxygen
+          python -m pip install --upgrade pip
+          python -m pip install -r ${GITHUB_WORKSPACE}/doc/requirements.txt
+          mkdir -p ${{runner.workspace}}/build
+
+      - name: Build documentation
+        run: |
+          export BUILD_DOCS_WITHOUT_CMAKE=1
+          export PYTHONPATH="${GITHUB_WORKSPACE}/doc/sphinx" 
+          sphinx-build -T -E -b html \
+            "${GITHUB_WORKSPACE}/doc/sphinx" \
+            "${{runner.workspace}}/build"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ${{runner.workspace}}/build
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+

@@ -30,7 +30,7 @@ also required during the building process.
 .. seealso::
 
     `Building USD
-    <https://github.com/PixarAnimationStudios/USD/blob/release/BUILDING.md>`_
+    <https://github.com/PixarAnimationStudios/OpenUSD/blob/release/BUILDING.md>`_
 
 
 Custom search paths to dependent packages can be provided with the following
@@ -60,14 +60,14 @@ Building library
 ================
 
 Obtain a copy of the source by either downloading the
-`zipball <https://github.com/wdas/usd-notice-framework/archive/main.zip>`_ or
+`zipball <https://github.com/wdas/unf/archive/main.zip>`_ or
 cloning the public repository::
 
-    git clone git@github.com:wdas/usd-notice-framework.git
+    git clone git@github.com:wdas/unf.git
 
 Then you can build and install the library as follows::
 
-    cd usd-notice-framework
+    cd unf
     mkdir build && cd build
     cmake -DCMAKE_INSTALL_PREFIX=/path/to/destination ..
     cmake --build . --target install
