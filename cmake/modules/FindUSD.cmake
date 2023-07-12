@@ -20,7 +20,7 @@
 #
 #     The PXR_LIB_PREFIX option can be used to indicate the expected
 #     library prefix. By default, it will look for "libusd_" and "lib".
-#     (https://github.com/PixarAnimationStudios/USD/blob/release/BUILDING.md)
+#     (https://github.com/PixarAnimationStudios/OpenUSD/blob/release/BUILDING.md)
 #
 #     We do not use pxrConfig.cmake to keep compatibility with USD included
 #     within Presto.

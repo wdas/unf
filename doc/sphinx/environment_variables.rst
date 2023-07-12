@@ -13,4 +13,4 @@ Environment variables directly defined or referenced by this package.
     .. seealso::
 
         `Building USD
-        <https://github.com/PixarAnimationStudios/USD/blob/release/BUILDING.md>`_
+        <https://github.com/PixarAnimationStudios/OpenUSD/blob/release/BUILDING.md>`_
