@@ -15,5 +15,12 @@
     },
     "changelog": {
         "enabled": false
+    },
+    "commit": {
+        "mainbranch": "main"
+    },
+    "tag": {
+        "enabled": true,
+        "name": "[version]"
     }
 }
