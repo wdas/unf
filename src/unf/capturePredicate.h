@@ -3,6 +3,7 @@
 
 /// \file unf/capturePredicate.h
 
+#include "unf/api.h"
 #include "unf/notice.h"
 
 #include <functional>
@@ -38,16 +39,16 @@ class CapturePredicate {
     ///     return (n.GetTypeId() != typeid(Foo).name());
     /// });
     /// \endcode
-    CapturePredicate(const CapturePredicateFunc&);
+    UNF_API CapturePredicate(const CapturePredicateFunc&);
 
     /// Invoke boolean predicate on UnfNotice::StageNotice \p notice.
-    bool operator()(const UnfNotice::StageNotice&) const;
+    UNF_API bool operator()(const UnfNotice::StageNotice&) const;
 
     /// Create a predicate which return true for each notice type.
-    static CapturePredicate Default();
+    UNF_API static CapturePredicate Default();
 
     /// Create a predicate which return false for each notice type.
-    static CapturePredicate BlockAll();
+    UNF_API static CapturePredicate BlockAll();
 
   private:
     CapturePredicateFunc _function = nullptr;

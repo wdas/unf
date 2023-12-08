@@ -16,6 +16,27 @@ set(CMAKE_CXX_STANDARD "${cxx_std}" CACHE STRING "Default C++ standard")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+if (MSVC)
+    # Make sure WinDef.h does not define min and max macros which
+    # will conflict with std::min() and std::max().
+    add_compile_definitions("NOMINMAX")
+
+    # From OpenUSD/cmake/defaults/msvcdefaults.cmake
+    #
+    # The /Zc:inline option strips out the "arch_ctor_<name>" symbols used for
+    # library initialization by ARCH_CONSTRUCTOR starting in Visual Studio 2019,
+    # causing release builds to fail. Disable the option for this and later
+    # versions.
+    #
+    # For more details, see:
+    # https://developercommunity.visualstudio.com/content/problem/914943/zcinline-removes-extern-symbols-inside-anonymous-n.html
+    if (MSVC_VERSION GREATER_EQUAL 1920)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:inline-")
+    else()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:inline")
+    endif()
+endif()
+
 option(BUILD_TESTS "Build tests" ON)
 option(BUILD_DOCS "Build documentation" ON)
 option(BUILD_PYTHON_BINDINGS "Build Python Bindings" ON)

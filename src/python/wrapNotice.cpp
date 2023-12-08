@@ -14,15 +14,18 @@ using namespace unf::UnfNotice;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
+namespace {
+
 TF_INSTANTIATE_NOTICE_WRAPPER(StageNotice, TfNotice);
 TF_INSTANTIATE_NOTICE_WRAPPER(StageContentsChanged, StageNotice);
 TF_INSTANTIATE_NOTICE_WRAPPER(ObjectsChanged, StageNotice);
 TF_INSTANTIATE_NOTICE_WRAPPER(StageEditTargetChanged, StageNotice);
 TF_INSTANTIATE_NOTICE_WRAPPER(LayerMutingChanged, StageNotice);
 
+}  // anonymous namespace
+
 // Dummy class to reproduce namespace in Python.
-class PythonUnfNotice {
-};
+class PythonUnfNotice {};
 
 void wrapNotice()
 {
@@ -95,13 +98,13 @@ void wrapNotice()
 
         .def(
             "HasChangedFields",
-            (bool (ObjectsChanged::*)(const SdfPath&) const)
+            (bool(ObjectsChanged::*)(const SdfPath&) const)
                 & ObjectsChanged::HasChangedFields,
             "Indicate whether any changed fields affected the path")
 
         .def(
             "HasChangedFields",
-            (bool (ObjectsChanged::*)(const UsdObject&) const)
+            (bool(ObjectsChanged::*)(const UsdObject&) const)
                 & ObjectsChanged::HasChangedFields,
             "Indicate whether any changed fields affected the object");
 

@@ -34,6 +34,14 @@ set_target_properties(pyUnf
         LIBRARY_OUTPUT_DIRECTORY unf
 )
 
+if(WIN32)
+    # Python modules must be suffixed with .pyd on Windows.
+    set_target_properties(pyUnf
+        PROPERTIES
+            SUFFIX ".pyd"
+    )
+endif()
+
 target_compile_definitions(
     pyUnf
     PRIVATE

@@ -23,7 +23,7 @@ namespace unf {
 class Dispatcher : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
   public:
     /// Revoke all registered listeners on destruction.
-    virtual ~Dispatcher() { Revoke(); };
+    UNF_API virtual ~Dispatcher() { Revoke(); };
 
     /// \brief
     /// Get unique string identifier
@@ -32,17 +32,17 @@ class Dispatcher : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     ///
     /// \sa
     /// Broker::GetDispatcher
-    virtual std::string GetIdentifier() const = 0;
+    UNF_API virtual std::string GetIdentifier() const = 0;
 
     ///  Register listeners to PXR_NS::TfNotice derived notices.
-    virtual void Register() = 0;
+    UNF_API virtual void Register() = 0;
 
     /// Revoke all registered listeners.
-    virtual void Revoke();
+    UNF_API virtual void Revoke();
 
   protected:
     /// Create a dispatcher targeting a Broker.
-    Dispatcher(const BrokerWeakPtr&);
+    UNF_API Dispatcher(const BrokerWeakPtr&);
 
     /// \brief
     /// Convenient templated method to register a listener for incoming
