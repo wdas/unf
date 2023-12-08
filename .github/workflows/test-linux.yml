@@ -1,4 +1,4 @@
-name: linux
+name: test-linux
 
 on:
   push:
@@ -10,25 +10,20 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  test-linux:
     runs-on: ubuntu-20.04
     timeout-minutes: 300
 
     strategy:
       fail-fast: false
       matrix:
-        name: [
-          "USD-23.05-py37",
-          "USD-20.11-py37",
-        ]
-
+        usd: ["v23.11", "v24.03"]
+        python: ["3.7", "3.10"]
         include:
-          - name: "USD-23.05-py37"
-            usd-tag: "v23.05"
-            python: "3.7"
-          - name: "USD-20.11-py37"
-            usd-tag: "v20.11"
-            python: "3.7"
+          - usd: "v24.03"
+            python: "3.11"
+
+    name: "USD-${{ matrix.usd }}-py${{ matrix.python }}"
 
     steps:
       - uses: actions/checkout@v3
@@ -42,7 +37,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y libgtest-dev ninja-build
-          pip install pytest
+          pip install pytest pytest-cmake
           mkdir -p ${{github.workspace}}/build
           mkdir -p ${{runner.temp}}/USD
 
@@ -50,7 +45,7 @@ jobs:
         working-directory: ${{runner.temp}}/USD
         run: |
           git clone https://github.com/PixarAnimationStudios/OpenUSD.git \
-              --depth 1 --branch ${{ matrix.usd-tag }} ./src
+              --depth 1 --branch ${{ matrix.usd }} ./src
           python ./src/build_scripts/build_usd.py . \
               --no-tests \
               --no-examples \

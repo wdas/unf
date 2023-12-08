@@ -3,6 +3,7 @@
 
 /// \file unf/broker.h
 
+#include "unf/api.h"
 #include "unf/capturePredicate.h"
 #include "unf/notice.h"
 
@@ -49,23 +50,23 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     ///
     /// If a broker has already been created from this \p stage, it will be
     /// returned. Otherwise, a new one will be created and returned.
-    static BrokerPtr Create(const PXR_NS::UsdStageWeakPtr& stage);
+    UNF_API static BrokerPtr Create(const PXR_NS::UsdStageWeakPtr& stage);
 
-    virtual ~Broker() = default;
+    UNF_API virtual ~Broker() = default;
 
     /// Remove default copy constructor.
-    Broker(const Broker&) = delete;
+    UNF_API Broker(const Broker&) = delete;
 
     /// Remove default assignment operator.
-    Broker& operator=(const Broker&) = delete;
+    UNF_API Broker& operator=(const Broker&) = delete;
 
     /// Return Usd Stage associated with the broker.
-    const PXR_NS::UsdStageWeakPtr GetStage() const { return _stage; }
+    UNF_API const PXR_NS::UsdStageWeakPtr GetStage() const { return _stage; }
 
     /// \brief
     /// Indicate whether a notice transaction has been started.
     /// \sa BeginTransaction
-    bool IsInTransaction();
+    UNF_API bool IsInTransaction();
 
     /// \brief
     /// Start a notice transaction.
@@ -85,7 +86,7 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     ///
     /// \sa EndTransaction
     /// \sa NoticeTransaction
-    void BeginTransaction(
+    UNF_API void BeginTransaction(
         CapturePredicate predicate = CapturePredicate::Default());
 
     /// \brief
@@ -107,7 +108,7 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     ///
     /// \sa EndTransaction
     /// \sa NoticeTransaction
-    void BeginTransaction(const CapturePredicateFunc&);
+    UNF_API void BeginTransaction(const CapturePredicateFunc&);
 
     /// \brief
     /// Stop a notice transaction.
@@ -122,7 +123,7 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     ///
     /// \sa BeginTransaction
     /// \sa NoticeTransaction
-    void EndTransaction();
+    UNF_API void EndTransaction();
 
     /// \brief
     /// Create and send a UnfNotice::StageNotice notice via the broker.
@@ -137,10 +138,10 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     ///
     /// \note
     /// The associated stage will be used as sender.
-    void Send(const UnfNotice::StageNoticeRefPtr&);
+    UNF_API void Send(const UnfNotice::StageNoticeRefPtr&);
 
     /// Return dispatcher reference associated with \p identifier.
-    DispatcherPtr& GetDispatcher(std::string identifier);
+    UNF_API DispatcherPtr& GetDispatcher(std::string identifier);
 
     /// \brief
     /// Create and register a new dispatcher.
@@ -154,10 +155,10 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     ///
     /// \warning
     /// The broker is not safe to use after this call.
-    void Reset();
+    UNF_API void Reset();
 
     /// Un-register all brokers.
-    static void ResetAll();
+    UNF_API static void ResetAll();
 
   private:
     Broker(const PXR_NS::UsdStageWeakPtr&);
@@ -169,7 +170,7 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     void _DiscoverDispatchers();
 
     /// Register dispacther within broker by its identifier.
-    void _Add(const DispatcherPtr&);
+    UNF_API void _Add(const DispatcherPtr&);
 
     /// Create and register dispacther within broker without running the
     /// Dispatcher::Register method.

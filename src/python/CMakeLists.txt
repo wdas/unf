@@ -9,11 +9,19 @@ add_library(pyUnf SHARED
 # Supress warnings from Boost Python regarding deprecated Bind placeholders.
 # https://github.com/boostorg/python/issues/359
 target_compile_definitions(
-    pyUnf PRIVATE BOOST_BIND_GLOBAL_PLACEHOLDERS)
+    pyUnf PRIVATE BOOST_BIND_GLOBAL_PLACEHOLDERS
+)
 
 target_compile_definitions(
-    pyUnf PRIVATE BOOST_PYTHON_NO_PY_SIGNATURES)
+    pyUnf PRIVATE BOOST_PYTHON_NO_PY_SIGNATURES
+)
 
+set_target_properties(pyUnf
+    PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/src/python/$<CONFIG>/unf"
+        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/src/python/$<CONFIG>/unf"
+        ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/src/python/$<CONFIG>/unf"
+)
 
 target_include_directories(pyUnf
     PUBLIC
@@ -34,6 +42,14 @@ set_target_properties(pyUnf
         LIBRARY_OUTPUT_DIRECTORY unf
 )
 
+if(WIN32)
+    # Python modules must be suffixed with .pyd on Windows.
+    set_target_properties(pyUnf
+        PROPERTIES
+            SUFFIX ".pyd"
+    )
+endif()
+
 target_compile_definitions(
     pyUnf
     PRIVATE
@@ -45,11 +61,16 @@ target_compile_definitions(
         MFB_ALT_PACKAGE_NAME=unf
 )
 
-configure_file("__init__.py" "${CMAKE_CURRENT_BINARY_DIR}/unf/__init__.py")
+file(
+    GENERATE
+    OUTPUT "$<TARGET_FILE_DIR:pyUnf>/__init__.py"
+    INPUT "__init__.py"
+)
 
 install(
     TARGETS pyUnf
-    DESTINATION ${PYTHON_DESTINATION}/unf
+    LIBRARY DESTINATION ${PYTHON_DESTINATION}/unf
+    RUNTIME DESTINATION ${PYTHON_DESTINATION}/unf
 )
 install(
     FILES __init__.py

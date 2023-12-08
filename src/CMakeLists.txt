@@ -9,12 +9,20 @@ add_library(unf
 # Suppress warning sfrom USD regarding deprecated TBB features.
 # https://github.com/PixarAnimationStudios/OpenUSD/issues/1471
 target_compile_definitions(unf
-    PUBLIC TBB_SUPPRESS_DEPRECATED_MESSAGES)
+    PUBLIC TBB_SUPPRESS_DEPRECATED_MESSAGES
+)
 
 # Suppress warnings from USD library including <ext/hash_set> .
 # https://github.com/PixarAnimationStudios/OpenUSD/issues/1057
 target_compile_definitions(unf
-    PUBLIC _GLIBCXX_PERMIT_BACKWARD_HASH)
+    PUBLIC _GLIBCXX_PERMIT_BACKWARD_HASH
+)
+
+# Ensure that all symbols are exported
+target_compile_definitions(unf
+    PRIVATE
+        UNF_EXPORTS=1
+)
 
 target_include_directories(unf
     PUBLIC
@@ -32,7 +40,13 @@ target_link_libraries(unf
         usd::vt
 )
 
-install(TARGETS unf EXPORT ${PROJECT_NAME})
+install(
+    TARGETS unf
+    EXPORT ${PROJECT_NAME}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
 install(
     DIRECTORY
         unf

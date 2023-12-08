@@ -3,6 +3,7 @@
 
 /// \file unf/transaction.h
 
+#include "unf/api.h"
 #include "unf/broker.h"
 #include "unf/capturePredicate.h"
 
@@ -29,7 +30,7 @@ class NoticeTransaction {
     /// the entire scope of the transaction. A CapturePredicate can be passed to
     /// influence which notices are captured. Notices that are not captured
     /// will not be emitted.
-    NoticeTransaction(
+    UNF_API NoticeTransaction(
         const BrokerPtr &,
         CapturePredicate predicate = CapturePredicate::Default());
 
@@ -44,7 +45,7 @@ class NoticeTransaction {
     ///     return (n.GetTypeId() != typeid(Foo).name());
     /// });
     /// \endcode
-    NoticeTransaction(const BrokerPtr &, const CapturePredicateFunc &);
+    UNF_API NoticeTransaction(const BrokerPtr &, const CapturePredicateFunc &);
 
     /// \brief
     /// Create transaction from a UsdStage.
@@ -54,7 +55,7 @@ class NoticeTransaction {
     /// \sa
     /// NoticeTransaction(const BrokerPtr &, CapturePredicate predicate =
     /// CapturePredicate::Default())
-    NoticeTransaction(
+    UNF_API NoticeTransaction(
         const PXR_NS::UsdStageRefPtr &,
         CapturePredicate predicate = CapturePredicate::Default());
 
@@ -66,20 +67,20 @@ class NoticeTransaction {
     /// \sa
     /// NoticeTransaction(const BrokerPtr &, const CapturePredicateFunc&)
 
-    NoticeTransaction(
+    UNF_API NoticeTransaction(
         const PXR_NS::UsdStageRefPtr &, const CapturePredicateFunc &);
 
     /// Delete object and end transaction.
-    virtual ~NoticeTransaction();
+    UNF_API virtual ~NoticeTransaction();
 
     /// Remove default copy constructor.
-    NoticeTransaction(const NoticeTransaction &) = delete;
+    UNF_API NoticeTransaction(const NoticeTransaction &) = delete;
 
     /// Remove default assignment operator.
-    NoticeTransaction &operator=(const NoticeTransaction &) = delete;
+    UNF_API NoticeTransaction &operator=(const NoticeTransaction &) = delete;
 
     /// Return associated Broker instance.
-    BrokerPtr GetBroker() { return _broker; }
+    UNF_API BrokerPtr GetBroker() { return _broker; }
 
   private:
     /// Broker associated with transaction.

@@ -1,5 +1,10 @@
-add_library(unfTestNewDispatcher
+add_library(unfTestNewDispatcher SHARED
     unfTest/newDispatcher/dispatcher.cpp
+)
+
+target_compile_definitions(unfTestNewDispatcher
+    PRIVATE
+        UNF_EXPORTS=1
 )
 
 target_link_libraries(unfTestNewDispatcher
@@ -13,4 +18,8 @@ target_include_directories(unfTestNewDispatcher
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 
-configure_file("plugInfo.json" "${CMAKE_CURRENT_BINARY_DIR}/plugInfo.json")
+file(
+    GENERATE
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/plugInfo_$<CONFIG>.json"
+    INPUT "plugInfo.json"
+)

@@ -1,4 +1,8 @@
-cmake_minimum_required(VERSION 3.15)
+if(WIN32)
+    cmake_minimum_required(VERSION 3.27)
+else()
+    cmake_minimum_required(VERSION 3.20)
+endif()
 
 project(unf
     VERSION 0.5.6
@@ -10,11 +14,32 @@ include(GNUInstallDirs)
 if (DEFINED ENV{CXXFLAGS_STD})
     string(SUBSTRING "$ENV{CXXFLAGS_STD}" 3 -1 cxx_std)
 else()
-    set(cxx_std 14)
+    set(cxx_std 17)
 endif()
 set(CMAKE_CXX_STANDARD "${cxx_std}" CACHE STRING "Default C++ standard")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+if (MSVC)
+    # Make sure WinDef.h does not define min and max macros which
+    # will conflict with std::min() and std::max().
+    add_compile_definitions("NOMINMAX")
+
+    # From OpenUSD/cmake/defaults/msvcdefaults.cmake
+    #
+    # The /Zc:inline option strips out the "arch_ctor_<name>" symbols used for
+    # library initialization by ARCH_CONSTRUCTOR starting in Visual Studio 2019,
+    # causing release builds to fail. Disable the option for this and later
+    # versions.
+    #
+    # For more details, see:
+    # https://developercommunity.visualstudio.com/content/problem/914943/zcinline-removes-extern-symbols-inside-anonymous-n.html
+    if (MSVC_VERSION GREATER_EQUAL 1920)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:inline-")
+    else()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:inline")
+    endif()
+endif()
 
 option(BUILD_TESTS "Build tests" ON)
 option(BUILD_DOCS "Build documentation" ON)
@@ -83,17 +108,6 @@ add_subdirectory(src)
 
 if (BUILD_TESTS)
     find_package(GTest 1.8.0 REQUIRED)
-
-    # For compatibility with module fetched from CMake < 3.20
-    if (NOT TARGET GTest::gtest)
-        set_target_properties(GTest::GTest PROPERTIES IMPORTED_GLOBAL TRUE)
-        add_library(GTest::gtest ALIAS GTest::GTest)
-    endif()
-    if (NOT TARGET GTest::gtest_main)
-        set_target_properties(GTest::Main PROPERTIES IMPORTED_GLOBAL TRUE)
-        add_library(GTest::gtest_main ALIAS GTest::Main)
-    endif()
-
     include(GoogleTest)
 
     if(BUILD_PYTHON_BINDINGS)
