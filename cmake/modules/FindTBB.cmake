@@ -25,6 +25,14 @@ find_path(
         include
 )
 
+find_path(
+    TBB_LIB_DIR
+        tbb.lib
+    PATH_SUFFIXES
+        lib
+)
+
+
 mark_as_advanced(TBB_INCLUDE_DIR)
 
 if(TBB_INCLUDE_DIR AND EXISTS "${TBB_INCLUDE_DIR}/tbb/tbb_stddef.h")
@@ -56,4 +64,8 @@ find_package_handle_standard_args(
 if (TBB_FOUND AND NOT TARGET TBB::tbb)
     add_library(TBB::tbb INTERFACE IMPORTED)
     target_include_directories(TBB::tbb INTERFACE "${TBB_INCLUDE_DIR}")
+    if(TBB_LIB_DIR)
+        target_link_libraries(TBB::tbb INTERFACE "${TBB_LIB_DIR}/tbb.lib")
+    endif()
+    
 endif()

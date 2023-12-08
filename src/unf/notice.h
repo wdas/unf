@@ -3,6 +3,8 @@
 
 /// \file unf/notice.h
 
+#include "unf/api.h"
+
 #include <pxr/base/arch/demangle.h>
 #include <pxr/base/tf/notice.h>
 #include <pxr/base/tf/refBase.h>
@@ -44,7 +46,7 @@ namespace UnfNotice {
 /// created.
 class StageNotice : public PXR_NS::TfNotice, public PXR_NS::TfRefBase {
   public:
-    virtual ~StageNotice() = default;
+    UNF_API virtual ~StageNotice() = default;
 
     /// \brief
     /// Indicate whether notice from the same type can be consolidated during a
@@ -54,7 +56,7 @@ class StageNotice : public PXR_NS::TfNotice, public PXR_NS::TfRefBase {
     ///
     /// \sa Merge
     /// \sa NoticeTransaction
-    virtual bool IsMergeable() const { return true; }
+    UNF_API virtual bool IsMergeable() const { return true; }
 
     /// \brief
     /// Interface method for merging StageNotice.
@@ -79,7 +81,7 @@ class StageNotice : public PXR_NS::TfNotice, public PXR_NS::TfRefBase {
     ///
     /// \warning
     /// This method should be considered as pure virtual.
-    virtual std::string GetTypeId() const
+    UNF_API virtual std::string GetTypeId() const
     {
         PXR_NAMESPACE_USING_DIRECTIVE
         TF_FATAL_ERROR(
@@ -98,7 +100,7 @@ class StageNotice : public PXR_NS::TfNotice, public PXR_NS::TfRefBase {
     }
 
   protected:
-    StageNotice() = default;
+    UNF_API StageNotice() = default;
 
   private:
     /// \brief
@@ -201,7 +203,7 @@ class StageNoticeImpl : public StageNotice {
 /// PXR_NS::UsdNotice::StageContentsChanged notice type.
 class StageContentsChanged : public StageNoticeImpl<StageContentsChanged> {
   public:
-    virtual ~StageContentsChanged() = default;
+    UNF_API virtual ~StageContentsChanged() = default;
 
   protected:
     /// Create notice from PXR_NS::UsdNotice::StageContentsChanged instance.
@@ -224,13 +226,13 @@ class StageContentsChanged : public StageNoticeImpl<StageContentsChanged> {
 /// PXR_NS::UsdNotice::ObjectsChanged notice type.
 class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
   public:
-    virtual ~ObjectsChanged() = default;
+    UNF_API virtual ~ObjectsChanged() = default;
 
     /// Copy constructor.
-    ObjectsChanged(const ObjectsChanged&);
+    UNF_API ObjectsChanged(const ObjectsChanged&);
 
     /// Assignment operator.
-    ObjectsChanged& operator=(const ObjectsChanged&);
+    UNF_API ObjectsChanged& operator=(const ObjectsChanged&);
 
     // Bring all Merge declarations from base class to prevent
     // overloaded-virtual warning.
@@ -241,8 +243,8 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     ///
     /// \note
     /// Data will be move out of incoming ObjectsChanged notice.
-    virtual void Merge(ObjectsChanged&&) override;
-    virtual void PostProcess() override;
+    UNF_API virtual void Merge(ObjectsChanged&&) override;
+    UNF_API virtual void PostProcess() override;
 
     /// \brief
     /// Indicate whether \p object was affected by the change that generated
@@ -250,7 +252,7 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     ///
     /// \note
     /// Equivalent from PXR_NS::UsdNotice::ObjectsChanged::AffectedObject
-    bool AffectedObject(const PXR_NS::UsdObject& object) const
+    UNF_API bool AffectedObject(const PXR_NS::UsdObject& object) const
     {
         return ResyncedObject(object) || ChangedInfoOnly(object);
     }
@@ -261,7 +263,7 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     ///
     /// \note
     /// Equivalent from PXR_NS::UsdNotice::ObjectsChanged::ResyncedObject
-    bool ResyncedObject(const PXR_NS::UsdObject&) const;
+    UNF_API bool ResyncedObject(const PXR_NS::UsdObject&) const;
 
     /// \brief
     /// Indicate whether \p object was modified but not resynced by the change
@@ -269,14 +271,14 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     ///
     /// \note
     /// Equivalent from PXR_NS::UsdNotice::ObjectsChanged::ChangedInfoOnly
-    bool ChangedInfoOnly(const PXR_NS::UsdObject&) const;
+    UNF_API bool ChangedInfoOnly(const PXR_NS::UsdObject&) const;
 
     /// \brief
     /// Return vector of paths that are resynced in lexicographical order.
     ///
     /// \note
     /// Equivalent from PXR_NS::UsdNotice::ObjectsChanged::GetResyncedPaths
-    const PXR_NS::SdfPathVector& GetResyncedPaths() const
+    UNF_API const PXR_NS::SdfPathVector& GetResyncedPaths() const
     {
         return _resyncChanges;
     }
@@ -288,7 +290,7 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     /// \note
     /// Equivalent from
     /// PXR_NS::UsdNotice::ObjectsChanged::GetChangedInfoOnlyPaths
-    const PXR_NS::SdfPathVector& GetChangedInfoOnlyPaths() const
+    UNF_API const PXR_NS::SdfPathVector& GetChangedInfoOnlyPaths() const
     {
         return _infoChanges;
     }
@@ -300,7 +302,7 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     /// Equivalent from
     /// PXR_NS::UsdNotice::ObjectsChanged::GetChangedFields(const UsdObject&)
     /// const
-    TfTokenSet GetChangedFields(const PXR_NS::UsdObject&) const;
+    UNF_API TfTokenSet GetChangedFields(const PXR_NS::UsdObject&) const;
 
     /// \brief
     /// Return the set of changed fields in layers that affected the \p path.
@@ -309,7 +311,7 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     /// Equivalent from
     /// PXR_NS::UsdNotice::ObjectsChanged::GetChangedFields(const SdfPath&)
     /// const
-    TfTokenSet GetChangedFields(const PXR_NS::SdfPath&) const;
+    UNF_API TfTokenSet GetChangedFields(const PXR_NS::SdfPath&) const;
 
     /// \brief
     /// Indicate whether any changed fields affected the \p object.
@@ -318,7 +320,7 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     /// Equivalent from
     /// PXR_NS::UsdNotice::ObjectsChanged::HasChangedFields(const UsdObject&)
     /// const
-    bool HasChangedFields(const PXR_NS::UsdObject&) const;
+    UNF_API bool HasChangedFields(const PXR_NS::UsdObject&) const;
 
     /// \brief
     /// Indicate whether any changed fields affected the \p path.
@@ -327,7 +329,7 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
     /// Equivalent from
     /// PXR_NS::UsdNotice::ObjectsChanged::HasChangedFields(const SdfPath&)
     /// const
-    bool HasChangedFields(const PXR_NS::SdfPath&) const;
+    UNF_API bool HasChangedFields(const PXR_NS::SdfPath&) const;
 
     /// \brief
     /// Return map of affected token sets organized per path.
@@ -360,7 +362,7 @@ class ObjectsChanged : public StageNoticeImpl<ObjectsChanged> {
 /// PXR_NS::UsdNotice::StageEditTargetChanged notice type.
 class StageEditTargetChanged : public StageNoticeImpl<StageEditTargetChanged> {
   public:
-    virtual ~StageEditTargetChanged() = default;
+    UNF_API virtual ~StageEditTargetChanged() = default;
 
   protected:
     /// Create notice from PXR_NS::UsdNotice::StageEditTargetChanged instance.
@@ -382,13 +384,13 @@ class StageEditTargetChanged : public StageNoticeImpl<StageEditTargetChanged> {
 /// PXR_NS::UsdNotice::LayerMutingChanged notice type.
 class LayerMutingChanged : public StageNoticeImpl<LayerMutingChanged> {
   public:
-    virtual ~LayerMutingChanged() = default;
+    UNF_API virtual ~LayerMutingChanged() = default;
 
     /// Copy constructor.
-    LayerMutingChanged(const LayerMutingChanged&);
+    UNF_API LayerMutingChanged(const LayerMutingChanged&);
 
     /// Assignment operator.
-    LayerMutingChanged& operator=(const LayerMutingChanged&);
+    UNF_API LayerMutingChanged& operator=(const LayerMutingChanged&);
 
     // Bring all Merge declarations from base class to prevent
     // overloaded-virtual warning.
@@ -399,7 +401,7 @@ class LayerMutingChanged : public StageNoticeImpl<LayerMutingChanged> {
     ///
     /// \note
     /// Data will be move out of incoming LayerMutingChanged notice.
-    virtual void Merge(LayerMutingChanged&&) override;
+    UNF_API virtual void Merge(LayerMutingChanged&&) override;
 
     /// \brief
     /// Returns identifiers of the layers that were muted.
@@ -407,7 +409,7 @@ class LayerMutingChanged : public StageNoticeImpl<LayerMutingChanged> {
     /// \note
     /// Equivalent from
     /// PXR_NS::UsdNotice::LayerMutingChanged::GetMutedLayers
-    const std::vector<std::string>& GetMutedLayers() const
+    UNF_API const std::vector<std::string>& GetMutedLayers() const
     {
         return _mutedLayers;
     }
@@ -418,7 +420,7 @@ class LayerMutingChanged : public StageNoticeImpl<LayerMutingChanged> {
     /// \note
     /// Equivalent from
     /// PXR_NS::UsdNotice::LayerMutingChanged::GetUnmutedLayers
-    const std::vector<std::string>& GetUnmutedLayers() const
+    UNF_API const std::vector<std::string>& GetUnmutedLayers() const
     {
         return _unmutedLayers;
     }
