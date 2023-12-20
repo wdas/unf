@@ -131,7 +131,7 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     /// \note
     /// The associated stage will be used as sender.
     template <class UnfNotice, class... Args>
-    UNF_API void Send(Args&&... args);
+    void Send(Args&&... args);
 
     /// \brief
     /// Send a UnfNotice::StageNotice notice via the broker.
@@ -148,7 +148,7 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     ///
     /// This will call the Dispatcher::Register method.
     template <class T>
-    UNF_API void AddDispatcher();
+    void AddDispatcher();
 
     /// \brief
     /// Un-register broker.

@@ -1,3 +1,5 @@
+add_compile_definitions(UNF_EXPORTS)
+
 add_library(unf
     unf/broker.cpp
     unf/capturePredicate.cpp
