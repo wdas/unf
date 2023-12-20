@@ -1,0 +1,81 @@
+name: test-linux
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main, dev ]
+
+permissions:
+  contents: read
+
+jobs:
+  test-linux:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 300
+
+    strategy:
+      fail-fast: false
+      matrix:
+        usd: ["v23.11"]
+        python: ["3.7", "3.10"]
+
+    name: "USD-${{ matrix.usd }}-py${{ matrix.python }}"
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Create Build Environment
+        run: |
+          sudo apt update
+          sudo apt install -y libgtest-dev ninja-build
+          pip install pytest pytest-cmake
+          mkdir -p ${{github.workspace}}/build
+          mkdir -p ${{runner.temp}}/USD
+
+      - name: Install USD
+        working-directory: ${{runner.temp}}/USD
+        run: |
+          git clone https://github.com/PixarAnimationStudios/OpenUSD.git \
+              --depth 1 --branch ${{ matrix.usd }} ./src
+          python ./src/build_scripts/build_usd.py . \
+              --no-tests \
+              --no-examples \
+              --no-tutorials \
+              --no-tools \
+              --no-docs \
+              --no-imaging \
+              --no-materialx \
+              -v
+
+      - name: Configure & Build
+        working-directory: ${{github.workspace}}/build
+        run: |
+          export PYTHONPATH="${{runner.temp}}/USD/lib/python"
+          cmake \
+              -D "BUILD_DOCS=OFF" \
+              -D "CMAKE_INCLUDE_PATH=${{runner.temp}}/USD/include" \
+              -D "CMAKE_LIBRARY_PATH=${{runner.temp}}/USD/lib" \
+              ${GITHUB_WORKSPACE}
+          cmake --build . --config Release
+
+      - name: Check for formatting errors
+        working-directory: ${{github.workspace}}/build
+        run: |
+          cmake --build . --target format
+          git -C ${GITHUB_WORKSPACE} status --porcelain
+          if [ -n "$(git -C ${GITHUB_WORKSPACE} status --porcelain)" ]; \
+            then echo "Code formatting errors found."; \
+            exit 1; fi
+
+      - name: Run Test
+        working-directory: ${{github.workspace}}/build
+        run: ctest -VV
+        env:
+          CTEST_OUTPUT_ON_FAILURE: True
+

@@ -1,7 +1,7 @@
 if(WIN32)
     cmake_minimum_required(VERSION 3.27)
 else()
-    cmake_minimum_required(VERSION 3.15)
+    cmake_minimum_required(VERSION 3.20)
 endif()
 
 project(unf
@@ -21,8 +21,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (MSVC)
-    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS 1)
-
     # Make sure WinDef.h does not define min and max macros which
     # will conflict with std::min() and std::max().
     add_compile_definitions("NOMINMAX")
@@ -110,17 +108,6 @@ add_subdirectory(src)
 
 if (BUILD_TESTS)
     find_package(GTest 1.8.0 REQUIRED)
-
-    # For compatibility with module fetched from CMake < 3.20
-    if (NOT TARGET GTest::gtest)
-        set_target_properties(GTest::GTest PROPERTIES IMPORTED_GLOBAL TRUE)
-        add_library(GTest::gtest ALIAS GTest::GTest)
-    endif()
-    if (NOT TARGET GTest::gtest_main)
-        set_target_properties(GTest::Main PROPERTIES IMPORTED_GLOBAL TRUE)
-        add_library(GTest::gtest_main ALIAS GTest::Main)
-    endif()
-
     include(GoogleTest)
 
     if(BUILD_PYTHON_BINDINGS)

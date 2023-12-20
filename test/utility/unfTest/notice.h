@@ -1,13 +1,13 @@
 #ifndef TEST_USD_NOTICE_FRAMEWORK_NOTICE_H
 #define TEST_USD_NOTICE_FRAMEWORK_NOTICE_H
 
+#include <unf/api.h>
 #include <unf/notice.h>
 
 #include <pxr/pxr.h>
 
 #include <string>
 #include <unordered_map>
-#include <utility>
 
 namespace Test {
 
@@ -17,32 +17,22 @@ using DataMap = std::unordered_map<std::string, std::string>;
 class MergeableNotice
     : public unf::UnfNotice::StageNoticeImpl<MergeableNotice> {
   public:
-    MergeableNotice() = default;
-    MergeableNotice(const DataMap& data) : _data(data) {}
+    UNF_API MergeableNotice() = default;
+    UNF_API MergeableNotice(const DataMap& data);
 
-    MergeableNotice(const MergeableNotice& other) : _data(other._data) {}
+    UNF_API MergeableNotice(const MergeableNotice& other);
 
-    MergeableNotice& operator=(const MergeableNotice& other)
-    {
-        MergeableNotice copy(other);
-        std::swap(_data, copy._data);
-        return *this;
-    }
+    UNF_API MergeableNotice& operator=(const MergeableNotice& other);
 
-    virtual ~MergeableNotice() = default;
+    UNF_API virtual ~MergeableNotice() = default;
 
     // Bring all Merge declarations from base class to prevent
     // overloaded-virtual warning.
     using unf::UnfNotice::StageNoticeImpl<MergeableNotice>::Merge;
 
-    virtual void Merge(MergeableNotice&& notice) override
-    {
-        for (const auto& it : notice.GetData()) {
-            _data[it.first] = std::move(it.second);
-        }
-    }
+    UNF_API virtual void Merge(MergeableNotice&& notice) override;
 
-    const DataMap& GetData() const { return _data; }
+    UNF_API const DataMap& GetData() const;
 
   private:
     DataMap _data;
@@ -52,23 +42,26 @@ class MergeableNotice
 class UnMergeableNotice
     : public unf::UnfNotice::StageNoticeImpl<UnMergeableNotice> {
   public:
-    UnMergeableNotice() = default;
-    virtual ~UnMergeableNotice() = default;
+    UNF_API UnMergeableNotice() = default;
+    UNF_API virtual ~UnMergeableNotice() = default;
 
-    virtual bool IsMergeable() const { return false; }
+    UNF_API virtual bool IsMergeable() const;
 };
 
 // Declare notices used by the test dispatchers.
-class InputNotice : public PXR_NS::TfNotice {};
+class InputNotice : public PXR_NS::TfNotice {
+  public:
+    UNF_API InputNotice();
+};
 
 class OutputNotice1 : public unf::UnfNotice::StageNoticeImpl<OutputNotice1> {
   public:
-    OutputNotice1(const InputNotice&) {}
+    UNF_API OutputNotice1(const InputNotice&);
 };
 
 class OutputNotice2 : public unf::UnfNotice::StageNoticeImpl<OutputNotice2> {
   public:
-    OutputNotice2(const InputNotice&) {}
+    UNF_API OutputNotice2(const InputNotice&);
 };
 
 }  // namespace Test
