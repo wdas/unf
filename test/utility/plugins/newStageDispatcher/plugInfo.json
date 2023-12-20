@@ -1,16 +1,16 @@
 {
-    "Plugins": [
-        {
-            "Info": {
-                "Types" : {
-                    "Test::NewStageDispatcher" : {
-                        "bases": [ "Dispatcher" ]
-                    }
-                }
-            },
-            "LibraryPath": "libunfTestNewStageDispatcher.so",
-            "Name": "NewStageDispatcher",
-            "Type": "library"
+  "Plugins": [
+    {
+      "Info": {
+        "Types": {
+          "Test::NewStageDispatcher": {
+            "bases": [ "unf::Dispatcher" ]
+          }
         }
-    ]
+      },
+      "LibraryPath": "$<TARGET_FILE:unfTestNewStageDispatcher>",
+      "Name": "NewStageDispatcher",
+      "Type": "library"
+    }
+  ]
 }

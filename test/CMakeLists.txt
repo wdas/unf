@@ -12,13 +12,12 @@ if (WIN32)
         # Extract and sanitize environment passed to function.
         cmake_parse_arguments("" "" "" "PROPERTIES" ${ARGN})
         cmake_parse_arguments("" "" "" "ENVIRONMENT" ${_PROPERTIES})
-        string(REPLACE ";" "\;" extra_env "${_ENVIRONMENT}")
 
         # Apply environment to newly added tests.
-        set(env_vars
-            "PATH=$<JOIN:$<TARGET_RUNTIME_DLL_DIRS:${NAME}>,\\;>\;${env_path}"
-            ${extra_env})
-        set_tests_properties(${tests} PROPERTIES ENVIRONMENT "${env_vars}")
+        set_tests_properties(${tests}
+            PROPERTIES ENVIRONMENT
+            "${_ENVIRONMENT};PATH=$<JOIN:$<TARGET_RUNTIME_DLL_DIRS:${NAME}>,\\;>\;${env_path}"
+        )
     endmacro()
 endif()
 

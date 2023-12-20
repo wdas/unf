@@ -1,3 +1,5 @@
+// clang-format off
+
 #include "unf/notice.h"
 
 #include <pxr/base/tf/notice.h>
