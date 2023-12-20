@@ -1,0 +1,86 @@
+name: windows
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main, dev ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Create Build Environment
+        run: |
+          vcpkg install --triplet=x64-windows gtest
+          pip install pytest
+          cmake -E make_directory ${{runner.workspace}}/build
+          cmake -E make_directory ${{runner.temp}}/USD
+
+      - name: Install USD
+        working-directory: ${{runner.temp}}/USD
+        shell: cmd
+        run: |
+          call "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
+          set VCPKG_TARGET_TRIPLET=x64-windows
+          set CMAKE_TOOLCHAIN_FILE=%VCPKG_INSTALLATION_ROOT%/scripts/buildsystems/vcpkg.cmake
+          git clone https://github.com/PixarAnimationStudios/OpenUSD.git ^
+              --depth 1 --branch v23.05 ./src
+          python ./src/build_scripts/build_usd.py . ^
+              --generator "Visual Studio 17 2022" ^
+              --no-tests ^
+              --no-examples ^
+              --no-tutorials ^
+              --no-tools ^
+              --no-docs ^
+              --no-imaging ^
+              --no-materialx ^
+              -v
+
+      - name: Configure
+        shell: bash
+        working-directory: ${{runner.workspace}}/build
+        run: |
+          export PATH="${{runner.temp}}/USD/bin;${{runner.temp}}/USD/lib;${PATH}"
+          cmake \
+            -G "Visual Studio 17 2022" -A x64 \
+            -D "CMAKE_TOOLCHAIN_FILE=${VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake" \
+            -D "VCPKG_TARGET_TRIPLET=x64-windows" \
+            -D "BUILD_DOCS=OFF" \
+            -D "CMAKE_INCLUDE_PATH=${{runner.temp}}/USD/include" \
+            -D "CMAKE_LIBRARY_PATH=${{runner.temp}}/USD/lib" \
+            -D "CMAKE_VERBOSE_MAKEFILE:BOOL=ON" \
+            --debug-output \
+            '${{github.workspace}}'
+          cmake --build . --config Release
+
+      - name: Check for formatting errors
+        shell: bash
+        working-directory: ${{runner.workspace}}/build
+        run: |
+          cmake --build . --target format
+          git -C '${{github.workspace}}' status --porcelain
+          if [ -n "$(git -C '${{github.workspace}}' status --porcelain)" ]; \
+            then echo "Code formatting errors found."; \
+            exit 1; fi
+
+      - name: Run Test
+        shell: bash
+        working-directory: ${{runner.workspace}}/build
+        run: ctest -VV -C Release
+        env:
+          CTEST_OUTPUT_ON_FAILURE: True
+
+          # Avoid the just-in-time debugger where possible when running tests.
+          ARCH_AVOID_JIT: True
