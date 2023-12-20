@@ -1,4 +1,8 @@
-cmake_minimum_required(VERSION 3.15)
+if(WIN32)
+    cmake_minimum_required(VERSION 3.27)
+else()
+    cmake_minimum_required(VERSION 3.15)
+endif()
 
 project(unf
     VERSION 0.5.6
@@ -17,6 +21,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (MSVC)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS 1)
+
     # Make sure WinDef.h does not define min and max macros which
     # will conflict with std::min() and std::max().
     add_compile_definitions("NOMINMAX")
