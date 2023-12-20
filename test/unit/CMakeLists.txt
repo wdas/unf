@@ -39,19 +39,13 @@ target_link_libraries(testUnitDispatcherPlugin
         GTest::gtest
         GTest::gtest_main
 )
-set(pxr_plug_path $ENV{PXR_PLUGINPATH_NAME})
-set(extended_pxr_plug_path "$<TARGET_FILE_DIR:unfTest>/plugins/*Dispatcher/plugInfo.json:${pxr_plug_path}")
-if (WIN32)
-    string(REPLACE "\\" "\\\\" extended_pxr_plug_path "${extended_pxr_plug_path}")
-    string(REPLACE ";" "\;" extended_pxr_plug_path "${extended_pxr_plug_path}")
-endif()
+set(_path "${CMAKE_BINARY_DIR}/test/utility/plugins/*Dispatcher/plugInfo_$<CONFIG>.json")
 gtest_discover_tests(
     testUnitDispatcherPlugin
     PROPERTIES ENVIRONMENT
-        "PXR_PLUGINPATH_NAME=${extended_pxr_plug_path}"
+        "PXR_PLUGINPATH_NAME=${_path}$<IF:$<BOOL:${WIN32}>,;,:>$ENV{PXR_PLUGINPATH_NAME}"
+
 )
-
-
 add_executable(testUnitTransaction testTransaction.cpp)
 target_link_libraries(testUnitTransaction
     PRIVATE

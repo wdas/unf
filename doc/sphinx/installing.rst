@@ -4,10 +4,6 @@
 Installing
 **********
 
-.. warning::
-
-    This library has only been tested on Linux platforms.
-
 .. highlight:: bash
 
 The library can be installed using :term:`CMake` (any version over `3.15
@@ -126,12 +122,13 @@ Then build the documentation as follows::
 Running tests
 =============
 
-Ensure that :term:`GTest` and :term:`Pytest` are installed.
+Ensure that :term:`GTest`, :term:`Pytest` and :term:`Pytest CMake` are
+installed.
 
 .. note::
 
-    :term:`Pytest` is not necessary is you set the ``BUILD_PYTHON_BINDINGS``
-    :term:`CMake` option to false.
+    :term:`Pytest` and :term:`Pytest CMake` are not necessary is you set the
+    ``BUILD_PYTHON_BINDINGS`` :term:`CMake` option to false.
 
 Once the library and all tests are built, you can run the tests using
 :term:`Ctest` within the build folder as follows::

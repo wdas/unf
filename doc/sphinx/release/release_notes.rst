@@ -4,6 +4,18 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: new
+
+        Added support for Windows.
+
+    .. change:: changed
+
+        Updated Python testing logic to discover the :term:`Pytest`
+        configuration for :term:`CMake` from the :term:`Pytest CMake` package
+        for simplicity.
+
 .. release:: 0.5.6
     :date: 2023-07-13
 
