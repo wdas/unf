@@ -58,7 +58,7 @@ void wrapBroker()
 
         .def(
             "BeginTransaction",
-            (void (Broker::*)(CapturePredicate)) & Broker::BeginTransaction,
+            (void(Broker::*)(CapturePredicate)) & Broker::BeginTransaction,
             (arg("predicate") = CapturePredicate::Default()),
             "Start a notice transaction.")
 

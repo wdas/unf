@@ -59,8 +59,7 @@ class UnMergeableNotice
 };
 
 // Declare notices used by the test dispatchers.
-class InputNotice : public PXR_NS::TfNotice {
-};
+class InputNotice : public PXR_NS::TfNotice {};
 
 class OutputNotice1 : public unf::UnfNotice::StageNoticeImpl<OutputNotice1> {
   public:
