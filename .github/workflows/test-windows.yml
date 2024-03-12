@@ -17,8 +17,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        usd: ["v23.11"]
+        usd: ["v23.11", "v24.03"]
         python: ["3.7", "3.10"]
+        include:
+          - usd: "v24.03"
+            python: "3.11"
 
     name: "USD-${{ matrix.usd }}-py${{ matrix.python }}"
 
@@ -57,7 +60,7 @@ jobs:
               --no-materialx ^
               -v
 
-      - name: Configure
+      - name: Configure & Build
         shell: bash
         working-directory: ${{runner.workspace}}/build
         run: |

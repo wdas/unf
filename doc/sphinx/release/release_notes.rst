@@ -12,6 +12,12 @@ Release Notes
 
     .. change:: changed
 
+        Updated C++ standard version to C++17 per VFX Reference Platform CY2023.
+
+        .. seealso:: https://vfxplatform.com/
+
+    .. change:: changed
+
         Updated Python testing logic to discover the :term:`Pytest`
         configuration for :term:`CMake` from the :term:`Pytest CMake` package
         for simplicity.
