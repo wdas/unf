@@ -4,6 +4,13 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+   .. change:: fixed
+
+        Updated TBB CMake module finder to ensure proper resolution of linker
+        scripts on older versions of GNU LD (prior to 2.35).
+
 .. release:: 0.6.0
     :date: 2024-03-12
 
