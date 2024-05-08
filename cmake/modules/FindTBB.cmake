@@ -283,10 +283,21 @@ if(NOT TBB_FOUND)
   # Create targets
   ##################################
 
+  # Linker scripts from TBB are not resolved correctly with older versions of
+  # GNU LD (before 2.35) when the 'INTERFACE_LINK_DIRECTORIES' property
+  # is not set.
+  set(TBB_LIBRARY_DIRS "")
+  foreach(lib ${TBB_LIBRARIES})
+      get_filename_component(dir ${lib} DIRECTORY)
+      list(APPEND TBB_LIBRARY_DIRS ${dir})
+  endforeach()
+  list(REMOVE_DUPLICATES TBB_LIBRARY_DIRS)
+
   if(NOT CMAKE_VERSION VERSION_LESS 3.0 AND TBB_FOUND)
     add_library(TBB::tbb UNKNOWN IMPORTED)
     set_target_properties(TBB::tbb PROPERTIES
           INTERFACE_INCLUDE_DIRECTORIES  ${TBB_INCLUDE_DIRS}
+          INTERFACE_LINK_DIRECTORIES     ${TBB_LIBRARY_DIRS}
           IMPORTED_LOCATION              ${TBB_LIBRARIES})
     if(TBB_LIBRARIES_RELEASE AND TBB_LIBRARIES_DEBUG)
       set_target_properties(TBB::tbb PROPERTIES
