@@ -1,0 +1,10 @@
+{
+    "install": [
+        "mkdir -p build/%(build_flavor)s",
+        "sh -c 'cmake -B build/%(build_flavor)s -S . -D CMAKE_INSTALL_PREFIX=%(prefix)s -D GTest_ROOT=$RP_gtest -D TBB_INCLUDE_DIRS=$RP_TBB/include -D Boost_ROOT=$RP_boost_disney -D USD_INCLUDE_DIR=$RP_presto_usd/include'",
+        "make -j%(jobs)s -C build/%(build_flavor)s install DESTDIR='%(DESTDIR)s'"
+    ],
+    "test": [
+        "make -j%(jobs)s -C build/%(build_flavor)s test"
+    ]
+}
