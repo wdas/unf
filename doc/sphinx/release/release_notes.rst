@@ -4,6 +4,13 @@
 Release Notes
 *************
 
+.. release:: 0.6.3
+    :date: 2024-07-23
+
+    .. change:: new
+
+        Added build metadata for use at WDAS.
+
 .. release:: 0.6.1
     :date: 2024-05-09
 
