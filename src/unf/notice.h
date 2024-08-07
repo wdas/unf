@@ -74,7 +74,7 @@ class StageNotice : public PXR_NS::TfNotice, public PXR_NS::TfRefBase {
     /// transaction.
     ///
     /// By default, no process is done.
-    virtual void PostProcess(){};
+    virtual void PostProcess() {}
 
     /// \brief
     /// Interface method for returing unique type identifier.

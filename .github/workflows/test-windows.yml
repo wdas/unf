@@ -15,16 +15,16 @@ permissions:
 
 jobs:
   test-windows:
-    runs-on: windows-2022
+    runs-on: windows-2019
     timeout-minutes: 300
 
     strategy:
       fail-fast: false
       matrix:
-        usd: ["v23.11", "v24.03"]
+        usd: ["v23.11", "v24.08"]
         python: ["3.7", "3.10"]
         include:
-          - usd: "v24.03"
+          - usd: "v24.08"
             python: "3.11"
 
     name: "USD-${{ matrix.usd }}-py${{ matrix.python }}"
@@ -54,7 +54,7 @@ jobs:
           git clone https://github.com/PixarAnimationStudios/OpenUSD.git ^
               --depth 1 --branch ${{ matrix.usd }} ./src
           python ./src/build_scripts/build_usd.py . ^
-              --generator "Visual Studio 17 2022" ^
+              --generator "Visual Studio 16 2019" ^
               --no-tests ^
               --no-examples ^
               --no-tutorials ^
@@ -71,7 +71,7 @@ jobs:
           export PATH="${{runner.temp}}/USD/bin;${{runner.temp}}/USD/lib;${PATH}"
           export PYTHONPATH="${{runner.temp}}/USD/lib/python;${PYTHONPATH}"
           cmake \
-            -G "Visual Studio 17 2022" -A x64 \
+            -G "Visual Studio 16 2019" -A x64 \
             -D "CMAKE_TOOLCHAIN_FILE=${VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake" \
             -D "VCPKG_TARGET_TRIPLET=x64-windows" \
             -D "BUILD_DOCS=OFF" \
@@ -85,10 +85,14 @@ jobs:
         working-directory: ${{runner.workspace}}/build
         run: |
           cmake --build . --target format
-          git -C ${GITHUB_WORKSPACE} status --porcelain
-          if [ -n "$(git -C ${GITHUB_WORKSPACE} status --porcelain)" ]; \
-            then echo "Code formatting errors found."; \
-            exit 1; fi
+          STATUS_OUTPUT=$(git -C ${GITHUB_WORKSPACE} status --porcelain)
+          if [ -n "$STATUS_OUTPUT" ]; then
+            echo "Code formatting errors found:"
+            git -C ${GITHUB_WORKSPACE} diff
+            exit 1
+          else
+            echo "No formatting errors found."
+          fi
 
       - name: Run Test
         shell: bash

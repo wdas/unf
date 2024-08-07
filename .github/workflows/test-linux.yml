@@ -21,10 +21,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        usd: ["v23.11", "v24.03"]
+        usd: ["v23.11", "v24.08"]
         python: ["3.7", "3.10"]
         include:
-          - usd: "v24.03"
+          - usd: "v24.08"
             python: "3.11"
 
     name: "USD-${{ matrix.usd }}-py${{ matrix.python }}"
@@ -75,10 +75,14 @@ jobs:
         working-directory: ${{github.workspace}}/build
         run: |
           cmake --build . --target format
-          git -C ${GITHUB_WORKSPACE} status --porcelain
-          if [ -n "$(git -C ${GITHUB_WORKSPACE} status --porcelain)" ]; \
-            then echo "Code formatting errors found."; \
-            exit 1; fi
+          STATUS_OUTPUT=$(git -C ${GITHUB_WORKSPACE} status --porcelain)
+          if [ -n "$STATUS_OUTPUT" ]; then
+            echo "Code formatting errors found:"
+            git -C ${GITHUB_WORKSPACE} diff
+            exit 1
+          else
+            echo "No formatting errors found."
+          fi
 
       - name: Run Test
         working-directory: ${{github.workspace}}/build
