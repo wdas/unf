@@ -4,6 +4,17 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: changed
+
+        Updated Github workflow configuration to test library against
+        :term:`USD` v24.08.
+
+    .. change:: fixed
+
+        Fixed Windows CI test errors by reverting to 'windows-2019' image.
+
 .. release:: 0.6.3
     :date: 2024-07-23
 
