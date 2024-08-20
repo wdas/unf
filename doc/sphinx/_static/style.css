@@ -1,0 +1,62 @@
+.changelog-release {
+    position: relative;
+}
+
+.changelog-release > h1, h2, h3, h4, h5 {
+    margin-bottom: 5px;
+}
+
+.changelog-release em.release-date {
+    color: #999;
+    position: absolute;
+    line-height: 2.5em;
+    top: 0;
+    right: 0;
+}
+
+.changelog-release ul.changelog-change-list {
+    list-style: outside none none;
+}
+
+.changelog-release ul.changelog-change-list > li {
+    list-style: outside none none;
+    position: relative;
+    margin: 0;
+    padding: 8px 0 2px 120px;
+    border-top: 1px solid #D6D6D6;
+}
+
+.rst-content .section .changelog-change-list ul li {
+    list-style: initial;
+}
+
+.changelog-category {
+    border-right: 3px solid #CCC;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.05), 0px -1px 0px rgba(0, 0, 0, 0.05) inset;
+    color: #333;
+    display: inline-block;
+    font-size: 0.7em;
+    font-style: normal;
+    font-weight: bold;
+    line-height: 14px;
+    padding: 4px 2px 4px 10px;
+    text-shadow: 1px 1px 0px #FFF;
+    text-transform: uppercase;
+    width: 102px;
+    position: absolute;
+    top: 10px;
+    left: 0px;
+    background-color: #f8f8f8;
+}
+
+.changelog-category-fixed {
+    border-color: #7C0;
+}
+
+.changelog-category-new {
+    border-color: #11B0E9;
+}
+
+.changelog-category-changed {
+    border-color: #EB3F3F;
+}

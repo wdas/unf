@@ -4,6 +4,22 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: changed
+
+        Updated documentation building logic to discover the :term:`Sphinx`
+        configuration for :term:`CMake` from the `Sphinx CMake
+        <https://python-cmake.github.io/sphinx-cmake>`_ package for simplicity.
+
+    .. change:: changed
+
+        Updated logic to build the :ref:`release/release_notes` page.
+
+    .. change:: changed
+
+        Added compatibility with CMake 3.30.
+
 .. release:: 0.6.4
     :date: 2024-08-08
 
@@ -47,8 +63,8 @@ Release Notes
     .. change:: changed
 
         Updated Python testing logic to discover the :term:`Pytest`
-        configuration for :term:`CMake` from the :term:`Pytest CMake` package
-        for simplicity.
+        configuration for :term:`CMake` from the `Pytest CMake
+        <https://python-cmake.github.io/pytest-cmake>`_ package for simplicity.
 
 .. release:: 0.5.6
     :date: 2023-07-13

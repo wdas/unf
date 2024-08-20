@@ -19,9 +19,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: 3.9
 
@@ -30,21 +30,21 @@ jobs:
           sudo apt update
           sudo apt install -y doxygen
           python -m pip install --upgrade pip
-          python -m pip install -r ${GITHUB_WORKSPACE}/doc/requirements.txt
-          mkdir -p ${{runner.workspace}}/build
+          python -m pip install -r ${{github.workspace}}/doc/requirements.txt
+          mkdir -p ${{github.workspace}}/build
 
       - name: Build documentation
         run: |
           export BUILD_DOCS_WITHOUT_CMAKE=1
-          export PYTHONPATH="${GITHUB_WORKSPACE}/doc/sphinx" 
+          export PYTHONPATH="${{github.workspace}}/doc/sphinx" 
           sphinx-build -T -E -b html \
-            "${GITHUB_WORKSPACE}/doc/sphinx" \
-            "${{runner.workspace}}/build"
+            "${{github.workspace}}/doc/sphinx" \
+            "${{github.workspace}}/build"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ${{runner.workspace}}/build
+          path: ${{github.workspace}}/build
 
   deploy:
     environment:

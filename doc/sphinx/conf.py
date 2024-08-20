@@ -1,11 +1,14 @@
-# -*- coding: utf-8 -*-
-
 """Configuration file for the Sphinx documentation builder."""
 
-import os
 import re
+import pathlib
+import os
+import sys
 
-extensions = ["sphinxcontrib.doxylink", "lowdown"]
+root = pathlib.Path(__file__).parent.resolve()
+sys.path.insert(0, str(root / "_extensions"))
+
+extensions = ["changelog", "sphinxcontrib.doxylink"]
 
 # This deployment mode exists so that documentation can be built within a
 # Github runner without requiring USD/TBB/Boost to be installed. We would be
@@ -16,17 +19,20 @@ if os.environ.get("BUILD_DOCS_WITHOUT_CMAKE"):
 
     doxygen.create_cmake_config()
     build_path = doxygen.build()
-    source_path = os.path.join(os.path.dirname(__file__), "..", "..")
+    source_path = root.parent.parent.resolve()
 
-    with open(os.path.join(source_path, "CMakeLists.txt")) as stream:
-        pattern = r"project\(.* VERSION ([\d\\.]+)"
-        version = re.search(pattern, stream.read(), re.DOTALL).group(1)
+    path = source_path / "CMakeLists.txt"
+    data = path.read_text()
+
+    pattern = r"project\(.* VERSION ([\d\\.]+)"
+    version = re.search(pattern, data, re.DOTALL).group(1)
 
     html_extra_path = ["./api"]
 
 else:
-    build_path = "@CMAKE_CURRENT_BINARY_DIR@/doc"
-    source_path = "@PROJECT_SOURCE_DIR@"
+    build_path = pathlib.Path("@CMAKE_CURRENT_BINARY_DIR@") / "doc"
+    source_path = pathlib.Path("@PROJECT_SOURCE_DIR@")
+
     version = "@CMAKE_PROJECT_VERSION@"
 
 source_suffix = ".rst"
@@ -38,15 +44,17 @@ release = version
 
 doxylink = {
     "usd-cpp": (
-        os.path.join(source_path, "doc", "doxygen", "USD.tag"),
+        str(source_path / "doc" / "doxygen" / "USD.tag"),
         "https://graphics.pixar.com/usd/release/api"
     ),
     "unf-cpp": (
-        os.path.join(build_path, "UNF.tag"),
+        str(build_path / "UNF.tag"),
         "./doxygen"
     )
 }
 
 html_theme = "sphinx_rtd_theme"
 html_favicon = "favicon.png"
+html_static_path = ["_static"]
+html_css_files = ["style.css"]
 

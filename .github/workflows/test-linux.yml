@@ -30,10 +30,10 @@ jobs:
     name: "USD-${{ matrix.usd }}-py${{ matrix.python }}"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
 
@@ -41,7 +41,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y libgtest-dev ninja-build
-          pip install pytest pytest-cmake
+          python -m pip install -r ${{github.workspace}}/test/requirements.txt
           mkdir -p ${{github.workspace}}/build
           mkdir -p ${{runner.temp}}/USD
 
@@ -68,17 +68,17 @@ jobs:
               -D "BUILD_DOCS=OFF" \
               -D "CMAKE_INCLUDE_PATH=${{runner.temp}}/USD/include" \
               -D "CMAKE_LIBRARY_PATH=${{runner.temp}}/USD/lib" \
-              ${GITHUB_WORKSPACE}
+              ..
           cmake --build . --config Release
 
       - name: Check for formatting errors
         working-directory: ${{github.workspace}}/build
         run: |
           cmake --build . --target format
-          STATUS_OUTPUT=$(git -C ${GITHUB_WORKSPACE} status --porcelain)
+          STATUS_OUTPUT=$(git -C .. status --porcelain)
           if [ -n "$STATUS_OUTPUT" ]; then
             echo "Code formatting errors found:"
-            git -C ${GITHUB_WORKSPACE} diff
+            git -C .. diff
             exit 1
           else
             echo "No formatting errors found."
