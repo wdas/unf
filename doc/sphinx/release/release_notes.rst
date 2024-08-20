@@ -8,6 +8,13 @@ Release Notes
 
     .. change:: changed
 
+        Updated to use the 'Tomorrow Open Source Technology' license, adopted
+        by OpenUSD in the v24.08 release.
+
+        .. seealso:: https://forum.aousd.org/t/upcoming-openusd-license-update/1561
+
+    .. change:: changed
+
         Updated documentation building logic to discover the :term:`Sphinx`
         configuration for :term:`CMake` from the `Sphinx CMake
         <https://python-cmake.github.io/sphinx-cmake>`_ package for simplicity.

@@ -3,7 +3,7 @@
 [![CMake](https://img.shields.io/badge/CMake-3.20...3.30-blue.svg?logo=CMake&logoColor=blue)](https://cmake.org)
 [![test-linux](https://github.com/wdas/unf/actions/workflows/test-linux.yml/badge.svg?branch=main)](https://github.com/wdas/unf/actions/workflows/test-linux.yml)
 [![test-windows](https://github.com/wdas/unf/actions/workflows/test-windows.yml/badge.svg?branch=main)](https://github.com/wdas/unf/actions/workflows/test-windows.yml)
-[![License](https://img.shields.io/badge/License-Modified%20Apache%202.0-yellow.svg)](https://github.com/wdas/unf/blob/main/LICENSE.txt)
+[![License](https://img.shields.io/badge/License-TOST-yellow.svg)](https://github.com/wdas/unf/blob/main/LICENSE.txt)
 
 The USD Notice Framework (UNF) is built over the native [Tf Notification System][1]
 in [USD][2], an open source extensible software platform for collaboratively
