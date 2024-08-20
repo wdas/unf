@@ -1,6 +1,6 @@
 # USD Notice Framework
 
-[![CMake](https://img.shields.io/badge/CMake-3.20...3.29-blue.svg?logo=CMake&logoColor=blue)](https://cmake.org)
+[![CMake](https://img.shields.io/badge/CMake-3.20...3.30-blue.svg?logo=CMake&logoColor=blue)](https://cmake.org)
 [![test-linux](https://github.com/wdas/unf/actions/workflows/test-linux.yml/badge.svg?branch=main)](https://github.com/wdas/unf/actions/workflows/test-linux.yml)
 [![test-windows](https://github.com/wdas/unf/actions/workflows/test-windows.yml/badge.svg?branch=main)](https://github.com/wdas/unf/actions/workflows/test-windows.yml)
 [![License](https://img.shields.io/badge/License-Modified%20Apache%202.0-yellow.svg)](https://github.com/wdas/unf/blob/main/LICENSE.txt)

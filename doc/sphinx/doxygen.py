@@ -1,34 +1,31 @@
-# -*- coding: utf-8 -*-
-
-import os
+import pathlib
 import re
 import subprocess
 import shutil
 
-ROOT = os.path.normpath(os.path.abspath(os.path.curdir))
+ROOT = pathlib.Path().resolve()
 
 
 def build():
     """Build API documentation."""
     target = "unfApiRefDoc"
 
-    build_path = os.path.join(ROOT, "build")
-    subprocess.call(["cmake", "-S", ROOT, "-B", build_path])
-    subprocess.call(["cmake", "--build", build_path, "--target", target])
+    build_path = ROOT / "build"
+    output_path = ROOT / "api"
 
-    # Move doxygen API outside the build directory.
-    output_path = os.path.join(ROOT, "api")
-    os.makedirs(output_path)
+    # Run CMake commands
+    subprocess.call(["cmake", "-S", ROOT, "-B", str(build_path)])
+    subprocess.call(["cmake", "--build", str(build_path), "--target", target])
 
-    shutil.move(
-        os.path.join(build_path, "doxygen"),
-        os.path.join(output_path, "doxygen")
-    )
+    # Remove output_path if it exists
+    if output_path.exists() and output_path.is_dir():
+        shutil.rmtree(output_path)
 
-    shutil.move(
-        os.path.join(build_path, "UNF.tag"),
-        os.path.join(output_path, "UNF.tag")
-    )
+    # Move doxygen API outside the build directory
+    output_path.mkdir()
+
+    shutil.move(build_path / "doxygen", output_path / "doxygen")
+    shutil.move(build_path / "UNF.tag", output_path / "UNF.tag")
 
     return output_path
 
@@ -40,10 +37,8 @@ def create_cmake_config():
         fetch_api_doc_content()
     ])
 
-    path = os.path.join(ROOT, "CMakeLists.txt")
-
-    with open(path, "w") as stream:
-        stream.write(content)
+    path = ROOT / "CMakeLists.txt"
+    path.write_text(content)
 
     return path
 
@@ -54,10 +49,8 @@ def fetch_project_content():
     # so we hard-code it for now.
     content = "cmake_minimum_required(VERSION 3.15)\n\n"
 
-    path = os.path.join(ROOT, "..", "..", "CMakeLists.txt")
-
-    with open(path, "r") as stream:
-        data = stream.read()
+    path = ROOT.parent.parent / "CMakeLists.txt"
+    data = path.read_text()
 
     patterns = [
         r"project\(.*?\)",
@@ -67,9 +60,9 @@ def fetch_project_content():
     for pattern in patterns:
         match = re.search(pattern, data, re.MULTILINE | re.DOTALL)
         if not match:
-            raise ValueError("Pattern not found: {!r}".format(pattern))
+            raise ValueError(f"Pattern not found: {pattern!r}")
 
-        content += "{}\n\n".format(match.group())
+        content += f"{match.group()}\n\n"
 
     return content
 
@@ -78,15 +71,12 @@ def fetch_api_doc_content():
     """Fetch info from documentation cmake config."""
     content = ""
 
-    path = os.path.join(ROOT, "..", "CMakeLists.txt")
+    path = ROOT.parent / "CMakeLists.txt"
+    data = path.read_text()
 
-    with open(path, "r") as stream:
-        data = stream.read()
-
-    for option in re.findall(
-        r"set\(\s*DOXYGEN.*?\s*\)", data, re.MULTILINE | re.DOTALL
-    ):
-        content += "{}\n".format(option)
+    # Extract DOXYGEN-related settings
+    options = re.findall(r"set\(\s*DOXYGEN.*?\s*\)", data, re.MULTILINE | re.DOTALL)
+    content += "\n".join(options) + "\n"
 
     # Update path to tag file.
     content = re.sub("/doc/", "/../", content)
@@ -116,5 +106,5 @@ def fetch_api_doc_content():
     command = re.sub("/doc/", "/../", match.group())
     command = re.sub("/src/", "/../../src/", command)
 
-    content += "\n{}".format(command)
+    content += f"\n{command}"
     return content

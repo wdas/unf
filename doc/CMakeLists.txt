@@ -26,8 +26,8 @@ file(COPY sphinx DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 configure_file(sphinx/conf.py sphinx/conf.py @ONLY)
 
 sphinx_add_docs(unfDoc
-    SOURCE "${CMAKE_CURRENT_BINARY_DIR}/sphinx"
-    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/doc"
+    SOURCE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/sphinx"
+    OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc"
     DEPENDS unfApiRefDoc
 )
 

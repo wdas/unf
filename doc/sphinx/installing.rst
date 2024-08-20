@@ -104,9 +104,10 @@ Then run the program as follows::
 Building documentation
 ======================
 
-Ensure that :term:`Doxygen` and :term:`Sphinx` with the `lowdown
-<https://pypi.org/project/Lowdown/>`_ and `sphinxcontrib-doxylink
-<https://pypi.org/project/sphinxcontrib-doxylink/>`_ extensions are installed.
+Ensure that :term:`Doxygen` is installed. The required Python dependencies
+must also be installed as follows::
+
+    pip install -r doc/requirements.txt
 
 Then build the documentation as follows::
 
@@ -122,13 +123,15 @@ Then build the documentation as follows::
 Running tests
 =============
 
-Ensure that :term:`GTest`, :term:`Pytest` and :term:`Pytest CMake` are
-installed.
+Ensure that :term:`GTest` is installed. The required Python dependencies
+must also be installed as follows::
+
+    pip install -r test/requirements.txt
 
 .. note::
 
-    :term:`Pytest` and :term:`Pytest CMake` are not necessary is you set the
-    ``BUILD_PYTHON_BINDINGS`` :term:`CMake` option to false.
+    Python dependencies are not necessary if the ``BUILD_PYTHON_BINDINGS``
+    :term:`CMake` option is set to false.
 
 Once the library and all tests are built, you can run the tests using
 :term:`Ctest` within the build folder as follows::

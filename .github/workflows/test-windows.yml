@@ -30,19 +30,19 @@ jobs:
     name: "USD-${{ matrix.usd }}-py${{ matrix.python }}"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
 
       - name: Create Build Environment
         run: |
           vcpkg install --triplet=x64-windows gtest
-          pip install pytest pytest-cmake
-          cmake -E make_directory ${{runner.workspace}}/build
-          cmake -E make_directory ${{runner.temp}}/USD
+          python -m pip install -r ${{github.workspace}}\test\requirements.txt
+          cmake -E make_directory ${{github.workspace}}\build
+          cmake -E make_directory ${{runner.temp}}\USD
 
       - name: Install USD
         working-directory: ${{runner.temp}}/USD
@@ -66,7 +66,7 @@ jobs:
 
       - name: Configure & Build
         shell: bash
-        working-directory: ${{runner.workspace}}/build
+        working-directory: ${{github.workspace}}/build
         run: |
           export PATH="${{runner.temp}}/USD/bin;${{runner.temp}}/USD/lib;${PATH}"
           export PYTHONPATH="${{runner.temp}}/USD/lib/python;${PYTHONPATH}"
@@ -77,18 +77,18 @@ jobs:
             -D "BUILD_DOCS=OFF" \
             -D "CMAKE_INCLUDE_PATH=${{runner.temp}}/USD/include" \
             -D "CMAKE_LIBRARY_PATH=${{runner.temp}}/USD/lib" \
-            '${{github.workspace}}'
+            ..
           cmake --build . --config Release
 
       - name: Check for formatting errors
         shell: bash
-        working-directory: ${{runner.workspace}}/build
+        working-directory: ${{github.workspace}}/build
         run: |
           cmake --build . --target format
-          STATUS_OUTPUT=$(git -C ${GITHUB_WORKSPACE} status --porcelain)
+          STATUS_OUTPUT=$(git -C .. status --porcelain)
           if [ -n "$STATUS_OUTPUT" ]; then
             echo "Code formatting errors found:"
-            git -C ${GITHUB_WORKSPACE} diff
+            git -C .. diff
             exit 1
           else
             echo "No formatting errors found."
@@ -96,7 +96,7 @@ jobs:
 
       - name: Run Test
         shell: bash
-        working-directory: ${{runner.workspace}}/build
+        working-directory: ${{github.workspace}}/build
         run: ctest -VV -C Release
         env:
           CTEST_OUTPUT_ON_FAILURE: True
