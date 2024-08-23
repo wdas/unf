@@ -39,6 +39,8 @@ if (MSVC)
     else()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:inline")
     endif()
+else()
+    add_compile_definitions("BOOST_NO_CXX98_FUNCTION_BASE")
 endif()
 
 option(BUILD_TESTS "Build tests" ON)
