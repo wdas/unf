@@ -67,6 +67,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 # https://cmake.org/cmake/help/latest/policy/CMP0094.html
 cmake_policy(SET CMP0094 NEW)
 
+find_package(USD 0.20.11 REQUIRED)
+find_package(TBB 2017.0 COMPONENTS tbb REQUIRED)
+
 if(BUILD_PYTHON_BINDINGS)
     # The 'manylinux' images do not include the Python library.
     # CMake >= 3.18 is required for this option to work as expected.
@@ -82,11 +85,13 @@ if(BUILD_PYTHON_BINDINGS)
     set(_py_version ${Python_VERSION_MAJOR}${Python_VERSION_MINOR})
     mark_as_advanced(_py_version)
 
-    find_package(Boost 1.70.0 COMPONENTS "python${_py_version}" REQUIRED)
+    if (NOT USD_USE_INTERNAL_BOOST_PYTHON)
+        find_package(Boost 1.70.0 COMPONENTS "python${_py_version}" REQUIRED)
 
-    # Define generic target for Boost Python if necessary.
-    if (NOT TARGET Boost::python)
-        add_library(Boost::python ALIAS "Boost::python${_py_version}")
+        # Define generic target for Boost Python if necessary.
+        if (NOT TARGET Boost::python)
+            add_library(Boost::python ALIAS "Boost::python${_py_version}")
+        endif()
     endif()
 
     # Set variable to identify the path to install and test python libraries.
@@ -97,12 +102,7 @@ if(BUILD_PYTHON_BINDINGS)
     set(PYTHON_DESTINATION
         "${CMAKE_INSTALL_LIBDIR}/python${PYTHON_VERSION}/site-packages"
         CACHE INTERNAL "Python library path.")
-else()
-    find_package(Boost 1.70.0 REQUIRED)
 endif()
-
-find_package(USD 0.20.11 REQUIRED)
-find_package(TBB 2017.0 COMPONENTS tbb REQUIRED)
 
 add_subdirectory(src)
 

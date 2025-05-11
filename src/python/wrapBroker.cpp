@@ -13,9 +13,16 @@
 #include <pxr/usd/usd/common.h>
 #include <pxr/usd/usd/stage.h>
 
+#ifndef PXR_USE_INTERNAL_BOOST_PYTHON
 #include <boost/python.hpp>
-
 using namespace boost::python;
+using noncopyable = boost::noncopyable;
+#else
+#include <pxr/external/boost/python.hpp>
+using namespace PXR_BOOST_PYTHON_NAMESPACE;
+using noncopyable = PXR_BOOST_PYTHON_NAMESPACE::noncopyable;
+#endif
+
 using namespace unf;
 
 PXR_NAMESPACE_USING_DIRECTIVE
@@ -31,7 +38,7 @@ void wrapBroker()
     // Ensure that predicate function can be passed from Python.
     TfPyFunctionFromPython<_CapturePredicateFuncRaw>();
 
-    class_<Broker, BrokerWeakPtr, boost::noncopyable>(
+    class_<Broker, BrokerWeakPtr, noncopyable>(
         "Broker",
         "Intermediate object between the Usd Stage and any clients that needs "
         "asynchronous handling and upstream filtering of notices.",

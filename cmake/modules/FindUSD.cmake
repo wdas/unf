@@ -38,15 +38,9 @@ find_path(
         include
 )
 
-set(USD_LIBRARIES usd sdf tf plug arch vt)
+set(USD_LIBRARIES usd sdf tf plug arch vt boost python)
 
-set(USD_DEPENDENCIES "Boost::boost;TBB::tbb")
-
-if (BUILD_PYTHON_BINDINGS)
-    set(USD_DEPENDENCIES  "${USD_DEPENDENCIES};Python::Python;Boost::python")
-endif()
-
-mark_as_advanced(USD_INCLUDE_DIR USD_LIBRARIES USD_DEPENDENCIES)
+mark_as_advanced(USD_INCLUDE_DIR USD_LIBRARIES)
 
 foreach(NAME IN LISTS USD_LIBRARIES)
     find_library(
@@ -64,6 +58,7 @@ foreach(NAME IN LISTS USD_LIBRARIES)
     mark_as_advanced("${NAME}_LIBRARY")
 endforeach()
 
+
 if(USD_INCLUDE_DIR AND EXISTS "${USD_INCLUDE_DIR}/pxr/pxr.h")
     file(READ "${USD_INCLUDE_DIR}/pxr/pxr.h" _pxr_header)
     foreach(label MAJOR MINOR PATCH)
@@ -75,11 +70,34 @@ if(USD_INCLUDE_DIR AND EXISTS "${USD_INCLUDE_DIR}/pxr/pxr.h")
 
     set(USD_VERSION ${_pxr_MAJOR}.${_pxr_MINOR}.${_pxr_PATCH})
 
+    set(USD_DEPENDENCIES "TBB::tbb")
+    if (BUILD_PYTHON_BINDINGS)
+        list(APPEND USD_DEPENDENCIES "Python::Python")
+    endif()
+
+    # Detect whether PXR_USE_INTERNAL_BOOST_PYTHON is explicitly enabled
+    set(USD_USE_INTERNAL_BOOST_PYTHON ON CACHE INTERNAL "")
+    string(REGEX MATCH
+        "#if +1[^\n]*\n[ \t]*#define +PXR_USE_INTERNAL_BOOST_PYTHON"
+        _use_internal_boost_python "${_pxr_header}")
+
+    # Use external Boost dependencies if USD version is less than 0.25.5, and
+    # if internal Boost.Python is not explicitly enabled
+    if (USD_VERSION VERSION_LESS "0.25.5" AND NOT _use_internal_boost_python)
+        set(USD_USE_INTERNAL_BOOST_PYTHON OFF CACHE INTERNAL "")
+        list(APPEND USD_DEPENDENCIES "Boost::boost")
+        if (BUILD_PYTHON_BINDINGS)
+            list(APPEND USD_DEPENDENCIES "Boost::python")
+        endif()
+    endif()
+
     mark_as_advanced(
         _pxr_MAJOR
         _pxr_MINOR
         _pxr_PATCH
+        _use_internal_boost_python
         USD_VERSION
+        USD_DEPENDENCIES
     )
 endif()
 
@@ -93,6 +111,8 @@ find_package_handle_standard_args(
         plug_LIBRARY
         arch_LIBRARY
         vt_LIBRARY
+        boost_LIBRARY
+        python_LIBRARY
     VERSION_VAR
         USD_VERSION
 )

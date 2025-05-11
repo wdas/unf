@@ -6,8 +6,7 @@
 #include <pxr/pxr.h>
 #include <pxr/usd/usd/stage.h>
 
-#include <boost/optional.hpp>
-
+#include <optional>
 #include <exception>
 
 namespace Test {
@@ -64,7 +63,7 @@ class Observer : public PXR_NS::TfWeakBase {
         }
     }
 
-    boost::optional<T> _notice;
+    std::optional<T> _notice;
     size_t _count;
     PXR_NS::TfNotice::Key _key;
     std::function<void(const T&)> _callback;
