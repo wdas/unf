@@ -9,10 +9,16 @@
 #include <pxr/usd/usd/common.h>
 #include <pxr/usd/usd/stage.h>
 
+#ifndef PXR_USE_INTERNAL_BOOST_PYTHON
 #include <boost/python.hpp>
 #include <boost/python/return_internal_reference.hpp>
-
 using namespace boost::python;
+#else
+#include <pxr/external/boost/python.hpp>
+#include <pxr/external/boost/python/return_internal_reference.hpp>
+using namespace PXR_BOOST_PYTHON_NAMESPACE;
+#endif
+
 using namespace unf;
 
 PXR_NAMESPACE_USING_DIRECTIVE

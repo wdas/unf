@@ -2,7 +2,7 @@ name: test-windows
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
   pull_request:
     branches: [ main, dev ]
 
@@ -21,11 +21,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        usd: ["v23.11", "v24.08"]
-        python: ["3.7", "3.10"]
-        include:
-          - usd: "v24.08"
-            python: "3.11"
+        usd: ["v25.05"]
+        python: ["3.10", "3.12"]
 
     name: "USD-${{ matrix.usd }}-py${{ matrix.python }}"
 

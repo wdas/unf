@@ -40,6 +40,12 @@ target_link_libraries(unf
         usd::vt
 )
 
+# Transitive Pixar libraries depend on vendorized Boost.Python
+# (Required due to manual CMake module used to locate USD)
+if (BUILD_PYTHON_BINDINGS)
+    target_link_libraries(unf PUBLIC usd::boost usd::python)
+endif()
+
 install(
     TARGETS unf
     EXPORT ${PROJECT_NAME}

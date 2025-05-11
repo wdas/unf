@@ -2,9 +2,14 @@
 
 #include "unf/capturePredicate.h"
 
+#ifndef PXR_USE_INTERNAL_BOOST_PYTHON
 #include <boost/python.hpp>
-
 using namespace boost::python;
+#else
+#include <pxr/external/boost/python.hpp>
+using namespace PXR_BOOST_PYTHON_NAMESPACE;
+#endif
+
 using namespace unf;
 
 PXR_NAMESPACE_USING_DIRECTIVE
