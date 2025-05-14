@@ -16,12 +16,11 @@ Dependencies
 
 Ensure that a minimal installation of :term:`USD` is available. Headers and
 compiled libraries from :term:`USD` as well as headers from transitive
-dependencies such as :term:`TBB` and :term:`Boost` are required during the
-building process.
+dependencies such as :term:`TBB` are required during the building process.
 
 If Python bindings are needed, :term:`USD` must be built with Python support.
-Compiled libraries and headers from Python and :term:`Boost Python` are
-also required during the building process.
+Compiled libraries and headers from Python are also required during the
+building process.
 
 .. seealso::
 
@@ -37,7 +36,6 @@ Option / Environment Variable Description
 ============================= =========================================================
 USD_ROOT                      Add search path to :term:`USD` package.
 TBB_ROOT                      Add search path to :term:`TBB` package.
-Boost_ROOT                    Add search path to :term:`Boost` package.
 Python_ROOT                   Add search path to Python package.
 Pytest_ROOT                   Add search path to :term:`pytest` program.
 Doxygen_ROOT                  Add search path to :term:`doxygen` program.

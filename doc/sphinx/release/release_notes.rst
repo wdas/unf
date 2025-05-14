@@ -4,6 +4,13 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: changed
+
+        Updated to use the :term:`Boost Python` dependencies vendorized within OpenUSD,
+        removing the need for a separate :term:`Boost` installation.
+
 .. release:: 0.7.0
     :date: 2024-08-20
 

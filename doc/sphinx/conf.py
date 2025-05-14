@@ -11,7 +11,7 @@ sys.path.insert(0, str(root / "_extensions"))
 extensions = ["changelog", "sphinxcontrib.doxylink"]
 
 # This deployment mode exists so that documentation can be built within a
-# Github runner without requiring USD/TBB/Boost to be installed. We would be
+# Github runner without requiring USD/TBB to be installed. We would be
 # able to simplify the process if we could rely on pre-built dependencies which
 # will be quick to install.
 if os.environ.get("BUILD_DOCS_WITHOUT_CMAKE"):
