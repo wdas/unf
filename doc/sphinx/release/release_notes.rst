@@ -4,6 +4,13 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+
+        Updated Github workflow configuration to deploy documentation using latest
+        GitHub Actions versions.
+
 .. release:: 0.8.0
     :date: 2025-05-13
 
