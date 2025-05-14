@@ -111,8 +111,6 @@ find_package_handle_standard_args(
         plug_LIBRARY
         arch_LIBRARY
         vt_LIBRARY
-        boost_LIBRARY
-        python_LIBRARY
     VERSION_VAR
         USD_VERSION
 )

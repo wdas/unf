@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        usd: ["v25.05"]
+        usd: ["v24.08", "v25.05"]
         python: ["3.10", "3.12"]
 
     name: "USD-${{ matrix.usd }}-py${{ matrix.python }}"
@@ -42,11 +42,23 @@ jobs:
           mkdir -p ${{github.workspace}}/build
           mkdir -p ${{runner.temp}}/USD
 
-      - name: Install USD
+      - name: Download USD
         working-directory: ${{runner.temp}}/USD
         run: |
           git clone https://github.com/PixarAnimationStudios/OpenUSD.git \
               --depth 1 --branch ${{ matrix.usd }} ./src
+
+      - name: Apply patch for USD v24.08
+        if: matrix.usd == 'v24.08'
+        working-directory: ${{runner.temp}}/USD
+        run: |
+          sed -i '/BOOST_URL/ s|boostorg.jfrog.io.*/release|sourceforge.net/projects/boost/files/boost|' src/build_scripts/build_usd.py
+          sed -i '/BOOST_URL/ s|source/boost|boost|' src/build_scripts/build_usd.py
+          sed -i '/BOOST_URL/ s|\.zip"|.zip/download"|' src/build_scripts/build_usd.py
+
+      - name: Install USD
+        working-directory: ${{runner.temp}}/USD
+        run: |
           python ./src/build_scripts/build_usd.py . \
               --no-tests \
               --no-examples \

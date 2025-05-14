@@ -4,6 +4,13 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+
+        Fixed CMake module to detect USD without requiring `usd::boost` or `usd::python`,
+        maintaining compatibility with OpenUSD v24.08.
+
 .. release:: 0.8.1
     :date: 2025-05-13
 

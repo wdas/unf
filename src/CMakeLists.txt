@@ -42,7 +42,7 @@ target_link_libraries(unf
 
 # Transitive Pixar libraries depend on vendorized Boost.Python
 # (Required due to manual CMake module used to locate USD)
-if (BUILD_PYTHON_BINDINGS)
+if (BUILD_PYTHON_BINDINGS AND USD_USE_INTERNAL_BOOST_PYTHON)
     target_link_libraries(unf PUBLIC usd::boost usd::python)
 endif()
 
