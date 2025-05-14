@@ -5,7 +5,7 @@ else()
 endif()
 
 project(unf
-    VERSION 0.8.0
+    VERSION 0.8.1
     LANGUAGES CXX
 )
 

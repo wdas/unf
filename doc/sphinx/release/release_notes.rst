@@ -4,7 +4,8 @@
 Release Notes
 *************
 
-.. release:: Upcoming
+.. release:: 0.8.1
+    :date: 2025-05-13
 
     .. change:: fixed
 
