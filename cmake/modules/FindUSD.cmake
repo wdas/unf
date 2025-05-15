@@ -78,12 +78,12 @@ if(USD_INCLUDE_DIR AND EXISTS "${USD_INCLUDE_DIR}/pxr/pxr.h")
     # Detect whether PXR_USE_INTERNAL_BOOST_PYTHON is explicitly enabled
     set(USD_USE_INTERNAL_BOOST_PYTHON ON CACHE INTERNAL "")
     string(REGEX MATCH
-        "#if +1[^\n]*\n[ \t]*#define +PXR_USE_INTERNAL_BOOST_PYTHON"
-        _use_internal_boost_python "${_pxr_header}")
+        "#if +0[^\n]*\n[ \t]*#define +PXR_USE_INTERNAL_BOOST_PYTHON"
+        _use_external_boost_python "${_pxr_header}")
 
     # Use external Boost dependencies if USD version is less than 0.25.5, and
-    # if internal Boost.Python is not explicitly enabled
-    if (USD_VERSION VERSION_LESS "0.25.5" AND NOT _use_internal_boost_python)
+    # if internal Boost.Python is not explicitly disabled
+    if (USD_VERSION VERSION_LESS "0.25.5" OR _use_external_boost_python)
         set(USD_USE_INTERNAL_BOOST_PYTHON OFF CACHE INTERNAL "")
         list(APPEND USD_DEPENDENCIES "Boost::boost")
         if (BUILD_PYTHON_BINDINGS)
@@ -95,7 +95,7 @@ if(USD_INCLUDE_DIR AND EXISTS "${USD_INCLUDE_DIR}/pxr/pxr.h")
         _pxr_MAJOR
         _pxr_MINOR
         _pxr_PATCH
-        _use_internal_boost_python
+        _use_external_boost_python
         USD_VERSION
         USD_DEPENDENCIES
     )
