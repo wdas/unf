@@ -4,6 +4,13 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+
+        Fixed CMake module to detect USD, ensuring support for using an external
+        :term:`Boost Python` with alpha versions of OpenUSD 25.05.
+
 .. release:: 0.8.2
     :date: 2025-05-14
 
