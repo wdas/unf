@@ -15,13 +15,13 @@ permissions:
 
 jobs:
   test-windows:
-    runs-on: windows-2019
+    runs-on: windows-2022
     timeout-minutes: 300
 
     strategy:
       fail-fast: false
       matrix:
-        usd: ["v24.08", "v25.05"]
+        usd: ["v24.08", "v25.05.01"]
         python: ["3.10", "3.12"]
 
     name: "USD-${{ matrix.usd }}-py${{ matrix.python }}"
@@ -65,7 +65,7 @@ jobs:
           set VCPKG_TARGET_TRIPLET=x64-windows
           set CMAKE_TOOLCHAIN_FILE=%VCPKG_INSTALLATION_ROOT%/scripts/buildsystems/vcpkg.cmake
           python ./src/build_scripts/build_usd.py . ^
-              --generator "Visual Studio 16 2019" ^
+              --generator "Visual Studio 17 2022" ^
               --no-tests ^
               --no-examples ^
               --no-tutorials ^
@@ -82,7 +82,7 @@ jobs:
           export PATH="${{runner.temp}}/USD/bin;${{runner.temp}}/USD/lib;${PATH}"
           export PYTHONPATH="${{runner.temp}}/USD/lib/python;${PYTHONPATH}"
           cmake \
-            -G "Visual Studio 16 2019" -A x64 \
+            -G "Visual Studio 17 2022" -A x64 \
             -D "CMAKE_TOOLCHAIN_FILE=${VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake" \
             -D "VCPKG_TARGET_TRIPLET=x64-windows" \
             -D "BUILD_DOCS=OFF" \

@@ -4,6 +4,17 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+
+        Updated Github workflow configuration to test library against
+        :term:`USD` v23.05.01.
+
+    .. change:: fixed
+
+        Fixed Windows CI test errors by switching to 'windows-2022' image.
+
 .. release:: 0.8.3
     :date: 2025-05-15
 
