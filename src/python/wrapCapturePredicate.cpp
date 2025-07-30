@@ -1,3 +1,5 @@
+// clang-format off
+
 #include "./predicate.h"
 
 #include "unf/capturePredicate.h"
