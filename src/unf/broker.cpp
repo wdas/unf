@@ -43,6 +43,11 @@ BrokerPtr Broker::Create(const UsdStageWeakPtr& stage)
     return Registry[stage];
 }
 
+const UsdStageWeakPtr
+Broker::GetStage() const {
+    return _stage;
+}
+
 bool Broker::IsInTransaction() { return _mergers.size() > 0; }
 
 void Broker::BeginTransaction(CapturePredicate predicate)
@@ -170,14 +175,14 @@ void Broker::_NoticeMerger::Merge()
         // first notice, and all other can be pruned.
         if (notices.size() > 1 && notices[0]->IsMergeable()) {
             auto& notice = notices.at(0);
-            auto it = std::next(notices.begin());
 
-            while (it != notices.end()) {
+            auto it = std::next(notices.begin());
+            for (; it != notices.end(); ++it) {
                 // Attempt to merge content of notice with first notice
                 // if this is possible.
                 notice->Merge(std::move(**it));
-                it = notices.erase(it);
             }
+            notices.resize(1);
         }
     }
 }
