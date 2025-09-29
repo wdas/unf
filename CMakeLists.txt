@@ -39,9 +39,8 @@ if (MSVC)
     else()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:inline")
     endif()
-else()
-    add_compile_definitions("BOOST_NO_CXX98_FUNCTION_BASE")
 endif()
+add_compile_definitions("BOOST_NO_CXX98_FUNCTION_BASE")
 
 option(BUILD_TESTS "Build tests" ON)
 option(BUILD_DOCS "Build documentation" ON)
@@ -104,6 +103,11 @@ if(BUILD_PYTHON_BINDINGS)
     set(PYTHON_DESTINATION
         "${CMAKE_INSTALL_LIBDIR}/python${PYTHON_VERSION}/site-packages"
         CACHE INTERNAL "Python library path.")
+endif()
+
+# usd::usd target always requres Boost::Boost
+if (NOT TARGET Boost::Boost)
+    find_package(Boost REQUIRED)
 endif()
 
 add_subdirectory(src)
