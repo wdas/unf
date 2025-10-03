@@ -61,7 +61,7 @@ class Broker : public PXR_NS::TfRefBase, public PXR_NS::TfWeakBase {
     UNF_API Broker& operator=(const Broker&) = delete;
 
     /// Return Usd Stage associated with the broker.
-    UNF_API const PXR_NS::UsdStageWeakPtr GetStage() const { return _stage; }
+    UNF_API const PXR_NS::UsdStageWeakPtr GetStage() const;
 
     /// \brief
     /// Indicate whether a notice transaction has been started.

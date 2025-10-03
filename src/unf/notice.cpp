@@ -63,13 +63,12 @@ ObjectsChanged& ObjectsChanged::operator=(const ObjectsChanged& other)
 
 void ObjectsChanged::Merge(ObjectsChanged&& notice)
 {
-    SdfPathSet resyncSet(_resyncChanges.begin(), _resyncChanges.end());
-
     // Update resyncChanges if necessary.
-    for (const auto& path : notice._resyncChanges) {
-        if (resyncSet.find(path) == resyncSet.end()) {
-            resyncSet.insert(path);
-            _resyncChanges.push_back(std::move(path));
+    for (auto& path : notice._resyncChanges) {
+        const auto iter = std::find(_resyncChanges.begin(), _resyncChanges.end(), path);
+        if (iter == _resyncChanges.end())
+        {
+            _resyncChanges.emplace_back(std::move(path));
         }
     }
 
@@ -78,31 +77,37 @@ void ObjectsChanged::Merge(ObjectsChanged&& notice)
         const SdfPath& primPath = path.GetPrimPath();
 
         // Skip if the path is already in resyncedPaths.
-        if (resyncSet.find(primPath) != resyncSet.end()) {
-            continue;
+        {
+            const auto it = std::find(
+                _resyncChanges.begin(), _resyncChanges.end(), primPath);
+            if (it != _resyncChanges.end())
+                continue;
         }
 
         // Skip if an ancestor of the path is already in resyncedPaths.
         bool ancestorResynced = false;
         for (const auto& ancestor : primPath.GetPrefixes()) {
-            if (resyncSet.find(ancestor) != resyncSet.end()) {
-                ancestorResynced = true;
-                break;
+            const auto it = std::find(
+                _resyncChanges.begin(), _resyncChanges.end(), ancestor);
+            if (it != _resyncChanges.end()) {
+                goto continue_ancestorResynced;
             }
         }
-        if (ancestorResynced) {
-            continue;
-        }
 
-        auto it = std::find(_infoChanges.begin(), _infoChanges.end(), path);
-        if (it == _infoChanges.end()) {
-            _infoChanges.push_back(std::move(path));
+        // Add infoChanges, when not already available
+        {
+            const auto it = std::find(
+                _infoChanges.begin(), _infoChanges.end(), path);
+            if (it == _infoChanges.end()) {
+                _infoChanges.push_back(std::move(path));
+            }
         }
+    continue_ancestorResynced:;
     }
 
     // Update changeFields.
     for (auto const& entry : notice._changedFields) {
-        auto const path = entry.first;
+        auto const& path = entry.first;
 
         if (_changedFields.find(path) == _changedFields.end()) {
             _changedFields[path] = std::move(notice._changedFields[path]);
