@@ -4,6 +4,17 @@
 Release Notes
 *************
 
+.. release:: 0.9.0
+     :date: Upcoming
+
+     .. change:: changed
+
+        Performance improvements for the Merge operation.
+
+    .. change:: fixed
+
+        Improved cmake packaging when building against a Python-free USD.
+
 .. release:: 0.8.4
     :date: 2025-07-30
 
