@@ -105,11 +105,6 @@ if(BUILD_PYTHON_BINDINGS)
         CACHE INTERNAL "Python library path.")
 endif()
 
-# usd::usd target always requres Boost::Boost
-if (NOT TARGET Boost::Boost)
-    find_package(Boost REQUIRED)
-endif()
-
 add_subdirectory(src)
 
 if (BUILD_TESTS)

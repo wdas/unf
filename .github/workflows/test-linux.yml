@@ -22,14 +22,15 @@ jobs:
       fail-fast: false
       matrix:
         usd: ["v24.08", "v25.05"]
-        python: ["3.10", "3.12"]
+        python: ["", "3.10", "3.12"]
 
-    name: "USD-${{ matrix.usd }}-py${{ matrix.python }}"
+    name: "USD-${{ matrix.usd }}${{ matrix.python != '' && format('-py{0}', matrix.python) || '-no-py' }}"
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python }}
+        if: matrix.python != ''
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
@@ -38,9 +39,13 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y libgtest-dev ninja-build
-          python -m pip install -r ${{github.workspace}}/test/requirements.txt
           mkdir -p ${{github.workspace}}/build
           mkdir -p ${{runner.temp}}/USD
+
+      - name: Install test Python deps
+        if: matrix.python != ''
+        run: |
+          python -m pip install -r ${{github.workspace}}/test/requirements.txt
 
       - name: Download USD
         working-directory: ${{runner.temp}}/USD
@@ -57,6 +62,7 @@ jobs:
           sed -i '/BOOST_URL/ s|\.zip"|.zip/download"|' src/build_scripts/build_usd.py
 
       - name: Install USD
+        if: matrix.python != ''
         working-directory: ${{runner.temp}}/USD
         run: |
           python ./src/build_scripts/build_usd.py . \
@@ -69,12 +75,40 @@ jobs:
               --no-materialx \
               -v
 
+      - name: Install USD (without Python)
+        if: matrix.python == ''
+        working-directory: ${{runner.temp}}/USD
+        run: |
+          python ./src/build_scripts/build_usd.py . \
+              --no-tests \
+              --no-examples \
+              --no-tutorials \
+              --no-tools \
+              --no-docs \
+              --no-imaging \
+              --no-materialx \
+              --no-python \
+              -v
+
       - name: Configure & Build
+        if: matrix.python != ''
         working-directory: ${{github.workspace}}/build
         run: |
           export PYTHONPATH="${{runner.temp}}/USD/lib/python"
           cmake \
               -D "BUILD_DOCS=OFF" \
+              -D "CMAKE_INCLUDE_PATH=${{runner.temp}}/USD/include" \
+              -D "CMAKE_LIBRARY_PATH=${{runner.temp}}/USD/lib" \
+              ..
+          cmake --build . --config Release
+
+      - name: Configure & Build (without Python)
+        if: matrix.python == ''
+        working-directory: ${{github.workspace}}/build
+        run: |
+          cmake \
+              -D "BUILD_DOCS=OFF" \
+              -D "BUILD_PYTHON_BINDINGS=OFF" \
               -D "CMAKE_INCLUDE_PATH=${{runner.temp}}/USD/include" \
               -D "CMAKE_LIBRARY_PATH=${{runner.temp}}/USD/lib" \
               ..
