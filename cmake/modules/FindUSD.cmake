@@ -85,9 +85,8 @@ if(USD_INCLUDE_DIR AND EXISTS "${USD_INCLUDE_DIR}/pxr/pxr.h")
     # if internal Boost.Python is not explicitly disabled
     if (USD_VERSION VERSION_LESS "0.25.5" OR _use_external_boost_python)
         set(USD_USE_INTERNAL_BOOST_PYTHON OFF CACHE INTERNAL "")
-        list(APPEND USD_DEPENDENCIES "Boost::boost")
         if (BUILD_PYTHON_BINDINGS)
-            list(APPEND USD_DEPENDENCIES "Boost::python")
+            list(APPEND USD_DEPENDENCIES "Boost::boost" "Boost::python")
         endif()
     endif()
 

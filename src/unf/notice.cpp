@@ -65,9 +65,9 @@ void ObjectsChanged::Merge(ObjectsChanged&& notice)
 {
     // Update resyncChanges if necessary.
     for (auto& path : notice._resyncChanges) {
-        const auto iter = std::find(_resyncChanges.begin(), _resyncChanges.end(), path);
-        if (iter == _resyncChanges.end())
-        {
+        const auto iter =
+            std::find(_resyncChanges.begin(), _resyncChanges.end(), path);
+        if (iter == _resyncChanges.end()) {
             _resyncChanges.emplace_back(std::move(path));
         }
     }
@@ -80,8 +80,7 @@ void ObjectsChanged::Merge(ObjectsChanged&& notice)
         {
             const auto it = std::find(
                 _resyncChanges.begin(), _resyncChanges.end(), primPath);
-            if (it != _resyncChanges.end())
-                continue;
+            if (it != _resyncChanges.end()) continue;
         }
 
         // Skip if an ancestor of the path is already in resyncedPaths.
@@ -96,8 +95,8 @@ void ObjectsChanged::Merge(ObjectsChanged&& notice)
 
         // Add infoChanges, when not already available
         {
-            const auto it = std::find(
-                _infoChanges.begin(), _infoChanges.end(), path);
+            const auto it =
+                std::find(_infoChanges.begin(), _infoChanges.end(), path);
             if (it == _infoChanges.end()) {
                 _infoChanges.push_back(std::move(path));
             }

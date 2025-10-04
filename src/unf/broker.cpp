@@ -43,10 +43,7 @@ BrokerPtr Broker::Create(const UsdStageWeakPtr& stage)
     return Registry[stage];
 }
 
-const UsdStageWeakPtr
-Broker::GetStage() const {
-    return _stage;
-}
+const UsdStageWeakPtr Broker::GetStage() const { return _stage; }
 
 bool Broker::IsInTransaction() { return _mergers.size() > 0; }
 

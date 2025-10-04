@@ -4,16 +4,16 @@
 Release Notes
 *************
 
-.. release:: 0.9.0
-     :date: Upcoming
+.. release:: Upcoming
 
-     .. change:: changed
+    .. change:: changed
 
         Performance improvements for the Merge operation.
 
     .. change:: fixed
 
-        Improved cmake packaging when building against a Python-free USD.
+        Removed the :term:`Boost` dependency for OpenUSD versions prior to
+        25.05 when Python bindings aren’t needed.
 
 .. release:: 0.8.4
     :date: 2025-07-30
