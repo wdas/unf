@@ -29,13 +29,7 @@ target_include_directories(pyUnf
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-target_link_libraries(pyUnf PUBLIC unf)
-
-if (NOT USD_USE_INTERNAL_BOOST_PYTHON)
-    target_link_libraries(pyUnf PUBLIC Boost::python)
-else()
-    target_link_libraries(pyUnf PUBLIC usd::boost usd::python)
-endif()
+target_link_libraries(pyUnf PUBLIC unf usd::boost usd::python)
 
 set_target_properties(pyUnf
     PROPERTIES
