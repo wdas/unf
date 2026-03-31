@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        usd: ["v25.05"]
+        usd: ["v25.11", "v26.03"]
         python: ["", "3.10", "3.12"]
 
     name: "USD-${{ matrix.usd }}${{ matrix.python != '' && format('-py{0}', matrix.python) || '-no-py' }}"
@@ -124,4 +124,4 @@ jobs:
         run: ctest -VV
         env:
           CTEST_OUTPUT_ON_FAILURE: True
-
+          PCP_ENABLE_MINIMAL_CHANGES_FOR_LAYER_OPERATIONS: 0
