@@ -13,15 +13,9 @@
 #include <pxr/usd/usd/common.h>
 #include <pxr/usd/usd/stage.h>
 
-#ifndef PXR_USE_INTERNAL_BOOST_PYTHON
-#include <boost/python.hpp>
-using namespace boost::python;
-using noncopyable = boost::noncopyable;
-#else
 #include <pxr/external/boost/python.hpp>
 using namespace PXR_BOOST_PYTHON_NAMESPACE;
 using noncopyable = PXR_BOOST_PYTHON_NAMESPACE::noncopyable;
-#endif
 
 using namespace unf;
 

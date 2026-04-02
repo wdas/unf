@@ -86,15 +86,6 @@ if(BUILD_PYTHON_BINDINGS)
     set(_py_version ${Python_VERSION_MAJOR}${Python_VERSION_MINOR})
     mark_as_advanced(_py_version)
 
-    if (NOT USD_USE_INTERNAL_BOOST_PYTHON)
-        find_package(Boost 1.70.0 COMPONENTS "python${_py_version}" REQUIRED)
-
-        # Define generic target for Boost Python if necessary.
-        if (NOT TARGET Boost::python)
-            add_library(Boost::python ALIAS "Boost::python${_py_version}")
-        endif()
-    endif()
-
     # Set variable to identify the path to install and test python libraries.
     set(PYTHON_VERSION
         "${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}"

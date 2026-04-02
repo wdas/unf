@@ -4,6 +4,13 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: changed
+
+        USD versions older than 25.11 are no longer supported.
+
+
 .. release:: 0.9.0
     :date: 2025-10-04
 
