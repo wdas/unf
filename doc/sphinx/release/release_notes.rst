@@ -4,7 +4,8 @@
 Release Notes
 *************
 
-.. release:: Upcoming
+.. release:: 1.0.0
+    :date: 2026-04-02
 
     .. change:: changed
 
