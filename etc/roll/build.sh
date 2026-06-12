@@ -5,12 +5,18 @@ destdir="$2"
 buildflavor="$3"
 numjobs="$4"
 
+if test -n "$RP_oneTBB"; then
+    tbbroot="$RP_oneTBB"
+else
+    tbbroot="$RP_TBB"
+fi
+
 mkdir -p build/$buildflavor &&
 cd build/$buildflavor &&
 cmake  \
     -D CMAKE_INSTALL_PREFIX=$prefix \
     -D GTest_ROOT=$RP_gtest \
-    -D TBB_INCLUDE_DIRS=$RP_TBB/include \
+    -D TBB_INCLUDE_DIRS=$tbbroot/include \
     -D USD_INCLUDE_DIR=$RP_presto_usd/include \
     ../.. &&
 make -j$numjobs &&
