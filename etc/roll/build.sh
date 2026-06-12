@@ -11,7 +11,6 @@ cmake  \
     -D CMAKE_INSTALL_PREFIX=$prefix \
     -D GTest_ROOT=$RP_gtest \
     -D TBB_INCLUDE_DIRS=$RP_TBB/include \
-    -D Boost_ROOT=$RP_boost_disney \
     -D USD_INCLUDE_DIR=$RP_presto_usd/include \
     ../.. &&
 make -j$numjobs &&
