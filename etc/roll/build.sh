@@ -1,7 +1,7 @@
 #!/bin/bash
 
-prefix="$1"
-destdir="$2"
+destdir="$1"
+prefix="$2"
 buildflavor="$3"
 numjobs="$4"
 
