@@ -197,7 +197,10 @@ if(NOT TBB_FOUND)
   ##################################
 
   if(TBB_INCLUDE_DIRS)
-    file(READ "${TBB_INCLUDE_DIRS}/tbb/tbb_stddef.h" _tbb_version_file)
+    if(NOT TBB_VERSION_H)
+      set(TBB_VERSION_H ${TBB_INCLUDE_DIRS}/oneapi/tbb/version.h)
+    endif()
+    file(READ "${TBB_VERSION_H}" _tbb_version_file)
     string(REGEX REPLACE ".*#define TBB_VERSION_MAJOR ([0-9]+).*" "\\1"
         TBB_VERSION_MAJOR "${_tbb_version_file}")
     string(REGEX REPLACE ".*#define TBB_VERSION_MINOR ([0-9]+).*" "\\1"
