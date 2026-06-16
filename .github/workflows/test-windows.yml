@@ -27,7 +27,7 @@ jobs:
     name: "USD-${{ matrix.usd }}${{ matrix.python != '' && format('-py{0}', matrix.python) || '-no-py' }}"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Python ${{ matrix.python }}
         if: matrix.python != ''
